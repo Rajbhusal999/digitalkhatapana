@@ -105,6 +105,41 @@ const TRANSLATIONS = {
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Override default school details dynamically if custom school registered
+    const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+    if (schoolInfoStr) {
+        try {
+            const schoolInfo = JSON.parse(schoolInfoStr);
+            if (schoolInfo.schoolName) {
+                TRANSLATIONS.ne['txt-school-name'] = schoolInfo.schoolName;
+                TRANSLATIONS.en['txt-school-name'] = schoolInfo.schoolName;
+            }
+            if (schoolInfo.address) {
+                TRANSLATIONS.ne['txt-gov-subtitle'] = `सामुदायिक विद्यालय - ${schoolInfo.address} (इमिस कोड: ${schoolInfo.emis})`;
+                TRANSLATIONS.en['txt-gov-subtitle'] = `Community School - ${schoolInfo.address} (EMIS: ${schoolInfo.emis})`;
+            }
+            
+            // Wait for DOM elements to load then override static footer parts
+            setTimeout(() => {
+                const footerContactDesc = document.getElementById('txt-footer-contact-desc');
+                const footerBottom = document.querySelector('footer .footer-bottom');
+                if (footerContactDesc) {
+                    footerContactDesc.innerHTML = `
+                        <strong>${schoolInfo.schoolName}</strong><br>
+                        ${schoolInfo.address}<br>
+                        फोन: ${schoolInfo.pPhone || '+९७७-६१-XXXXXX'}<br>
+                        इमेल: info@${(schoolInfo.schoolName || 'school').toLowerCase().replace(/[^a-z0-9]/g, '')}.edu.np
+                    `;
+                }
+                if (footerBottom) {
+                    footerBottom.innerText = `© २०८२ ${schoolInfo.schoolName} | सुशासन, पारदर्शिता र गुणस्तरीय शिक्षा`;
+                }
+            }, 50);
+        } catch (e) {
+            console.error('Error overriding school info:', e);
+        }
+    }
+
     applyLanguage();
     populateCategoryDropdowns();
     await initDatabase();

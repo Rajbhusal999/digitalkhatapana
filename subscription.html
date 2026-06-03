@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Billing - Digital Khata Pana</title>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Dark Theme Background specifically for Subscription Page matching Hero */
+        body.sub-page {
+            background: radial-gradient(circle at 50% 50%, #0c2340 0%, #060e1b 100%);
+            color: #F8FAFC;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Glassmorphism Header Override */
+        header.sub-header {
+            background: rgba(6, 14, 27, 0.8) !important;
+            backdrop-filter: blur(20px) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+
+        header.sub-header .brand-titles h1 {
+            color: #ffffff !important;
+        }
+
+        header.sub-header .brand-titles h2 {
+            color: var(--accent) !important;
+        }
+
+        header.sub-header .brand-titles p {
+            color: #94A3B8 !important;
+        }
+
+        header.sub-header nav.nav-links a {
+            color: #CBD5E1 !important;
+        }
+
+        /* Container styling */
+        .sub-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .success-banner {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .success-banner h2 {
+            font-family: var(--font-nepali);
+            font-size: 2.2rem;
+            color: #34D399;
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+
+        .success-banner p {
+            color: #E2E8F0;
+            font-size: 1rem;
+        }
+
+        .school-badge {
+            background: rgba(229, 169, 59, 0.2);
+            border: 1px solid rgba(229, 169, 59, 0.4);
+            color: var(--accent);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        /* Subscription Cards */
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            align-items: stretch;
+            margin-bottom: 50px;
+        }
+
+        @media (max-width: 1024px) {
+            .plans-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .plans-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .plan-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Popular card glow effect */
+        .plan-card.popular {
+            border: 2px solid var(--accent);
+            box-shadow: 0 10px 30px rgba(229, 169, 59, 0.15);
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .plan-card.popular:hover {
+            box-shadow: 0 20px 50px rgba(229, 169, 59, 0.3);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: 20px;
+            right: -35px;
+            background: var(--accent);
+            color: #000;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 35px;
+            transform: rotate(45deg);
+            text-transform: uppercase;
+        }
+
+        .plan-header {
+            margin-bottom: 25px;
+        }
+
+        .plan-badge {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #E2E8F0;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .plan-card.popular .plan-badge {
+            background: rgba(229, 169, 59, 0.25);
+            color: var(--accent);
+        }
+
+        .plan-title {
+            font-family: var(--font-nepali);
+            font-size: 1.8rem;
+            color: white;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .plan-price {
+            margin-bottom: 20px;
+        }
+
+        .plan-price .amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -1px;
+        }
+
+        .plan-price .period {
+            font-size: 0.9rem;
+            color: #94A3B8;
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 35px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.88rem;
+            color: #CBD5E1;
+            line-height: 1.4;
+        }
+
+        .plan-features li svg {
+            flex-shrink: 0;
+            color: #34D399;
+            margin-top: 2px;
+        }
+
+        .plan-features li.disabled {
+            color: #64748B;
+            text-decoration: line-through;
+        }
+
+        .plan-features li.disabled svg {
+            color: #64748B;
+        }
+
+        .select-plan-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            padding: 14px 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .select-plan-btn:hover {
+            background: white;
+            color: #060e1b;
+            transform: translateY(-2px);
+        }
+
+        .plan-card.popular .select-plan-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            color: #000;
+            border: none;
+        }
+
+        .plan-card.popular .select-plan-btn:hover {
+            box-shadow: 0 6px 15px rgba(229, 169, 59, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Payment Modal Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(6, 14, 27, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .checkout-modal {
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .checkout-modal {
+            transform: scale(1);
+        }
+
+        .checkout-header {
+            background: #1F2937;
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .checkout-header h3 {
+            font-family: var(--font-nepali);
+            font-size: 1.3rem;
+            color: white;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #94A3B8;
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: white;
+        }
+
+        .checkout-body {
+            padding: 25px;
+        }
+
+        .billing-summary {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-sm);
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.88rem;
+            margin-bottom: 8px;
+            color: #94A3B8;
+        }
+
+        .summary-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .summary-row strong {
+            color: white;
+        }
+
+        .payment-methods-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #E2E8F0;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .method-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 15px 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: #CBD5E1;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .method-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Gateway Branded Styles */
+        .method-btn.esewa-btn.selected {
+            background: rgba(96, 187, 70, 0.15);
+            border-color: #60BB46;
+            color: #60BB46;
+        }
+
+        .method-btn.khalti-btn.selected {
+            background: rgba(92, 45, 145, 0.15);
+            border-color: #5C2D91;
+            color: #8C52FF;
+        }
+
+        .method-btn.connectips-btn.selected {
+            background: rgba(26, 82, 118, 0.2);
+            border-color: #1A5276;
+            color: #3498DB;
+        }
+
+        .method-icon {
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .checkout-flow-container {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 20px;
+        }
+
+        /* Branded Gateway Login Forms */
+        .gateway-form-wrapper {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .gateway-form-wrapper.active {
+            display: block;
+        }
+
+        /* Branded titles/headers */
+        .gateway-brand-bar {
+            border-radius: var(--radius-sm);
+            padding: 12px 15px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .esewa-bar { background: #60BB46; color: white; }
+        .khalti-bar { background: #5C2D91; color: white; }
+        .connectips-bar { background: #003893; color: white; }
+
+        .gateway-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .gateway-inputs .form-group {
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .gateway-inputs label {
+            color: #94A3B8;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .gateway-inputs input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .gateway-inputs input:focus {
+            border-color: var(--accent);
+        }
+
+        /* Payment flow buttons */
+        .pay-submit-btn {
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .esewa-pay-btn { background: linear-gradient(135deg, #60BB46 0%, #4FA338 100%); }
+        .khalti-pay-btn { background: linear-gradient(135deg, #5C2D91 0%, #4D257A 100%); }
+        .connectips-pay-btn { background: linear-gradient(135deg, #003893 0%, #002B70 100%); }
+
+        .pay-submit-btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+        }
+
+        /* Loader & OTP styles */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* OTP Form */
+        .otp-screen {
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .otp-screen h4 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .otp-screen p {
+            color: #94A3B8;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+
+        .otp-input-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .otp-digit {
+            width: 45px;
+            height: 45px;
+            background: #0F172A;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+        }
+
+        .otp-digit:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(229, 169, 59, 0.2);
+        }
+
+        /* Success screen */
+        .success-screen {
+            text-align: center;
+            padding: 20px 0;
+            display: none;
+            animation: scaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .checkmark-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.1);
+            border: 3px solid #10B981;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #10B981;
+            font-size: 3rem;
+            margin: 0 auto 20px;
+        }
+
+        .success-screen h4 {
+            font-family: var(--font-nepali);
+            font-size: 1.6rem;
+            color: #10B981;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .success-screen p {
+            color: #94A3B8;
+            font-size: 0.88rem;
+            margin-bottom: 8px;
+        }
+
+        .txn-receipt {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-sm);
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            text-align: left;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .txn-receipt div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            color: #CBD5E1;
+        }
+
+        .txn-receipt div:last-child {
+            margin-bottom: 0;
+        }
+
+        .txn-receipt strong {
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleUp {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Toast Container overrides for subscription screen */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 2000;
+        }
+        .toast {
+            background: #1E293B;
+            border-left: 4px solid var(--primary);
+            border-radius: var(--radius-sm);
+            padding: 15px 20px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 300px;
+            max-width: 450px;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            color: white;
+        }
+        .toast.show {
+            transform: translateX(0);
+        }
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.info { border-left-color: var(--secondary-light); }
+    </style>
+</head>
+<body class="sub-page">
+
+    <!-- Top Gov Bar -->
+    <div class="top-gov-bar">
+        <span>
+            नेपाल सरकार | शिक्षा, विज्ञान तथा प्रविधि मन्त्रालय (Ministry of Education, Science & Technology)
+        </span>
+        <span>
+            <a href="index.html" style="color: white; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 4px;">
+                🏠 Portal Home
+            </a>
+        </span>
+    </div>
+
+    <!-- Header -->
+    <header class="sub-header">
+        <div class="brand-section">
+            <svg class="gov-logo" viewBox="0 0 100 100" width="65" height="65">
+                <circle cx="50" cy="50" r="46" fill="#0b2b61" />
+                <circle cx="50" cy="50" r="42" fill="white" />
+                <circle cx="50" cy="50" r="38" fill="#e63946" opacity="0.15" />
+                <path d="M25 65 L40 40 L52 55 L65 30 L80 65 Z" fill="#b0c4de" stroke="#0b2b61" stroke-width="1.5" />
+                <path d="M35 65 L48 45 L58 58 L72 38 L80 65 Z" fill="#ffffff" opacity="0.8" />
+                <path d="M42 68 C45 66, 55 66, 58 68" stroke="#0b2b61" stroke-width="3" stroke-linecap="round" />
+                <path d="M45 23 L50 17 L55 23 L50 25 Z" fill="#ffb300" />
+                <circle cx="50" cy="8" r="2.5" fill="#ffb300" />
+                <text x="50" y="85" text-anchor="middle" font-size="6.5" font-family="'Mukta', sans-serif" font-weight="bold" fill="#0b2b61">जननी जन्मभूमिश्च...</text>
+            </svg>
+            <div class="brand-titles">
+                <h1 style="font-family: var(--font-nepali); font-size:1.6rem; color:#ffffff; font-weight:800;">खातापाना Digital</h1>
+                <h2 style="font-size:0.9rem; color:var(--accent); font-weight:600;">Digital Khata Pana Portal</h2>
+                <p style="font-size:0.75rem; color:#CBD5E1; text-transform:uppercase;">विद्यालय वित्तीय सुशासन र पारदर्शिता प्रणाली</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="sub-container">
+        
+        <!-- Registration Success Notice -->
+        <div class="success-banner">
+            <h2>विद्यालय दर्ता सफल!</h2>
+            <p>तपाईंको विद्यालय प्रणालीमा दर्ता भएको छ। वित्तीय पारदर्शिता सुरू गर्न कृपया एउटा सदस्यता योजना रोज्नुहोस्।</p>
+            <div class="school-badge" id="lbl-registered-school-name">श्री जन जागृति माध्यमिक विद्यालय</div>
+        </div>
+
+        <!-- Plans Grid -->
+        <div class="plans-grid">
+            
+            <!-- Plan 1: Free -->
+            <div class="plan-card">
+                <div class="plan-header">
+                    <span class="plan-badge">आधारभूत योजना</span>
+                    <h3 class="plan-title">निशुल्क (Basic)</h3>
+                    <div class="plan-price">
+                        <span class="amount">रू. ०</span>
+                        <span class="period">/ सधैंका लागि</span>
+                    </div>
+                </div>
+                <ul class="plan-features">
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        ५० वटासम्म स्रेस्ता प्रविष्टि (Up to 50 Entries)
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        नागरिक पारदर्शिता बोर्ड (Public Access Board)
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        मासिक आय-व्यय विश्लेषक सूचकहरू
+                    </li>
+                    <li class="disabled">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Supabase क्लाउड डाटाबेस सिङ्क
+                    </li>
+                    <li class="disabled">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        बजेट सीमा सतर्कता प्रणाली (Budget Alarms)
+                    </li>
+                </ul>
+                <button class="select-plan-btn" onclick="activatePlan('Free', 0)">
+                    नि:शुल्क सुरू गर्नुहोस् (Start Free)
+                </button>
+            </div>
+
+            <!-- Plan 2: Standard (Recommended) -->
+            <div class="plan-card popular">
+                <div class="popular-badge">POPULAR</div>
+                <div class="plan-header">
+                    <span class="plan-badge">सिफारिस गरिएको</span>
+                    <h3 class="plan-title">मध्यम (Standard)</h3>
+                    <div class="plan-price">
+                        <span class="amount">रू. ९,९९९</span>
+                        <span class="period">/ वार्षिक (Yearly)</span>
+                    </div>
+                </div>
+                <ul class="plan-features">
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <strong>Supabase क्लाउड सिङ्क (Cloud Integration)</strong>
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        असीमित कारोबार रेकर्ड प्रविष्टिहरू
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        बजेट सीमा सतर्कता प्रणाली (Budget Alert Caps)
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        नागरिक पारदर्शिता बोर्ड र गुनासो डेस्क
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Excel/CSV रिपोर्ट निर्यात सुविधा
+                    </li>
+                </ul>
+                <button class="select-plan-btn" onclick="activatePlan('Standard', 9999)">
+                    योजना छनोट गर्नुहोस् (Select Standard)
+                </button>
+            </div>
+
+            <!-- Plan 3: Premium -->
+            <div class="plan-card">
+                <div class="plan-header">
+                    <span class="plan-badge">पूर्ण प्याकेज</span>
+                    <h3 class="plan-title">प्रिमियम (Premium)</h3>
+                    <div class="plan-price">
+                        <span class="amount">रू. १९,९९९</span>
+                        <span class="period">/ वार्षिक (Yearly)</span>
+                    </div>
+                </div>
+                <ul class="plan-features">
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Standard योजनाका सम्पूर्ण सुविधाहरू
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        समर्पित प्राविधिक सहयोग (24/7 Support)
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <strong>लेखा परीक्षण (Auditing Assistance) सहायता</strong>
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        कस्टम डोमेन जडान (उदा: schoolname.gov.np)
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        वार्षिक आर्थिक प्रतिवेदन तयारी उपकरण
+                    </li>
+                </ul>
+                <button class="select-plan-btn" onclick="activatePlan('Premium', 19999)">
+                    योजना छनोट गर्नुहोस् (Select Premium)
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Payment Gateway Checkout Modal -->
+    <div class="modal-overlay" id="checkout-modal-overlay">
+        <div class="checkout-modal">
+            
+            <div class="checkout-header">
+                <h3>भुक्तानी गेटवे छनोट गर्नुहोस्</h3>
+                <button class="close-btn" onclick="closeCheckoutModal()">&times;</button>
+            </div>
+
+            <div class="checkout-body">
+                
+                <!-- Billing Summary Card -->
+                <div class="billing-summary">
+                    <div class="summary-row">
+                        <span>विद्यालयको नाम:</span>
+                        <strong id="bill-school-name">-</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>छनोट योजना:</span>
+                        <strong id="bill-plan-name">-</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>कुल बुझाउनुपर्ने रकम:</span>
+                        <strong id="bill-plan-price">-</strong>
+                    </div>
+                </div>
+
+                <!-- Step 1: Payment Method Choice -->
+                <div id="checkout-step-1">
+                    <span class="payment-methods-label">भुक्तानी माध्यम रोज्नुहोस् (Select Gateway)</span>
+                    <div class="methods-grid">
+                        <button class="method-btn esewa-btn" onclick="selectPaymentMethod('esewa')">
+                            <span class="method-icon">🟢</span>
+                            <span>eSewa</span>
+                        </button>
+                        <button class="method-btn khalti-btn" onclick="selectPaymentMethod('khalti')">
+                            <span class="method-icon">🟣</span>
+                            <span>Khalti</span>
+                        </button>
+                        <button class="method-btn connectips-btn" onclick="selectPaymentMethod('connectips')">
+                            <span class="method-icon">🔵</span>
+                            <span>connectIPS</span>
+                        </button>
+                    </div>
+
+                    <!-- Checkout flows (inputs show dynamically here) -->
+                    <div class="checkout-flow-container hidden" id="gateway-flows-section">
+                        
+                        <!-- eSewa Flow -->
+                        <div class="gateway-form-wrapper" id="form-flow-esewa">
+                            <div class="gateway-brand-bar esewa-bar">
+                                🟢 eSewa Digital Wallet Payment
+                            </div>
+                            <form onsubmit="submitGatewayPayment(event, 'eSewa')">
+                                <div class="gateway-inputs">
+                                    <div class="form-group">
+                                        <label>eSewa ID (Mobile Number / Email)</label>
+                                        <input type="text" required placeholder="९८xxxxxxxx / email@domain.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>eSewa MPIN / Password</label>
+                                        <input type="password" required placeholder="••••">
+                                    </div>
+                                </div>
+                                <button type="submit" class="pay-submit-btn esewa-pay-btn">
+                                    <span class="btn-text">Pay Rs. <span class="btn-price-val">0</span> via eSewa</span>
+                                    <div class="spinner"></div>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Khalti Flow -->
+                        <div class="gateway-form-wrapper" id="form-flow-khalti">
+                            <div class="gateway-brand-bar khalti-bar">
+                                🟣 Khalti Digital Pay
+                            </div>
+                            <form onsubmit="submitGatewayPayment(event, 'Khalti')">
+                                <div class="gateway-inputs">
+                                    <div class="form-group">
+                                        <label>Khalti Registered Mobile Number</label>
+                                        <input type="text" required placeholder="९८xxxxxxxx">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Khalti Transaction PIN</label>
+                                        <input type="password" required placeholder="••••">
+                                    </div>
+                                </div>
+                                <button type="submit" class="pay-submit-btn khalti-pay-btn">
+                                    <span class="btn-text">Pay Rs. <span class="btn-price-val">0</span> via Khalti</span>
+                                    <div class="spinner"></div>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- ConnectIPS Flow -->
+                        <div class="gateway-form-wrapper" id="form-flow-connectips">
+                            <div class="gateway-brand-bar connectips-bar">
+                                🔵 connectIPS e-Payment System
+                            </div>
+                            <form onsubmit="submitGatewayPayment(event, 'connectIPS')">
+                                <div class="gateway-inputs">
+                                    <div class="form-group">
+                                        <label>connectIPS Username</label>
+                                        <input type="text" required placeholder="तपाईंको युजरनेम">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>connectIPS Password</label>
+                                        <input type="password" required placeholder="••••••••">
+                                    </div>
+                                </div>
+                                <button type="submit" class="pay-submit-btn connectips-pay-btn">
+                                    <span class="btn-text">Pay Rs. <span class="btn-price-val">0</span> via connectIPS</span>
+                                    <div class="spinner"></div>
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Step 2: OTP Verification Screen -->
+                <div id="checkout-step-otp" class="otp-screen">
+                    <h4 id="otp-gateway-title">भुक्तानी सुरक्षा प्रमाणिकरण</h4>
+                    <p>तपाईंको दर्ता भएको मोबाइल नम्बरमा ६-अङ्कको एक पटक प्रयोग गरिने सुरक्षा कोड (OTP) पठाइएको छ।</p>
+                    <form onsubmit="verifyOTP(event)">
+                        <div class="otp-input-group">
+                            <input type="text" class="otp-digit" pattern="\d" required maxlength="1" oninput="moveFocus(this, 1)">
+                            <input type="text" class="otp-digit" pattern="\d" required maxlength="1" oninput="moveFocus(this, 2)">
+                            <input type="text" class="otp-digit" pattern="\d" required maxlength="1" oninput="moveFocus(this, 3)">
+                            <input type="text" class="otp-digit" pattern="\d" required maxlength="1" oninput="moveFocus(this, 4)">
+                            <input type="text" class="otp-digit" pattern="\d" required maxlength="1" oninput="moveFocus(this, 5)">
+                            <input type="text" class="otp-digit" pattern="\d" required maxlength="1" oninput="moveFocus(this, 6)">
+                        </div>
+                        <button type="submit" class="pay-submit-btn" style="background: var(--accent); color: black;" id="otp-confirm-btn">
+                            <span class="btn-text">OTP कोड प्रमाणित गर्नुहोस् (Verify)</span>
+                            <div class="spinner"></div>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Step 3: Success Screen -->
+                <div id="checkout-step-success" class="success-screen">
+                    <div class="checkmark-circle">✓</div>
+                    <h4>भुक्तानी र दर्ता सफल!</h4>
+                    <p>तपाईंको विद्यालयको सदस्यता भुक्तानी सफलतापूर्वक सम्पन्न भयो।</p>
+                    <p style="color: #60BB46; font-weight: 700;" id="success-plan-alert">Standard Plan Active (१ वर्षका लागि)</p>
+                    
+                    <div class="txn-receipt">
+                        <div>
+                            <span>भुक्तानी माध्यम (Gateway):</span>
+                            <strong id="receipt-gateway">-</strong>
+                        </div>
+                        <div>
+                            <span>कारोबार नं (Transaction ID):</span>
+                            <strong id="receipt-txnid">-</strong>
+                        </div>
+                        <div>
+                            <span>बुझाइएको रकम (Paid Amount):</span>
+                            <strong id="receipt-amount">-</strong>
+                        </div>
+                        <div>
+                            <span>स्थिति (Status):</span>
+                            <strong style="color: #10B981;">SUCCESS (सफल)</strong>
+                        </div>
+                    </div>
+
+                    <p style="font-size:0.78rem; color:#94A3B8; margin-top:25px; font-style:italic;">
+                        लेखा र बजेट प्रशासन केन्द्र (Admin Portal) मा सिधै रिडाइरेक्ट हुँदैछ, कृपया प्रतीक्षा गर्नुहोस्...
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast Notifications container -->
+    <div class="toast-container" id="sub-toast-container"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-bottom" style="border-top:none; padding-top:20px; text-align:center;">
+            © २०८२ श्री जन जागृति माध्यमिक विद्यालय | सुशासन, पारदर्शिता र प्रविधिमैत्री शैक्षिक प्रशासन
+        </div>
+    </footer>
+
+    <!-- Subscription Script -->
+    <script>
+        let currentSelectedPlan = '';
+        let currentSelectedPrice = 0;
+        let currentPaymentGateway = '';
+
+        // Load registered school details
+        document.addEventListener('DOMContentLoaded', () => {
+            const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+            if (schoolInfoStr) {
+                try {
+                    const schoolInfo = JSON.parse(schoolInfoStr);
+                    if (schoolInfo.schoolName) {
+                        document.getElementById('lbl-registered-school-name').innerText = schoolInfo.schoolName;
+                        document.getElementById('bill-school-name').innerText = schoolInfo.schoolName;
+                    }
+                } catch (e) {
+                    console.error('Error loading school details', e);
+                }
+            } else {
+                // Mock default fallback
+                document.getElementById('lbl-registered-school-name').innerText = 'श्री जन जागृति माध्यमिक विद्यालय';
+                document.getElementById('bill-school-name').innerText = 'श्री जन जागृति माध्यमिक विद्यालय';
+            }
+        });
+
+        // Activate Plan Selection
+        function activatePlan(planName, price) {
+            currentSelectedPlan = planName;
+            currentSelectedPrice = price;
+
+            // If FREE plan chosen, bypass checkout and immediately configure and redirect
+            if (price === 0) {
+                showSubToast('नि:शुल्क योजना सक्रिय हुँदैछ...', 'info');
+                saveSubscriptionInfo('Free', 0, 'None', 'FREE-MOCK-TXN');
+                setTimeout(() => {
+                    showSubToast('योजना सक्रिय भयो! लेखा प्यानलमा जाँदैछ...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'admin.html';
+                    }, 1200);
+                }, 1500);
+                return;
+            }
+
+            // Open pricing modal
+            document.getElementById('bill-plan-name').innerText = `${planName} प्याकेज`;
+            document.getElementById('bill-plan-price').innerText = `रू. ${price.toLocaleString()}/-`;
+            
+            // Set prices in pay buttons
+            document.querySelectorAll('.btn-price-val').forEach(el => {
+                el.innerText = price.toLocaleString();
+            });
+
+            // Reset modal states
+            resetModalFlow();
+
+            // Open overlay
+            document.getElementById('checkout-modal-overlay').classList.add('active');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal-overlay').classList.remove('active');
+        }
+
+        // Reset elements to Step 1
+        function resetModalFlow() {
+            document.getElementById('checkout-step-1').style.display = 'block';
+            document.getElementById('checkout-step-otp').style.display = 'none';
+            document.getElementById('checkout-step-success').style.display = 'none';
+            
+            // Unselect methods
+            document.querySelectorAll('.method-btn').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById('gateway-flows-section').classList.add('hidden');
+            document.querySelectorAll('.gateway-form-wrapper').forEach(flow => flow.classList.remove('active'));
+            
+            // Reset input values
+            document.querySelectorAll('.gateway-inputs input').forEach(input => input.value = '');
+            document.querySelectorAll('.otp-digit').forEach(input => input.value = '');
+            
+            currentPaymentGateway = '';
+        }
+
+        // Select Payment Gateway
+        function selectPaymentMethod(method) {
+            currentPaymentGateway = method;
+            
+            // Highlight selected button
+            document.querySelectorAll('.method-btn').forEach(btn => btn.classList.remove('selected'));
+            document.querySelector(`.${method}-btn`).classList.add('selected');
+
+            // Show input flows
+            document.getElementById('gateway-flows-section').classList.remove('hidden');
+            document.querySelectorAll('.gateway-form-wrapper').forEach(flow => flow.classList.remove('active'));
+            document.getElementById(`form-flow-${method}`).classList.add('active');
+        }
+
+        // Submit Payment details to simulate processing
+        function submitGatewayPayment(event, gatewayBrandedName) {
+            event.preventDefault();
+            
+            const submitBtn = event.target.querySelector('.pay-submit-btn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const spinner = submitBtn.querySelector('.spinner');
+
+            // Show loading spinner
+            btnText.style.display = 'none';
+            spinner.style.display = 'block';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                // Transition to OTP screen
+                spinner.style.display = 'none';
+                btnText.style.display = 'inline';
+                submitBtn.disabled = false;
+
+                document.getElementById('checkout-step-1').style.display = 'none';
+                document.getElementById('checkout-step-otp').style.display = 'block';
+                document.getElementById('otp-gateway-title').innerText = `${gatewayBrandedName} सुरक्षा प्रमाणिकरण (OTP)`;
+                
+                // Focus first OTP input
+                document.querySelector('.otp-digit').focus();
+            }, 1500);
+        }
+
+        // Auto move OTP focus
+        function moveFocus(currentInput, index) {
+            if (currentInput.value.length === 1 && index < 6) {
+                const digits = document.querySelectorAll('.otp-digit');
+                digits[index].focus();
+            }
+        }
+
+        // Verify OTP code
+        function verifyOTP(event) {
+            event.preventDefault();
+            
+            const confirmBtn = document.getElementById('otp-confirm-btn');
+            const btnText = confirmBtn.querySelector('.btn-text');
+            const spinner = confirmBtn.querySelector('.spinner');
+
+            // Show loading
+            btnText.style.display = 'none';
+            spinner.style.display = 'block';
+            confirmBtn.disabled = true;
+
+            setTimeout(() => {
+                spinner.style.display = 'none';
+                btnText.style.display = 'inline';
+                confirmBtn.disabled = false;
+
+                const otpDigits = Array.from(document.querySelectorAll('.otp-digit')).map(el => el.value).join('');
+                
+                // Display success screen
+                document.getElementById('checkout-step-otp').style.display = 'none';
+                document.getElementById('checkout-step-success').style.display = 'block';
+                
+                const txnId = 'TXN-' + Math.floor(10000000 + Math.random() * 90000000);
+                let gatewayFormatted = '';
+                if (currentPaymentGateway === 'esewa') gatewayFormatted = 'eSewa Wallet';
+                if (currentPaymentGateway === 'khalti') gatewayFormatted = 'Khalti Pay';
+                if (currentPaymentGateway === 'connectips') gatewayFormatted = 'connectIPS System';
+
+                // Display receipt details
+                document.getElementById('success-plan-alert').innerText = `${currentSelectedPlan} प्याकेज सक्रिय (१ वर्षका लिए)`;
+                document.getElementById('receipt-gateway').innerText = gatewayFormatted;
+                document.getElementById('receipt-txnid').innerText = txnId;
+                document.getElementById('receipt-amount').innerText = `रू. ${currentSelectedPrice.toLocaleString()}/-`;
+
+                // Save to localStorage
+                saveSubscriptionInfo(currentSelectedPlan, currentSelectedPrice, gatewayFormatted, txnId);
+
+                // Auto redirect to Admin Dashboard
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 3500);
+
+            }, 1200);
+        }
+
+        // Save subscription details to localStorage
+        function saveSubscriptionInfo(planName, price, gateway, txnId) {
+            const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+            let schoolInfo = {};
+            
+            if (schoolInfoStr) {
+                try {
+                    schoolInfo = JSON.parse(schoolInfoStr);
+                } catch (e) {
+                    console.error('Error reading registered info', e);
+                }
+            }
+
+            schoolInfo.subscription = {
+                planName: planName,
+                price: price,
+                gateway: gateway,
+                transactionId: txnId,
+                status: 'Active',
+                activatedAt: new Date().toISOString(),
+                expiresAt: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
+            };
+
+            localStorage.setItem('nepal_school_registered_info', JSON.stringify(schoolInfo));
+        }
+
+        // Custom Toasts for Subscriptions
+        function showSubToast(message, type = 'success') {
+            const container = document.getElementById('sub-toast-container');
+            if (!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div style="font-size:0.85rem; font-weight:500;">${message}</div>
+                <button style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight:bold;" onclick="this.parentElement.remove()">×</button>
+            `;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 50);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -412,6 +412,27 @@
             box-shadow: 0 4px 12px rgba(229, 169, 59, 0.3);
         }
 
+        #form-widget-register {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        #form-widget-register::-webkit-scrollbar {
+            width: 6px;
+        }
+        #form-widget-register::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-sm);
+        }
+        #form-widget-register::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-sm);
+        }
+        #form-widget-register::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
         /* About Us styling */
         .about-split-view {
             display: grid;
@@ -659,27 +680,76 @@
 
                 <!-- B. Register Form -->
                 <form id="form-widget-register" class="auth-widget-form hidden" onsubmit="handleWidgetRegister(event)">
-                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                        <label for="widget-reg-name">Full Name (पूरा नाम)</label>
-                        <input type="text" id="widget-reg-name" required placeholder="तपाईंको नाम">
+                    <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #FCA5A5; font-size: 0.75rem; padding: 10px; border-radius: var(--radius-sm); text-align: center; font-weight: 600; margin-bottom: 5px;">
+                        ⚠️ सरकारी विद्यालय मात्र दर्ता योग्य (Only Government Schools Eligible)
                     </div>
+
                     <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                        <label for="widget-reg-email">Email Address (इमेल)</label>
-                        <input type="email" id="widget-reg-email" required placeholder="name@domain.com">
+                        <label for="reg-school-name">School Name (विद्यालयको नाम) *</label>
+                        <input type="text" id="reg-school-name" required placeholder="उदा: श्री जन जागृति मा.वि.">
                     </div>
+
                     <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                        <label for="widget-reg-role">Role (भूमिका)</label>
-                        <select id="widget-reg-role" required>
-                            <option value="Parent">Parent (अभिभावक)</option>
-                            <option value="Citizen">Local Citizen (नागरिक)</option>
-                            <option value="Student">Student (विद्यार्थी)</option>
+                        <label for="reg-address">School Address (ठेगाना) *</label>
+                        <input type="text" id="reg-address" required placeholder="उदा: पोखरा १५, कास्की">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-emis">EMIS Code (इमिस कोड) *</label>
+                        <input type="text" id="reg-emis" required pattern="\d{9}" title="EMIS code must be exactly 9 digits" placeholder="९-अङ्कको कोड (उदा: १२३४५६७८९)">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-principal-name">Principal Name (प्रधानाध्यापकको नाम) *</label>
+                        <input type="text" id="reg-principal-name" required placeholder="प्रधानाध्यापकको पूरा नाम">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-principal-phone">Principal Phone (प्र.अ. फोन नम्बर) *</label>
+                        <input type="tel" id="reg-principal-phone" required placeholder="उदा: ९८XXXXXXXX">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-accountant-name">Accountant Name (लेखापालको नाम) *</label>
+                        <input type="text" id="reg-accountant-name" required placeholder="लेखापालको पूरा नाम">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-accountant-phone">Accountant Phone (लेखापाल फोन नम्बर) *</label>
+                        <input type="tel" id="reg-accountant-phone" required placeholder="उदा: ९८XXXXXXXX">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-logo">School Logo Upload (विद्यालयको लोगो) *</label>
+                        <input type="file" id="reg-logo" accept="image/*" required>
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-photo">School Photo Upload (विद्यालयको तस्बिर) *</label>
+                        <input type="file" id="reg-photo" accept="image/*" required>
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-public-board">Public Board Settings (सार्वजनिक बोर्ड) *</label>
+                        <select id="reg-public-board" required>
+                            <option value="yes">Publicly Visible (नागरिकका लागि खुल्ला राख्ने)</option>
+                            <option value="no">Keep Private (गोप्य राख्ने - प्रशासनिक मात्र)</option>
                         </select>
                     </div>
+
                     <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                        <label for="widget-reg-pass">Create Password (पासवर्ड)</label>
-                        <input type="password" id="widget-reg-pass" required placeholder="नयाँ पासवर्ड">
+                        <label for="reg-pass">Create Password (पासवर्ड) *</label>
+                        <input type="password" id="reg-pass" required placeholder="नयाँ पासवर्ड">
                     </div>
-                    <button type="submit" class="auth-submit-btn" style="background: linear-gradient(135deg, var(--success) 0%, #059669 100%); color:white;">Register Account</button>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-confirm-pass">Confirm Password (पासवर्ड पुष्टि) *</label>
+                        <input type="password" id="reg-confirm-pass" required placeholder="पासवर्ड पुनः टाइप गर्नुहोस्">
+                    </div>
+
+                    <button type="submit" class="auth-submit-btn" style="background: linear-gradient(135deg, var(--success) 0%, #059669 100%); color:white;">
+                        Register School & Choose Plan
+                    </button>
                 </form>
             </div>
         </div>
@@ -893,9 +963,48 @@
 
         function handleWidgetRegister(event) {
             event.preventDefault();
-            const name = document.getElementById('widget-reg-name').value;
-            showGatewayToast(`Account registered successfully for ${name}! Please login now.`, 'success');
-            toggleAuthTab('login');
+            
+            const schoolName = document.getElementById('reg-school-name').value.trim();
+            const address = document.getElementById('reg-address').value.trim();
+            const emis = document.getElementById('reg-emis').value.trim();
+            const principal = document.getElementById('reg-principal-name').value.trim();
+            const pPhone = document.getElementById('reg-principal-phone').value.trim();
+            const accountant = document.getElementById('reg-accountant-name').value.trim();
+            const aPhone = document.getElementById('reg-accountant-phone').value.trim();
+            const publicBoard = document.getElementById('reg-public-board').value;
+            const pass = document.getElementById('reg-pass').value;
+            const confirmPass = document.getElementById('reg-confirm-pass').value;
+
+            // Password check
+            if (pass !== confirmPass) {
+                showGatewayToast('Passwords do not match! (पासवर्डहरू मिलेनन्)', 'error');
+                return;
+            }
+
+            // EMIS validation
+            if (emis.length !== 9 || isNaN(emis)) {
+                showGatewayToast('EMIS Code must be exactly 9 digits! (इमिस कोड ९-अङ्कको हुनुपर्छ)', 'error');
+                return;
+            }
+
+            // Save details to LocalStorage for mock database use
+            const registeredSchool = {
+                schoolName,
+                address,
+                emis,
+                principal,
+                pPhone,
+                accountant,
+                aPhone,
+                publicBoard,
+                registeredAt: new Date().toISOString()
+            };
+            localStorage.setItem('nepal_school_registered_info', JSON.stringify(registeredSchool));
+
+            showGatewayToast('Registration Successful! Redirecting to subscription checkout...', 'success');
+            setTimeout(() => {
+                window.location.href = 'subscription.html';
+            }, 1800);
         }
 
         function handleGatewayContactSubmit(event) {

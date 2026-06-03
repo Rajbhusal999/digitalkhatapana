@@ -56,12 +56,36 @@ function handleLogout() {
 function initAdminPage() {
     if (sessionStorage.getItem('admin_logged_in') !== 'true') return;
     
+    updateSchoolHeader();
     updateAdminMetrics();
     handleTypeChange(); // populate category dropdown for the entry form
     renderOverviewTable();
     renderBudgetPlanner();
     renderFeedbackInbox();
     renderAdmTransactionsTable();
+}
+
+function updateSchoolHeader() {
+    const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+    if (schoolInfoStr) {
+        try {
+            const schoolInfo = JSON.parse(schoolInfoStr);
+            const titleEl = document.getElementById('adm-school-name');
+            const subEl = document.getElementById('adm-school-sub');
+            const userEl = document.getElementById('adm-user-name');
+            if (titleEl && schoolInfo.schoolName) {
+                titleEl.innerText = schoolInfo.schoolName;
+            }
+            if (subEl && schoolInfo.address) {
+                subEl.innerText = `लेखा तथा बजेट प्रशासन केन्द्र (${schoolInfo.address})`;
+            }
+            if (userEl && schoolInfo.accountant) {
+                userEl.innerText = `प्रयोक्ता: ${schoolInfo.accountant} (लेखापाल) | प्र.अ.: ${schoolInfo.principal || '-'}`;
+            }
+        } catch (e) {
+            console.error('Error loading school details in Admin Panel:', e);
+        }
+    }
 }
 
 /**
