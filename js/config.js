@@ -6,4 +6,4 @@
  */
 
 const SUPABASE_URL = "https://YOUR_SUPABASE_PROJECT_URL.supabase.co";
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_PUBLIC_KEY";
+const SUPABASE_ANON_KEY = "sb_publishable_0Ucsj5RFIXxxYRRE3DmatQ_Q0PT2Zwx";
