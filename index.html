@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Income-Expenditure Transparency System - Government of Nepal</title>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Top Gov Bar -->
+    <div class="top-gov-bar">
+        <span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            नेपाल सरकार | शिक्षा, विज्ञान तथा प्रविधि मन्त्रालय (Ministry of Education, Science & Technology)
+        </span>
+        <button class="lang-toggle" id="lang-toggle" onclick="toggleLanguage()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <span id="lang-btn-text">नेपाली संस्करण</span>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="brand-section">
+            <!-- Government Emblem of Nepal Stylized SVG -->
+            <svg class="gov-logo" viewBox="0 0 100 100" width="65" height="65">
+                <circle cx="50" cy="50" r="46" fill="#0b2b61" />
+                <circle cx="50" cy="50" r="42" fill="white" />
+                <!-- Rhododendron Background Circle -->
+                <circle cx="50" cy="50" r="38" fill="#e63946" opacity="0.15" />
+                <!-- Mountain silhouette -->
+                <path d="M25 65 L40 40 L52 55 L65 30 L80 65 Z" fill="#b0c4de" stroke="#0b2b61" stroke-width="1.5" />
+                <path d="M35 65 L48 45 L58 58 L72 38 L80 65 Z" fill="#ffffff" opacity="0.8" />
+                <!-- Flag shapes -->
+                <path d="M22 35 L32 30 L27 42 L35 42 L25 52 L25 35" fill="#dc143c" stroke="#003893" stroke-width="1" />
+                <!-- Handshake stylized -->
+                <path d="M42 68 C45 66, 55 66, 58 68" stroke="#0b2b61" stroke-width="3" stroke-linecap="round" />
+                <path d="M45 71 C48 69, 52 69, 55 71" stroke="#0b2b61" stroke-width="2.5" stroke-linecap="round" />
+                <!-- Crown / Crest -->
+                <path d="M45 23 L50 17 L55 23 L50 25 Z" fill="#ffb300" />
+                <!-- Border stars / decorations -->
+                <circle cx="50" cy="8" r="2.5" fill="#ffb300" />
+                <path d="M15 50 A 35 35 0 0 0 85 50" fill="none" stroke="#059669" stroke-width="3" stroke-dasharray="2 3" />
+                <text x="50" y="85" text-anchor="middle" font-size="6.5" font-family="'Mukta', sans-serif" font-weight="bold" fill="#0b2b61">जननी जन्मभूमिश्च...</text>
+            </svg>
+            <div class="brand-titles">
+                <h1 id="txt-school-name">श्री जन जागृति माध्यमिक विद्यालय</h1>
+                <h2 id="txt-school-sub">Shree Jana Jagriti Secondary School</h2>
+                <p id="txt-gov-subtitle">सामुदायिक विद्यालय - पोखरा १५, कास्की (स्थापित: २०१६)</p>
+            </div>
+        </div>
+        <div class="nav-actions">
+            <a href="admin.html" class="btn-portal admin-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span id="txt-admin-portal-btn">Admin Portal (प्रशासनिक लगइन)</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main>
+
+        <!-- Hero Panel -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h2 id="txt-hero-title">सार्वजनिक आय-व्यय तथा बजेट पारदर्शिता बोर्ड</h2>
+                <p id="txt-hero-desc">नेपाल सरकारको "सुशासन तथा पारदर्शिता सम्बन्धी निर्देशिका" बमोजिम विद्यालयको आर्थिक कारोबारलाई समुदायमा सार्वजनिकिकरण गर्ने डिजिटल प्रणाली। यहाँ सबै आम्दानी र खर्चको विवरण पारदर्शी रूपमा हेर्न सकिन्छ।</p>
+            </div>
+            <div class="fiscal-badge">
+                <span id="txt-fiscal-year-label">आर्थिक वर्ष</span>: <span id="txt-current-fiscal-year">२०८२/८३ (FY 2026/27)</span>
+            </div>
+        </section>
+
+        <!-- KPI Summary Cards -->
+        <section class="kpi-grid">
+            <!-- Card 1: Total Revenue -->
+            <div class="kpi-card revenue">
+                <div class="kpi-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </div>
+                <div class="kpi-details">
+                    <span id="txt-kpi-revenue-label">Total Income (कुल आम्दानी)</span>
+                    <h3 id="val-total-revenue">रू. ०.००</h3>
+                    <p id="txt-kpi-revenue-sub">अनुदान, चन्दा तथा आन्तरिक आम्दानी</p>
+                </div>
+            </div>
+
+            <!-- Card 2: Total Expenses -->
+            <div class="kpi-card expenses">
+                <div class="kpi-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </div>
+                <div class="kpi-details">
+                    <span id="txt-kpi-expenses-label">Total Expenses (कुल खर्च)</span>
+                    <h3 id="val-total-expenses">रू. ०.००</h3>
+                    <p id="txt-kpi-expenses-sub">तलब, भौतिक निर्माण तथा सञ्चालन खर्च</p>
+                </div>
+            </div>
+
+            <!-- Card 3: Net Balance -->
+            <div class="kpi-card balance">
+                <div class="kpi-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <div class="kpi-details">
+                    <span id="txt-kpi-balance-label">Net Balance (बाँकी कोष)</span>
+                    <h3 id="val-net-balance">रू. ०.००</h3>
+                    <p id="txt-kpi-balance-sub">बैंक मौज्दात तथा सञ्चित कोष</p>
+                </div>
+            </div>
+
+            <!-- Card 4: Budget Utilization -->
+            <div class="kpi-card utilization">
+                <div class="kpi-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                        <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                </div>
+                <div class="kpi-details">
+                    <span id="txt-kpi-utilization-label">Budget Spent (बजेट खर्च दर)</span>
+                    <h3 id="val-budget-utilization">०.०%</h3>
+                    <p id="txt-kpi-utilization-sub">कुल विनियोजित बजेटको खर्च अनुपात</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visualization Graphs -->
+        <section class="dashboard-middle">
+            <!-- Left: Line Chart for Monthly Trends -->
+            <div class="chart-card">
+                <div class="card-title-row">
+                    <div>
+                        <h3 id="txt-trend-chart-title">Income & Expenditure Monthly Trend</h3>
+                        <p class="card-subtitle" id="txt-trend-chart-sub">आय र व्ययको मासिक उतारचढाव विश्लेषण</p>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="monthlyTrendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Right: Budget vs Actual Bars -->
+            <div class="chart-card">
+                <div class="card-title-row">
+                    <div>
+                        <h3 id="txt-budget-list-title">Budget Allocation vs. Spent</h3>
+                        <p class="card-subtitle" id="txt-budget-list-sub">विषयगत शीर्षक अनुसार बजेट र वास्तविक खर्च</p>
+                    </div>
+                </div>
+                <div class="budget-list" id="budget-progress-container">
+                    <!-- Dynamic rendering of budget item progress bars -->
+                    <div class="budget-item">
+                        <div class="budget-item-info">
+                            <span class="budget-label">Salary & Wages <small>तलब तथा पारिश्रमिक</small></span>
+                            <span class="budget-values">रू. ७,८०,००० / १०,००,००० (७८%)</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill normal" style="width: 78%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Data Logs -->
+        <section class="data-card">
+            <div class="card-title-row">
+                <div>
+                    <h3 id="txt-table-title">Full Transaction Audit Ledger</h3>
+                    <p class="card-subtitle" id="txt-table-sub">विद्यालयको विस्तृत आय-व्यय स्रेस्ता र भौचर विवरण</p>
+                </div>
+                <div class="export-actions">
+                    <button class="btn-secondary" onclick="exportCSV()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        <span id="txt-export-csv-btn">Export CSV</span>
+                    </button>
+                    <button class="btn-secondary" onclick="window.print()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                        <span id="txt-print-btn">Print Report</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters-row">
+                <div class="filter-group search">
+                    <label for="search-input" id="lbl-search">Search Details / Particulars</label>
+                    <input type="text" id="search-input" placeholder="खोज्नुहोस् (विवरण, भौचर नं., स्रोत...)" oninput="filterTransactions()">
+                </div>
+                <div class="filter-group">
+                    <label for="filter-type" id="lbl-filter-type">Transaction Type</label>
+                    <select id="filter-type" onchange="filterTransactions()">
+                        <option value="all">All (सबै विवरण)</option>
+                        <option value="income">Income (आम्दानी)</option>
+                        <option value="expense">Expenditure (खर्च)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-category" id="lbl-filter-cat">Category / शीर्षक</label>
+                    <select id="filter-category" onchange="filterTransactions()">
+                        <!-- Dynamic options loaded by JS -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Table Wrapper -->
+            <div class="table-wrapper">
+                <table id="transaction-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 110px;" id="th-date">Date (मिति)</th>
+                            <th style="width: 120px;" id="th-voucher">Voucher / भौचर</th>
+                            <th id="th-particulars">Particulars & Source (विवरण र कोषको स्रोत)</th>
+                            <th style="width: 130px;" id="th-category">Category (शीर्षक)</th>
+                            <th style="width: 120px;" id="th-type">Type (प्रकार)</th>
+                            <th style="width: 150px; text-align: right;" id="th-amount">Amount (रकम)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transaction-tbody">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Feedback & Grievance Box -->
+        <section class="feedback-grid">
+            <!-- Feedback Form -->
+            <div class="feedback-card">
+                <div class="card-title-row">
+                    <div>
+                        <h3 id="txt-feedback-form-title">Public Inquiry & Feedback Form</h3>
+                        <p class="card-subtitle" id="txt-feedback-form-sub">पारदर्शिता सुधार गर्न आफ्नो रचनात्मक सुझाव वा गुनासो पेश गर्नुहोस्।</p>
+                    </div>
+                </div>
+                <form id="public-feedback-form" onsubmit="submitPublicFeedback(event)">
+                    <div class="form-group">
+                        <label for="fb-name" id="lbl-fb-name">Full Name (पूरा नाम) *</label>
+                        <input type="text" id="fb-name" required placeholder="तपाईंको नाम">
+                    </div>
+                    <div class="form-group">
+                        <label for="fb-role" id="lbl-fb-role">Role (भूमिका) *</label>
+                        <select id="fb-role" required>
+                            <option value="Parent (अभिभावक)">Parent (अभिभावक)</option>
+                            <option value="Local Citizen (स्थानीय नागरिक)">Local Citizen (स्थानीय नागरिक)</option>
+                            <option value="Student (विद्यार्थी)">Student (विद्यार्थी)</option>
+                            <option value="Teacher/Staff (शिक्षक/कर्मचारी)">Teacher/Staff (शिक्षक/कर्मचारी)</option>
+                            <option value="Other (अन्य)">Other (अन्य)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fb-message" id="lbl-fb-msg">Grievance / Message (जिज्ञासा, सुझाव वा गुनासो) *</label>
+                        <textarea id="fb-message" rows="4" required placeholder="आफ्नो सन्देश यहाँ लेख्नुहोस्..."></textarea>
+                    </div>
+                    <button type="submit" class="form-submit-btn" id="btn-fb-submit">Submit Feedback (गुनासो दर्ता गर्नुहोस्)</button>
+                </form>
+            </div>
+
+            <!-- Public Feed -->
+            <div class="feedback-card">
+                <div class="card-title-row">
+                    <div>
+                        <h3 id="txt-feedback-feed-title">Citizen Feedback Board</h3>
+                        <p class="card-subtitle" id="txt-feedback-feed-sub">अभिभावक तथा सरोकारवालाहरूबाट प्राप्त सुझाव र विद्यालयको आधिकारिक जवाफ</p>
+                    </div>
+                </div>
+                <div class="feedback-list" id="public-feedback-container">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast Notifications container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4 id="txt-footer-about-title">नेपाल सरकार विद्यालय वित्तीय पारदर्शिता</h4>
+                <p id="txt-footer-about-desc">यो पोर्टल सामुदायिक विद्यालयको आय-व्यय सार्वजनिक सुनुवाइलाई थप प्रविधिमैत्री र पारदर्शी बनाउन परीक्षणका रूपमा सञ्चालन गरिएको हो। डिजिटल पारदर्शिताले सुशासन प्रवर्द्धन गर्दछ।</p>
+            </div>
+            <div class="footer-section">
+                <h4 id="txt-footer-links-title">Quick Actions</h4>
+                <ul class="footer-links">
+                    <li><a href="admin.html" id="txt-link-admin">Admin Portal Login</a></li>
+                    <li><a href="#transaction-table" id="txt-link-ledger">Audit Ledger Table</a></li>
+                    <li><a href="#public-feedback-form" id="txt-link-feedback">File a Grievance</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4 id="txt-footer-contact-title">Contact Office</h4>
+                <p id="txt-footer-contact-desc">
+                    <strong>श्री जन जागृति मा.वि.</strong><br>
+                    पोखरा १५, कास्की, नेपाल<br>
+                    फोन: +९७७-६१-XXXXXX<br>
+                    इमेल: info@janajagritimavi.edu.np
+                </p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © २०८२ श्री जन जागृति माध्यमिक विद्यालय | सुशासन, पारदर्शिता र गुणस्तरीय शिक्षा
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/user.js"></script>
+</body>
+</html>
