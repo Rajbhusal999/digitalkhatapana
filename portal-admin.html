@@ -319,6 +319,46 @@
             background-color: #0f172a;
             color: white;
         }
+
+        @media (max-width: 1200px) {
+            .super-dashboard-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        .email-bubble {
+            background: rgba(15, 23, 42, 0.6);
+            border-left: 4px solid var(--accent);
+            border-radius: var(--radius-sm);
+            padding: 15px;
+            transition: var(--transition);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .email-bubble:hover {
+            background: rgba(229, 169, 59, 0.05);
+        }
+        .email-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .email-subject {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+        .email-body {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: #cbd5e1;
+            font-style: italic;
+        }
     </style>
 </head>
 <body class="super-admin-body">
@@ -425,52 +465,74 @@
             </div>
         </div>
 
-        <!-- Schools Database Card -->
-        <div class="super-data-card">
-            <div class="card-title-row">
-                <div>
-                    <h3>School Accounts Audit & Verification List (विद्यालय दर्ता व्यवस्थापन)</h3>
-                    <p class="card-subtitle">Verify transaction receipts and approve/reject ledger portals</p>
+        <!-- Grid layout for side-by-side table & inbox notifications -->
+        <div class="super-dashboard-grid" style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 30px; margin-top: 30px; align-items: start;">
+            
+            <!-- Left Column: Schools Database Card -->
+            <div class="super-data-card" style="margin-bottom: 0;">
+                <div class="card-title-row">
+                    <div>
+                        <h3>School Accounts Audit & Verification List (विद्यालय दर्ता व्यवस्थापन)</h3>
+                        <p class="card-subtitle">Verify transaction receipts and approve/reject ledger portals</p>
+                    </div>
+                </div>
+
+                <!-- Filters & Search -->
+                <div class="super-search-row">
+                    <div class="super-search-group" style="flex: 2;">
+                        <label for="search-school-input">Search Schools (खोज्नुहोस्)</label>
+                        <input type="text" id="search-school-input" class="super-search-field" placeholder="विद्यालयको नाम, इमेल वा इमिस कोडबाट खोज्नुहोस्..." oninput="renderSchoolsDatabase()">
+                    </div>
+                    <div class="super-search-group">
+                        <label for="filter-status-select">Filter by Status (दर्ता अवस्था)</label>
+                        <select id="filter-status-select" class="super-search-field" onchange="renderSchoolsDatabase()">
+                            <option value="all">All Registrations (सबै दर्ता)</option>
+                            <option value="Pending">Pending Approvals (स्वीकृति बाँकी)</option>
+                            <option value="Approved">Approved / Active (सक्रिय)</option>
+                            <option value="Rejected">Rejected (अस्वीकृत)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-wrapper super-table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Reg Date</th>
+                                <th>School Name (विद्यालयको नाम)</th>
+                                <th>EMIS Code</th>
+                                <th>Email Address</th>
+                                <th>Payment</th>
+                                <th>Transaction Code</th>
+                                <th style="text-align: center;">Status</th>
+                                <th style="text-align: center; width: 220px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="super-schools-tbody">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Filters & Search -->
-            <div class="super-search-row">
-                <div class="super-search-group" style="flex: 2;">
-                    <label for="search-school-input">Search Schools (खोज्नुहोस्)</label>
-                    <input type="text" id="search-school-input" class="super-search-field" placeholder="विद्यालयको नाम, इमेल वा इमिस कोडबाट खोज्नुहोस्..." oninput="renderSchoolsDatabase()">
+            <!-- Right Column: Mock Email Inbox -->
+            <div class="super-data-card" style="margin-bottom: 0; display: flex; flex-direction: column; min-height: 500px;">
+                <div class="card-title-row" style="margin-bottom: 15px;">
+                    <div>
+                        <h3>Email Inbox (rajbhusal235@gmail.com)</h3>
+                        <p class="card-subtitle">System notifications for new registrations</p>
+                    </div>
+                    <button class="btn-portal" style="padding: 6px 12px; font-size: 0.75rem; background: #ef4444; color: white; border: none; box-shadow: none;" onclick="clearNotifications()">
+                        Clear All
+                    </button>
                 </div>
-                <div class="super-search-group">
-                    <label for="filter-status-select">Filter by Status (दर्ता अवस्था)</label>
-                    <select id="filter-status-select" class="super-search-field" onchange="renderSchoolsDatabase()">
-                        <option value="all">All Registrations (सबै दर्ता)</option>
-                        <option value="Pending">Pending Approvals (स्वीकृति बाँकी)</option>
-                        <option value="Approved">Approved / Active (सक्रिय)</option>
-                        <option value="Rejected">Rejected (अस्वीकृत)</option>
-                    </select>
+                
+                <div id="email-inbox-list" style="flex: 1; overflow-y: auto; max-height: 480px; display: flex; flex-direction: column; gap: 15px; padding-right: 5px;">
+                    <!-- Dynamically loaded emails -->
                 </div>
             </div>
 
-            <!-- Table -->
-            <div class="table-wrapper super-table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Reg Date</th>
-                            <th>School Name (विद्यालयको नाम)</th>
-                            <th>EMIS Code</th>
-                            <th>Email Address</th>
-                            <th>Payment</th>
-                            <th>Transaction Code</th>
-                            <th style="text-align: center;">Status</th>
-                            <th style="text-align: center; width: 220px;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="super-schools-tbody">
-                        <!-- Loaded dynamically -->
-                    </tbody>
-                </table>
-            </div>
         </div>
 
     </div>
@@ -534,6 +596,61 @@
         function initSuperDashboard() {
             updateSuperMetrics();
             renderSchoolsDatabase();
+            renderNotifications();
+        }
+
+        // Render mock notifications in Super Admin Inbox
+        function renderNotifications() {
+            const listEl = document.getElementById('email-inbox-list');
+            if (!listEl) return;
+            
+            listEl.innerHTML = '';
+            
+            let notifications = [];
+            const notificationsStr = localStorage.getItem('nepal_admin_notifications');
+            if (notificationsStr) {
+                try {
+                    notifications = JSON.parse(notificationsStr);
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+            
+            // Sort by timestamp descending
+            notifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            notifications.forEach(notif => {
+                const bubble = document.createElement('div');
+                bubble.className = 'email-bubble';
+                
+                const timeStr = new Date(notif.timestamp).toLocaleString();
+                
+                bubble.innerHTML = `
+                    <div class="email-header">
+                        <span>To: ${notif.to}</span>
+                        <span>${timeStr}</span>
+                    </div>
+                    <div class="email-subject">✉️ ${notif.subject}</div>
+                    <div class="email-body">${notif.body}</div>
+                `;
+                listEl.appendChild(bubble);
+            });
+            
+            if (notifications.length === 0) {
+                listEl.innerHTML = `
+                    <div style="text-align: center; color: #94a3b8; padding: 40px 10px; font-size: 0.85rem; border: 1px dashed rgba(255, 255, 255, 0.1); border-radius: var(--radius-sm); margin-top: 20px;">
+                        Inbox is empty.<br>New school registrations will trigger alert emails here.
+                    </div>
+                `;
+            }
+        }
+        
+        function clearNotifications() {
+            if (confirm('Are you sure you want to clear all system email notifications?')) {
+                localStorage.removeItem('nepal_admin_notifications');
+                showSuperToast('Email notifications cleared.', 'info');
+                renderNotifications();
+            }
         }
 
         function updateSuperMetrics() {

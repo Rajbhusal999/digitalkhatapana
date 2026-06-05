@@ -1277,6 +1277,9 @@
             schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== schoolInfo.schoolEmail.toLowerCase());
             schoolsList.push(schoolInfo);
             localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+            
+            // Dispatch email notification to rajbhusal235@gmail.com
+            sendAdminNotification(schoolInfo.schoolName, schoolInfo.schoolEmail, 'Approved');
         }
 
         function submitTransactionCode(event, gateway) {
@@ -1339,6 +1342,9 @@
             schoolsList.push(schoolInfo);
             localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
 
+            // Dispatch email notification to rajbhusal235@gmail.com
+            sendAdminNotification(schoolInfo.schoolName, schoolInfo.schoolEmail, 'Pending');
+
             // Show success alert in checkout modal
             // Transition to Step 3 success screen
             document.getElementById('checkout-step-1').style.display = 'none';
@@ -1363,6 +1369,33 @@
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 3500);
+        }
+
+        // Email notification simulation helper
+        function sendAdminNotification(schoolName, email, status) {
+            const notificationsKey = 'nepal_admin_notifications';
+            let notifications = [];
+            const notificationsStr = localStorage.getItem(notificationsKey);
+            if (notificationsStr) {
+                try {
+                    notifications = JSON.parse(notificationsStr);
+                } catch(e) {
+                    console.error('Error reading admin notifications', e);
+                }
+            }
+            
+            const newNotification = {
+                id: 'notif-' + Date.now(),
+                to: 'rajbhusal235@gmail.com',
+                subject: 'New User Registered in your Khatapana',
+                body: `New user has registered in your khatapana. School Name: ${schoolName}, Email: ${email}, Status: ${status}.`,
+                timestamp: new Date().toISOString()
+            };
+            
+            notifications.push(newNotification);
+            localStorage.setItem(notificationsKey, JSON.stringify(notifications));
+            
+            console.log(`[EMAIL SIMULATION] Sent to rajbhusal235@gmail.com: ${newNotification.body}`);
         }
 
         // Custom Toasts for Subscriptions
