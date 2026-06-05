@@ -817,7 +817,31 @@
                     }
                 }
 
-                showSuperToast(`School ${schoolsList[idx].schoolName} has been approved successfully!`, 'success');
+                // Send approval verification email to the school email
+                const schoolName = schoolsList[idx].schoolName;
+                const emailSubject = `School Registration Approved - Khata Pana`;
+                const emailMessage = `Congratulations! The registration for "${schoolName}" has been approved by the Central Administration. You can now login to your dashboard using your registered school email and password.`;
+
+                fetch(`https://formsubmit.co/ajax/${email}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        _subject: emailSubject,
+                        message: emailMessage
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`Approval email sent successfully to ${email}:`, data);
+                })
+                .catch(error => {
+                    console.error('Error sending approval email:', error);
+                });
+
+                showSuperToast(`School ${schoolName} approved and verification email sent!`, 'success');
                 initSuperDashboard();
             }
         }

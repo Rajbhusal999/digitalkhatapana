@@ -1029,6 +1029,29 @@
                 return;
             }
 
+            // Email format validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(schoolEmail)) {
+                showGatewayToast('Please enter a valid email address! (कृपया मान्य इमेल ठेगाना प्रविष्ट गर्नुहोस्)', 'error');
+                return;
+            }
+
+            // Email uniqueness validation
+            let schoolsListCheck = [];
+            const schoolsListCheckStr = localStorage.getItem('nepal_registered_schools');
+            if (schoolsListCheckStr) {
+                try {
+                    schoolsListCheck = JSON.parse(schoolsListCheckStr);
+                } catch (e) {
+                    console.error('Error reading schools list for validation', e);
+                }
+            }
+            const emailExists = schoolsListCheck.some(s => s.schoolEmail.toLowerCase() === schoolEmail.toLowerCase());
+            if (emailExists) {
+                showGatewayToast('This email is already registered! (यो इमेल पहिले नै दर्ता भइसकेको छ)', 'error');
+                return;
+            }
+
             // EMIS validation
             if (emis.length !== 9 || isNaN(emis)) {
                 showGatewayToast('EMIS Code must be exactly 9 digits! (इमिस कोड ९-अङ्कको हुनुपर्छ)', 'error');
