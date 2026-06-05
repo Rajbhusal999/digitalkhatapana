@@ -8,7 +8,14 @@ let activeEditId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     checkAuth();
-    await initDatabase();
+    updateSchoolHeader(); // Show school details (name, logo, background) instantly from localStorage on load/refresh
+    
+    try {
+        await initDatabase();
+    } catch (e) {
+        console.error("Database initialization failed (Supabase connection issues?):", e);
+    }
+    
     initAdminPage();
 });
 
@@ -66,7 +73,22 @@ function initAdminPage() {
 }
 
 function updateSchoolHeader() {
-    const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+    let schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+    if (!schoolInfoStr) {
+        const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+        if (schoolsListStr) {
+            try {
+                const schoolsList = JSON.parse(schoolsListStr);
+                const approvedSchool = schoolsList.find(s => s.status === 'Approved');
+                if (approvedSchool) {
+                    schoolInfoStr = JSON.stringify(approvedSchool);
+                    localStorage.setItem('nepal_school_registered_info', schoolInfoStr);
+                }
+            } catch (e) {
+                console.error('Error recovering school info in updateSchoolHeader:', e);
+            }
+        }
+    }
     if (schoolInfoStr) {
         try {
             const schoolInfo = JSON.parse(schoolInfoStr);
