@@ -103,10 +103,6 @@
                 नागरिक सुझाव (Grievances)
                 <span id="feedback-badge-count" class="warning-badge" style="display:none; margin-left:5px;">0</span>
             </button>
-            <button class="admin-nav-item" id="nav-btn-approvals" onclick="switchTab('approvals')">
-                दर्ता स्वीकृति (Approvals)
-                <span id="approvals-badge-count" class="warning-badge" style="display:none; margin-left:5px;">0</span>
-            </button>
         </nav>
 
         <!-- TAB 1: OVERVIEW -->
@@ -336,36 +332,6 @@
                         <tbody id="adm-feedback-tbody">
                             <!-- Populated dynamically -->
                         </tbody>
-                    </table>
-                </div>
-        <!-- TAB 5: SCHOOL APPROVALS -->
-        <section id="tab-approvals" class="admin-tab-content hidden">
-            <div class="data-card">
-                <div class="card-title-row">
-                    <div>
-                        <h3>School Registration Approvals (विद्यालय दर्ता स्वीकृति)</h3>
-                        <p class="card-subtitle">Review pending school registrations and payment transactions</p>
-                    </div>
-                </div>
-                
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Reg Date</th>
-                                <th>School Name</th>
-                                <th>Email</th>
-                                <th>EMIS Code</th>
-                                <th>Payment Method</th>
-                                <th>Transaction Code</th>
-                                <th style="text-align: center;">Status</th>
-                                <th style="text-align: center; width: 220px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adm-approvals-tbody">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </section>
