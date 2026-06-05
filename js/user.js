@@ -106,7 +106,23 @@ const TRANSLATIONS = {
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Override default school details dynamically if custom school registered
-    const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+    let schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+    // Fallback recovery: if active session missing, try to get first approved school
+    if (!schoolInfoStr) {
+        const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+        if (schoolsListStr) {
+            try {
+                const schoolsList = JSON.parse(schoolsListStr);
+                const approvedSchool = schoolsList.find(s => s.status === 'Approved');
+                if (approvedSchool) {
+                    schoolInfoStr = JSON.stringify(approvedSchool);
+                    localStorage.setItem('nepal_school_registered_info', schoolInfoStr);
+                }
+            } catch (e) {
+                console.error('Error recovering school info in user.js:', e);
+            }
+        }
+    }
     if (schoolInfoStr) {
         try {
             const schoolInfo = JSON.parse(schoolInfoStr);
@@ -117,6 +133,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (schoolInfo.address) {
                 TRANSLATIONS.ne['txt-gov-subtitle'] = `सामुदायिक विद्यालय - ${schoolInfo.address} (इमिस कोड: ${schoolInfo.emis})`;
                 TRANSLATIONS.en['txt-gov-subtitle'] = `Community School - ${schoolInfo.address} (EMIS: ${schoolInfo.emis})`;
+            }
+
+            // Inject custom school logo into the header logo container
+            if (schoolInfo.logo) {
+                const logoContainer = document.getElementById('user-school-logo-container');
+                if (logoContainer) {
+                    logoContainer.innerHTML = `<img src="${schoolInfo.logo}" alt="${schoolInfo.schoolName || 'School Logo'}" class="gov-logo" style="width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--secondary); box-shadow: 0 4px 12px rgba(0,0,0,0.18);">`;
+                }
             }
             
             // Wait for DOM elements to load then override static footer parts
