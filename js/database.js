@@ -3,9 +3,27 @@
  * Refactored to support Supabase Cloud Database with LocalStorage Fallback.
  */
 
-const DB_KEY = 'nepal_school_finances';
-const BUDGET_KEY = 'nepal_school_budgets';
-const FEEDBACK_KEY = 'nepal_school_feedbacks';
+let DB_KEY = 'nepal_school_finances';
+let BUDGET_KEY = 'nepal_school_budgets';
+let FEEDBACK_KEY = 'nepal_school_feedbacks';
+let dbSuffix = '';
+
+function initKeys() {
+    const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+    if (schoolInfoStr) {
+        try {
+            const schoolInfo = JSON.parse(schoolInfoStr);
+            if (schoolInfo.schoolEmail) {
+                dbSuffix = '_' + schoolInfo.schoolEmail.replace(/[^a-zA-Z0-9]/g, '');
+            }
+        } catch(e) {
+            console.error(e);
+        }
+    }
+    DB_KEY = 'nepal_school_finances' + dbSuffix;
+    BUDGET_KEY = 'nepal_school_budgets' + dbSuffix;
+    FEEDBACK_KEY = 'nepal_school_feedbacks' + dbSuffix;
+}
 
 // Standard Categories
 const INCOME_CATEGORIES = {
@@ -69,6 +87,7 @@ let cachedFeedbacks = [];
  * Resolves connection details, determines if to use Supabase or Fallback LocalStorage
  */
 async function initDatabase() {
+    initKeys();
     // Check if configuration parameters exist and are not defaults
     const hasConfig = typeof SUPABASE_URL !== 'undefined' && 
                       typeof SUPABASE_ANON_KEY !== 'undefined' &&
@@ -103,13 +122,15 @@ async function initDatabase() {
  */
 function syncFromLocalStorage() {
     if (!localStorage.getItem(DB_KEY)) {
-        localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_TRANSACTIONS));
+        const initialTransactions = dbSuffix ? [] : DEFAULT_TRANSACTIONS;
+        localStorage.setItem(DB_KEY, JSON.stringify(initialTransactions));
     }
     if (!localStorage.getItem(BUDGET_KEY)) {
         localStorage.setItem(BUDGET_KEY, JSON.stringify(DEFAULT_BUDGETS));
     }
     if (!localStorage.getItem(FEEDBACK_KEY)) {
-        localStorage.setItem(FEEDBACK_KEY, JSON.stringify(DEFAULT_FEEDBACKS));
+        const initialFeedbacks = dbSuffix ? [] : DEFAULT_FEEDBACKS;
+        localStorage.setItem(FEEDBACK_KEY, JSON.stringify(initialFeedbacks));
     }
 
     cachedTransactions = JSON.parse(localStorage.getItem(DB_KEY));

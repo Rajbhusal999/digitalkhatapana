@@ -787,8 +787,8 @@
                     <span class="plan-badge">सिफारिस गरिएको</span>
                     <h3 class="plan-title">मध्यम (Standard)</h3>
                     <div class="plan-price">
-                        <span class="amount">रू. ९,९९९</span>
-                        <span class="period">/ वार्षिक (Yearly)</span>
+                        <span class="amount">रू. ५,९९९</span>
+                        <span class="period">/ १ वर्ष (1 Year)</span>
                     </div>
                 </div>
                 <ul class="plan-features">
@@ -814,7 +814,7 @@
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
-                        नागरिक पारदर्शिता बोर्ड र गुनासो डेस्क
+                         नागरिक पारदर्शिता बोर्ड र गुनासो डेस्क
                     </li>
                     <li>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -823,7 +823,7 @@
                         Excel/CSV रिपोर्ट निर्यात सुविधा
                     </li>
                 </ul>
-                <button class="select-plan-btn" onclick="activatePlan('Standard', 9999)">
+                <button class="select-plan-btn" onclick="activatePlan('Standard', 5999)">
                     योजना छनोट गर्नुहोस् (Select Standard)
                 </button>
             </div>
@@ -834,8 +834,8 @@
                     <span class="plan-badge">पूर्ण प्याकेज</span>
                     <h3 class="plan-title">प्रिमियम (Premium)</h3>
                     <div class="plan-price">
-                        <span class="amount">रू. १९,९९९</span>
-                        <span class="period">/ वार्षिक (Yearly)</span>
+                        <span class="amount">रू. १५,९९९</span>
+                        <span class="period">/ ३ वर्ष (3 Years)</span>
                     </div>
                 </div>
                 <ul class="plan-features">
@@ -870,7 +870,7 @@
                         वार्षिक आर्थिक प्रतिवेदन तयारी उपकरण
                     </li>
                 </ul>
-                <button class="select-plan-btn" onclick="activatePlan('Premium', 19999)">
+                <button class="select-plan-btn" onclick="activatePlan('Premium', 15999)">
                     योजना छनोट गर्नुहोस् (Select Premium)
                 </button>
             </div>
@@ -1252,6 +1252,7 @@
             }
 
             schoolInfo.status = 'Approved'; // Free plans are approved automatically
+            const years = planName === 'Premium' ? 3 : 1;
             schoolInfo.subscription = {
                 planName: planName,
                 price: price,
@@ -1259,7 +1260,7 @@
                 transactionId: txnId,
                 status: 'Active',
                 activatedAt: new Date().toISOString(),
-                expiresAt: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
+                expiresAt: new Date(new Date().setFullYear(new Date().getFullYear() + years)).toISOString()
             };
 
             localStorage.setItem('nepal_school_registered_info', JSON.stringify(schoolInfo));
@@ -1306,6 +1307,7 @@
             }
 
             // Set registration status to Pending with payment info
+            const yearsCode = currentSelectedPlan === 'Premium' ? 3 : 1;
             schoolInfo.status = 'Pending';
             schoolInfo.paymentMethod = gateway;
             schoolInfo.transactionCode = txnCode;
@@ -1316,7 +1318,7 @@
                 transactionId: txnCode,
                 status: 'Pending',
                 activatedAt: new Date().toISOString(),
-                expiresAt: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
+                expiresAt: new Date(new Date().setFullYear(new Date().getFullYear() + yearsCode)).toISOString()
             };
 
             // Write back to nepal_school_registered_info
