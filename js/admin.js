@@ -713,13 +713,26 @@ function renderApprovalsTable() {
                     </button>
                 </div>
             `;
+        } else if (school.status === 'Rejected') {
+            actionHTML = `
+                <div class="btn-action-group" style="justify-content: center; gap: 8px;">
+                    <button class="btn-portal" style="padding:6px 12px; font-size:0.8rem; box-shadow:none; background: linear-gradient(135deg, var(--success) 0%, #059669 100%); color: white; border: none; cursor: pointer; border-radius: 4px;" onclick="handleApproveSchool('${school.schoolEmail}')">
+                        Approve (स्वीकृत)
+                    </button>
+                </div>
+            `;
         } else {
             actionHTML = `<span style="font-size:0.8rem; color:var(--text-muted); font-style:italic;">Approved (सक्रिय)</span>`;
         }
         
-        const statusBadge = school.status === 'Approved'
-            ? `<span class="badge income" style="font-size:0.7rem;">स्वीकृत (Approved)</span>`
-            : `<span class="badge expense" style="font-size:0.7rem;">बाँकी (Pending)</span>`;
+        let statusBadge = '';
+        if (school.status === 'Approved') {
+            statusBadge = `<span class="badge income" style="font-size:0.7rem;">स्वीकृत (Approved)</span>`;
+        } else if (school.status === 'Rejected') {
+            statusBadge = `<span class="badge expense" style="font-size:0.7rem; background:#ef4444; color:white;">अस्वीकृत (Rejected)</span>`;
+        } else {
+            statusBadge = `<span class="badge expense" style="font-size:0.7rem;">बाँकी (Pending)</span>`;
+        }
             
         row.innerHTML = `
             <td>${school.registeredAt ? new Date(school.registeredAt).toLocaleDateString() : '-'}</td>
@@ -786,7 +799,7 @@ function handleApproveSchool(email) {
 }
 
 function handleRejectSchool(email) {
-    if (confirm('Are you sure you want to reject and remove this school registration?')) {
+    if (confirm('Are you sure you want to reject this school registration?')) {
         let schoolsList = [];
         const schoolsListStr = localStorage.getItem('nepal_registered_schools');
         if (schoolsListStr) {
@@ -797,12 +810,34 @@ function handleRejectSchool(email) {
             }
         }
         
-        const matched = schoolsList.find(s => s.schoolEmail.toLowerCase() === email.toLowerCase());
-        schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== email.toLowerCase());
-        localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
-        
-        showAdmToast(`Registration for ${matched ? matched.schoolName : email} has been rejected.`, 'info');
-        renderApprovalsTable();
+        const idx = schoolsList.findIndex(s => s.schoolEmail.toLowerCase() === email.toLowerCase());
+        if (idx !== -1) {
+            schoolsList[idx].status = 'Rejected';
+            if (schoolsList[idx].subscription) {
+                schoolsList[idx].subscription.status = 'Rejected';
+            }
+            localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+            
+            // Also sync active school info if it matches
+            const currentActiveStr = localStorage.getItem('nepal_school_registered_info');
+            if (currentActiveStr) {
+                try {
+                    const currentActive = JSON.parse(currentActiveStr);
+                    if (currentActive.schoolEmail.toLowerCase() === email.toLowerCase()) {
+                        currentActive.status = 'Rejected';
+                        if (currentActive.subscription) {
+                            currentActive.subscription.status = 'Rejected';
+                        }
+                        localStorage.setItem('nepal_school_registered_info', JSON.stringify(currentActive));
+                    }
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+            
+            showAdmToast(`Registration for ${schoolsList[idx].schoolName} has been rejected.`, 'info');
+            renderApprovalsTable();
+        }
     }
 }
 

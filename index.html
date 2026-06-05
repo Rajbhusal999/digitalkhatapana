@@ -987,6 +987,11 @@
                     return;
                 }
 
+                if (matchedSchool.status === 'Rejected') {
+                    showGatewayToast('School registration has been rejected! (दर्ता अस्वीकृत गरिएको छ)', 'error');
+                    return;
+                }
+
                 // Successful school admin login
                 localStorage.setItem('nepal_school_registered_info', JSON.stringify(matchedSchool));
                 sessionStorage.setItem('admin_logged_in', 'true');
