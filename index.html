@@ -1058,43 +1058,64 @@
                 return;
             }
 
-            // Save details to LocalStorage for mock database use
-            const registeredSchool = {
-                schoolName,
-                address,
-                schoolEmail,
-                emis,
-                principal,
-                pPhone,
-                accountant,
-                aPhone,
-                publicBoard,
-                password: pass,
-                status: 'Pending',
-                registeredAt: new Date().toISOString()
+            // Read file uploads asynchronously
+            const logoFile = document.getElementById('reg-logo').files[0];
+            const photoFile = document.getElementById('reg-photo').files[0];
+
+            const readAsDataURL = (file) => {
+                return new Promise((resolve) => {
+                    if (!file) {
+                        resolve('');
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(file);
+                });
             };
-            
-            localStorage.setItem('nepal_school_registered_info', JSON.stringify(registeredSchool));
 
-            // Save to registered schools database list
-            let schoolsList = [];
-            const schoolsListStr = localStorage.getItem('nepal_registered_schools');
-            if (schoolsListStr) {
-                try {
-                    schoolsList = JSON.parse(schoolsListStr);
-                } catch (e) {
-                    console.error('Error reading schools list', e);
+            Promise.all([
+                readAsDataURL(logoFile),
+                readAsDataURL(photoFile)
+            ]).then(([logoBase64, photoBase64]) => {
+                const registeredSchool = {
+                    schoolName,
+                    address,
+                    schoolEmail,
+                    emis,
+                    principal,
+                    pPhone,
+                    accountant,
+                    aPhone,
+                    publicBoard,
+                    password: pass,
+                    logo: logoBase64,
+                    photo: photoBase64,
+                    status: 'Pending',
+                    registeredAt: new Date().toISOString()
+                };
+
+                localStorage.setItem('nepal_school_registered_info', JSON.stringify(registeredSchool));
+
+                // Save to registered schools database list
+                let schoolsList = [];
+                const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+                if (schoolsListStr) {
+                    try {
+                        schoolsList = JSON.parse(schoolsListStr);
+                    } catch (e) {
+                        console.error('Error reading schools list', e);
+                    }
                 }
-            }
-            // Remove existing duplicate
-            schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== schoolEmail.toLowerCase());
-            schoolsList.push(registeredSchool);
-            localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+                schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== schoolEmail.toLowerCase());
+                schoolsList.push(registeredSchool);
+                localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
 
-            showGatewayToast('Registration Successful! Redirecting to subscription checkout...', 'success');
-            setTimeout(() => {
-                window.location.href = 'subscription.html';
-            }, 1800);
+                showGatewayToast('Registration Successful! Redirecting to subscription checkout...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'subscription.html';
+                }, 1800);
+            });
         }
 
         function handleGatewayContactSubmit(event) {

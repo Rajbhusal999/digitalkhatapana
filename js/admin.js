@@ -82,6 +82,20 @@ function updateSchoolHeader() {
             if (userEl && schoolInfo.accountant) {
                 userEl.innerText = `प्रयोक्ता: ${schoolInfo.accountant} (लेखापाल) | प्र.अ.: ${schoolInfo.principal || '-'}`;
             }
+
+            // Update School Logo if custom logo uploaded
+            const logoContainer = document.getElementById('adm-school-logo-container');
+            if (logoContainer && schoolInfo.logo) {
+                logoContainer.innerHTML = `<img src="${schoolInfo.logo}" alt="Logo" class="gov-logo" style="width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--secondary); box-shadow: 0 4px 6px rgba(0,0,0,0.15);">`;
+            }
+
+            // Update Body Background Image if custom photo uploaded (showing in light, faded background)
+            if (schoolInfo.photo) {
+                document.body.style.backgroundImage = `linear-gradient(rgba(244, 246, 249, 0.93), rgba(244, 246, 249, 0.93)), url('${schoolInfo.photo}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundAttachment = 'fixed';
+                document.body.style.backgroundPosition = 'center';
+            }
         } catch (e) {
             console.error('Error loading school details in Admin Panel:', e);
         }
