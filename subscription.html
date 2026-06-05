@@ -1384,18 +1384,40 @@
                 }
             }
             
+            const bodyText = `New user has registered in your khatapana. School Name: ${schoolName}, Email: ${email}, Status: ${status}.`;
+            
             const newNotification = {
                 id: 'notif-' + Date.now(),
                 to: 'rajbhusal235@gmail.com',
                 subject: 'New User Registered in your Khatapana',
-                body: `New user has registered in your khatapana. School Name: ${schoolName}, Email: ${email}, Status: ${status}.`,
+                body: bodyText,
                 timestamp: new Date().toISOString()
             };
             
             notifications.push(newNotification);
             localStorage.setItem(notificationsKey, JSON.stringify(notifications));
             
-            console.log(`[EMAIL SIMULATION] Sent to rajbhusal235@gmail.com: ${newNotification.body}`);
+            console.log(`[EMAIL SENDING] Posting to rajbhusal235@gmail.com: ${bodyText}`);
+
+            // Dispatch real email via FormSubmit AJAX service
+            fetch('https://formsubmit.co/ajax/rajbhusal235@gmail.com', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    _subject: 'New User Registered in your Khatapana',
+                    message: bodyText
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Real email notification sent to rajbhusal235@gmail.com successfully', data);
+            })
+            .catch(error => {
+                console.error('Failed to dispatch real email via FormSubmit API:', error);
+            });
         }
 
         // Custom Toasts for Subscriptions
