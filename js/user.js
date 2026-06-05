@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <strong>${schoolInfo.schoolName}</strong><br>
                         ${schoolInfo.address}<br>
                         फोन: ${schoolInfo.pPhone || '+९७७-६१-XXXXXX'}<br>
-                        इमेल: info@${(schoolInfo.schoolName || 'school').toLowerCase().replace(/[^a-z0-9]/g, '')}.edu.np
+                        इमेल: ${schoolInfo.schoolEmail || ('info@' + (schoolInfo.schoolName || 'school').toLowerCase().replace(/[^a-z0-9]/g, '') + '.edu.np')}
                     `;
                 }
                 if (footerBottom) {

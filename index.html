@@ -695,6 +695,11 @@
                     </div>
 
                     <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-school-email">School Email (विद्यालयको इमेल) *</label>
+                        <input type="email" id="reg-school-email" required placeholder="उदा: info@school.edu.np">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
                         <label for="reg-emis">EMIS Code (इमिस कोड) *</label>
                         <input type="text" id="reg-emis" required pattern="\d{9}" title="EMIS code must be exactly 9 digits" placeholder="९-अङ्कको कोड (उदा: १२३४५६७८९)">
                     </div>
@@ -966,6 +971,7 @@
             
             const schoolName = document.getElementById('reg-school-name').value.trim();
             const address = document.getElementById('reg-address').value.trim();
+            const schoolEmail = document.getElementById('reg-school-email').value.trim();
             const emis = document.getElementById('reg-emis').value.trim();
             const principal = document.getElementById('reg-principal-name').value.trim();
             const pPhone = document.getElementById('reg-principal-phone').value.trim();
@@ -991,6 +997,7 @@
             const registeredSchool = {
                 schoolName,
                 address,
+                schoolEmail,
                 emis,
                 principal,
                 pPhone,
