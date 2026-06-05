@@ -959,11 +959,48 @@
 
         function handleWidgetLogin(event) {
             event.preventDefault();
-            const email = document.getElementById('widget-login-email').value;
-            showGatewayToast(`Citizen login successful! Welcome, ${email}. Redirecting to Transparency board...`, 'success');
-            setTimeout(() => {
-                window.location.href = 'user.html';
-            }, 1500);
+            const email = document.getElementById('widget-login-email').value.trim();
+            const pass = document.getElementById('widget-login-pass').value;
+
+            // Check if there is a matching school registration
+            let matchedSchool = null;
+            const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+            if (schoolsListStr) {
+                try {
+                    const schoolsList = JSON.parse(schoolsListStr);
+                    matchedSchool = schoolsList.find(s => s.schoolEmail.toLowerCase() === email.toLowerCase());
+                } catch (e) {
+                    console.error('Error parsing registered schools list', e);
+                }
+            }
+
+            if (matchedSchool) {
+                // Verify password
+                if (matchedSchool.password !== pass) {
+                    showGatewayToast('Incorrect password! (गलत पासवर्ड)', 'error');
+                    return;
+                }
+
+                // Verify approval status
+                if (matchedSchool.status === 'Pending') {
+                    showGatewayToast('School registration is pending admin approval! (दर्ता स्वीकृति हुन बाँकी छ)', 'error');
+                    return;
+                }
+
+                // Successful school admin login
+                localStorage.setItem('nepal_school_registered_info', JSON.stringify(matchedSchool));
+                sessionStorage.setItem('admin_logged_in', 'true');
+                showGatewayToast(`Access Granted! Welcome to ${matchedSchool.schoolName} admin panel.`, 'success');
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 1500);
+            } else {
+                // Fallback to citizen login
+                showGatewayToast(`Citizen login successful! Welcome, ${email}. Redirecting to Transparency board...`, 'success');
+                setTimeout(() => {
+                    window.location.href = 'user.html';
+                }, 1500);
+            }
         }
 
         function handleWidgetRegister(event) {
@@ -1004,9 +1041,27 @@
                 accountant,
                 aPhone,
                 publicBoard,
+                password: pass,
+                status: 'Pending',
                 registeredAt: new Date().toISOString()
             };
+            
             localStorage.setItem('nepal_school_registered_info', JSON.stringify(registeredSchool));
+
+            // Save to registered schools database list
+            let schoolsList = [];
+            const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+            if (schoolsListStr) {
+                try {
+                    schoolsList = JSON.parse(schoolsListStr);
+                } catch (e) {
+                    console.error('Error reading schools list', e);
+                }
+            }
+            // Remove existing duplicate
+            schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== schoolEmail.toLowerCase());
+            schoolsList.push(registeredSchool);
+            localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
 
             showGatewayToast('Registration Successful! Redirecting to subscription checkout...', 'success');
             setTimeout(() => {

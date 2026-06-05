@@ -907,6 +907,7 @@
                 </div>
 
                 <!-- Step 1: Payment Method Choice -->
+                <!-- Step 1: Payment Method Choice -->
                 <div id="checkout-step-1">
                     <span class="payment-methods-label">भुक्तानी माध्यम रोज्नुहोस् (Select Gateway)</span>
                     <div class="methods-grid">
@@ -914,13 +915,9 @@
                             <span class="method-icon">🟢</span>
                             <span>eSewa</span>
                         </button>
-                        <button class="method-btn khalti-btn" onclick="selectPaymentMethod('khalti')">
-                            <span class="method-icon">🟣</span>
-                            <span>Khalti</span>
-                        </button>
-                        <button class="method-btn connectips-btn" onclick="selectPaymentMethod('connectips')">
-                            <span class="method-icon">🔵</span>
-                            <span>connectIPS</span>
+                        <button class="method-btn mobilebanking-btn" onclick="selectPaymentMethod('mobilebanking')">
+                            <span class="method-icon">📱</span>
+                            <span>Mobile Banking</span>
                         </button>
                     </div>
 
@@ -930,72 +927,66 @@
                         <!-- eSewa Flow -->
                         <div class="gateway-form-wrapper" id="form-flow-esewa">
                             <div class="gateway-brand-bar esewa-bar">
-                                🟢 eSewa Digital Wallet Payment
+                                🟢 eSewa QR Code Payment
                             </div>
-                            <form onsubmit="submitGatewayPayment(event, 'eSewa')">
-                                <div class="gateway-inputs">
-                                    <div class="form-group">
-                                        <label>eSewa ID (Mobile Number / Email)</label>
-                                        <input type="text" required placeholder="९८xxxxxxxx / email@domain.com">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>eSewa MPIN / Password</label>
-                                        <input type="password" required placeholder="••••">
-                                    </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 15px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                                <div class="qr-container">
+                                    <svg width="180" height="180" viewBox="0 0 29 29" style="background: white; padding: 10px; border-radius: 8px; display: block; margin: 0 auto;">
+                                        <!-- Outer Position Markers -->
+                                        <path d="M0 0h7v7H0zM0 22h7v7H0zM22 0h7v7h-7z" fill="#000"/>
+                                        <path d="M1 1h5v5H1zM1 23h5v5H1zM23 1h5v5H23z" fill="#fff"/>
+                                        <path d="M2 2h3v3H2zM2 24h3v3H2zM24 2h3v3H2z" fill="#60BB46"/>
+                                        <!-- Fake Data Blocks -->
+                                        <path d="M9 0h2v1H9zm4 0h2v2h-2zm6 0h1v3h-1zm5 0h1v1h-1zm-13 2h3v1h-3zm4 0h2v2h-2zm6 1h2v2h-2zm2 2h1v1h-1zm-10 1h2v1h-2zm3 0h3v2h-3zm6 0h1v3h-1zm-9 2h2v1h-2zm4 0h2v2h-2zm-6 2h1v3h-1zm4 0h3v1h-3zm6 0h1v2h-1zm-8 2h2v1h-2zm5 0h3v1h-3zm-9 2h2v2h-2zm5 0h4v1h-4zm7 0h1v2h-1zm-10 2h3v1h-3zm4 0h2v2h-2zm5 1h3v1h-3z" fill="#000"/>
+                                        <circle cx="14.5" cy="14.5" r="2.5" fill="#60BB46"/>
+                                    </svg>
                                 </div>
-                                <button type="submit" class="pay-submit-btn esewa-pay-btn">
-                                    <span class="btn-text">Pay Rs. <span class="btn-price-val">0</span> via eSewa</span>
-                                    <div class="spinner"></div>
+                                <p style="font-size: 0.85rem; color: #E2E8F0; text-align: center; margin: 0;">
+                                    Scan QR code using your **eSewa App** to pay Rs. <strong class="display-price-val">0</strong>.
+                                </p>
+                            </div>
+                            <form onsubmit="submitTransactionCode(event, 'eSewa')" style="margin-top: 15px;">
+                                <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                                    <label for="esewa-txn-code">Enter Transaction Verification Code (कारोबार प्रमाणिकरण कोड) *</label>
+                                    <input type="text" id="esewa-txn-code" required placeholder="उदा: 8X9Y2Z1W" style="text-align: center; text-transform: uppercase; font-weight: bold; letter-spacing: 2px;">
+                                </div>
+                                <button type="submit" class="pay-submit-btn esewa-pay-btn" style="margin-top: 15px;">
+                                    Submit Transaction Code for Approval
                                 </button>
                             </form>
                         </div>
-
-                        <!-- Khalti Flow -->
-                        <div class="gateway-form-wrapper" id="form-flow-khalti">
-                            <div class="gateway-brand-bar khalti-bar">
-                                🟣 Khalti Digital Pay
+                        
+                        <!-- Mobile Banking Flow -->
+                        <div class="gateway-form-wrapper" id="form-flow-mobilebanking">
+                            <div class="gateway-brand-bar mobilebanking-bar" style="background: linear-gradient(135deg, #003893 0%, #002B70 100%); color: white; padding: 10px; border-radius: var(--radius-sm); font-weight: bold; text-align: center;">
+                                📱 Fonepay / Mobile Banking QR Payment
                             </div>
-                            <form onsubmit="submitGatewayPayment(event, 'Khalti')">
-                                <div class="gateway-inputs">
-                                    <div class="form-group">
-                                        <label>Khalti Registered Mobile Number</label>
-                                        <input type="text" required placeholder="९८xxxxxxxx">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Khalti Transaction PIN</label>
-                                        <input type="password" required placeholder="••••">
-                                    </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 15px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                                <div class="qr-container">
+                                    <svg width="180" height="180" viewBox="0 0 29 29" style="background: white; padding: 10px; border-radius: 8px; display: block; margin: 0 auto;">
+                                        <!-- Outer Position Markers -->
+                                        <path d="M0 0h7v7H0zM0 22h7v7H0zM22 0h7v7h-7z" fill="#000"/>
+                                        <path d="M1 1h5v5H1zM1 23h5v5H1zM23 1h5v5H23z" fill="#fff"/>
+                                        <path d="M2 2h3v3H2zM2 24h3v3H2zM24 2h3v3H2z" fill="#003893"/>
+                                        <!-- Fake Data Blocks -->
+                                        <path d="M9 0h2v1H9zm4 0h2v2h-2zm6 0h1v3h-1zm5 0h1v1h-1zm-13 2h3v1h-3zm4 0h2v2h-2zm6 1h2v2h-2zm2 2h1v1h-1zm-10 1h2v1h-2zm3 0h3v2h-3zm6 0h1v3h-1zm-9 2h2v1h-2zm4 0h2v2h-2zm-6 2h1v3h-1zm4 0h3v1h-3zm6 0h1v2h-1zm-8 2h2v1h-2zm5 0h3v1h-3zm-9 2h2v2h-2zm5 0h4v1h-4zm7 0h1v2h-1zm-10 2h3v1h-3zm4 0h2v2h-2zm5 1h3v1h-3z" fill="#000"/>
+                                        <circle cx="14.5" cy="14.5" r="2.5" fill="#003893"/>
+                                    </svg>
                                 </div>
-                                <button type="submit" class="pay-submit-btn khalti-pay-btn">
-                                    <span class="btn-text">Pay Rs. <span class="btn-price-val">0</span> via Khalti</span>
-                                    <div class="spinner"></div>
+                                <p style="font-size: 0.85rem; color: #E2E8F0; text-align: center; margin: 0;">
+                                    Scan QR code using **any Mobile Banking App** to pay Rs. <strong class="display-price-val">0</strong>.
+                                </p>
+                            </div>
+                            <form onsubmit="submitTransactionCode(event, 'Mobile Banking')" style="margin-top: 15px;">
+                                <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                                    <label for="mb-txn-code">Enter Transaction Verification Code (कारोबार प्रमाणिकरण कोड) *</label>
+                                    <input type="text" id="mb-txn-code" required placeholder="उदा: FT-98765432" style="text-align: center; text-transform: uppercase; font-weight: bold; letter-spacing: 2px;">
+                                </div>
+                                <button type="submit" class="pay-submit-btn mobilebanking-pay-btn" style="background: linear-gradient(135deg, #003893 0%, #002B70 100%); color: white; margin-top: 15px;">
+                                    Submit Transaction Code for Approval
                                 </button>
                             </form>
                         </div>
-
-                        <!-- ConnectIPS Flow -->
-                        <div class="gateway-form-wrapper" id="form-flow-connectips">
-                            <div class="gateway-brand-bar connectips-bar">
-                                🔵 connectIPS e-Payment System
-                            </div>
-                            <form onsubmit="submitGatewayPayment(event, 'connectIPS')">
-                                <div class="gateway-inputs">
-                                    <div class="form-group">
-                                        <label>connectIPS Username</label>
-                                        <input type="text" required placeholder="तपाईंको युजरनेम">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>connectIPS Password</label>
-                                        <input type="password" required placeholder="••••••••">
-                                    </div>
-                                </div>
-                                <button type="submit" class="pay-submit-btn connectips-pay-btn">
-                                    <span class="btn-text">Pay Rs. <span class="btn-price-val">0</span> via connectIPS</span>
-                                    <div class="spinner"></div>
-                                </button>
-                            </form>
-                        </div>
-
                     </div>
                 </div>
 
@@ -1115,6 +1106,9 @@
             
             // Set prices in pay buttons
             document.querySelectorAll('.btn-price-val').forEach(el => {
+                el.innerText = price.toLocaleString();
+            });
+            document.querySelectorAll('.display-price-val').forEach(el => {
                 el.innerText = price.toLocaleString();
             });
 
@@ -1257,6 +1251,7 @@
                 }
             }
 
+            schoolInfo.status = 'Approved'; // Free plans are approved automatically
             schoolInfo.subscription = {
                 planName: planName,
                 price: price,
@@ -1268,6 +1263,105 @@
             };
 
             localStorage.setItem('nepal_school_registered_info', JSON.stringify(schoolInfo));
+
+            // Also update in registered list
+            let schoolsList = [];
+            const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+            if (schoolsListStr) {
+                try {
+                    schoolsList = JSON.parse(schoolsListStr);
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+            schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== schoolInfo.schoolEmail.toLowerCase());
+            schoolsList.push(schoolInfo);
+            localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+        }
+
+        function submitTransactionCode(event, gateway) {
+            event.preventDefault();
+            
+            // Find the correct code input
+            let txnCode = '';
+            if (gateway === 'eSewa') {
+                txnCode = document.getElementById('esewa-txn-code').value.trim();
+            } else {
+                txnCode = document.getElementById('mb-txn-code').value.trim();
+            }
+            
+            if (!txnCode) {
+                showSubToast('Please enter the transaction verification code!', 'error');
+                return;
+            }
+
+            const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+            let schoolInfo = {};
+            if (schoolInfoStr) {
+                try {
+                    schoolInfo = JSON.parse(schoolInfoStr);
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+
+            // Set registration status to Pending with payment info
+            schoolInfo.status = 'Pending';
+            schoolInfo.paymentMethod = gateway;
+            schoolInfo.transactionCode = txnCode;
+            schoolInfo.subscription = {
+                planName: currentSelectedPlan,
+                price: currentSelectedPrice,
+                gateway: gateway,
+                transactionId: txnCode,
+                status: 'Pending',
+                activatedAt: new Date().toISOString(),
+                expiresAt: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
+            };
+
+            // Write back to nepal_school_registered_info
+            localStorage.setItem('nepal_school_registered_info', JSON.stringify(schoolInfo));
+
+            // Also update this school inside the global list nepal_registered_schools
+            let schoolsList = [];
+            const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+            if (schoolsListStr) {
+                try {
+                    schoolsList = JSON.parse(schoolsListStr);
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+            
+            // Find and replace
+            schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== schoolInfo.schoolEmail.toLowerCase());
+            schoolsList.push(schoolInfo);
+            localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+
+            // Show success alert in checkout modal
+            // Transition to Step 3 success screen
+            document.getElementById('checkout-step-1').style.display = 'none';
+            document.getElementById('checkout-step-success').style.display = 'block';
+            
+            document.getElementById('success-plan-alert').innerText = `${currentSelectedPlan} प्याकेज (अनुमोदन विचाराधीन)`;
+            document.getElementById('receipt-gateway').innerText = gateway;
+            document.getElementById('receipt-txnid').innerText = txnCode;
+            document.getElementById('receipt-amount').innerText = `रू. ${currentSelectedPrice.toLocaleString()}/-`;
+            
+            // Change receipt status text to PENDING (विचाराधीन)
+            const successScreen = document.getElementById('checkout-step-success');
+            const receiptStatus = successScreen.querySelector('.txn-receipt div:last-child strong');
+            if (receiptStatus) {
+                receiptStatus.innerText = 'PENDING (स्वीकृति बाँकी)';
+                receiptStatus.style.color = '#E5A93B';
+            }
+
+            showSubToast('Transaction code submitted successfully!', 'success');
+
+            // Redirect to index.html after 3.5 seconds
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 3500);
         }
 
         // Custom Toasts for Subscriptions

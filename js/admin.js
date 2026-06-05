@@ -63,6 +63,8 @@ function initAdminPage() {
     renderBudgetPlanner();
     renderFeedbackInbox();
     renderAdmTransactionsTable();
+    renderApprovalsTable();
+    updateApprovalsBadge();
 }
 
 function updateSchoolHeader() {
@@ -122,6 +124,8 @@ function switchTab(tabId) {
         renderBudgetPlanner();
     } else if (tabId === 'feedback') {
         renderFeedbackInbox();
+    } else if (tabId === 'approvals') {
+        renderApprovalsTable();
     }
 }
 
@@ -673,4 +677,155 @@ function showAdmToast(message, type = 'success') {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
     }, 4500);
+}
+
+/**
+ * Render Pending School Registrations for approval
+ */
+function renderApprovalsTable() {
+    const tbody = document.getElementById('adm-approvals-tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    let schoolsList = [];
+    const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+    if (schoolsListStr) {
+        try {
+            schoolsList = JSON.parse(schoolsListStr);
+        } catch (e) {
+            console.error('Error loading schools list', e);
+        }
+    }
+    
+    schoolsList.forEach(school => {
+        const row = document.createElement('tr');
+        
+        let actionHTML = '';
+        if (school.status === 'Pending') {
+            actionHTML = `
+                <div class="btn-action-group" style="justify-content: center; gap: 8px;">
+                    <button class="btn-portal" style="padding:6px 12px; font-size:0.8rem; box-shadow:none; background: linear-gradient(135deg, var(--success) 0%, #059669 100%); color: white; border: none; cursor: pointer; border-radius: 4px;" onclick="handleApproveSchool('${school.schoolEmail}')">
+                        Approve (स्वीकृत)
+                    </button>
+                    <button class="btn-portal" style="padding:6px 12px; font-size:0.8rem; box-shadow:none; background: #ef4444; color: white; border: none; cursor: pointer; border-radius: 4px;" onclick="handleRejectSchool('${school.schoolEmail}')">
+                        Reject (अस्वीकृत)
+                    </button>
+                </div>
+            `;
+        } else {
+            actionHTML = `<span style="font-size:0.8rem; color:var(--text-muted); font-style:italic;">Approved (सक्रिय)</span>`;
+        }
+        
+        const statusBadge = school.status === 'Approved'
+            ? `<span class="badge income" style="font-size:0.7rem;">स्वीकृत (Approved)</span>`
+            : `<span class="badge expense" style="font-size:0.7rem;">बाँकी (Pending)</span>`;
+            
+        row.innerHTML = `
+            <td>${school.registeredAt ? new Date(school.registeredAt).toLocaleDateString() : '-'}</td>
+            <td>
+                <strong>${school.schoolName}</strong>
+                <div style="font-size:0.75rem; color:var(--text-muted);">${school.address}</div>
+            </td>
+            <td>${school.schoolEmail}</td>
+            <td><code>${school.emis}</code></td>
+            <td>${school.paymentMethod || 'None (Free)'}</td>
+            <td><code>${school.transactionCode || 'N/A'}</code></td>
+            <td style="text-align:center;">${statusBadge}</td>
+            <td style="text-align:center;">${actionHTML}</td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    if (schoolsList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:20px;">No school registrations found.</td></tr>`;
+    }
+    
+    updateApprovalsBadge();
+}
+
+function handleApproveSchool(email) {
+    let schoolsList = [];
+    const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+    if (schoolsListStr) {
+        try {
+            schoolsList = JSON.parse(schoolsListStr);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+    
+    const idx = schoolsList.findIndex(s => s.schoolEmail.toLowerCase() === email.toLowerCase());
+    if (idx !== -1) {
+        schoolsList[idx].status = 'Approved';
+        if (schoolsList[idx].subscription) {
+            schoolsList[idx].subscription.status = 'Active';
+        }
+        localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+        
+        // Also if this is the currently loaded mock school details in nepal_school_registered_info, sync it
+        const currentActiveStr = localStorage.getItem('nepal_school_registered_info');
+        if (currentActiveStr) {
+            try {
+                const currentActive = JSON.parse(currentActiveStr);
+                if (currentActive.schoolEmail.toLowerCase() === email.toLowerCase()) {
+                    currentActive.status = 'Approved';
+                    if (currentActive.subscription) {
+                        currentActive.subscription.status = 'Active';
+                    }
+                    localStorage.setItem('nepal_school_registered_info', JSON.stringify(currentActive));
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        }
+        
+        showAdmToast(`School ${schoolsList[idx].schoolName} has been approved successfully!`, 'success');
+        renderApprovalsTable();
+    }
+}
+
+function handleRejectSchool(email) {
+    if (confirm('Are you sure you want to reject and remove this school registration?')) {
+        let schoolsList = [];
+        const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+        if (schoolsListStr) {
+            try {
+                schoolsList = JSON.parse(schoolsListStr);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        
+        const matched = schoolsList.find(s => s.schoolEmail.toLowerCase() === email.toLowerCase());
+        schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== email.toLowerCase());
+        localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+        
+        showAdmToast(`Registration for ${matched ? matched.schoolName : email} has been rejected.`, 'info');
+        renderApprovalsTable();
+    }
+}
+
+function updateApprovalsBadge() {
+    const badge = document.getElementById('approvals-badge-count');
+    if (!badge) return;
+    
+    let schoolsList = [];
+    const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+    if (schoolsListStr) {
+        try {
+            schoolsList = JSON.parse(schoolsListStr);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+    
+    const pendingCount = schoolsList.filter(s => s.status === 'Pending').length;
+    
+    if (pendingCount > 0) {
+        badge.innerText = pendingCount;
+        badge.style.display = 'inline-block';
+    } else {
+        badge.style.display = 'none';
+    }
 }
