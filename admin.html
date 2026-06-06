@@ -343,11 +343,65 @@
     <div class="modal-overlay" id="tx-modal-overlay">
         <div class="modal">
             <div class="modal-header">
-                <h3 id="modal-title">भौचर प्रविष्टि फारम (Voucher Entry)</h3>
-                <button class="close-btn" onclick="closeTransactionModal()">&times;</button>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:6px; height:28px; background:linear-gradient(180deg,var(--primary),var(--primary-light)); border-radius:3px;"></div>
+                    <h3 id="modal-title" style="font-family:var(--font-nepali); font-size:1.35rem; color:var(--secondary);">नयाँ भौचर प्रविष्टि (New Voucher Entry)</h3>
+                </div>
+                <button class="close-btn" onclick="closeTransactionModal()" style="width:36px;height:36px;border-radius:50%;background:var(--danger-light);color:var(--danger);font-size:1.4rem;display:flex;align-items:center;justify-content:center;transition:var(--transition);" onmouseover="this.style.background='var(--danger)';this.style.color='white'" onmouseout="this.style.background='var(--danger-light)';this.style.color='var(--danger)'">&times;</button>
             </div>
-            <div class="modal-body" id="modal-form-container">
-                <!-- Reuses or duplicates the entry form for desktop modal overlay -->
+            <div class="modal-body">
+                <form id="modal-voucher-form" onsubmit="handleModalVoucherSubmit(event)">
+                    <input type="hidden" id="modal-tx-id">
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div class="form-group">
+                            <label for="modal-tx-type">Transaction Type (कारोबार प्रकार) *</label>
+                            <select id="modal-tx-type" required onchange="handleModalTypeChange()">
+                                <option value="income">Income (आम्दानी)</option>
+                                <option value="expense">Expenditure (खर्च)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-tx-category">Category (शीर्षक) *</label>
+                            <select id="modal-tx-category" required></select>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div class="form-group">
+                            <label for="modal-tx-date">Date (कारोबार मिति) *</label>
+                            <input type="date" id="modal-tx-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-tx-voucher">Voucher / Bill No. (भौचर नम्बर) *</label>
+                            <input type="text" id="modal-tx-voucher" required placeholder="उदा: V-8081-12">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-tx-particulars">Particulars (कारोबारको विवरण) *</label>
+                        <textarea id="modal-tx-particulars" rows="3" required placeholder="उदा: शिक्षक तलब अनुदान वा शैक्षिक सामग्री खरिद..."></textarea>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div class="form-group">
+                            <label for="modal-tx-source">Fund Source (कोषको स्रोत) *</label>
+                            <input type="text" id="modal-tx-source" required placeholder="उदा: संघीय शिक्षा अनुदान">
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-tx-amount">Amount (रकम रू.) *</label>
+                            <input type="number" id="modal-tx-amount" min="1" step="any" required placeholder="रकम प्रविष्ट गर्नुहोस्">
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="padding:0; border:none; margin-top:8px;">
+                        <button type="button" class="btn-secondary" onclick="closeTransactionModal()">रद्द गर्नुहोस् (Cancel)</button>
+                        <button type="submit" class="btn-portal" style="gap:8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            भौचर सुरक्षित गर्नुहोस् (Save Voucher)
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

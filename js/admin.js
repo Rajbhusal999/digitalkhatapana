@@ -663,27 +663,83 @@ async function handleFeedbackReplySubmit(event) {
 
 /**
  * Modal helper controls for Transaction Modal Overlay
+ * Uses a fully self-contained modal form (modal-tx-* fields)
+ * so the Records tab form is never disrupted.
  */
 function openTransactionModal() {
-    // Injects entry form into modal body to handle popups nicely
-    const formContainer = document.getElementById('modal-form-container');
-    const actualForm = document.getElementById('ledger-entry-form');
-    
-    // We move the form from its tab panel into the modal
-    formContainer.appendChild(actualForm);
+    // Reset modal form to a clean new-entry state
+    document.getElementById('modal-voucher-form').reset();
+    document.getElementById('modal-tx-id').value = '';
+    document.getElementById('modal-title').innerText = 'नयाँ भौचर प्रविष्टि (New Voucher Entry)';
+
+    // Set today's date as default
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('modal-tx-date').value = today;
+
+    // Populate category dropdown
+    handleModalTypeChange();
+
     document.getElementById('tx-modal-overlay').classList.add('active');
 }
 
 function closeTransactionModal() {
     document.getElementById('tx-modal-overlay').classList.remove('active');
-    
-    // Return the form back to its designated card container in Record Tab
-    const designContainer = document.querySelector('#tab-transactions .feedback-card');
-    const actualForm = document.getElementById('ledger-entry-form');
-    
-    if (designContainer && actualForm) {
-        // Find title header and append form after it
-        designContainer.appendChild(actualForm);
+}
+
+/**
+ * Populate modal category dropdown based on selected type
+ */
+function handleModalTypeChange() {
+    const type = document.getElementById('modal-tx-type').value;
+    const catSelect = document.getElementById('modal-tx-category');
+    if (!catSelect) return;
+
+    catSelect.innerHTML = '';
+    const categories = type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+    Object.keys(categories).forEach(key => {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.innerText = `${categories[key].ne} (${categories[key].en})`;
+        catSelect.appendChild(opt);
+    });
+}
+
+/**
+ * Handle submission from the modal voucher entry form
+ */
+async function handleModalVoucherSubmit(event) {
+    event.preventDefault();
+
+    const type    = document.getElementById('modal-tx-type').value;
+    const cat     = document.getElementById('modal-tx-category').value;
+    const date    = document.getElementById('modal-tx-date').value;
+    const vch     = document.getElementById('modal-tx-voucher').value.trim();
+    const part    = document.getElementById('modal-tx-particulars').value.trim();
+    const src     = document.getElementById('modal-tx-source').value.trim();
+    const amt     = Number(document.getElementById('modal-tx-amount').value);
+    const editId  = document.getElementById('modal-tx-id').value;
+
+    if (!vch || !part || !src || isNaN(amt) || amt <= 0) {
+        showAdmToast('कृपया सबै आवश्यक फिल्डहरू सही भर्नुहोस्।', 'error');
+        return;
+    }
+
+    const transaction = { type, category: cat, date, voucherNo: vch, particulars: part, source: src, amount: amt };
+    if (editId) transaction.id = editId;
+
+    try {
+        await saveTransaction(transaction);
+
+        if (type === 'expense') {
+            checkBudgetAlert(cat, amt);
+        }
+
+        showAdmToast(editId ? 'भौचर सफलतापूर्वक परिमार्जन गरियो!' : 'नयाँ भौचर सफलतापूर्वक सुरक्षित गरियो!', 'success');
+        closeTransactionModal();
+        initAdminPage(); // Refresh metrics & tables
+    } catch (err) {
+        console.error(err);
+        showAdmToast('डाटाबेसमा भौचर सुरक्षित गर्न असफल भयो।', 'error');
     }
 }
 
