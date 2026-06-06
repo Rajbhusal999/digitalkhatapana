@@ -91,12 +91,14 @@ function renderCategoryLists() {
     
     // Render income categories
     Object.keys(INCOME_CATEGORIES).forEach(key => {
+        const cat = INCOME_CATEGORIES[key];
+        if (!cat) return;
         const item = document.createElement('li');
         item.className = 'category-item';
         item.innerHTML = `
             <div>
-                <strong>${INCOME_CATEGORIES[key].ne}</strong>
-                <span style="display:block; font-size:0.8rem; color:var(--text-muted);">${INCOME_CATEGORIES[key].en}</span>
+                <strong>${cat.ne || ''}</strong>
+                <span style="display:block; font-size:0.8rem; color:var(--text-muted);">${cat.en || ''}</span>
             </div>
             <span class="category-badge">${key}</span>
         `;
@@ -105,12 +107,14 @@ function renderCategoryLists() {
     
     // Render expense categories
     Object.keys(EXPENSE_CATEGORIES).forEach(key => {
+        const cat = EXPENSE_CATEGORIES[key];
+        if (!cat) return;
         const item = document.createElement('li');
         item.className = 'category-item';
         item.innerHTML = `
             <div>
-                <strong>${EXPENSE_CATEGORIES[key].ne}</strong>
-                <span style="display:block; font-size:0.8rem; color:var(--text-muted);">${EXPENSE_CATEGORIES[key].en}</span>
+                <strong>${cat.ne || ''}</strong>
+                <span style="display:block; font-size:0.8rem; color:var(--text-muted);">${cat.en || ''}</span>
             </div>
             <span class="category-badge">${key}</span>
         `;

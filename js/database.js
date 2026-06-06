@@ -69,23 +69,37 @@ function loadDynamicCategories() {
     const incKey = 'nepal_school_income_categories' + dbSuffix;
     const expKey = 'nepal_school_expense_categories' + dbSuffix;
     
-    if (!localStorage.getItem(incKey) || localStorage.getItem(incKey) === 'null' || localStorage.getItem(incKey) === 'undefined') {
+    const incStored = localStorage.getItem(incKey);
+    const expStored = localStorage.getItem(expKey);
+    
+    let incParsed = null;
+    let expParsed = null;
+    
+    try {
+        if (incStored && incStored !== 'null' && incStored !== 'undefined') {
+            incParsed = JSON.parse(incStored);
+        }
+    } catch(e) {}
+    
+    try {
+        if (expStored && expStored !== 'null' && expStored !== 'undefined') {
+            expParsed = JSON.parse(expStored);
+        }
+    } catch(e) {}
+    
+    // Seed defaults if empty, missing, or corrupt
+    if (!incParsed || Object.keys(incParsed).length === 0) {
         localStorage.setItem(incKey, JSON.stringify(DEFAULT_INCOME_CATEGORIES));
-    }
-    if (!localStorage.getItem(expKey) || localStorage.getItem(expKey) === 'null' || localStorage.getItem(expKey) === 'undefined') {
-        localStorage.setItem(expKey, JSON.stringify(DEFAULT_EXPENSE_CATEGORIES));
-    }
-    
-    try {
-        INCOME_CATEGORIES = JSON.parse(localStorage.getItem(incKey)) || DEFAULT_INCOME_CATEGORIES;
-    } catch(e) {
         INCOME_CATEGORIES = DEFAULT_INCOME_CATEGORIES;
+    } else {
+        INCOME_CATEGORIES = incParsed;
     }
     
-    try {
-        EXPENSE_CATEGORIES = JSON.parse(localStorage.getItem(expKey)) || DEFAULT_EXPENSE_CATEGORIES;
-    } catch(e) {
+    if (!expParsed || Object.keys(expParsed).length === 0) {
+        localStorage.setItem(expKey, JSON.stringify(DEFAULT_EXPENSE_CATEGORIES));
         EXPENSE_CATEGORIES = DEFAULT_EXPENSE_CATEGORIES;
+    } else {
+        EXPENSE_CATEGORIES = expParsed;
     }
 }
 
