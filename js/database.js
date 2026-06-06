@@ -136,21 +136,41 @@ async function initDatabase() {
  * LocalStorage Fallback Handlers
  */
 function syncFromLocalStorage() {
-    if (!localStorage.getItem(DB_KEY)) {
+    if (!localStorage.getItem(DB_KEY) || localStorage.getItem(DB_KEY) === 'null' || localStorage.getItem(DB_KEY) === 'undefined') {
         const initialTransactions = dbSuffix ? [] : DEFAULT_TRANSACTIONS;
         localStorage.setItem(DB_KEY, JSON.stringify(initialTransactions));
     }
-    if (!localStorage.getItem(BUDGET_KEY)) {
+    if (!localStorage.getItem(BUDGET_KEY) || localStorage.getItem(BUDGET_KEY) === 'null' || localStorage.getItem(BUDGET_KEY) === 'undefined') {
         localStorage.setItem(BUDGET_KEY, JSON.stringify(DEFAULT_BUDGETS));
     }
-    if (!localStorage.getItem(FEEDBACK_KEY)) {
+    if (!localStorage.getItem(FEEDBACK_KEY) || localStorage.getItem(FEEDBACK_KEY) === 'null' || localStorage.getItem(FEEDBACK_KEY) === 'undefined') {
         const initialFeedbacks = dbSuffix ? [] : DEFAULT_FEEDBACKS;
         localStorage.setItem(FEEDBACK_KEY, JSON.stringify(initialFeedbacks));
     }
 
-    cachedTransactions = JSON.parse(localStorage.getItem(DB_KEY));
-    cachedBudgets = JSON.parse(localStorage.getItem(BUDGET_KEY));
-    cachedFeedbacks = JSON.parse(localStorage.getItem(FEEDBACK_KEY));
+    try {
+        cachedTransactions = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+    } catch (e) {
+        console.error("Error parsing DB_KEY, resetting:", e);
+        cachedTransactions = dbSuffix ? [] : DEFAULT_TRANSACTIONS;
+        localStorage.setItem(DB_KEY, JSON.stringify(cachedTransactions));
+    }
+
+    try {
+        cachedBudgets = JSON.parse(localStorage.getItem(BUDGET_KEY)) || {};
+    } catch (e) {
+        console.error("Error parsing BUDGET_KEY, resetting:", e);
+        cachedBudgets = DEFAULT_BUDGETS;
+        localStorage.setItem(BUDGET_KEY, JSON.stringify(cachedBudgets));
+    }
+
+    try {
+        cachedFeedbacks = JSON.parse(localStorage.getItem(FEEDBACK_KEY)) || [];
+    } catch (e) {
+        console.error("Error parsing FEEDBACK_KEY, resetting:", e);
+        cachedFeedbacks = dbSuffix ? [] : DEFAULT_FEEDBACKS;
+        localStorage.setItem(FEEDBACK_KEY, JSON.stringify(cachedFeedbacks));
+    }
 }
 
 /**
@@ -207,15 +227,15 @@ async function syncFromSupabase() {
  * Getters (return cached data immediately for synchronous UI drawing)
  */
 function getTransactions() {
-    return cachedTransactions;
+    return cachedTransactions || [];
 }
 
 function getBudgets() {
-    return cachedBudgets;
+    return cachedBudgets || {};
 }
 
 function getFeedbacks() {
-    return cachedFeedbacks;
+    return cachedFeedbacks || [];
 }
 
 /**
