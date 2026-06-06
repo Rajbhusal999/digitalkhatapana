@@ -10,13 +10,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     checkAuth();
     updateSchoolHeader(); // Show school details (name, logo, background) instantly from localStorage on load/refresh
     
+    // Initialize keys and populate UI instantly with local/cached data
+    initKeys();
+    initAdminPage();
+    
     try {
         await initDatabase();
+        // Refresh UI elements after Supabase data syncs successfully
+        if (sessionStorage.getItem('admin_logged_in') === 'true') {
+            updateAdminMetrics();
+            handleTypeChange();
+            renderOverviewTable();
+            renderBudgetPlanner();
+            renderFeedbackInbox();
+            renderAdmTransactionsTable();
+        }
     } catch (e) {
         console.error("Database initialization failed (Supabase connection issues?):", e);
     }
-    
-    initAdminPage();
 });
 
 /**

@@ -13,15 +13,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 2. Set default brand layout
     updateSchoolHeader();
 
-    // 3. Initialize database connection
+    // 3. Initialize keys and render category lists instantly from LocalStorage
+    initKeys();
+    renderCategoryLists();
+
+    // 4. Initialize database connection in the background
     try {
         await initDatabase();
     } catch (e) {
         console.error("Database initialization failed:", e);
     }
-
-    // 4. Render category lists
-    renderCategoryLists();
 });
 
 /**

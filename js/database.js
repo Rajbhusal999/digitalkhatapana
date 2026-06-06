@@ -90,14 +90,14 @@ function loadDynamicCategories() {
     // Seed defaults if empty, missing, or corrupt
     if (!incParsed || Object.keys(incParsed).length === 0) {
         localStorage.setItem(incKey, JSON.stringify(DEFAULT_INCOME_CATEGORIES));
-        INCOME_CATEGORIES = DEFAULT_INCOME_CATEGORIES;
+        INCOME_CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_INCOME_CATEGORIES));
     } else {
         INCOME_CATEGORIES = incParsed;
     }
     
     if (!expParsed || Object.keys(expParsed).length === 0) {
         localStorage.setItem(expKey, JSON.stringify(DEFAULT_EXPENSE_CATEGORIES));
-        EXPENSE_CATEGORIES = DEFAULT_EXPENSE_CATEGORIES;
+        EXPENSE_CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_EXPENSE_CATEGORIES));
     } else {
         EXPENSE_CATEGORIES = expParsed;
     }

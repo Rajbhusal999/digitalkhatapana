@@ -14,19 +14,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 2. Set default brand layout
     updateSchoolHeader();
 
-    // 3. Initialize database connection
+    // 3. Initialize keys and populate category dropdown instantly
+    initKeys();
+    handleTypeChange();
+
+    // 4. Initialize database connection in the background
     try {
         await initDatabase();
     } catch (e) {
         console.error("Database initialization failed:", e);
     }
 
-    // 4. Default date is today
+    // 5. Default date is today
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('tx-date').value = today;
-
-    // 5. Populate categories initial dropdown
-    handleTypeChange();
 });
 
 /**

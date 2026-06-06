@@ -165,6 +165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     applyLanguage();
+    initKeys(); // Load keys and categories synchronously from local storage
     populateCategoryDropdowns();
     await initDatabase();
     updateDashboardMetrics();
