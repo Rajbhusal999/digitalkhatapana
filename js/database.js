@@ -38,10 +38,11 @@ function initKeys() {
     DB_KEY = 'nepal_school_finances' + dbSuffix;
     BUDGET_KEY = 'nepal_school_budgets' + dbSuffix;
     FEEDBACK_KEY = 'nepal_school_feedbacks' + dbSuffix;
+    loadDynamicCategories();
 }
 
-// Standard Categories
-const INCOME_CATEGORIES = {
+// Default Seed Categories
+const DEFAULT_INCOME_CATEGORIES = {
     'gov_conditional': { en: 'Government Conditional Grant', ne: 'संघीय सशर्त अनुदान' },
     'local_level': { en: 'Local Government Budget', ne: 'स्थानीय तह अनुदान' },
     'internal_source': { en: 'School Internal Source', ne: 'विद्यालय आन्तरिक स्रोत' },
@@ -50,7 +51,7 @@ const INCOME_CATEGORIES = {
     'misc_income': { en: 'Miscellaneous Income', ne: 'विविध आय' }
 };
 
-const EXPENSE_CATEGORIES = {
+const DEFAULT_EXPENSE_CATEGORIES = {
     'salary': { en: 'Teacher & Staff Salary', enShort: 'Salary', ne: 'शिक्षक तथा कर्मचारी तलब' },
     'infrastructure': { en: 'Infrastructure & Repair', enShort: 'Infrastructure', ne: 'भौतिक निर्माण तथा मर्मत' },
     'materials': { en: 'Educational & IT Materials', enShort: 'Materials', ne: 'शैक्षिक तथा सूचना-प्रविधि सामग्री' },
@@ -59,6 +60,47 @@ const EXPENSE_CATEGORIES = {
     'office_ops': { en: 'Office Operations & Stationery', enShort: 'Office Ops', ne: 'कार्यालय सञ्चालन र मसलन्द' },
     'misc_expense': { en: 'Miscellaneous Expense', enShort: 'Misc', ne: 'विविध खर्च' }
 };
+
+// Dynamic Categories
+let INCOME_CATEGORIES = {};
+let EXPENSE_CATEGORIES = {};
+
+function loadDynamicCategories() {
+    const incKey = 'nepal_school_income_categories' + dbSuffix;
+    const expKey = 'nepal_school_expense_categories' + dbSuffix;
+    
+    if (!localStorage.getItem(incKey) || localStorage.getItem(incKey) === 'null' || localStorage.getItem(incKey) === 'undefined') {
+        localStorage.setItem(incKey, JSON.stringify(DEFAULT_INCOME_CATEGORIES));
+    }
+    if (!localStorage.getItem(expKey) || localStorage.getItem(expKey) === 'null' || localStorage.getItem(expKey) === 'undefined') {
+        localStorage.setItem(expKey, JSON.stringify(DEFAULT_EXPENSE_CATEGORIES));
+    }
+    
+    try {
+        INCOME_CATEGORIES = JSON.parse(localStorage.getItem(incKey)) || DEFAULT_INCOME_CATEGORIES;
+    } catch(e) {
+        INCOME_CATEGORIES = DEFAULT_INCOME_CATEGORIES;
+    }
+    
+    try {
+        EXPENSE_CATEGORIES = JSON.parse(localStorage.getItem(expKey)) || DEFAULT_EXPENSE_CATEGORIES;
+    } catch(e) {
+        EXPENSE_CATEGORIES = DEFAULT_EXPENSE_CATEGORIES;
+    }
+}
+
+function saveCustomCategory(type, key, neName, enName) {
+    const incKey = 'nepal_school_income_categories' + dbSuffix;
+    const expKey = 'nepal_school_expense_categories' + dbSuffix;
+    
+    if (type === 'income') {
+        INCOME_CATEGORIES[key] = { en: enName, ne: neName };
+        localStorage.setItem(incKey, JSON.stringify(INCOME_CATEGORIES));
+    } else {
+        EXPENSE_CATEGORIES[key] = { en: enName, enShort: enName.substring(0, 15), ne: neName };
+        localStorage.setItem(expKey, JSON.stringify(EXPENSE_CATEGORIES));
+    }
+}
 
 // Seed/Mock Data for Local Storage Fallback
 const DEFAULT_TRANSACTIONS = [
