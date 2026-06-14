@@ -52,6 +52,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Set active button
     updateSidebarActiveState();
 
+    // Initialize Nepali Date Picker
+    if (typeof window.nepaliDatePicker === 'function' || (window.nepaliDatePicker)) {
+        const dateInputs = document.querySelectorAll('.nepali-date');
+        dateInputs.forEach(input => {
+            input.nepaliDatePicker({
+                ndpYear: true,
+                ndpMonth: true,
+                ndpYearCount: 10
+            });
+        });
+    }
+
     // Load Data
     await loadInitialData();
 });
@@ -504,7 +516,6 @@ function toggleEntryForm() {
     const formContainer = document.getElementById('inline-entry-form-container');
     if (formContainer.style.display === 'none') {
         formContainer.style.display = 'block';
-        document.getElementById('tx-date').valueAsDate = new Date();
     } else {
         formContainer.style.display = 'none';
         document.getElementById('inline-entry-form').reset();
@@ -516,14 +527,23 @@ async function handleInlineSubmit(e) {
     
     // Bundle the 7 specific amounts into a JSON string
     const amountsObj = {
-        cash_dr: document.getElementById('tx-cash-dr').value,
-        cash_cr: document.getElementById('tx-cash-cr').value,
-        bank_dr: document.getElementById('tx-bank-dr').value,
-        bank_cr: document.getElementById('tx-bank-cr').value,
-        budget_exp: document.getElementById('tx-budget-exp').value,
-        misc_dr: document.getElementById('tx-misc-dr').value,
-        misc_cr: document.getElementById('tx-misc-cr').value
+        cash_dr: document.getElementById('tx-cash-dr').value || 0,
+        cash_cr: document.getElementById('tx-cash-cr').value || 0,
+        bank_dr: document.getElementById('tx-bank-dr').value || 0,
+        bank_cr: document.getElementById('tx-bank-cr').value || 0,
+        budget_exp: document.getElementById('tx-budget-exp').value || 0,
+        misc_dr: document.getElementById('tx-misc-dr').value || 0,
+        misc_cr: document.getElementById('tx-misc-cr').value || 0
     };
+
+    // Balance Check
+    const totalDr = Number(amountsObj.cash_dr) + Number(amountsObj.bank_dr) + Number(amountsObj.budget_exp) + Number(amountsObj.misc_dr);
+    const totalCr = Number(amountsObj.cash_cr) + Number(amountsObj.bank_cr) + Number(amountsObj.misc_cr);
+
+    if (totalDr !== totalCr) {
+        alert("त्रुटि: कुल डेबिट (रु. " + totalDr + ") र कुल क्रेडिट (रु. " + totalCr + ") बराबर हुनुपर्छ।\nError: Total Debit must equal Total Credit.");
+        return;
+    }
 
     // Fallback if saveTransaction doesn't exist
     if (typeof saveTransaction !== 'function') {
