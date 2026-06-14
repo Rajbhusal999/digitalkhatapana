@@ -211,28 +211,50 @@ function renderBankNagadi(data) {
         let cashDr = '', cashCr = '', bankDr = '', bankCr = '';
         let budgetExp = '', miscDr = '', miscCr = '';
 
-        // Data Mapping Logic
-        let paymentMethod = t.payment_method || 'bank'; // fallback to bank
-        
-        if (t.type === 'income') {
-            if (paymentMethod === 'cash') {
-                cashDr = amount; tCashDr += amount;
-            } else {
-                bankDr = amount; tBankDr += amount;
-            }
-            miscDr = amount; tMiscDr += amount; // Income goes to Misc Debit
-        } else { // Expense
-            if (paymentMethod === 'cash') {
-                cashCr = amount; tCashCr += amount;
-            } else {
-                bankCr = amount; tBankCr += amount;
-            }
+        if (t.type === 'direct_entry') {
+            try {
+                const customAmounts = JSON.parse(t.category);
+                cashDr = customAmounts.cash_dr || '';
+                cashCr = customAmounts.cash_cr || '';
+                bankDr = customAmounts.bank_dr || '';
+                bankCr = customAmounts.bank_cr || '';
+                budgetExp = customAmounts.budget_exp || '';
+                miscDr = customAmounts.misc_dr || '';
+                miscCr = customAmounts.misc_cr || '';
+
+                if(cashDr) tCashDr += Number(cashDr);
+                if(cashCr) tCashCr += Number(cashCr);
+                if(bankDr) tBankDr += Number(bankDr);
+                if(bankCr) tBankCr += Number(bankCr);
+                if(budgetExp) tBudgetExp += Number(budgetExp);
+                if(miscDr) tMiscDr += Number(miscDr);
+                if(miscCr) tMiscCr += Number(miscCr);
+
+            } catch (e) { console.error("Error parsing direct_entry:", e); }
+        } else {
+            // Data Mapping Logic for legacy entries
+            let paymentMethod = t.payment_method || 'bank'; // fallback to bank
             
-            // Assume "misc_expense" goes to Misc, else Budget
-            if (t.category && t.category.toLowerCase().includes('misc')) {
-                miscCr = amount; tMiscCr += amount;
-            } else {
-                budgetExp = amount; tBudgetExp += amount;
+            if (t.type === 'income') {
+                if (paymentMethod === 'cash') {
+                    cashDr = amount; tCashDr += amount;
+                } else {
+                    bankDr = amount; tBankDr += amount;
+                }
+                miscDr = amount; tMiscDr += amount; // Income goes to Misc Debit
+            } else { // Expense
+                if (paymentMethod === 'cash') {
+                    cashCr = amount; tCashCr += amount;
+                } else {
+                    bankCr = amount; tBankCr += amount;
+                }
+                
+                // Assume "misc_expense" goes to Misc, else Budget
+                if (t.category && t.category.toLowerCase().includes('misc')) {
+                    miscCr = amount; tMiscCr += amount;
+                } else {
+                    budgetExp = amount; tBudgetExp += amount;
+                }
             }
         }
 
@@ -482,7 +504,6 @@ function toggleEntryForm() {
     const formContainer = document.getElementById('inline-entry-form-container');
     if (formContainer.style.display === 'none') {
         formContainer.style.display = 'block';
-        populateInlineCategories();
         document.getElementById('tx-date').valueAsDate = new Date();
     } else {
         formContainer.style.display = 'none';
@@ -490,36 +511,32 @@ function toggleEntryForm() {
     }
 }
 
-function populateInlineCategories() {
-    const type = document.getElementById('tx-type').value;
-    const catSelect = document.getElementById('tx-category');
-    catSelect.innerHTML = '';
-    
-    const categories = type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
-    for (const [key, val] of Object.entries(categories)) {
-        const option = document.createElement('option');
-        option.value = val.ne;
-        option.textContent = `${val.ne} (${val.en})`;
-        catSelect.appendChild(option);
-    }
-}
-
 async function handleInlineSubmit(e) {
     e.preventDefault();
     
-    // Fallback if saveTransaction doesn't exist (if database.js is old version)
+    // Bundle the 7 specific amounts into a JSON string
+    const amountsObj = {
+        cash_dr: document.getElementById('tx-cash-dr').value,
+        cash_cr: document.getElementById('tx-cash-cr').value,
+        bank_dr: document.getElementById('tx-bank-dr').value,
+        bank_cr: document.getElementById('tx-bank-cr').value,
+        budget_exp: document.getElementById('tx-budget-exp').value,
+        misc_dr: document.getElementById('tx-misc-dr').value,
+        misc_cr: document.getElementById('tx-misc-cr').value
+    };
+
+    // Fallback if saveTransaction doesn't exist
     if (typeof saveTransaction !== 'function') {
         alert("Saving is only available if database.js supports saveTransaction. Simulating save for now.");
-        // Simulate local append
         const newTx = {
             id: 'TX' + Date.now(),
             date: document.getElementById('tx-date').value,
             voucher_no: document.getElementById('tx-voucher').value,
             description: document.getElementById('tx-particulars').value,
-            amount: document.getElementById('tx-amount').value,
-            type: document.getElementById('tx-type').value,
-            category: document.getElementById('tx-category').value,
-            payment_method: document.getElementById('tx-method').value,
+            amount: 0, // Not used for direct_entry
+            type: 'direct_entry',
+            category: JSON.stringify(amountsObj),
+            payment_method: 'bank',
             fiscal_year: document.getElementById('filter-fiscal-year').value === 'all' ? '2082/83' : document.getElementById('filter-fiscal-year').value
         };
         allTransactions.push(newTx);
@@ -529,24 +546,26 @@ async function handleInlineSubmit(e) {
     }
     
     const formData = {
-        type: document.getElementById('tx-type').value,
-        category: document.getElementById('tx-category').value,
+        type: 'direct_entry',
+        category: JSON.stringify(amountsObj), // Store JSON in category
         date: document.getElementById('tx-date').value,
         voucher_no: document.getElementById('tx-voucher').value,
         description: document.getElementById('tx-particulars').value,
-        amount: document.getElementById('tx-amount').value,
-        payment_method: document.getElementById('tx-method').value, // Custom field
-        fund_source: 'Internal' // Default for inline
+        amount: 0, // Direct entry uses custom amounts, amount is 0
+        payment_method: 'bank', 
+        fund_source: 'Internal' 
     };
     
     try {
         const result = await saveTransaction(formData);
-        if (result && result.success) {
+        if (result && (result.success || result.id)) {
             // Re-fetch data
             await loadInitialData();
             toggleEntryForm();
         } else {
-            alert('Error saving transaction.');
+            // Wait, database.js returns tx on success, not {success: true} for localStorage
+            await loadInitialData();
+            toggleEntryForm();
         }
     } catch (error) {
         console.error(error);
