@@ -219,71 +219,80 @@ function renderBankNagadi(data) {
     let tBudgetExp = 0, tMiscDr = 0, tMiscCr = 0;
 
     data.forEach(t => {
-        let amount = Number(t.amount);
-        let cashDr = '', cashCr = '', bankDr = '', bankCr = '';
-        let budgetExp = '', miscDr = '', miscCr = '';
+        let rows = [];
 
         if (t.type === 'direct_entry') {
             try {
-                const customAmounts = JSON.parse(t.category);
-                cashDr = customAmounts.cash_dr || '';
-                cashCr = customAmounts.cash_cr || '';
-                bankDr = customAmounts.bank_dr || '';
-                bankCr = customAmounts.bank_cr || '';
-                budgetExp = customAmounts.budget_exp || '';
-                miscDr = customAmounts.misc_dr || '';
-                miscCr = customAmounts.misc_cr || '';
-
-                if(cashDr) tCashDr += Number(cashDr);
-                if(cashCr) tCashCr += Number(cashCr);
-                if(bankDr) tBankDr += Number(bankDr);
-                if(bankCr) tBankCr += Number(bankCr);
-                if(budgetExp) tBudgetExp += Number(budgetExp);
-                if(miscDr) tMiscDr += Number(miscDr);
-                if(miscCr) tMiscCr += Number(miscCr);
-
+                const parsedCat = JSON.parse(t.category);
+                if (Array.isArray(parsedCat)) {
+                    rows = parsedCat; // new multi-row format
+                } else {
+                    rows = [parsedCat]; // legacy single row direct entry format
+                }
             } catch (e) { console.error("Error parsing direct_entry:", e); }
         } else {
             // Data Mapping Logic for legacy entries
+            let amount = Number(t.amount);
             let paymentMethod = t.payment_method || 'bank'; // fallback to bank
+            let legacyRow = {};
             
             if (t.type === 'income') {
                 if (paymentMethod === 'cash') {
-                    cashDr = amount; tCashDr += amount;
+                    legacyRow.cash_dr = amount;
                 } else {
-                    bankDr = amount; tBankDr += amount;
+                    legacyRow.bank_dr = amount;
                 }
-                miscDr = amount; tMiscDr += amount; // Income goes to Misc Debit
+                legacyRow.misc_dr = amount; // Income goes to Misc Debit
             } else { // Expense
                 if (paymentMethod === 'cash') {
-                    cashCr = amount; tCashCr += amount;
+                    legacyRow.cash_cr = amount;
                 } else {
-                    bankCr = amount; tBankCr += amount;
+                    legacyRow.bank_cr = amount;
                 }
                 
                 // Assume "misc_expense" goes to Misc, else Budget
                 if (t.category && t.category.toLowerCase().includes('misc')) {
-                    miscCr = amount; tMiscCr += amount;
+                    legacyRow.misc_cr = amount;
                 } else {
-                    budgetExp = amount; tBudgetExp += amount;
+                    legacyRow.budget_exp = amount;
                 }
             }
+            rows = [legacyRow];
         }
 
-        html += `
-            <tr>
-                <td>${t.date}</td>
-                <td>${t.voucher_no || '-'}</td>
-                <td>${t.description}</td>
-                <td style="text-align: right;">${cashDr ? cashDr : ''}</td>
-                <td style="text-align: right;">${cashCr ? cashCr : ''}</td>
-                <td style="text-align: right;">${bankDr ? bankDr : ''}</td>
-                <td style="text-align: right;">${bankCr ? bankCr : ''}</td>
-                <td style="text-align: right;">${budgetExp ? budgetExp : ''}</td>
-                <td style="text-align: right;">${miscDr ? miscDr : ''}</td>
-                <td style="text-align: right;">${miscCr ? miscCr : ''}</td>
-            </tr>
-        `;
+        // Render rows
+        rows.forEach((r, index) => {
+            let cashDr = r.cash_dr || '';
+            let cashCr = r.cash_cr || '';
+            let bankDr = r.bank_dr || '';
+            let bankCr = r.bank_cr || '';
+            let budgetExp = r.budget_exp || '';
+            let miscDr = r.misc_dr || '';
+            let miscCr = r.misc_cr || '';
+
+            if(cashDr) tCashDr += Number(cashDr);
+            if(cashCr) tCashCr += Number(cashCr);
+            if(bankDr) tBankDr += Number(bankDr);
+            if(bankCr) tBankCr += Number(bankCr);
+            if(budgetExp) tBudgetExp += Number(budgetExp);
+            if(miscDr) tMiscDr += Number(miscDr);
+            if(miscCr) tMiscCr += Number(miscCr);
+
+            html += `
+                <tr>
+                    <td>${index === 0 ? t.date : ''}</td>
+                    <td>${index === 0 ? (t.voucher_no || '-') : ''}</td>
+                    <td>${index === 0 ? t.description : ''}</td>
+                    <td style="text-align: right;">${cashDr ? cashDr : ''}</td>
+                    <td style="text-align: right;">${cashCr ? cashCr : ''}</td>
+                    <td style="text-align: right;">${bankDr ? bankDr : ''}</td>
+                    <td style="text-align: right;">${bankCr ? bankCr : ''}</td>
+                    <td style="text-align: right;">${budgetExp ? budgetExp : ''}</td>
+                    <td style="text-align: right;">${miscDr ? miscDr : ''}</td>
+                    <td style="text-align: right;">${miscCr ? miscCr : ''}</td>
+                </tr>
+            `;
+        });
     });
 
     // Total Row
@@ -519,29 +528,54 @@ function toggleEntryForm() {
     } else {
         formContainer.style.display = 'none';
         document.getElementById('inline-entry-form').reset();
+        const tbody = document.getElementById('inline-amounts-body');
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td><input type="number" min="0" step="any" class="form-control tx-cash-dr" style="width:100%;"></td>
+                    <td><input type="number" min="0" step="any" class="form-control tx-cash-cr" style="width:100%;"></td>
+                    <td><input type="number" min="0" step="any" class="form-control tx-bank-dr" style="width:100%;"></td>
+                    <td><input type="number" min="0" step="any" class="form-control tx-bank-cr" style="width:100%;"></td>
+                    <td><input type="number" min="0" step="any" class="form-control tx-budget-exp" style="width:100%;"></td>
+                    <td><input type="number" min="0" step="any" class="form-control tx-misc-dr" style="width:100%;"></td>
+                    <td><input type="number" min="0" step="any" class="form-control tx-misc-cr" style="width:100%;"></td>
+                    <td style="text-align: center;"></td>
+                </tr>`;
+        }
     }
 }
 
 async function handleInlineSubmit(e) {
     e.preventDefault();
     
-    // Bundle the 7 specific amounts into a JSON string
-    const amountsObj = {
-        cash_dr: document.getElementById('tx-cash-dr').value || 0,
-        cash_cr: document.getElementById('tx-cash-cr').value || 0,
-        bank_dr: document.getElementById('tx-bank-dr').value || 0,
-        bank_cr: document.getElementById('tx-bank-cr').value || 0,
-        budget_exp: document.getElementById('tx-budget-exp').value || 0,
-        misc_dr: document.getElementById('tx-misc-dr').value || 0,
-        misc_cr: document.getElementById('tx-misc-cr').value || 0
-    };
+    // Bundle rows into an array
+    const trs = document.querySelectorAll('#inline-amounts-body tr');
+    let totalDr = 0;
+    let totalCr = 0;
+    const amountsArr = [];
 
-    // Balance Check
-    const totalDr = Number(amountsObj.cash_dr) + Number(amountsObj.bank_dr) + Number(amountsObj.budget_exp) + Number(amountsObj.misc_dr);
-    const totalCr = Number(amountsObj.cash_cr) + Number(amountsObj.bank_cr) + Number(amountsObj.misc_cr);
+    trs.forEach(row => {
+        const rowData = {
+            cash_dr: row.querySelector('.tx-cash-dr').value || 0,
+            cash_cr: row.querySelector('.tx-cash-cr').value || 0,
+            bank_dr: row.querySelector('.tx-bank-dr').value || 0,
+            bank_cr: row.querySelector('.tx-bank-cr').value || 0,
+            budget_exp: row.querySelector('.tx-budget-exp').value || 0,
+            misc_dr: row.querySelector('.tx-misc-dr').value || 0,
+            misc_cr: row.querySelector('.tx-misc-cr').value || 0
+        };
 
-    if (totalDr !== totalCr) {
-        alert("त्रुटि: कुल डेबिट (रु. " + totalDr + ") र कुल क्रेडिट (रु. " + totalCr + ") बराबर हुनुपर्छ।\nError: Total Debit must equal Total Credit.");
+        totalDr += Number(rowData.cash_dr) + Number(rowData.bank_dr) + Number(rowData.budget_exp) + Number(rowData.misc_dr);
+        totalCr += Number(rowData.cash_cr) + Number(rowData.bank_cr) + Number(rowData.misc_cr);
+
+        // Only push row if it has at least one non-zero amount
+        if (Object.values(rowData).some(val => Number(val) > 0)) {
+            amountsArr.push(rowData);
+        }
+    });
+
+    if (totalDr !== totalCr || amountsArr.length === 0) {
+        alert("त्रुटि: कुल डेबिट (रु. " + totalDr + ") र कुल क्रेडिट (रु. " + totalCr + ") बराबर हुनुपर्छ र कम्तिमा एउटा रकम हुनुपर्छ।\nError: Total Debit must equal Total Credit and you must enter at least one amount.");
         return;
     }
 
@@ -555,7 +589,7 @@ async function handleInlineSubmit(e) {
             description: document.getElementById('tx-particulars').value,
             amount: 0, // Not used for direct_entry
             type: 'direct_entry',
-            category: JSON.stringify(amountsObj),
+            category: JSON.stringify(amountsArr),
             payment_method: 'bank',
             fiscal_year: document.getElementById('filter-fiscal-year').value === 'all' ? '2082/83' : document.getElementById('filter-fiscal-year').value
         };
@@ -567,7 +601,7 @@ async function handleInlineSubmit(e) {
     
     const formData = {
         type: 'direct_entry',
-        category: JSON.stringify(amountsObj), // Store JSON in category
+        category: JSON.stringify(amountsArr), // Store JSON array in category
         date: document.getElementById('tx-date').value,
         voucher_no: document.getElementById('tx-voucher').value,
         description: document.getElementById('tx-particulars').value,

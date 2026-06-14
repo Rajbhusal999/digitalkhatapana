@@ -127,11 +127,11 @@
                     </div>
                     <div class="filter-group">
                         <label>देखि मिति (From Date)</label>
-                        <input type="text" id="filter-from-date" class="form-control nepali-date" placeholder="YYYY-MM-DD">
+                        <input type="text" id="filter-from-date" class="form-control nepali-date" placeholder="YYYY/MM/DD" oninput="formatNepaliDate(this)">
                     </div>
                     <div class="filter-group">
                         <label>सम्म मिति (To Date)</label>
-                        <input type="text" id="filter-to-date" class="form-control nepali-date" placeholder="YYYY-MM-DD">
+                        <input type="text" id="filter-to-date" class="form-control nepali-date" placeholder="YYYY/MM/DD" oninput="formatNepaliDate(this)">
                     </div>
                     <button class="btn-primary" style="margin-top: 22px;" onclick="generateReport()">खोज्नुहोस् (Filter)</button>
                     <button id="btn-toggle-entry" class="btn-portal" style="margin-top: 22px; margin-left: auto; display: none;" onclick="toggleEntryForm()">
@@ -146,7 +146,7 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 15px; margin-bottom: 15px;">
                             <div class="form-group">
                                 <label>मिति (Date) *</label>
-                                <input type="text" id="tx-date" required class="form-control nepali-date" placeholder="YYYY-MM-DD">
+                                <input type="text" id="tx-date" required class="form-control nepali-date" placeholder="YYYY/MM/DD" oninput="formatNepaliDate(this)">
                             </div>
                             <div class="form-group">
                                 <label>भौचर नं (Voucher No) *</label>
@@ -158,38 +158,43 @@
                             </div>
                         </div>
 
-                        <!-- 7 Amount Columns -->
-                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 15px;">
-                            <div class="form-group" style="background: #f8fafc; padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0;">
-                                <label style="font-weight: bold; color: var(--primary);">नगद मौज्दात (Cash)</label>
-                                <div style="display: flex; gap: 10px; margin-top: 5px;">
-                                    <input type="number" id="tx-cash-dr" min="0" step="any" class="form-control" placeholder="डेबिट (Dr)">
-                                    <input type="number" id="tx-cash-cr" min="0" step="any" class="form-control" placeholder="क्रेडिट (Cr)">
-                                </div>
-                            </div>
-                            
-                            <div class="form-group" style="background: #f8fafc; padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0;">
-                                <label style="font-weight: bold; color: var(--primary);">बैंक मौज्दात (Bank)</label>
-                                <div style="display: flex; gap: 10px; margin-top: 5px;">
-                                    <input type="number" id="tx-bank-dr" min="0" step="any" class="form-control" placeholder="डेबिट (Dr)">
-                                    <input type="number" id="tx-bank-cr" min="0" step="any" class="form-control" placeholder="क्रेडिट (Cr)">
-                                </div>
-                            </div>
-
-                            <div class="form-group" style="background: #f8fafc; padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0;">
-                                <label style="font-weight: bold; color: var(--primary);">बजेट खर्च (Budget Exp)</label>
-                                <div style="display: flex; gap: 10px; margin-top: 5px;">
-                                    <input type="number" id="tx-budget-exp" min="0" step="any" class="form-control" placeholder="रकम (Amount)">
-                                </div>
-                            </div>
-
-                            <div class="form-group" style="background: #f8fafc; padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0;">
-                                <label style="font-weight: bold; color: var(--primary);">विविध (Misc)</label>
-                                <div style="display: flex; gap: 10px; margin-top: 5px;">
-                                    <input type="number" id="tx-misc-dr" min="0" step="any" class="form-control" placeholder="डेबिट (Dr)">
-                                    <input type="number" id="tx-misc-cr" min="0" step="any" class="form-control" placeholder="क्रेडिट (Cr)">
-                                </div>
-                            </div>
+                        <!-- Dynamic Amount Rows -->
+                        <div style="margin-bottom: 15px; overflow-x: auto;">
+                            <h4 style="margin-bottom: 10px; color: var(--primary);">रकम विवरण (Amount Details)</h4>
+                            <table class="data-table" id="inline-amounts-table" style="margin-bottom: 10px; min-width: 800px;">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2" style="text-align: center; background: #f8fafc;">नगद मौज्दात (Cash)</th>
+                                        <th colspan="2" style="text-align: center; background: #f8fafc;">बैंक मौज्दात (Bank)</th>
+                                        <th style="text-align: center; background: #f8fafc;">बजेट खर्च</th>
+                                        <th colspan="2" style="text-align: center; background: #f8fafc;">विविध (Misc)</th>
+                                        <th style="width: 50px; background: #f8fafc;"></th>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align: center;">डेबिट (Dr)</th>
+                                        <th style="text-align: center;">क्रेडिट (Cr)</th>
+                                        <th style="text-align: center;">डेबिट (Dr)</th>
+                                        <th style="text-align: center;">क्रेडिट (Cr)</th>
+                                        <th style="text-align: center;">रकम (Amount)</th>
+                                        <th style="text-align: center;">डेबिट (Dr)</th>
+                                        <th style="text-align: center;">क्रेडिट (Cr)</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inline-amounts-body">
+                                    <tr>
+                                        <td><input type="number" min="0" step="any" class="form-control tx-cash-dr" style="width:100%;"></td>
+                                        <td><input type="number" min="0" step="any" class="form-control tx-cash-cr" style="width:100%;"></td>
+                                        <td><input type="number" min="0" step="any" class="form-control tx-bank-dr" style="width:100%;"></td>
+                                        <td><input type="number" min="0" step="any" class="form-control tx-bank-cr" style="width:100%;"></td>
+                                        <td><input type="number" min="0" step="any" class="form-control tx-budget-exp" style="width:100%;"></td>
+                                        <td><input type="number" min="0" step="any" class="form-control tx-misc-dr" style="width:100%;"></td>
+                                        <td><input type="number" min="0" step="any" class="form-control tx-misc-cr" style="width:100%;"></td>
+                                        <td style="text-align: center;"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button type="button" class="btn-primary" onclick="addAmountRow()" style="padding: 5px 10px; font-size: 0.9rem;">+ थप्नुहोस् (Add Row)</button>
                         </div>
                         <div style="text-align: right;">
                             <button type="button" class="btn-secondary" onclick="toggleEntryForm()">रद्द गर्नुहोस् (Cancel)</button>
@@ -218,6 +223,31 @@
 
     <!-- Scripts -->
     <script src="js/config.js"></script>
+    <script>
+        function formatNepaliDate(input) {
+            let val = input.value.replace(/[^\d/]/g, '');
+            val = val.replace(/\//g, '');
+            if (val.length > 4) val = val.slice(0, 4) + '/' + val.slice(4);
+            if (val.length > 7) val = val.slice(0, 7) + '/' + val.slice(7);
+            input.value = val.slice(0, 10);
+        }
+
+        function addAmountRow() {
+            const tbody = document.getElementById('inline-amounts-body');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="number" min="0" step="any" class="form-control tx-cash-dr" style="width:100%;"></td>
+                <td><input type="number" min="0" step="any" class="form-control tx-cash-cr" style="width:100%;"></td>
+                <td><input type="number" min="0" step="any" class="form-control tx-bank-dr" style="width:100%;"></td>
+                <td><input type="number" min="0" step="any" class="form-control tx-bank-cr" style="width:100%;"></td>
+                <td><input type="number" min="0" step="any" class="form-control tx-budget-exp" style="width:100%;"></td>
+                <td><input type="number" min="0" step="any" class="form-control tx-misc-dr" style="width:100%;"></td>
+                <td><input type="number" min="0" step="any" class="form-control tx-misc-cr" style="width:100%;"></td>
+                <td style="text-align: center;"><button type="button" class="btn-danger" onclick="this.closest('tr').remove()" style="padding: 4px 8px; font-size: 0.8rem; cursor: pointer;">X</button></td>
+            `;
+            tbody.appendChild(tr);
+        }
+    </script>
     <script src="js/database.js"></script>
     <script src="js/reports.js"></script>
 </body>
