@@ -46,6 +46,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentReport = reportParam;
     }
 
+    // Set school header
+    updateSchoolHeader();
+
     // Set active button
     updateSidebarActiveState();
 
@@ -548,5 +551,43 @@ async function handleInlineSubmit(e) {
     } catch (error) {
         console.error(error);
         alert('Failed to save transaction.');
+    }
+}
+
+// Update School Header Dynamically
+function updateSchoolHeader() {
+    let schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+    if (!schoolInfoStr) {
+        const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+        if (schoolsListStr) {
+            try {
+                const schoolsList = JSON.parse(schoolsListStr);
+                const approvedSchool = schoolsList.find(s => s.status === 'Approved');
+                if (approvedSchool) {
+                    schoolInfoStr = JSON.stringify(approvedSchool);
+                    localStorage.setItem('nepal_school_registered_info', schoolInfoStr);
+                }
+            } catch (e) {
+                console.error('Error recovering school info:', e);
+            }
+        }
+    }
+    if (schoolInfoStr) {
+        try {
+            const schoolInfo = JSON.parse(schoolInfoStr);
+            const titleEl = document.getElementById('txt-school-name');
+            
+            if (titleEl && schoolInfo.schoolName) {
+                titleEl.innerText = schoolInfo.schoolName;
+            }
+
+            const logoContainer = document.getElementById('user-school-logo-container');
+            if (logoContainer && schoolInfo.logo) {
+                logoContainer.innerHTML = `<img src="${schoolInfo.logo}" alt="Logo" class="gov-logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--secondary); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">`;
+            }
+
+        } catch (e) {
+            console.error('Error loading school details:', e);
+        }
     }
 }
