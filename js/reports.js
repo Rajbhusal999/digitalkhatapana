@@ -123,8 +123,25 @@ function generateReport() {
     // Clear summary container
     document.getElementById('report-summary-container').innerHTML = '';
 
+    // Show/Hide New Entry Button for Bank Cash Book
+    const btnToggleEntry = document.getElementById('btn-toggle-entry');
+    if (btnToggleEntry) {
+        btnToggleEntry.style.display = currentReport === 'bank_nagadi' ? 'inline-block' : 'none';
+    }
+
+    // Hide inline form if we switch reports
+    const inlineFormContainer = document.getElementById('inline-entry-form-container');
+    if (inlineFormContainer && inlineFormContainer.style.display === 'block') {
+        inlineFormContainer.style.display = 'none';
+    }
+
     // Render Table based on type
-    let html = `<table class="data-table">
+    let html = '';
+    
+    if (currentReport === 'bank_nagadi') {
+        html = renderBankNagadi(filteredData);
+    } else {
+        html = `<table class="data-table">
                     <thead>
                         <tr>
                             ${config.headers.map(h => `<th>${h}</th>`).join('')}
@@ -132,41 +149,88 @@ function generateReport() {
                     </thead>
                     <tbody>`;
 
-    if (filteredData.length === 0) {
-        html += `<tr><td colspan="${config.headers.length}" style="text-align: center;">कुनै तथ्यांक भेटिएन। (No data found)</td></tr>`;
-    } else {
-        // Specific Report Renderers
-        switch (currentReport) {
-            case 'bank_nagadi': html += renderBankNagadi(filteredData); break;
-            case 'aamdani_khata': html += renderLedger(filteredData, 'income'); break;
-            case 'kharcha_khata': html += renderLedger(filteredData, 'expense'); break;
-            case 'nagad_bank': html += renderCashBank(filteredData); break;
-            case 'aaya_vyaya': html += renderIncomeExpenditure(filteredData); break;
-            case 'trial_balance': html += renderTrialBalance(filteredData); break;
+        if (filteredData.length === 0) {
+            html += `<tr><td colspan="${config.headers.length}" style="text-align: center;">कुनै तथ्यांक भेटिएन। (No data found)</td></tr>`;
+        } else {
+            // Specific Report Renderers
+            switch (currentReport) {
+                case 'aamdani_khata': html += renderLedger(filteredData, 'income'); break;
+                case 'kharcha_khata': html += renderLedger(filteredData, 'expense'); break;
+                case 'nagad_bank': html += renderCashBank(filteredData); break;
+                case 'aaya_vyaya': html += renderIncomeExpenditure(filteredData); break;
+                case 'trial_balance': html += renderTrialBalance(filteredData); break;
+            }
         }
+        html += `</tbody></table>`;
     }
 
     html += `</tbody></table>`;
     document.getElementById('report-table-wrapper').innerHTML = html;
 }
 
-// 1. Bank Cash Book logic
+// 1. Bank Cash Book logic (11 column format)
 function renderBankNagadi(data) {
-    let html = '';
-    let cashBalance = 0;
-    let bankBalance = 0;
+    let html = `
+    <table class="data-table bank-cash-book-table">
+        <thead>
+            <tr>
+                <th rowspan="2" style="vertical-align: middle;">मिति</th>
+                <th rowspan="2" style="vertical-align: middle;">भौचर नं</th>
+                <th rowspan="2" style="vertical-align: middle;">विवरण</th>
+                <th colspan="2" style="text-align: center; border-bottom: 1px solid var(--border);">नगद मौज्दात</th>
+                <th colspan="2" style="text-align: center; border-bottom: 1px solid var(--border);">बैंक मौज्दात</th>
+                <th style="text-align: center; border-bottom: 1px solid var(--border);">बजेट खर्च</th>
+                <th colspan="2" style="text-align: center; border-bottom: 1px solid var(--border);">विविध</th>
+            </tr>
+            <tr>
+                <th style="text-align: center;">डेबिट (Debit)</th>
+                <th style="text-align: center;">क्रेडिट (Credit)</th>
+                <th style="text-align: center;">डेबिट (Debit)</th>
+                <th style="text-align: center;">क्रेडिट (Credit)</th>
+                <th style="text-align: center;">रकम (Amount)</th>
+                <th style="text-align: center;">डेबिट (Debit)</th>
+                <th style="text-align: center;">क्रेडिट (Credit)</th>
+            </tr>
+        </thead>
+        <tbody>
+    `;
+
+    if (data.length === 0) {
+        html += `<tr><td colspan="10" style="text-align: center;">कुनै तथ्यांक भेटिएन। (No data found)</td></tr></tbody></table>`;
+        return html;
+    }
+
+    let tCashDr = 0, tCashCr = 0, tBankDr = 0, tBankCr = 0;
+    let tBudgetExp = 0, tMiscDr = 0, tMiscCr = 0;
 
     data.forEach(t => {
-        let cashIn = 0, cashOut = 0, bankIn = 0, bankOut = 0;
         let amount = Number(t.amount);
+        let cashDr = '', cashCr = '', bankDr = '', bankCr = '';
+        let budgetExp = '', miscDr = '', miscCr = '';
 
-        // Simple assumption: if no specific cash/bank flag, treat as bank for safety in demo
+        // Data Mapping Logic
+        let paymentMethod = t.payment_method || 'bank'; // fallback to bank
+        
         if (t.type === 'income') {
-            bankIn = amount; 
-            bankBalance += amount;
-        } else {
-            bankOut = amount;
-            bankBalance -= amount;
+            if (paymentMethod === 'cash') {
+                cashDr = amount; tCashDr += amount;
+            } else {
+                bankDr = amount; tBankDr += amount;
+            }
+            miscDr = amount; tMiscDr += amount; // Income goes to Misc Debit
+        } else { // Expense
+            if (paymentMethod === 'cash') {
+                cashCr = amount; tCashCr += amount;
+            } else {
+                bankCr = amount; tBankCr += amount;
+            }
+            
+            // Assume "misc_expense" goes to Misc, else Budget
+            if (t.category && t.category.toLowerCase().includes('misc')) {
+                miscCr = amount; tMiscCr += amount;
+            } else {
+                budgetExp = amount; tBudgetExp += amount;
+            }
         }
 
         html += `
@@ -174,15 +238,32 @@ function renderBankNagadi(data) {
                 <td>${t.date}</td>
                 <td>${t.voucher_no || '-'}</td>
                 <td>${t.description}</td>
-                <td style="text-align: right;">${cashIn ? formatCurrency(cashIn) : '-'}</td>
-                <td style="text-align: right;">${cashOut ? formatCurrency(cashOut) : '-'}</td>
-                <td style="text-align: right;">${bankIn ? formatCurrency(bankIn) : '-'}</td>
-                <td style="text-align: right;">${bankOut ? formatCurrency(bankOut) : '-'}</td>
-                <td style="text-align: right; font-weight: bold;">${formatCurrency(cashBalance)}</td>
-                <td style="text-align: right; font-weight: bold;">${formatCurrency(bankBalance)}</td>
+                <td style="text-align: right;">${cashDr ? cashDr : ''}</td>
+                <td style="text-align: right;">${cashCr ? cashCr : ''}</td>
+                <td style="text-align: right;">${bankDr ? bankDr : ''}</td>
+                <td style="text-align: right;">${bankCr ? bankCr : ''}</td>
+                <td style="text-align: right;">${budgetExp ? budgetExp : ''}</td>
+                <td style="text-align: right;">${miscDr ? miscDr : ''}</td>
+                <td style="text-align: right;">${miscCr ? miscCr : ''}</td>
             </tr>
         `;
     });
+
+    // Total Row
+    html += `
+        <tr style="background: #ffff00; font-weight: bold; font-family: var(--font-nepali);">
+            <td colspan="3" style="text-align: center; color: black;">जम्मा</td>
+            <td style="text-align: right; color: black;">${tCashDr ? formatCurrency(tCashDr) : ''}</td>
+            <td style="text-align: right; color: black;">${tCashCr ? formatCurrency(tCashCr) : ''}</td>
+            <td style="text-align: right; color: black;">${tBankDr ? formatCurrency(tBankDr) : ''}</td>
+            <td style="text-align: right; color: black;">${tBankCr ? formatCurrency(tBankCr) : ''}</td>
+            <td style="text-align: right; color: black;">${tBudgetExp ? formatCurrency(tBudgetExp) : ''}</td>
+            <td style="text-align: right; color: black;">${tMiscDr ? formatCurrency(tMiscDr) : ''}</td>
+            <td style="text-align: right; color: black;">${tMiscCr ? formatCurrency(tMiscCr) : ''}</td>
+        </tr>
+    `;
+
+    html += `</tbody></table>`;
     return html;
 }
 
@@ -391,4 +472,81 @@ function exportReportExcel() {
     }
     const wb = XLSX.utils.table_to_book(table, {sheet: "Report"});
     XLSX.writeFile(wb, `${currentReport}_${new Date().toISOString().split('T')[0]}.xlsx`);
+}
+
+// Inline Form Logic
+function toggleEntryForm() {
+    const formContainer = document.getElementById('inline-entry-form-container');
+    if (formContainer.style.display === 'none') {
+        formContainer.style.display = 'block';
+        populateInlineCategories();
+        document.getElementById('tx-date').valueAsDate = new Date();
+    } else {
+        formContainer.style.display = 'none';
+        document.getElementById('inline-entry-form').reset();
+    }
+}
+
+function populateInlineCategories() {
+    const type = document.getElementById('tx-type').value;
+    const catSelect = document.getElementById('tx-category');
+    catSelect.innerHTML = '';
+    
+    const categories = type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+    for (const [key, val] of Object.entries(categories)) {
+        const option = document.createElement('option');
+        option.value = val.ne;
+        option.textContent = `${val.ne} (${val.en})`;
+        catSelect.appendChild(option);
+    }
+}
+
+async function handleInlineSubmit(e) {
+    e.preventDefault();
+    
+    // Fallback if saveTransaction doesn't exist (if database.js is old version)
+    if (typeof saveTransaction !== 'function') {
+        alert("Saving is only available if database.js supports saveTransaction. Simulating save for now.");
+        // Simulate local append
+        const newTx = {
+            id: 'TX' + Date.now(),
+            date: document.getElementById('tx-date').value,
+            voucher_no: document.getElementById('tx-voucher').value,
+            description: document.getElementById('tx-particulars').value,
+            amount: document.getElementById('tx-amount').value,
+            type: document.getElementById('tx-type').value,
+            category: document.getElementById('tx-category').value,
+            payment_method: document.getElementById('tx-method').value,
+            fiscal_year: document.getElementById('filter-fiscal-year').value === 'all' ? '2082/83' : document.getElementById('filter-fiscal-year').value
+        };
+        allTransactions.push(newTx);
+        toggleEntryForm();
+        generateReport();
+        return;
+    }
+    
+    const formData = {
+        type: document.getElementById('tx-type').value,
+        category: document.getElementById('tx-category').value,
+        date: document.getElementById('tx-date').value,
+        voucher_no: document.getElementById('tx-voucher').value,
+        description: document.getElementById('tx-particulars').value,
+        amount: document.getElementById('tx-amount').value,
+        payment_method: document.getElementById('tx-method').value, // Custom field
+        fund_source: 'Internal' // Default for inline
+    };
+    
+    try {
+        const result = await saveTransaction(formData);
+        if (result && result.success) {
+            // Re-fetch data
+            await loadInitialData();
+            toggleEntryForm();
+        } else {
+            alert('Error saving transaction.');
+        }
+    } catch (error) {
+        console.error(error);
+        alert('Failed to save transaction.');
+    }
 }

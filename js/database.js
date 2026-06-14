@@ -247,7 +247,8 @@ async function syncFromSupabase() {
             amount: Number(item.amount),
             voucherNo: item.voucher_no,
             source: item.source,
-            recordedBy: item.recorded_by
+            recordedBy: item.recorded_by,
+            payment_method: item.payment_method || 'bank'
         }));
 
         // Fetch budgets
@@ -307,9 +308,10 @@ async function saveTransaction(tx) {
             category: tx.category,
             particulars: tx.particulars,
             amount: Number(tx.amount),
-            voucher_no: tx.voucherNo,
-            source: tx.source,
-            recorded_by: tx.recordedBy || 'Ram Bahadur Thapa (Accountant)'
+            voucher_no: tx.voucherNo || tx.voucher_no, // handle both cases
+            source: tx.source || tx.fund_source || 'Internal',
+            recorded_by: tx.recordedBy || 'Ram Bahadur Thapa (Accountant)',
+            payment_method: tx.payment_method || 'bank'
         };
 
         const { error } = await supabase

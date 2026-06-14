@@ -1040,6 +1040,23 @@ tr:hover td {
     .report-table-container { overflow: visible; }
     .report-table-container th { position: static; }
     @page { margin: 1cm; size: landscape; }
+    
+    .bank-cash-book-table {
+        font-size: 10px;
+        width: 100%;
+        page-break-inside: auto;
+    }
+    .bank-cash-book-table th, .bank-cash-book-table td {
+        padding: 4px;
+        border: 1px solid #000;
+    }
+    .bank-cash-book-table tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+    .bank-cash-book-table thead {
+        display: table-header-group;
+    }
 }
 
 .login-hint {

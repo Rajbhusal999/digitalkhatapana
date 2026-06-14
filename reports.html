@@ -130,6 +130,58 @@
                         <input type="date" id="filter-to-date" class="form-control" onchange="generateReport()">
                     </div>
                     <button class="btn-primary" style="margin-top: 22px;" onclick="generateReport()">खोज्नुहोस् (Filter)</button>
+                    <button id="btn-toggle-entry" class="btn-portal" style="margin-top: 22px; margin-left: auto; display: none;" onclick="toggleEntryForm()">
+                        + नयाँ प्रविष्टि (New Entry)
+                    </button>
+                </div>
+
+                <!-- Inline Data Entry Form (Hidden by default, shown for Bank Cash Book) -->
+                <div id="inline-entry-form-container" style="display: none; padding: 20px; border-bottom: 1px solid var(--border); background: #fdfdfd;">
+                    <h3 style="font-family: var(--font-nepali); color: var(--secondary); margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">नयाँ कारोबार प्रविष्टि (New Transaction Entry)</h3>
+                    <form id="inline-entry-form" onsubmit="handleInlineSubmit(event)">
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 15px;">
+                            <div class="form-group">
+                                <label>Transaction Type *</label>
+                                <select id="tx-type" required onchange="populateInlineCategories()" class="form-control">
+                                    <option value="income">Income (आम्दानी)</option>
+                                    <option value="expense">Expenditure (खर्च)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Category *</label>
+                                <select id="tx-category" required class="form-control"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Payment Method *</label>
+                                <select id="tx-method" required class="form-control">
+                                    <option value="bank">Bank (बैंक)</option>
+                                    <option value="cash">Cash (नगद)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Date *</label>
+                                <input type="date" id="tx-date" required class="form-control">
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div class="form-group">
+                                <label>Voucher No *</label>
+                                <input type="text" id="tx-voucher" required class="form-control" placeholder="e.g. V-01">
+                            </div>
+                            <div class="form-group">
+                                <label>Particulars (विवरण) *</label>
+                                <input type="text" id="tx-particulars" required class="form-control" placeholder="Description of transaction">
+                            </div>
+                            <div class="form-group">
+                                <label>Amount (रकम) *</label>
+                                <input type="number" id="tx-amount" min="1" step="any" required class="form-control" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <button type="button" class="btn-secondary" onclick="toggleEntryForm()">रद्द गर्नुहोस् (Cancel)</button>
+                            <button type="submit" class="btn-portal" style="margin-left: 10px;">सुरक्षित गर्नुहोस् (Save)</button>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Data Table Container -->
