@@ -494,3 +494,10 @@ function formatDate(dateStr, isDevanagari = false) {
     }
     return englishDate;
 }
+
+// Explicitly attach to window to prevent "is not defined" errors when caching goes wrong
+window.initDatabase = initDatabase;
+window.getTransactions = getTransactions;
+window.saveTransaction = saveTransaction;
+window.deleteTransaction = deleteTransaction;
+window.loadDynamicCategories = loadDynamicCategories;
