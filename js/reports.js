@@ -579,25 +579,7 @@ async function handleInlineSubmit(e) {
         return;
     }
 
-    // Fallback if saveTransaction doesn't exist
-    if (typeof saveTransaction !== 'function') {
-        alert("Saving is only available if database.js supports saveTransaction. Simulating save for now.");
-        const newTx = {
-            id: 'TX' + Date.now(),
-            date: document.getElementById('tx-date').value,
-            voucher_no: document.getElementById('tx-voucher').value,
-            description: document.getElementById('tx-particulars').value,
-            amount: 0, // Not used for direct_entry
-            type: 'direct_entry',
-            category: JSON.stringify(amountsArr),
-            payment_method: 'bank',
-            fiscal_year: document.getElementById('filter-fiscal-year').value === 'all' ? '2082/83' : document.getElementById('filter-fiscal-year').value
-        };
-        allTransactions.push(newTx);
-        toggleEntryForm();
-        generateReport();
-        return;
-    }
+
     
     const formData = {
         type: 'direct_entry',
