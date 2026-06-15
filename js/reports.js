@@ -605,7 +605,7 @@ async function handleInlineSubmit(e) {
         }
     } catch (error) {
         console.error(error);
-        alert('Failed to save transaction.');
+        alert('Failed to save transaction: ' + (error.message || error));
     }
 }
 
