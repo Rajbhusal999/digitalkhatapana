@@ -574,38 +574,35 @@ async function handleInlineSubmit(e) {
         }
     });
 
-    if (totalDr !== totalCr || amountsArr.length === 0) {
-        alert("त्रुटि: कुल डेबिट (रु. " + totalDr + ") र कुल क्रेडिट (रु. " + totalCr + ") बराबर हुनुपर्छ र कम्तिमा एउटा रकम हुनुपर्छ।\nError: Total Debit must equal Total Credit and you must enter at least one amount.");
+    if (amountsArr.length === 0) {
+        alert("कम्तिमा एउटा रकम भर्नुहोस्।\nPlease enter at least one amount.");
         return;
     }
 
+    const saveBtn = document.querySelector('#inline-entry-form button[type="submit"]');
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
 
-    
     const formData = {
         type: 'direct_entry',
-        category: JSON.stringify(amountsArr), // Store JSON array in category
+        category: JSON.stringify(amountsArr),
         date: document.getElementById('tx-date').value,
         voucher_no: document.getElementById('tx-voucher').value,
-        description: document.getElementById('tx-particulars').value,
-        amount: 0, // Direct entry uses custom amounts, amount is 0
-        payment_method: 'bank', 
-        fund_source: 'Internal' 
+        particulars: document.getElementById('tx-particulars').value,
+        amount: totalDr || totalCr || 0,
+        payment_method: 'bank',
+        fund_source: 'Internal'
     };
-    
+
     try {
-        const result = await window.saveTransaction(formData);
-        if (result && (result.success || result.id)) {
-            // Re-fetch data
-            await loadInitialData();
-            toggleEntryForm();
-        } else {
-            // Wait, database.js returns tx on success, not {success: true} for localStorage
-            await loadInitialData();
-            toggleEntryForm();
-        }
+        await window.saveTransaction(formData);
+        await loadInitialData();
+        toggleEntryForm();
+        alert('✅ Transaction saved successfully!');
     } catch (error) {
         console.error(error);
         alert('Failed to save transaction: ' + (error.message || error));
+    } finally {
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'सुरक्षित गर्नुहोस् (Save)'; }
     }
 }
 

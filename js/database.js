@@ -314,7 +314,7 @@ async function saveTransaction(tx) {
             payment_method: tx.payment_method || 'bank'
         };
 
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('transactions')
             .upsert(dbPayload);
 
@@ -342,7 +342,7 @@ async function saveTransaction(tx) {
 
 async function deleteTransaction(id) {
     if (useSupabase) {
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('transactions')
             .delete()
             .eq('id', id);
