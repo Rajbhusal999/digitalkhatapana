@@ -947,7 +947,7 @@ tr:hover td {
     box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 .reports-content-header {
@@ -986,6 +986,7 @@ tr:hover td {
 .report-table-container {
     padding: 20px;
     flex: 1;
+    min-height: 200px;
     overflow-y: auto;
 }
 
