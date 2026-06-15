@@ -124,7 +124,7 @@ function generateReport() {
     let filteredData = allTransactions;
 
     if (fy !== 'all') {
-        filteredData = filteredData.filter(t => t.fiscal_year === fy);
+        filteredData = filteredData.filter(t => !t.fiscal_year || t.fiscal_year === fy);
     }
     if (fromDate) {
         filteredData = filteredData.filter(t => new Date(t.date) >= new Date(fromDate));
@@ -591,6 +591,7 @@ async function handleInlineSubmit(e) {
         particulars: document.getElementById('tx-particulars').value,
         amount: totalDr || totalCr || 0,
         payment_method: 'bank',
+        fiscal_year: document.getElementById('filter-fiscal-year').value || '2082/83',
         fund_source: 'Internal'
     };
 

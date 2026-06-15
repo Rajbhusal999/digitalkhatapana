@@ -308,10 +308,11 @@ async function saveTransaction(tx) {
             category: tx.category,
             particulars: tx.particulars,
             amount: Number(tx.amount),
-            voucher_no: tx.voucherNo || tx.voucher_no, // handle both cases
+            voucher_no: tx.voucherNo || tx.voucher_no,
             source: tx.source || tx.fund_source || 'Internal',
             recorded_by: tx.recordedBy || 'Ram Bahadur Thapa (Accountant)',
-            payment_method: tx.payment_method || 'bank'
+            payment_method: tx.payment_method || 'bank',
+            fiscal_year: tx.fiscal_year || null
         };
 
         const { error } = await supabaseClient
