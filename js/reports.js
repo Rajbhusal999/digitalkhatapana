@@ -64,6 +64,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // Initialize Database (connects to Supabase & syncs data)
+    await window.initDatabase();
+
     // Load Data
     await loadInitialData();
 });
@@ -91,11 +94,9 @@ function loadReport(reportKey) {
 
 async function loadInitialData() {
     try {
-        // Fetch all transactions using the database.js function
-        const data = await getTransactions();
-        if (data) {
-            allTransactions = data;
-        }
+        document.getElementById('report-table-wrapper').innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted)"><div class="spinner"></div><p>Loading data from cloud...</p></div>`;
+        // getTransactions() returns cached data after initDatabase() has synced
+        allTransactions = window.getTransactions();
         generateReport();
     } catch (error) {
         console.error("Error loading transactions:", error);
