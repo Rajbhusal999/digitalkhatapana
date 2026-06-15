@@ -145,7 +145,7 @@ const DEFAULT_FEEDBACKS = [
 ];
 
 // Connection variables
-let supabase = null;
+let supabaseClient = null;
 let useSupabase = false;
 
 // Memory Cache
@@ -169,7 +169,7 @@ async function initDatabase() {
 
     if (hasConfig && window.supabase) {
         try {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             useSupabase = true;
             console.log("Supabase client initialized successfully.");
         } catch (err) {
@@ -235,7 +235,7 @@ function syncFromLocalStorage() {
 async function syncFromSupabase() {
     try {
         // Fetch transactions
-        const txRes = await supabase.from('transactions').select('*');
+        const txRes = await supabaseClient.from('transactions').select('*');
         if (txRes.error) throw txRes.error;
         // Map database naming (snake_case) to application (camelCase)
         cachedTransactions = txRes.data.map(item => ({
@@ -252,7 +252,7 @@ async function syncFromSupabase() {
         }));
 
         // Fetch budgets
-        const bgRes = await supabase.from('budgets').select('*');
+        const bgRes = await supabaseClient.from('budgets').select('*');
         if (bgRes.error) throw bgRes.error;
         cachedBudgets = {};
         bgRes.data.forEach(item => {
@@ -260,7 +260,7 @@ async function syncFromSupabase() {
         });
 
         // Fetch feedbacks
-        const fbRes = await supabase.from('feedbacks').select('*');
+        const fbRes = await supabaseClient.from('feedbacks').select('*');
         if (fbRes.error) throw fbRes.error;
         cachedFeedbacks = fbRes.data.map(item => ({
             id: item.id,
