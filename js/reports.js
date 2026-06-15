@@ -593,7 +593,7 @@ async function handleInlineSubmit(e) {
     };
     
     try {
-        const result = await saveTransaction(formData);
+        const result = await window.saveTransaction(formData);
         if (result && (result.success || result.id)) {
             // Re-fetch data
             await loadInitialData();
