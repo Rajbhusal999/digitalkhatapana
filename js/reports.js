@@ -283,7 +283,7 @@ function renderBankNagadi(data) {
                 <tr>
                     <td>${index === 0 ? t.date : ''}</td>
                     <td>${index === 0 ? (t.voucher_no || '-') : ''}</td>
-                    <td>${index === 0 ? t.description : ''}</td>
+                    <td>${index === 0 ? (t.particulars || t.description || '') : ''}</td>
                     <td style="text-align: right;">${cashDr ? cashDr : ''}</td>
                     <td style="text-align: right;">${cashCr ? cashCr : ''}</td>
                     <td style="text-align: right;">${bankDr ? bankDr : ''}</td>
