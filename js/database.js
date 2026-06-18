@@ -6,6 +6,7 @@
 let DB_KEY = 'nepal_school_finances';
 let BUDGET_KEY = 'nepal_school_budgets';
 let FEEDBACK_KEY = 'nepal_school_feedbacks';
+let HEADINGS_KEY = 'nepal_school_ledger_headings';
 let dbSuffix = '';
 
 function initKeys() {
@@ -38,6 +39,7 @@ function initKeys() {
     DB_KEY = 'nepal_school_finances' + dbSuffix;
     BUDGET_KEY = 'nepal_school_budgets' + dbSuffix;
     FEEDBACK_KEY = 'nepal_school_feedbacks' + dbSuffix;
+    HEADINGS_KEY = 'nepal_school_ledger_headings' + dbSuffix;
     loadDynamicCategories();
 }
 
@@ -144,6 +146,41 @@ const DEFAULT_FEEDBACKS = [
     { id: 'fb-2', name: 'Sushma Regmi', role: 'Local Citizen (स्थानीय नागरिक)', date: '2026-05-26', message: 'कम्प्युटर ल्याबमा इन्टरनेट कहिले जडान हुन्छ? विद्यार्थीहरूलाई डिजिटल साक्षरता धेरै आवश्यक छ। बजेट पर्याप्त छुट्टिएको देखिन्छ।', replied: true, replyText: 'सुझावका लागि धन्यवाद। कम्प्युटर खरिद भइसकेको छ र यसै महिनाभित्र वाइफाइ जडान गरेर सञ्चालनमा ल्याइनेछ।' }
 ];
 
+// Default ledger headings seed (matching picture format)
+const DEFAULT_INCOME_HEADINGS = [
+    { id: 'a1-001', type: 'income', parent_id: null, name_ne: 'सरकारी अनुदान', name_en: 'Govt Conditional Grant', sort_order: 1 },
+    { id: 'a1-001-a', type: 'income', parent_id: 'a1-001', name_ne: 'तलब भत्ता', name_en: 'Salary Allowance', sort_order: 1 },
+    { id: 'a1-001-b', type: 'income', parent_id: 'a1-001', name_ne: 'दिवा खाजा', name_en: 'Mid-Day Meal', sort_order: 2 },
+    { id: 'a1-001-c', type: 'income', parent_id: 'a1-001', name_ne: 'अन्य', name_en: 'Others', sort_order: 3 },
+    { id: 'a1-002', type: 'income', parent_id: null, name_ne: 'PCP', name_en: 'PCP', sort_order: 2 },
+    { id: 'a1-003', type: 'income', parent_id: null, name_ne: 'स्थानीय अनुदान', name_en: 'Local Govt Grant', sort_order: 3 },
+    { id: 'a1-003-a', type: 'income', parent_id: 'a1-003', name_ne: 'निर्माण', name_en: 'Construction', sort_order: 1 },
+    { id: 'a1-003-b', type: 'income', parent_id: 'a1-003', name_ne: 'शैक्षिक', name_en: 'Educational', sort_order: 2 },
+    { id: 'a1-003-c', type: 'income', parent_id: 'a1-003', name_ne: 'अन्य', name_en: 'Others', sort_order: 3 },
+    { id: 'a1-004', type: 'income', parent_id: null, name_ne: 'संस्थागत', name_en: 'Institutional', sort_order: 4 },
+    { id: 'a1-005', type: 'income', parent_id: null, name_ne: 'सापटी', name_en: 'Loan', sort_order: 5 },
+    { id: 'a1-006', type: 'income', parent_id: null, name_ne: 'विविध', name_en: 'Miscellaneous', sort_order: 6 }
+];
+
+const DEFAULT_EXPENSE_HEADINGS = [
+    { id: 'c1-001', type: 'expense', parent_id: null, name_ne: 'सरकारी अनुदान', name_en: 'Govt Grant', sort_order: 1 },
+    { id: 'c1-001-a', type: 'expense', parent_id: 'c1-001', name_ne: 'तलब भत्ता', name_en: 'Salary', sort_order: 1 },
+    { id: 'c1-001-b', type: 'expense', parent_id: 'c1-001', name_ne: 'दिवा खाजा', name_en: 'Mid-Day Meal', sort_order: 2 },
+    { id: 'c1-001-c', type: 'expense', parent_id: 'c1-001', name_ne: 'भवन निर्माण', name_en: 'Construction', sort_order: 3 },
+    { id: 'c1-002', type: 'expense', parent_id: null, name_ne: 'स्थानीय अनुदान', name_en: 'Local Grant', sort_order: 2 },
+    { id: 'c1-002-a', type: 'expense', parent_id: 'c1-002', name_ne: 'तलब भत्ता', name_en: 'Salary', sort_order: 1 },
+    { id: 'c1-002-b', type: 'expense', parent_id: 'c1-002', name_ne: 'निर्माण', name_en: 'Construction', sort_order: 2 },
+    { id: 'c1-002-c', type: 'expense', parent_id: 'c1-002', name_ne: 'शैक्षिक सामग्री', name_en: 'Educational Materials', sort_order: 3 },
+    { id: 'c1-003', type: 'expense', parent_id: null, name_ne: 'संस्थागत', name_en: 'Institutional', sort_order: 3 },
+    { id: 'c1-004', type: 'expense', parent_id: null, name_ne: 'PCD', name_en: 'PCD', sort_order: 4 },
+    { id: 'c1-005', type: 'expense', parent_id: null, name_ne: 'कर्मचारी सुविधा', name_en: 'Staff Benefits', sort_order: 5 },
+    { id: 'c1-006', type: 'expense', parent_id: null, name_ne: 'सामाजिक सुरक्षा', name_en: 'Social Security', sort_order: 6 },
+    { id: 'c1-007', type: 'expense', parent_id: null, name_ne: 'उपकरण सामग्री', name_en: 'Equipment & Materials', sort_order: 7 },
+    { id: 'c1-007-a', type: 'expense', parent_id: 'c1-007', name_ne: 'कम्प्युटर', name_en: 'Computer', sort_order: 1 },
+    { id: 'c1-007-b', type: 'expense', parent_id: 'c1-007', name_ne: 'फर्निचर', name_en: 'Furniture', sort_order: 2 },
+    { id: 'c1-008', type: 'expense', parent_id: null, name_ne: 'विविध', name_en: 'Miscellaneous', sort_order: 8 }
+];
+
 // Connection variables
 let supabaseClient = null;
 let useSupabase = false;
@@ -152,6 +189,7 @@ let useSupabase = false;
 let cachedTransactions = [];
 let cachedBudgets = {};
 let cachedFeedbacks = [];
+let cachedHeadings = [];
 
 /**
  * Initialize Database
@@ -189,6 +227,20 @@ async function initDatabase() {
 }
 
 /**
+ * School ID helper — returns a sanitized school email key for multi-tenancy
+ */
+function getSchoolId() {
+    const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+    if (schoolInfoStr) {
+        try {
+            const info = JSON.parse(schoolInfoStr);
+            if (info.schoolEmail) return info.schoolEmail.replace(/[^a-zA-Z0-9@.]/g, '');
+        } catch(e) {}
+    }
+    return 'default';
+}
+
+/**
  * LocalStorage Fallback Handlers
  */
 function syncFromLocalStorage() {
@@ -202,6 +254,12 @@ function syncFromLocalStorage() {
     if (!localStorage.getItem(FEEDBACK_KEY) || localStorage.getItem(FEEDBACK_KEY) === 'null' || localStorage.getItem(FEEDBACK_KEY) === 'undefined') {
         const initialFeedbacks = dbSuffix ? [] : DEFAULT_FEEDBACKS;
         localStorage.setItem(FEEDBACK_KEY, JSON.stringify(initialFeedbacks));
+    }
+    // Seed default headings if not present
+    const storedHeadings = localStorage.getItem(HEADINGS_KEY);
+    if (!storedHeadings || storedHeadings === 'null' || storedHeadings === 'undefined' || JSON.parse(storedHeadings || '[]').length === 0) {
+        const allDefaults = [...DEFAULT_INCOME_HEADINGS, ...DEFAULT_EXPENSE_HEADINGS];
+        localStorage.setItem(HEADINGS_KEY, JSON.stringify(allDefaults));
     }
 
     try {
@@ -227,6 +285,12 @@ function syncFromLocalStorage() {
         cachedFeedbacks = dbSuffix ? [] : DEFAULT_FEEDBACKS;
         localStorage.setItem(FEEDBACK_KEY, JSON.stringify(cachedFeedbacks));
     }
+
+    try {
+        cachedHeadings = JSON.parse(localStorage.getItem(HEADINGS_KEY)) || [...DEFAULT_INCOME_HEADINGS, ...DEFAULT_EXPENSE_HEADINGS];
+    } catch (e) {
+        cachedHeadings = [...DEFAULT_INCOME_HEADINGS, ...DEFAULT_EXPENSE_HEADINGS];
+    }
 }
 
 /**
@@ -246,9 +310,14 @@ async function syncFromSupabase() {
             particulars: item.particulars,
             amount: Number(item.amount),
             voucherNo: item.voucher_no,
+            voucher_no: item.voucher_no,
             source: item.source,
             recordedBy: item.recorded_by,
-            payment_method: item.payment_method || 'bank'
+            payment_method: item.payment_method || 'bank',
+            subheading_id: item.subheading_id || null,
+            subheading_amount: Number(item.subheading_amount || 0),
+            fiscal_year: item.fiscal_year || null,
+            description: item.description || item.particulars || ''
         }));
 
         // Fetch budgets
@@ -271,6 +340,20 @@ async function syncFromSupabase() {
             replyText: item.reply_text,
             date: item.date
         }));
+
+        // Fetch ledger headings
+        const hdRes = await supabaseClient.from('ledger_headings').select('*').order('sort_order');
+        if (!hdRes.error && hdRes.data && hdRes.data.length > 0) {
+            cachedHeadings = hdRes.data;
+        } else {
+            // Fallback to localStorage or defaults
+            try {
+                const stored = localStorage.getItem(HEADINGS_KEY);
+                cachedHeadings = (stored && stored !== 'null') ? JSON.parse(stored) : [...DEFAULT_INCOME_HEADINGS, ...DEFAULT_EXPENSE_HEADINGS];
+            } catch(e) {
+                cachedHeadings = [...DEFAULT_INCOME_HEADINGS, ...DEFAULT_EXPENSE_HEADINGS];
+            }
+        }
 
         console.log("Supabase data synchronized successfully.");
     } catch (err) {
@@ -295,6 +378,16 @@ function getFeedbacks() {
     return cachedFeedbacks || [];
 }
 
+function getLedgerHeadings(type) {
+    const all = cachedHeadings || [];
+    if (type) return all.filter(h => h.type === type);
+    return all;
+}
+
+function getLedgerHeadingById(id) {
+    return (cachedHeadings || []).find(h => h.id === id) || null;
+}
+
 /**
  * Mutation Writers (Async)
  */
@@ -306,13 +399,16 @@ async function saveTransaction(tx) {
             date: tx.date,
             type: tx.type,
             category: tx.category,
-            particulars: tx.particulars,
+            particulars: tx.particulars || tx.description || '',
+            description: tx.description || tx.particulars || '',
             amount: Number(tx.amount),
             voucher_no: tx.voucherNo || tx.voucher_no,
             source: tx.source || tx.fund_source || 'Internal',
-            recorded_by: tx.recordedBy || 'Ram Bahadur Thapa (Accountant)',
+            recorded_by: tx.recordedBy || 'Accountant',
             payment_method: tx.payment_method || 'bank',
-            fiscal_year: tx.fiscal_year || null
+            fiscal_year: tx.fiscal_year || null,
+            subheading_id: tx.subheading_id || null,
+            subheading_amount: Number(tx.subheading_amount || tx.amount || 0)
         };
 
         const { error } = await supabaseClient
@@ -329,10 +425,10 @@ async function saveTransaction(tx) {
         const transactions = getTransactions();
         if (tx.id) {
             const idx = transactions.findIndex(t => t.id === tx.id);
-            if (idx !== -1) transactions[idx] = tx;
+            if (idx !== -1) transactions[idx] = { ...transactions[idx], ...tx };
         } else {
             tx.id = 'tx-' + Date.now();
-            tx.recordedBy = 'Ram Bahadur Thapa (Accountant)';
+            if (!tx.recordedBy) tx.recordedBy = 'Accountant';
             transactions.push(tx);
         }
         localStorage.setItem(DB_KEY, JSON.stringify(transactions));
@@ -447,6 +543,55 @@ async function replyToFeedback(id, text) {
 }
 
 /**
+ * Ledger Heading CRUD (Async)
+ */
+async function saveLedgerHeading(heading) {
+    if (!heading.id) {
+        heading.id = 'hd-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+    }
+    heading.school_id = heading.school_id || getSchoolId();
+    heading.sort_order = heading.sort_order || 0;
+
+    if (useSupabase) {
+        const payload = {
+            id: heading.id,
+            school_id: heading.school_id,
+            type: heading.type,
+            parent_id: heading.parent_id || null,
+            name_ne: heading.name_ne,
+            name_en: heading.name_en || heading.name_ne,
+            sort_order: heading.sort_order
+        };
+        const { error } = await supabaseClient.from('ledger_headings').upsert(payload);
+        if (error) { console.error('Error saving heading:', error); throw error; }
+        await syncFromSupabase();
+    } else {
+        const existing = cachedHeadings.findIndex(h => h.id === heading.id);
+        if (existing !== -1) {
+            cachedHeadings[existing] = heading;
+        } else {
+            cachedHeadings.push(heading);
+        }
+        localStorage.setItem(HEADINGS_KEY, JSON.stringify(cachedHeadings));
+    }
+    return heading;
+}
+
+async function deleteLedgerHeading(id) {
+    if (useSupabase) {
+        // Delete children first
+        await supabaseClient.from('ledger_headings').delete().eq('parent_id', id);
+        const { error } = await supabaseClient.from('ledger_headings').delete().eq('id', id);
+        if (error) { console.error('Error deleting heading:', error); throw error; }
+        await syncFromSupabase();
+    } else {
+        // Remove heading and all its children
+        cachedHeadings = cachedHeadings.filter(h => h.id !== id && h.parent_id !== id);
+        localStorage.setItem(HEADINGS_KEY, JSON.stringify(cachedHeadings));
+    }
+}
+
+/**
  * Currency Formatting Helpers (unchanged)
  */
 const NEPALI_DIGITS = {
@@ -502,3 +647,11 @@ window.getTransactions = getTransactions;
 window.saveTransaction = saveTransaction;
 window.deleteTransaction = deleteTransaction;
 window.loadDynamicCategories = loadDynamicCategories;
+window.getLedgerHeadings = getLedgerHeadings;
+window.getLedgerHeadingById = getLedgerHeadingById;
+window.saveLedgerHeading = saveLedgerHeading;
+window.deleteLedgerHeading = deleteLedgerHeading;
+window.getSchoolId = getSchoolId;
+window.formatCurrency = formatCurrency;
+window.formatNepaliStyleNumber = formatNepaliStyleNumber;
+window.toNepaliDigits = toNepaliDigits;
