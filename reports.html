@@ -288,33 +288,31 @@
         </div>
     </header>
 
-    <main style="padding:20px;">
-        <div class="reports-layout">
-            <!-- Sidebar Navigation -->
-            <div class="reports-sidebar no-print">
-                <div class="reports-sidebar-title">प्रतिवेदन सूची</div>
-                <button class="report-nav-btn active" data-target="bank_nagadi" onclick="loadReport('bank_nagadi')">
-                    <span>🏦</span> बैंक नगदी किताब
-                </button>
-                <button class="report-nav-btn" data-target="aamdani_khata" onclick="loadReport('aamdani_khata')">
-                    <span>📥</span> आम्दानी खाता
-                </button>
-                <button class="report-nav-btn" data-target="kharcha_khata" onclick="loadReport('kharcha_khata')">
-                    <span>📤</span> खर्च खाता
-                </button>
-                <button class="report-nav-btn" data-target="nagad_bank" onclick="loadReport('nagad_bank')">
-                    <span>💵</span> नगद बैंक खाता
-                </button>
-                <button class="report-nav-btn" data-target="aaya_vyaya" onclick="loadReport('aaya_vyaya')">
-                    <span>⚖️</span> आय व्यय विवरण
-                </button>
-                <button class="report-nav-btn" data-target="trial_balance" onclick="loadReport('trial_balance')">
-                    <span>🧮</span> ट्रायल ब्यालेन्स
-                </button>
-            </div>
+    <main style="padding:16px 20px;">
+        <!-- Horizontal Tab Navigation -->
+        <div class="reports-tab-bar no-print">
+            <button class="report-tab-btn active" data-target="bank_nagadi" onclick="loadReport('bank_nagadi')">
+                🏦 बैंक नगदी किताब
+            </button>
+            <button class="report-tab-btn" data-target="aamdani_khata" onclick="loadReport('aamdani_khata')">
+                📥 आम्दानी खाता
+            </button>
+            <button class="report-tab-btn" data-target="kharcha_khata" onclick="loadReport('kharcha_khata')">
+                📤 खर्च खाता
+            </button>
+            <button class="report-tab-btn" data-target="nagad_bank" onclick="loadReport('nagad_bank')">
+                💵 नगद बैंक खाता
+            </button>
+            <button class="report-tab-btn" data-target="aaya_vyaya" onclick="loadReport('aaya_vyaya')">
+                ⚖️ आय व्यय विवरण
+            </button>
+            <button class="report-tab-btn" data-target="trial_balance" onclick="loadReport('trial_balance')">
+                🧮 ट्रायल ब्यालेन्स
+            </button>
+        </div>
 
-            <!-- Report Content Area -->
-            <div class="reports-content-pane">
+        <!-- Full-width Content Area -->
+        <div class="reports-content-pane" style="border-radius:0 0 var(--radius-md) var(--radius-md);">
                 <!-- Content Header -->
                 <div class="reports-content-header no-print">
                     <div>
@@ -463,8 +461,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+        </div><!-- end reports-content-pane -->
     </main>
 
     <!-- ══════════════════════════════════════════════

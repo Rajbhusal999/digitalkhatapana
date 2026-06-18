@@ -1369,15 +1369,53 @@ footer {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   REPORTS PAGE LAYOUT
+   REPORTS PAGE — HORIZONTAL TAB BAR
 ══════════════════════════════════════════════════════════════ */
-.reports-layout {
-    display: grid;
-    grid-template-columns: 210px 1fr;
-    gap: 20px;
-    align-items: start;
+.reports-tab-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    background: white;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    padding: 8px 12px 0;
+    box-shadow: var(--shadow-sm);
 }
-@media (max-width: 900px) { .reports-layout { grid-template-columns: 1fr; } }
+
+.report-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-family: var(--font-nepali);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+    position: relative;
+    margin-bottom: -1px;
+}
+
+.report-tab-btn:hover {
+    color: var(--secondary);
+    background: rgba(11, 43, 97, 0.04);
+    border-radius: 6px 6px 0 0;
+}
+
+.report-tab-btn.active {
+    color: var(--secondary);
+    font-weight: 700;
+    border-bottom: 3px solid var(--secondary);
+    background: rgba(11, 43, 97, 0.06);
+    border-radius: 6px 6px 0 0;
+}
+
 
 .reports-sidebar {
     background: white;

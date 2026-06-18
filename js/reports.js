@@ -111,7 +111,7 @@ function getSchoolDisplayName() {
 // SIDEBAR
 // ─────────────────────────────────────────────────────────────────
 function updateSidebarActiveState() {
-    document.querySelectorAll('.report-nav-btn').forEach(btn => {
+    document.querySelectorAll('.report-tab-btn, .report-nav-btn').forEach(btn => {
         btn.classList.remove('active');
         if (btn.dataset.target === currentReport) btn.classList.add('active');
     });
