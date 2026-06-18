@@ -370,17 +370,19 @@ function renderKhata(data, type) {
     const bgColors = ['#e8f0fe', '#e8f5e9', '#fce8b2', '#fde0dc', '#f3e5f5', '#e0f7fa', '#f1f8e9', '#fff8e1'];
     parentGroups.forEach((group, gi) => {
         const bg = bgColors[gi % bgColors.length];
+        // Determine a readable dark text color
+        const textColors = ['#1e3a8a','#14532d','#713f12','#7f1d1d','#4a1d96','#164e63','#365314','#78350f'];
+        const tc = textColors[gi % textColors.length];
         if (group.leaves.length === 1 && group.leaves[0].id === group.parent.id) {
-            // Single leaf = parent itself (no children)
-            hdrRow1 += `<th rowspan="2" style="vertical-align:middle;background:${bg};min-width:90px;">${group.parent.name_ne}</th>`;
+            hdrRow1 += `<th rowspan="2" style="vertical-align:middle;background:${bg};color:${tc};min-width:90px;font-size:0.78rem;">${group.parent.name_ne}</th>`;
         } else {
-            hdrRow1 += `<th colspan="${group.leaves.length}" style="text-align:center;background:${bg};">${group.parent.name_ne}</th>`;
+            hdrRow1 += `<th colspan="${group.leaves.length}" style="text-align:center;background:${bg};color:${tc};font-size:0.78rem;">${group.parent.name_ne}</th>`;
             group.leaves.forEach(leaf => {
-                hdrRow2 += `<th style="text-align:center;background:${bg};min-width:90px;font-size:0.72rem;">${leaf.name_ne}</th>`;
+                hdrRow2 += `<th style="text-align:center;background:${bg};color:${tc};min-width:90px;font-size:0.72rem;">${leaf.name_ne}</th>`;
             });
         }
     });
-    hdrRow1 += '<th rowspan="2" style="vertical-align:middle;min-width:100px;">जम्मा (रू.)</th>';
+    hdrRow1 += '<th rowspan="2" style="vertical-align:middle;min-width:100px;background:#1a3a6e;color:white;">जम्मा (रू.)</th>';
 
     // Data rows
     let sn = 1;

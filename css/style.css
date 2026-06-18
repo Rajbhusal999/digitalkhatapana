@@ -1560,7 +1560,7 @@ footer {
     padding: 7px 10px;
     white-space: nowrap;
     background: #0e3272;
-    color: white;
+    color: inherit;
     border: 1px solid rgba(255,255,255,0.15);
     text-align: center;
 }
