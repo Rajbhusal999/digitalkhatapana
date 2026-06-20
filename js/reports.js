@@ -534,48 +534,173 @@ function renderKhata(data, type) {
 // 4. CASH/BANK LEDGER
 // ─────────────────────────────────────────────────────────────────
 function renderCashBank(data) {
-    let html = `<table class="data-table"><thead><tr>
-        <th>मिति</th><th>विवरण</th>
-        <th>नगद प्राप्ति</th><th>नगद भुक्तानी</th>
-        <th>बैंक जम्मा</th><th>बैंक भुक्तानी</th><th>कुल मौज्दात</th>
-    </tr></thead><tbody>`;
-    let balance = 0;
-    let tCashIn = 0, tCashOut = 0, tBankIn = 0, tBankOut = 0;
+    let allRows = [];
     data.forEach(t => {
-        let amt = Number(t.amount);
-        let pm = t.payment_method || 'bank';
-        let cIn = 0, cOut = 0, bIn = 0, bOut = 0;
-
-        if (t.type === 'income') { 
-            balance += amt; 
-            if (pm === 'cash') { cIn = amt; tCashIn += amt; }
-            else { bIn = amt; tBankIn += amt; }
-        } else { 
-            balance -= amt; 
-            if (pm === 'cash') { cOut = amt; tCashOut += amt; }
-            else { bOut = amt; tBankOut += amt; }
+        let rows = [];
+        if (t.type === 'direct_entry') {
+            try {
+                const parsedCat = JSON.parse(t.category);
+                rows = Array.isArray(parsedCat) ? parsedCat : [parsedCat];
+            } catch(e) {}
+        } else {
+            let amount = Number(t.amount);
+            let pm = t.payment_method || 'bank';
+            let r = {};
+            if (t.type === 'income') {
+                if (pm === 'cash') r.cash_dr = amount; else r.bank_dr = amount;
+                r.misc_dr = amount;
+            } else {
+                if (pm === 'cash') r.cash_cr = amount; else r.bank_cr = amount;
+                if (t.category && t.category.toLowerCase().includes('misc')) r.misc_cr = amount;
+                else r.budget_exp = amount;
+            }
+            rows = [r];
         }
-        
-        html += `<tr>
-            <td>${t.date}</td><td>${t.particulars||t.description||''}</td>
-            <td class="num-cell">${cIn?formatCurrency(cIn):'–'}</td>
-            <td class="num-cell">${cOut?formatCurrency(cOut):'–'}</td>
-            <td class="num-cell">${bIn?formatCurrency(bIn):'–'}</td>
-            <td class="num-cell">${bOut?formatCurrency(bOut):'–'}</td>
-            <td class="num-cell" style="font-weight:bold;">${formatCurrency(balance)}</td>
-        </tr>`;
-    });
-    
-    html += `<tr class="khata-total-row">
-        <td colspan="2" style="text-align:center;font-weight:bold;">जम्मा (Total)</td>
-        <td class="num-cell">${tCashIn ? formatCurrency(tCashIn) : '–'}</td>
-        <td class="num-cell">${tCashOut ? formatCurrency(tCashOut) : '–'}</td>
-        <td class="num-cell">${tBankIn ? formatCurrency(tBankIn) : '–'}</td>
-        <td class="num-cell">${tBankOut ? formatCurrency(tBankOut) : '–'}</td>
-        <td class="num-cell" style="font-weight:bold;">${formatCurrency(balance)}</td>
-    </tr>`;
 
-    html += `</tbody></table>`;
+        rows.forEach((r, idx) => {
+            allRows.push({
+                cashDr: Number(r.cash_dr) || 0,
+                cashCr: Number(r.cash_cr) || 0,
+                bankDr: Number(r.bank_dr) || 0,
+                bankCr: Number(r.bank_cr) || 0,
+                budgetExp: Number(r.budget_exp) || 0,
+                miscDr: Number(r.misc_dr) || 0,
+                miscCr: Number(r.misc_cr) || 0
+            });
+        });
+    });
+
+    const schoolName = getSchoolDisplayName();
+    const schoolAddress = getSchoolAddress();
+    const fyEl = document.getElementById('filter-fiscal-year');
+    const fiscalYear = fyEl ? fyEl.value : '२०८२/८३';
+    const title = 'नगद बैङ्क खाता';
+
+    let headerHtml = `
+        <div class="khata-print-header" style="text-align:center;margin-bottom:8px;">
+            <div style="font-size:1.15rem;font-weight:800;font-family:var(--font-nepali);">${schoolName}</div>
+            <div style="font-size:0.95rem;font-weight:600;font-family:var(--font-nepali);color:var(--secondary);">${schoolAddress}</div>
+            <div style="font-size:1.3rem;font-weight:700;font-family:var(--font-nepali);margin-top:4px;">${title} (${fiscalYear})</div>
+        </div>
+        <div style="overflow-x:auto;">
+        <table class="data-table bank-cash-book-table" style="margin-bottom:0; font-family:var(--font-nepali);">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="vertical-align:middle;text-align:center;background:#fff;color:#000;">पाना नं.</th>
+                    <th colspan="2" style="text-align:center;background:#fff;color:#000;">नगद</th>
+                    <th colspan="2" style="text-align:center;background:#fff;color:#000;">बैङ्क</th>
+                    <th rowspan="2" style="vertical-align:middle;text-align:center;background:#fff;color:#000;">खर्च</th>
+                    <th colspan="2" style="text-align:center;background:#fff;color:#000;">पेश्की</th>
+                    <th colspan="2" style="text-align:center;background:#fff;color:#000;">विविध</th>
+                </tr>
+                <tr>
+                    <th style="text-align:center;background:#fff;color:#000;">डेबिट</th>
+                    <th style="text-align:center;background:#fff;color:#000;">क्रेडिट</th>
+                    <th style="text-align:center;background:#fff;color:#000;">डेबिट</th>
+                    <th style="text-align:center;background:#fff;color:#000;">क्रेडिट</th>
+                    <th style="text-align:center;background:#fff;color:#000;">पाएको</th>
+                    <th style="text-align:center;background:#fff;color:#000;">फर्छ्यौट</th>
+                    <th style="text-align:center;background:#fff;color:#000;">डेबिट</th>
+                    <th style="text-align:center;background:#fff;color:#000;">क्रेडिट</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    if (allRows.length === 0) {
+        return `<div style="overflow-x:auto;">${headerHtml}<tr><td colspan="10" style="text-align:center;padding:20px;">कुनै तथ्यांक भेटिएन।</td></tr></tbody></table></div></div>`;
+    }
+
+    let html = headerHtml;
+    const ROWS_PER_PAGE = 10;
+    
+    let tCashDr=0, tCashCr=0, tBankDr=0, tBankCr=0, tBudgetExp=0, tMiscDr=0, tMiscCr=0;
+    let pageNumber = 1;
+
+    for (let i = 0; i < allRows.length; i += ROWS_PER_PAGE) {
+        let pageRows = allRows.slice(i, i + ROWS_PER_PAGE);
+        let pCashDr=0, pCashCr=0, pBankDr=0, pBankCr=0, pBudgetExp=0, pMiscDr=0, pMiscCr=0;
+        
+        pageRows.forEach(r => {
+            pCashDr += r.cashDr; pCashCr += r.cashCr;
+            pBankDr += r.bankDr; pBankCr += r.bankCr;
+            pBudgetExp += r.budgetExp; pMiscDr += r.miscDr; pMiscCr += r.miscCr;
+            
+            tCashDr += r.cashDr; tCashCr += r.cashCr;
+            tBankDr += r.bankDr; tBankCr += r.bankCr;
+            tBudgetExp += r.budgetExp; tMiscDr += r.miscDr; tMiscCr += r.miscCr;
+        });
+
+        html += `
+            <tr>
+                <td style="text-align:center;">${pageNumber++}.</td>
+                <td class="num-cell">${pCashDr ? formatCurrency(pCashDr) : '०.००'}</td>
+                <td class="num-cell">${pCashCr ? formatCurrency(pCashCr) : '०.००'}</td>
+                <td class="num-cell">${pBankDr ? formatCurrency(pBankDr) : '०.००'}</td>
+                <td class="num-cell">${pBankCr ? formatCurrency(pBankCr) : '०.००'}</td>
+                <td class="num-cell">${pBudgetExp ? formatCurrency(pBudgetExp) : '०.००'}</td>
+                <td class="num-cell"></td>
+                <td class="num-cell"></td>
+                <td class="num-cell">${pMiscDr ? formatCurrency(pMiscDr) : '०.००'}</td>
+                <td class="num-cell">${pMiscCr ? formatCurrency(pMiscCr) : '०.००'}</td>
+            </tr>
+        `;
+    }
+
+    let remaining = 11 - (pageNumber - 1);
+    for(let i=0; i < remaining; i++) {
+        html += `
+            <tr>
+                <td style="text-align:center;">${pageNumber++}.</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+        `;
+    }
+
+    html += `
+        <tr style="font-weight:bold;">
+            <td style="text-align:center;">जम्मा</td>
+            <td class="num-cell">${formatCurrency(tCashDr)}</td>
+            <td class="num-cell">${formatCurrency(tCashCr)}</td>
+            <td class="num-cell">${formatCurrency(tBankDr)}</td>
+            <td class="num-cell">${formatCurrency(tBankCr)}</td>
+            <td class="num-cell">${formatCurrency(tBudgetExp)}</td>
+            <td class="num-cell">०.००</td>
+            <td class="num-cell">०.००</td>
+            <td class="num-cell">${formatCurrency(tMiscDr)}</td>
+            <td class="num-cell">${formatCurrency(tMiscCr)}</td>
+        </tr>
+    `;
+
+    let bankBalVal = Math.abs(tBankDr - tBankCr);
+    let totalDebit = tCashDr + tBankDr + tBudgetExp + tMiscDr; 
+    let totalCredit = tCashCr + tBankCr + tMiscCr; 
+
+    html += `
+        <tr>
+            <td colspan="3"></td>
+            <td style="text-align:center;font-family:Arial,sans-serif;font-weight:600;">Bank b/d</td>
+            <td class="num-cell" style="font-weight:600;">${formatCurrency(bankBalVal)}</td>
+            <td colspan="5"></td>
+        </tr>
+    `;
+
+    html += `<tr><td colspan="10" style="border:none;">&nbsp;</td></tr>`;
+
+    html += `
+        <tr>
+            <td colspan="2" style="font-family:Arial,sans-serif;border:1px solid #333;background:#e2e8f0;padding:4px;">Debit Amount</td>
+            <td class="num-cell" style="border:1px solid #333;font-weight:bold;background:#e2e8f0;padding:4px;">${formatCurrency(totalDebit)}</td>
+            <td colspan="7" style="border:none;"></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="font-family:Arial,sans-serif;border:1px solid #333;background:#e2e8f0;padding:4px;">Credit Amount</td>
+            <td class="num-cell" style="border:1px solid #333;font-weight:bold;background:#e2e8f0;padding:4px;">${formatCurrency(totalCredit)}</td>
+            <td colspan="7" style="border:none;"></td>
+        </tr>
+    `;
+
+    html += `</tbody></table></div>`;
     return html;
 }
 
