@@ -183,7 +183,11 @@ function generateReport() {
     if (toDate) {
         filteredData = filteredData.filter(t => t.date <= toDate);
     }
-    filteredData.sort((a, b) => new Date(a.date) - new Date(b.date));
+    filteredData.sort((a, b) => {
+        let vA = String(a.voucher_no || a.voucherNo || '').trim();
+        let vB = String(b.voucher_no || b.voucherNo || '').trim();
+        return vA.localeCompare(vB, undefined, { numeric: true, sensitivity: 'base' });
+    });
 
     document.getElementById('report-summary-container').innerHTML = '';
 
