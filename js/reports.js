@@ -864,34 +864,91 @@ function renderIncomeExpenditure(data) {
 // 6. TRIAL BALANCE
 // ─────────────────────────────────────────────────────────────────
 function renderTrialBalance(data) {
-    let cats = {}, totalDr = 0, totalCr = 0;
+    let tCashDr = 0, tCashCr = 0, tBankDr = 0, tBankCr = 0, tBudgetExp = 0, tMiscDr = 0, tMiscCr = 0;
+    
     data.forEach(t => {
-        if (!cats[t.category]) cats[t.category] = { dr: 0, cr: 0 };
-        const amt = Number(t.amount);
-        if (t.type==='income') { cats[t.category].cr += amt; totalCr += amt; }
-        else { cats[t.category].dr += amt; totalDr += amt; }
+        let amount = Number(t.amount);
+        let pm = t.payment_method || 'bank';
+        
+        if (t.type === 'income') {
+            if (pm === 'cash') tCashDr += amount; else tBankDr += amount;
+            tMiscDr += amount;
+        } else if (t.type === 'expense') {
+            if (pm === 'cash') tCashCr += amount; else tBankCr += amount;
+            if (t.category && t.category.toLowerCase().includes('misc')) tMiscCr += amount;
+            else tBudgetExp += amount;
+        }
     });
-    let html = `<table class="data-table"><thead><tr>
-        <th>सि.नं.</th><th>खाताको नाम</th><th>डेबिट (Dr)</th><th>क्रेडिट (Cr)</th>
-    </tr></thead><tbody>`;
-    let sn = 1;
-    for (const [cat, v] of Object.entries(cats)) {
-        html += `<tr>
-            <td>${sn++}</td><td>${cat}</td>
-            <td class="num-cell">${v.dr>0?formatCurrency(v.dr):'–'}</td>
-            <td class="num-cell">${v.cr>0?formatCurrency(v.cr):'–'}</td>
-        </tr>`;
-    }
-    const netBank = totalCr - totalDr;
-    if (netBank > 0) {
-        html += `<tr><td>${sn++}</td><td>बैंक तथा नगद मौज्दात</td><td class="num-cell">${formatCurrency(netBank)}</td><td>–</td></tr>`;
-        totalDr += netBank;
-    }
-    html += `<tr class="khata-total-row">
-        <td colspan="2" style="text-align:center;">कुल जम्मा</td>
-        <td class="num-cell">${formatCurrency(totalDr)}</td>
-        <td class="num-cell">${formatCurrency(totalCr)}</td>
-    </tr></tbody></table>`;
+
+    const fyEl = document.getElementById('filter-fiscal-year');
+    const fiscalYear = fyEl ? fyEl.value : '२०८२/०८३';
+
+    let totalDr = tCashDr + tBankDr + tBudgetExp + tMiscDr;
+    let totalCr = tCashCr + tBankCr + tMiscCr;
+
+    let html = `
+        <div style="overflow-x:auto; margin-top:20px;">
+        <table class="data-table trial-balance-table" style="margin-bottom:0; font-family:var(--font-nepali); border-collapse: collapse; width:100%; border:1px solid #000;">
+            <thead>
+                <tr>
+                    <th colspan="5" style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:10px;font-size:1.3rem;">सन्तुलन परीक्षण ( आ.व. ${fiscalYear} )</th>
+                </tr>
+                <tr>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:6px;width:10%;">क्र.सं.</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:6px;width:30%;">विवरण</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:6px;width:20%;">डेबिट</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:6px;width:20%;">क्रेडिट</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:6px;width:20%;">कैफियत</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align:center;border:1px solid #000;padding:4px 8px;">१</td>
+                    <td style="text-align:right;border:1px solid #000;padding:4px 8px;">नगद</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${tCashDr ? formatCurrency(tCashDr) : ''}</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${tCashCr ? formatCurrency(tCashCr) : ''}</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">०</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center;border:1px solid #000;padding:4px 8px;">२</td>
+                    <td style="text-align:right;border:1px solid #000;padding:4px 8px;">बैंक</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${tBankDr ? formatCurrency(tBankDr) : ''}</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${tBankCr ? formatCurrency(tBankCr) : ''}</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">०</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center;border:1px solid #000;padding:4px 8px;">३</td>
+                    <td style="text-align:right;border:1px solid #000;padding:4px 8px;">खर्च</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${tBudgetExp ? formatCurrency(tBudgetExp) : ''}</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;"></td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">०</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center;border:1px solid #000;padding:4px 8px;">४</td>
+                    <td style="text-align:right;border:1px solid #000;padding:4px 8px;">पेश्की</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;"></td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;"></td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">०</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center;border:1px solid #000;padding:4px 8px;">५</td>
+                    <td style="text-align:right;border:1px solid #000;padding:4px 8px;">विविध</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${tMiscDr ? formatCurrency(tMiscDr) : ''}</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${tMiscCr ? formatCurrency(tMiscCr) : ''}</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">०</td>
+                </tr>
+                <tr style="font-weight:bold;">
+                    <td colspan="2" style="text-align:center;border:1px solid #000;padding:6px;">जम्मा</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:6px;">${totalDr ? formatCurrency(totalDr) : '०'}</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:6px;">${totalCr ? formatCurrency(totalCr) : '०'}</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:6px;">०</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    `;
+
+    renderSummaryCards([]);
     return html;
 }
 
