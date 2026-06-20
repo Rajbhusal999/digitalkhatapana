@@ -297,6 +297,125 @@
             box-shadow: 0 6px 12px rgba(239, 68, 68, 0.4);
         }
 
+        .btn-action-delete {
+            background: linear-gradient(135deg, #7c1d1d 0%, #450a0a 100%);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(127, 29, 29, 0.4);
+        }
+
+        .btn-action-delete:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+            color: white;
+            box-shadow: 0 6px 14px rgba(239, 68, 68, 0.5);
+        }
+
+        /* Delete Confirmation Modal */
+        .delete-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        .delete-modal-overlay.active { display: flex; }
+        .delete-modal-box {
+            background: #0f172a;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            border-radius: 16px;
+            padding: 40px 35px;
+            max-width: 440px;
+            width: 90%;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.2);
+        }
+        .delete-modal-box .del-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        .delete-modal-box h3 {
+            color: #f87171;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .delete-modal-box p {
+            color: #94a3b8;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .delete-modal-box .school-name-highlight {
+            color: #fca5a5;
+            font-weight: 700;
+            font-size: 0.95rem;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 6px 14px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 18px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .delete-confirm-input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1.5px solid rgba(239, 68, 68, 0.4);
+            color: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            text-align: center;
+            margin-bottom: 22px;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+        .delete-confirm-input:focus { border-color: #ef4444; }
+        .delete-modal-actions { display: flex; gap: 12px; justify-content: center; }
+        .delete-modal-actions .btn-cancel-del {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #94a3b8;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .delete-modal-actions .btn-cancel-del:hover { background: rgba(255,255,255,0.1); color: white; }
+        .delete-modal-actions .btn-confirm-del {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            border: none;
+            color: white;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+        }
+        .delete-modal-actions .btn-confirm-del:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .delete-modal-actions .btn-confirm-del:not(:disabled):hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(239, 68, 68, 0.5);
+        }
+
         .super-search-row {
             display: flex;
             gap: 20px;
@@ -527,7 +646,7 @@
                                 <th>Payment</th>
                                 <th>Transaction Code</th>
                                 <th style="text-align: center;">Status</th>
-                                <th style="text-align: center; width: 220px;">Actions</th>
+                                <th style="text-align: center; width: 260px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="super-schools-tbody">
@@ -556,6 +675,22 @@
 
         </div>
 
+    </div>
+
+    <!-- Delete School Confirmation Modal -->
+    <div class="delete-modal-overlay" id="delete-school-modal">
+        <div class="delete-modal-box">
+            <div class="del-icon">🗑️</div>
+            <h3>विद्यालय स्थायी रूपमा मेटाउनुहोस्</h3>
+            <p>This action is <strong style="color:#f87171;">PERMANENT and IRREVERSIBLE</strong>.<br>All transactions, budgets, feedbacks and registration data for this school will be wiped from both local storage and the database.</p>
+            <div class="school-name-highlight" id="del-school-name-label">School Name</div>
+            <p style="font-size:0.82rem; margin-bottom: 10px;">Type <strong style="color:#fca5a5;">DELETE</strong> below to confirm:</p>
+            <input type="text" class="delete-confirm-input" id="del-confirm-input" placeholder="Type DELETE here..." oninput="checkDeleteConfirm()">
+            <div class="delete-modal-actions">
+                <button class="btn-cancel-del" onclick="closeDeleteModal()">Cancel (रद्द गर्नुहोस्)</button>
+                <button class="btn-confirm-del" id="del-confirm-btn" disabled onclick="confirmDeleteSchool()">🗑️ Delete Forever</button>
+            </div>
+        </div>
     </div>
 
     <!-- Toast Container -->
@@ -747,33 +882,44 @@
 
                 // Actions buttons
                 let actionHTML = '';
+                const escEmail = school.schoolEmail.replace(/'/g, "\\'");
+                const escName = (school.schoolName || '').replace(/'/g, "\\'");
                 if (school.status === 'Pending') {
                     actionHTML = `
-                        <div class="btn-action-group" style="justify-content: center; gap: 8px;">
-                            <button class="btn-action-approve" onclick="handleApproveSchool('${school.schoolEmail}')">
+                        <div class="btn-action-group" style="justify-content: center; gap: 6px; flex-wrap: wrap;">
+                            <button class="btn-action-approve" onclick="handleApproveSchool('${escEmail}')">
                                 Approve
                             </button>
-                            <button class="btn-action-reject" onclick="handleRejectSchool('${school.schoolEmail}')">
+                            <button class="btn-action-reject" onclick="handleRejectSchool('${escEmail}')">
                                 Reject
+                            </button>
+                            <button class="btn-action-delete" onclick="openDeleteModal('${escEmail}','${escName}')" title="Permanently delete school">
+                                🗑️ Delete
                             </button>
                         </div>
                     `;
                 } else if (school.status === 'Rejected') {
                     actionHTML = `
-                        <div class="btn-action-group" style="justify-content: center;">
-                            <button class="btn-action-approve" onclick="handleApproveSchool('${school.schoolEmail}')">
+                        <div class="btn-action-group" style="justify-content: center; gap: 6px; flex-wrap: wrap;">
+                            <button class="btn-action-approve" onclick="handleApproveSchool('${escEmail}')">
                                 Approve
+                            </button>
+                            <button class="btn-action-delete" onclick="openDeleteModal('${escEmail}','${escName}')" title="Permanently delete school">
+                                🗑️ Delete
                             </button>
                         </div>
                     `;
                 } else {
                     actionHTML = `
-                        <div class="btn-action-group" style="justify-content: center; gap: 8px;">
+                        <div class="btn-action-group" style="justify-content: center; gap: 6px; flex-wrap: wrap;">
                             <span style="font-size:0.8rem; color:#10b981; font-weight:bold; display:flex; align-items:center; gap:3px;">
                                 ✓ Approved
                             </span>
-                            <button class="btn-action-reject" style="padding: 4px 8px; font-size: 0.7rem; opacity: 0.7;" onclick="handleRejectSchool('${school.schoolEmail}')">
+                            <button class="btn-action-reject" style="padding: 4px 8px; font-size: 0.7rem; opacity: 0.7;" onclick="handleRejectSchool('${escEmail}')">
                                 Suspend
+                            </button>
+                            <button class="btn-action-delete" onclick="openDeleteModal('${escEmail}','${escName}')" title="Permanently delete school">
+                                🗑️ Delete
                             </button>
                         </div>
                     `;
@@ -908,6 +1054,103 @@
                     initSuperDashboard();
                 }
             }
+        }
+
+        /* ─────────────────────────────────────────────────
+           DELETE SCHOOL — Full Data Wipe
+        ───────────────────────────────────────────────── */
+        let _pendingDeleteEmail = null;
+        let _pendingDeleteName  = null;
+
+        function openDeleteModal(email, schoolName) {
+            _pendingDeleteEmail = email;
+            _pendingDeleteName  = schoolName;
+            document.getElementById('del-school-name-label').innerText = schoolName || email;
+            document.getElementById('del-confirm-input').value = '';
+            document.getElementById('del-confirm-btn').disabled = true;
+            document.getElementById('delete-school-modal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-school-modal').classList.remove('active');
+            _pendingDeleteEmail = null;
+            _pendingDeleteName  = null;
+        }
+
+        function checkDeleteConfirm() {
+            const val = document.getElementById('del-confirm-input').value.trim();
+            document.getElementById('del-confirm-btn').disabled = (val !== 'DELETE');
+        }
+
+        async function confirmDeleteSchool() {
+            if (!_pendingDeleteEmail) return;
+            const email = _pendingDeleteEmail;
+            const schoolName = _pendingDeleteName || email;
+
+            // Build the same suffix logic used in database.js
+            const suffix = '_' + email.replace(/[^a-zA-Z0-9]/g, '');
+
+            // 1. Remove from registered schools list
+            let schoolsList = [];
+            try {
+                const raw = localStorage.getItem('nepal_registered_schools');
+                if (raw) schoolsList = JSON.parse(raw);
+            } catch(e) {}
+            schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== email.toLowerCase());
+            localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+
+            // 2. Remove active school info if it matches
+            try {
+                const activeRaw = localStorage.getItem('nepal_school_registered_info');
+                if (activeRaw) {
+                    const active = JSON.parse(activeRaw);
+                    if (active.schoolEmail && active.schoolEmail.toLowerCase() === email.toLowerCase()) {
+                        localStorage.removeItem('nepal_school_registered_info');
+                    }
+                }
+            } catch(e) {}
+
+            // 3. Wipe all school-specific localStorage keys
+            const keysToDelete = [
+                'nepal_school_finances'       + suffix,
+                'nepal_school_budgets'        + suffix,
+                'nepal_school_feedbacks'      + suffix,
+                'nepal_school_ledger_headings'+ suffix,
+                'nepal_school_income_categories'  + suffix,
+                'nepal_school_expense_categories' + suffix
+            ];
+            keysToDelete.forEach(k => localStorage.removeItem(k));
+
+            // 4. Wipe Supabase records for this school's email (school_id)
+            try {
+                const hasConfig = typeof SUPABASE_URL !== 'undefined' &&
+                                  typeof SUPABASE_ANON_KEY !== 'undefined' &&
+                                  SUPABASE_URL && SUPABASE_ANON_KEY &&
+                                  !SUPABASE_URL.includes('YOUR_SUPABASE') &&
+                                  !SUPABASE_ANON_KEY.includes('YOUR_SUPABASE');
+
+                if (hasConfig && window.supabase) {
+                    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    const schoolId = email.replace(/[^a-zA-Z0-9@.]/g, '');
+
+                    // Delete transactions by school_id
+                    await client.from('transactions').delete().eq('school_id', schoolId);
+                    // Delete budgets by school_id
+                    await client.from('budgets').delete().eq('school_id', schoolId);
+                    // Delete feedbacks by school_id
+                    await client.from('feedbacks').delete().eq('school_id', schoolId);
+                    // Delete ledger headings by school_id
+                    await client.from('ledger_headings').delete().eq('school_id', schoolId);
+
+                    console.log(`Supabase records for ${schoolId} deleted.`);
+                }
+            } catch(err) {
+                console.warn('Supabase cleanup partial or not applicable:', err);
+            }
+
+            closeDeleteModal();
+            showSuperToast(`🗑️ School "${schoolName}" and all its data have been permanently deleted.`, 'error');
+            initSuperDashboard();
         }
 
         // Beautiful toast helper
