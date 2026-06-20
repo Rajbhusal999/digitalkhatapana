@@ -305,14 +305,16 @@ function renderBankNagadi(data) {
     }
 
     let html = '';
-    const ROWS_PER_PAGE = 15;
+    const ROWS_PER_PAGE = 10;
     let tCashDr=0, tCashCr=0, tBankDr=0, tBankCr=0, tBudgetExp=0, tMiscDr=0, tMiscCr=0;
 
     for (let i = 0; i < allRows.length; i += ROWS_PER_PAGE) {
         let pageRows = allRows.slice(i, i + ROWS_PER_PAGE);
         let isLastPage = (i + ROWS_PER_PAGE >= allRows.length);
         
-        html += `<div style="page-break-inside: avoid; page-break-after: ${isLastPage ? 'auto' : 'always'}; margin-bottom: ${isLastPage ? '0' : '20px'};">`;
+        // Remove page-break-inside: avoid to prevent the entire table from jumping to page 2
+        // Use a smaller ROWS_PER_PAGE to comfortably fit with the report header
+        html += `<div style="page-break-after: ${isLastPage ? 'auto' : 'always'}; margin-bottom: ${isLastPage ? '0' : '20px'};">`;
         html += headerHtml;
         
         pageRows.forEach(r => {
