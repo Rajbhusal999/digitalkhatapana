@@ -684,8 +684,8 @@ async function submitPublicFeedback(event) {
         // Reload feed
         renderFeedbacks();
         
-        // Simulate email sent to user
-        let schoolName = '';
+        // Send real email to user using EmailJS
+        let schoolName = 'School Administration';
         try {
             const schoolInfo = JSON.parse(localStorage.getItem('nepal_school_registered_info'));
             if (schoolInfo && schoolInfo.schoolName) {
@@ -693,9 +693,27 @@ async function submitPublicFeedback(event) {
             }
         } catch (e) {}
         
-        setTimeout(() => {
-            alert(`[Simulated Email Sent to ${emailVal}]\n\nSubject: Gunaso/Sujhav Received\n\nDear parents/citizens,\nThank you for your gunaso/sujhav.\n\nRegards,\n${schoolName || 'School Administration'}`);
-        }, 800);
+        if (typeof emailjs !== 'undefined' && typeof EMAILJS_PUBLIC_KEY !== 'undefined' && EMAILJS_PUBLIC_KEY) {
+            emailjs.init({
+              publicKey: EMAILJS_PUBLIC_KEY,
+            });
+            
+            const templateParams = {
+                to_email: emailVal,
+                to_name: nameVal,
+                school_name: schoolName,
+                message: msgVal
+            };
+            
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+                .then(() => {
+                    console.log('Auto-reply email sent successfully to ' + emailVal);
+                }, (error) => {
+                    console.error('EmailJS Failed...', error);
+                });
+        } else {
+            console.warn('EmailJS is not configured. Auto-reply email was not sent. Please add keys to config.js.');
+        }
         
     } catch (err) {
         showToast(currentLang === 'en' ? 'Failed to submit feedback. Try again.' : 'गुनासो दर्ता गर्न असफल भयो। पुनः प्रयास गर्नुहोस्।', 'error');
