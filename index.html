@@ -730,11 +730,6 @@
                     </div>
 
                     <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                        <label for="reg-photo">School Photo Upload (विद्यालयको तस्बिर) *</label>
-                        <input type="file" id="reg-photo" accept="image/*" required>
-                    </div>
-
-                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
                         <label for="reg-public-board">Public Board Settings (सार्वजनिक बोर्ड) *</label>
                         <select id="reg-public-board" required>
                             <option value="yes">Publicly Visible (नागरिकका लागि खुल्ला राख्ने)</option>
@@ -1060,7 +1055,6 @@
 
             // Read file uploads asynchronously
             const logoFile = document.getElementById('reg-logo').files[0];
-            const photoFile = document.getElementById('reg-photo').files[0];
 
             const readAsDataURL = (file) => {
                 return new Promise((resolve) => {
@@ -1075,9 +1069,8 @@
             };
 
             Promise.all([
-                readAsDataURL(logoFile),
-                readAsDataURL(photoFile)
-            ]).then(([logoBase64, photoBase64]) => {
+                readAsDataURL(logoFile)
+            ]).then(([logoBase64]) => {
                 const registeredSchool = {
                     schoolName,
                     address,
@@ -1090,7 +1083,6 @@
                     publicBoard,
                     password: pass,
                     logo: logoBase64,
-                    photo: photoBase64,
                     status: 'Pending',
                     registeredAt: new Date().toISOString()
                 };
