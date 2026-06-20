@@ -732,6 +732,21 @@ function renderIncomeExpenditure(data) {
     const fiscalYear = fyEl ? fyEl.value : '२०८२/८३';
     const title = 'आय / व्यय विवरण';
 
+    function getLeafHeadings(type) {
+        const headings = window.getLedgerHeadings(type);
+        const parents = headings.filter(h => !h.parent_id).sort((a,b) => (a.sort_order||0)-(b.sort_order||0));
+        const allLeafCols = [];
+        parents.forEach(parent => {
+            const children = headings.filter(h => h.parent_id === parent.id).sort((a,b) => (a.sort_order||0)-(b.sort_order||0));
+            if (children.length > 0) {
+                children.forEach(child => allLeafCols.push({ ...child }));
+            } else {
+                allLeafCols.push({ ...parent });
+            }
+        });
+        return allLeafCols;
+    }
+
     let incomes = [];
     let expenses = [];
     let totalInc = 0;
@@ -744,36 +759,39 @@ function renderIncomeExpenditure(data) {
     data.forEach(t => {
         const amt = Number(t.subheading_amount || t.amount || 0);
         if (t.type === 'income') {
-            incTotals[t.category] = (incTotals[t.category] || 0) + amt;
+            let key = t.subheading_id || t.category;
+            incTotals[key] = (incTotals[key] || 0) + amt;
         } else if (t.type === 'expense') {
-            expTotals[t.category] = (expTotals[t.category] || 0) + amt;
+            let key = t.subheading_id || t.category;
+            expTotals[key] = (expTotals[key] || 0) + amt;
         }
     });
 
-    // We get headings so they appear in correct ledger order
-    const incHeadings = window.getLedgerHeadings('income').filter(h => !h.parent_id).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
-    const expHeadings = window.getLedgerHeadings('expense').filter(h => !h.parent_id).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+    const incHeadings = getLeafHeadings('income');
+    const expHeadings = getLeafHeadings('expense');
 
     incHeadings.forEach(h => {
-        let amt = incTotals[h.name_ne] || 0;
+        let amt = (incTotals[h.id] || 0) + (incTotals[h.name_ne] || 0);
         incomes.push({ label: h.name_ne, amount: amt });
         totalInc += amt;
+        delete incTotals[h.id];
         delete incTotals[h.name_ne];
     });
-    for(let cat in incTotals) {
-        incomes.push({ label: cat, amount: incTotals[cat] });
-        totalInc += incTotals[cat];
+    for(let key in incTotals) {
+        incomes.push({ label: key, amount: incTotals[key] });
+        totalInc += incTotals[key];
     }
 
     expHeadings.forEach(h => {
-        let amt = expTotals[h.name_ne] || 0;
+        let amt = (expTotals[h.id] || 0) + (expTotals[h.name_ne] || 0);
         expenses.push({ label: h.name_ne, amount: amt });
         totalExp += amt;
+        delete expTotals[h.id];
         delete expTotals[h.name_ne];
     });
-    for(let cat in expTotals) {
-        expenses.push({ label: cat, amount: expTotals[cat] });
-        totalExp += expTotals[cat];
+    for(let key in expTotals) {
+        expenses.push({ label: key, amount: expTotals[key] });
+        totalExp += expTotals[key];
     }
 
     let headerHtml = `
