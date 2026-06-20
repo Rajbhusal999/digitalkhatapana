@@ -786,17 +786,18 @@ function renderIncomeExpenditure(data) {
         delete expTotals[h.name_ne];
     });
 
+    const schoolName = getSchoolDisplayName();
+    const schoolAddress = getSchoolAddress();
+    
     let headerHtml = `
-        <div style="text-align:center; font-family:var(--font-nepali); margin-bottom:10px; line-height:1.4;">
-            <div style="font-size:1.4rem; font-weight:bold;">${window.schoolProfile ? window.schoolProfile.name : 'श्री विद्यालयको नाम'}</div>
-            <div style="font-size:1.1rem;">${window.schoolProfile ? window.schoolProfile.address : 'ठेगाना'}</div>
+        <div class="khata-print-header" style="text-align:center;margin-bottom:8px;">
+            <div style="font-size:1.15rem;font-weight:800;font-family:var(--font-nepali);">${schoolName}</div>
+            <div style="font-size:0.95rem;font-weight:600;font-family:var(--font-nepali);color:var(--secondary);">${schoolAddress}</div>
+            <div style="font-size:1.3rem;font-weight:700;font-family:var(--font-nepali);margin-top:4px;">आ.व. ${fiscalYear} को ${title}</div>
         </div>
-        <div style="overflow-x:auto; margin-top:20px;">
+        <div style="overflow-x:auto;">
         <table class="data-table aya-vyaya-table" style="margin-bottom:0; font-family:var(--font-nepali); border-collapse: collapse; width:100%; border:2px solid #000;">
             <thead>
-                <tr>
-                    <th colspan="4" style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:8px;font-size:1.3rem;">आ.व. ${fiscalYear} को ${title}</th>
-                </tr>
                 <tr>
                     <th colspan="2" style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:6px;width:50%;font-size:1.1rem;">आम्दानी</th>
                     <th colspan="2" style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:6px;width:50%;font-size:1.1rem;">खर्च</th>
@@ -897,17 +898,18 @@ function renderTrialBalance(data) {
     let miscDiff = tMiscDr - tMiscCr;
     let totalDiff = totalDr - totalCr;
 
+    const schoolName = getSchoolDisplayName();
+    const schoolAddress = getSchoolAddress();
+
     let html = `
-        <div style="text-align:center; font-family:var(--font-nepali); margin-bottom:10px; line-height:1.4;">
-            <div style="font-size:1.4rem; font-weight:bold;">${window.schoolProfile ? window.schoolProfile.name : 'श्री विद्यालयको नाम'}</div>
-            <div style="font-size:1.1rem;">${window.schoolProfile ? window.schoolProfile.address : 'ठेगाना'}</div>
+        <div class="khata-print-header" style="text-align:center;margin-bottom:8px;">
+            <div style="font-size:1.15rem;font-weight:800;font-family:var(--font-nepali);">${schoolName}</div>
+            <div style="font-size:0.95rem;font-weight:600;font-family:var(--font-nepali);color:var(--secondary);">${schoolAddress}</div>
+            <div style="font-size:1.3rem;font-weight:700;font-family:var(--font-nepali);margin-top:4px;">सन्तुलन परीक्षण ( आ.व. ${fiscalYear} )</div>
         </div>
-        <div style="overflow-x:auto; margin-top:20px;">
+        <div style="overflow-x:auto;">
         <table class="data-table trial-balance-table" style="margin-bottom:0; font-family:var(--font-nepali); border-collapse: collapse; width:100%; border:1px solid #000;">
             <thead>
-                <tr>
-                    <th colspan="5" style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:10px;font-size:1.3rem;">सन्तुलन परीक्षण ( आ.व. ${fiscalYear} )</th>
-                </tr>
                 <tr>
                     <th style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:6px;width:10%;">क्र.सं.</th>
                     <th style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:6px;width:30%;">विवरण</th>
