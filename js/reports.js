@@ -107,6 +107,17 @@ function getSchoolDisplayName() {
     return 'श्री जन जागृति माध्यमिक विद्यालय';
 }
 
+function getSchoolAddress() {
+    const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+    if (schoolInfoStr) {
+        try {
+            const info = JSON.parse(schoolInfoStr);
+            return info.address || 'तिलोत्तमा-३, रुपन्देही';
+        } catch(e) {}
+    }
+    return 'तिलोत्तमा-३, रुपन्देही';
+}
+
 // ─────────────────────────────────────────────────────────────────
 // SIDEBAR
 // ─────────────────────────────────────────────────────────────────
@@ -227,7 +238,7 @@ function generateReport() {
         document.head.appendChild(styleEl);
     }
     const isA3 = (currentReport === 'aamdani_khata' || currentReport === 'kharcha_khata');
-    styleEl.innerHTML = `@media print { @page { size: ${isA3 ? 'A3' : 'A4'} landscape; } }`;
+    styleEl.innerHTML = `@media print { @page { size: ${isA3 ? 'A3' : 'A4'} landscape; margin: 5mm; } }`;
 
     document.getElementById('report-table-wrapper').innerHTML = html;
 }
@@ -275,7 +286,19 @@ function renderBankNagadi(data) {
         });
     });
 
+    const schoolName = getSchoolDisplayName();
+    const schoolAddress = getSchoolAddress();
+    const fyEl = document.getElementById('filter-fiscal-year');
+    const fiscalYear = fyEl ? fyEl.value : '२०८२/८३';
+    const title = 'बैंक तथा नगद किताब';
+
     let headerHtml = `
+        <div class="khata-print-header" style="text-align:center;margin-bottom:8px;">
+            <div style="font-size:1.15rem;font-weight:800;font-family:var(--font-nepali);">${schoolName}</div>
+            <div style="font-size:0.95rem;font-weight:600;font-family:var(--font-nepali);color:var(--secondary);">${schoolAddress}</div>
+            <div style="font-size:0.9rem;font-weight:600;color:var(--secondary);">आ.व. ${fiscalYear}</div>
+            <div style="font-size:1rem;font-weight:700;font-family:var(--font-nepali);margin-top:4px;border-top:2px solid #333;border-bottom:2px solid #333;padding:3px 0;display:inline-block;">${title}</div>
+        </div>
         <table class="data-table bank-cash-book-table" style="margin-bottom:0;">
             <thead>
                 <tr>
@@ -387,6 +410,7 @@ function renderKhata(data, type) {
     const headings = window.getLedgerHeadings(type);
     const parents = headings.filter(h => !h.parent_id).sort((a,b) => (a.sort_order||0)-(b.sort_order||0));
     const schoolName = getSchoolDisplayName();
+    const schoolAddress = getSchoolAddress();
     const fyEl = document.getElementById('filter-fiscal-year');
     const fiscalYear = fyEl ? fyEl.value : '२०८२/८३';
     const title = type === 'income' ? 'आम्दानी खाता' : 'खर्च खाता';
@@ -488,6 +512,7 @@ function renderKhata(data, type) {
     return `
     <div class="khata-print-header" style="text-align:center;margin-bottom:8px;">
         <div style="font-size:1.15rem;font-weight:800;font-family:var(--font-nepali);">${schoolName}</div>
+        <div style="font-size:0.95rem;font-weight:600;font-family:var(--font-nepali);color:var(--secondary);">${schoolAddress}</div>
         <div style="font-size:0.9rem;font-weight:600;color:var(--secondary);">आ.व. ${fiscalYear}</div>
         <div style="font-size:1rem;font-weight:700;font-family:var(--font-nepali);margin-top:4px;border-top:2px solid #333;border-bottom:2px solid #333;padding:3px 0;">${title}</div>
     </div>
