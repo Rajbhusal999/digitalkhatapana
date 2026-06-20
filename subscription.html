@@ -945,12 +945,9 @@
                                 </p>
                             </div>
                             <form onsubmit="submitTransactionCode(event, 'eSewa')" style="margin-top: 15px;">
-                                <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                                    <label for="esewa-txn-code">Enter Transaction Verification Code (कारोबार प्रमाणिकरण कोड) *</label>
-                                    <input type="text" id="esewa-txn-code" required placeholder="उदा: 8X9Y2Z1W" style="text-align: center; text-transform: uppercase; font-weight: bold; letter-spacing: 2px;">
-                                </div>
-                                <button type="submit" class="pay-submit-btn esewa-pay-btn" style="margin-top: 15px;">
-                                    Submit Transaction Code for Approval
+                                <p style="font-size: 0.82rem; color: #CBD5E1; text-align: center; margin-bottom: 10px;">QR स्क्यान गरेपछि तलको बटन थिच्नुहोस्। कारोबार कोड स्वतः उत्पन्न हुनेछ।</p>
+                                <button type="submit" class="pay-submit-btn esewa-pay-btn" style="margin-top: 5px;">
+                                    Submit Payment for Approval
                                 </button>
                             </form>
                         </div>
@@ -977,12 +974,9 @@
                                 </p>
                             </div>
                             <form onsubmit="submitTransactionCode(event, 'Mobile Banking')" style="margin-top: 15px;">
-                                <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                                    <label for="mb-txn-code">Enter Transaction Verification Code (कारोबार प्रमाणिकरण कोड) *</label>
-                                    <input type="text" id="mb-txn-code" required placeholder="उदा: FT-98765432" style="text-align: center; text-transform: uppercase; font-weight: bold; letter-spacing: 2px;">
-                                </div>
-                                <button type="submit" class="pay-submit-btn mobilebanking-pay-btn" style="background: linear-gradient(135deg, #003893 0%, #002B70 100%); color: white; margin-top: 15px;">
-                                    Submit Transaction Code for Approval
+                                <p style="font-size: 0.82rem; color: #CBD5E1; text-align: center; margin-bottom: 10px;">QR स्क्यान गरेपछि तलको बटन थिच्नुहोस्। कारोबार कोड स्वतः उत्पन्न हुनेछ।</p>
+                                <button type="submit" class="pay-submit-btn mobilebanking-pay-btn" style="background: linear-gradient(135deg, #003893 0%, #002B70 100%); color: white; margin-top: 5px;">
+                                    Submit Payment for Approval
                                 </button>
                             </form>
                         </div>
@@ -1285,18 +1279,17 @@
         function submitTransactionCode(event, gateway) {
             event.preventDefault();
             
-            // Find the correct code input
-            let txnCode = '';
-            if (gateway === 'eSewa') {
-                txnCode = document.getElementById('esewa-txn-code').value.trim();
-            } else {
-                txnCode = document.getElementById('mb-txn-code').value.trim();
+            // Auto-generate 5-character transaction code (letters, numbers, special chars)
+            function generateTxnCode() {
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%&*';
+                let code = '';
+                for (let i = 0; i < 5; i++) {
+                    code += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return code;
             }
             
-            if (!txnCode) {
-                showSubToast('Please enter the transaction verification code!', 'error');
-                return;
-            }
+            const txnCode = generateTxnCode();
 
             const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
             let schoolInfo = {};
