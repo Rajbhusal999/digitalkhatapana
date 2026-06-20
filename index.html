@@ -847,7 +847,7 @@
                     <h3>नागरिक सार्वजनिक बोर्ड</h3>
                     <p>विद्यालयको आर्थिक पारदर्शिता विवरण, आय-व्यय प्रवृत्ति विश्लेषण ग्राफ र बजेट खर्चको अवस्था हेर्न र प्रतिक्रिया दर्ता गर्न।</p>
                 </div>
-                <a href="user.html" class="btn-portal" style="background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%); text-align:center; justify-content:center;">
+                <a href="select-school.html" class="btn-portal" style="background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%); text-align:center; justify-content:center;">
                     सार्वजनिक बोर्डमा प्रवेश (Enter Public Board)
                 </a>
             </div>
@@ -1001,9 +1001,9 @@
                 }, 1500);
             } else {
                 // Fallback to citizen login
-                showGatewayToast(`Citizen login successful! Welcome, ${email}. Redirecting to Transparency board...`, 'success');
+                showGatewayToast(`Citizen login successful! Welcome, ${email}. Please select a school...`, 'success');
                 setTimeout(() => {
-                    window.location.href = 'user.html';
+                    window.location.href = 'select-school.html';
                 }, 1500);
             }
         }

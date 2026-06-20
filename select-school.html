@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Khata Pana - Select School</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            margin-top: 80px; /* Space for header */
+        }
+        .selection-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            border-top: 5px solid var(--secondary);
+        }
+        .selection-card h2 {
+            font-family: var(--font-nepali);
+            color: var(--secondary);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .selection-card p {
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+        .form-group select, .form-group input {
+            padding: 12px;
+            border: 1px solid #CBD5E1;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .form-group select:focus, .form-group input:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(11, 43, 97, 0.1);
+        }
+        .submit-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: var(--radius-sm);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            background: var(--secondary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        .error-msg {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        /* Header overrides */
+        header {
+            background: rgba(6, 14, 27, 0.95) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        header .brand-titles h1 { color: #ffffff !important; }
+        header .brand-titles h2 { color: var(--accent) !important; }
+        header .brand-titles p { color: #94A3B8 !important; }
+        header nav.nav-links a { color: #CBD5E1 !important; }
+        header nav.nav-links a:hover { color: var(--accent) !important; }
+        
+        .top-gov-bar {
+            background: rgba(6, 14, 27, 1) !important;
+            border-bottom: 1px solid rgba(193, 11, 48, 0.3) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Gov Bar -->
+    <div class="top-gov-bar">
+        <span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            नेपाल सरकार | शिक्षा, विज्ञान तथा प्रविधि मन्त्रालय
+        </span>
+        <a href="index.html" style="color: white; text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;">
+            🏠 गृहपृष्ठ (Home)
+        </a>
+    </div>
+
+    <!-- Header -->
+    <header style="position: fixed; top: 35px; width: 100%; z-index: 100;">
+        <div class="brand-section">
+            <svg class="gov-logo" viewBox="0 0 100 100" width="50" height="50">
+                <circle cx="50" cy="50" r="46" fill="#0b2b61" />
+                <circle cx="50" cy="50" r="42" fill="white" />
+                <path d="M25 65 L40 40 L52 55 L65 30 L80 65 Z" fill="#b0c4de" stroke="#0b2b61" stroke-width="1.5" />
+                <path d="M35 65 L48 45 L58 58 L72 38 L80 65 Z" fill="#ffffff" opacity="0.8" />
+                <path d="M22 35 L32 30 L27 42 L35 42 L25 52 L25 35" fill="#dc143c" stroke="#003893" stroke-width="1" />
+            </svg>
+            <div class="brand-titles">
+                <h1 style="font-family: var(--font-nepali); font-size:1.4rem; color:var(--secondary); font-weight:800; margin:0;">खातापाना Digital</h1>
+                <p style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; margin:0;">विद्यालय वित्तीय सुशासन</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div class="selection-card">
+            <h2>सार्वजनिक बोर्ड पहुँच</h2>
+            <p>कृपया विद्यालयको नाम छान्नुहोस् र इमिस (EMIS) कोड राखेर उक्त विद्यालयको वित्तीय पारदर्शिता विवरण हेर्नुहोस्।</p>
+            
+            <div id="error-message" class="error-msg">विद्यालय वा इमिस कोड मिलेन! (School or EMIS mismatch)</div>
+
+            <form id="school-select-form">
+                <div class="form-group">
+                    <label for="school-select">विद्यालय छान्नुहोस् (Select School)</label>
+                    <select id="school-select" required>
+                        <option value="" disabled selected>-- विद्यालय छान्नुहोस् --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="emis-input">इमिस कोड (EMIS Code)</label>
+                    <input type="text" id="emis-input" required placeholder="९-अङ्कको इमिस कोड राख्नुहोस्" pattern="\d{9}">
+                </div>
+
+                <button type="submit" class="submit-btn">सार्वजनिक बोर्डमा जानुहोस्</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-bottom">
+            © २०८२ | सुशासन, पारदर्शिता र गुणस्तरीय शिक्षा
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- Nepali Functions for dates/years if needed by database.js -->
+    <script src="js/database.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectElement = document.getElementById('school-select');
+            
+            // Fetch approved schools
+            let approvedSchools = [];
+            try {
+                const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+                if (schoolsListStr) {
+                    const schoolsList = JSON.parse(schoolsListStr);
+                    approvedSchools = schoolsList;
+                }
+            } catch (e) {
+                console.error("Error loading schools", e);
+            }
+
+            // Populate dropdown
+            if (approvedSchools.length === 0) {
+                // Add a dummy school if none registered yet for demo purposes
+                approvedSchools.push({
+                    schoolName: "श्री जन जागृति माध्यमिक विद्यालय",
+                    emis: "123456789",
+                    schoolEmail: "info@janajagritimavi.edu.np",
+                    address: "पोखरा १५, कास्की"
+                });
+            }
+
+            approvedSchools.forEach(school => {
+                const option = document.createElement('option');
+                option.value = school.schoolEmail || school.emis; // Use email or emis as unique identifier
+                option.textContent = school.schoolName + (school.address ? ` (${school.address})` : '');
+                option.dataset.emis = school.emis;
+                option.dataset.fullObj = JSON.stringify(school);
+                selectElement.appendChild(option);
+            });
+
+            // Handle submission
+            document.getElementById('school-select-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const selectedVal = selectElement.value;
+                const enteredEmis = document.getElementById('emis-input').value.trim();
+                const errorMsg = document.getElementById('error-message');
+
+                if (!selectedVal) {
+                    errorMsg.textContent = "कृपया विद्यालय छान्नुहोस्! (Please select a school)";
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+
+                const selectedOption = selectElement.querySelector(`option[value="${selectedVal}"]`);
+                const actualEmis = selectedOption.dataset.emis;
+
+                if (enteredEmis !== actualEmis) {
+                    errorMsg.textContent = "तपाईंले छान्नुभएको विद्यालय र राख्नुभएको इमिस कोड मिलेन! (School and EMIS code do not match)";
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+
+                // Success!
+                errorMsg.style.display = 'none';
+                const schoolObj = JSON.parse(selectedOption.dataset.fullObj);
+                
+                // Save to local storage so user.html loads this school's DB
+                localStorage.setItem('nepal_school_registered_info', JSON.stringify(schoolObj));
+                
+                // Clear any admin session
+                sessionStorage.removeItem('admin_logged_in');
+
+                // Redirect to user transparency board
+                window.location.href = 'user.html';
+            });
+        });
+    </script>
+</body>
+</html>
