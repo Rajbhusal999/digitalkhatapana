@@ -8,6 +8,34 @@
     <link rel="stylesheet" href="css/style.css">
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- School login guard: redirect to school-login.html if not authenticated via OTP -->
+    <script>
+        (function() {
+            // If coming from subscription flow or portal-admin redirect, allow pass-through
+            const fromSub = document.referrer && (
+                document.referrer.includes('subscription.html') ||
+                document.referrer.includes('school-login.html')
+            );
+            const loggedIn = sessionStorage.getItem('school_user_logged_in') === 'true';
+            const adminLoggedIn = sessionStorage.getItem('admin_logged_in') === 'true';
+
+            // Skip guard if user navigated directly from subscription (first-time setup)
+            // OR if admin session exists
+            if (!loggedIn && !adminLoggedIn && !fromSub) {
+                // Check if there are any approved schools - if yes, enforce login
+                try {
+                    const raw = localStorage.getItem('nepal_registered_schools');
+                    if (raw) {
+                        const list = JSON.parse(raw);
+                        const hasApproved = list.some(s => s.status === 'Approved' && s.otp);
+                        if (hasApproved) {
+                            window.location.href = 'school-login.html';
+                        }
+                    }
+                } catch(e) {}
+            }
+        })();
+    </script>
 </head>
 <body>
 
@@ -74,7 +102,6 @@
                 <h1 id="adm-school-name">लेखा तथा बजेट प्रशासन केन्द्र</h1>
                 <h2 id="adm-school-sub">Administrative Ledger Dashboard</h2>
                 <p id="adm-user-name">प्रयोक्ता: राम बहादुर थापा (लेखा प्रमुख)</p>
-                <p id="adm-school-txn" style="font-size: 0.8rem; margin-top: 5px; color: #38bdf8; font-weight: bold;"></p>
             </div>
         </div>
         <div class="nav-actions">

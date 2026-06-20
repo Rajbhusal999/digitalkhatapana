@@ -934,6 +934,9 @@
                             <span style="font-size:0.8rem; color:#10b981; font-weight:bold; display:flex; align-items:center; gap:3px;">
                                 ✓ Approved
                             </span>
+                            <button style="background:linear-gradient(135deg,#6366f1,#4f46e5); color:white; border:none; padding:6px 10px; border-radius:6px; font-size:0.72rem; font-weight:700; cursor:pointer;" onclick="handleResendOTP('${escEmail}')" title="Regenerate and resend OTP to school email">
+                                🔁 Resend OTP
+                            </button>
                             <button class="btn-action-reject" style="padding: 4px 8px; font-size: 0.7rem; opacity: 0.7;" onclick="handleRejectSchool('${escEmail}')">
                                 Suspend
                             </button>
@@ -1004,63 +1007,138 @@
             if (schoolsListStr) {
                 try {
                     schoolsList = JSON.parse(schoolsListStr);
-                } catch (e) {
-                    console.error(e);
-                }
+                } catch (e) { console.error(e); }
             }
 
             const idx = schoolsList.findIndex(s => s.schoolEmail.toLowerCase() === email.toLowerCase());
-            if (idx !== -1) {
-                schoolsList[idx].status = 'Approved';
-                if (schoolsList[idx].subscription) {
-                    schoolsList[idx].subscription.status = 'Active';
-                }
-                localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+            if (idx === -1) return;
 
-                // Also if this matches the school in nepal_school_registered_info, sync it
-                const currentActiveStr = localStorage.getItem('nepal_school_registered_info');
-                if (currentActiveStr) {
-                    try {
-                        const currentActive = JSON.parse(currentActiveStr);
-                        if (currentActive.schoolEmail.toLowerCase() === email.toLowerCase()) {
-                            currentActive.status = 'Approved';
-                            if (currentActive.subscription) {
-                                currentActive.subscription.status = 'Active';
-                            }
-                            localStorage.setItem('nepal_school_registered_info', JSON.stringify(currentActive));
-                        }
-                    } catch(e) {
-                        console.error(e);
+            // Generate 8-character alphanumeric OTP
+            const otpChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let otp = '';
+            for (let i = 0; i < 8; i++) otp += otpChars[Math.floor(Math.random() * otpChars.length)];
+
+            schoolsList[idx].status    = 'Approved';
+            schoolsList[idx].otp       = otp;
+            schoolsList[idx].otpUsed   = false;
+            schoolsList[idx].approvedAt = new Date().toISOString();
+            if (schoolsList[idx].subscription) schoolsList[idx].subscription.status = 'Active';
+            localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+
+            // Sync active school info
+            try {
+                const activeRaw = localStorage.getItem('nepal_school_registered_info');
+                if (activeRaw) {
+                    const active = JSON.parse(activeRaw);
+                    if (active.schoolEmail && active.schoolEmail.toLowerCase() === email.toLowerCase()) {
+                        active.status  = 'Approved';
+                        active.otp     = otp;
+                        active.otpUsed = false;
+                        if (active.subscription) active.subscription.status = 'Active';
+                        localStorage.setItem('nepal_school_registered_info', JSON.stringify(active));
                     }
                 }
+            } catch(e) { console.error(e); }
 
-                // Send approval verification email to the school email
-                const schoolName = schoolsList[idx].schoolName;
-                const emailSubject = `School Registration Approved - Khata Pana`;
-                const emailMessage = `Congratulations! The registration for "${schoolName}" has been approved by the Central Administration. You can now login to your dashboard using your registered school email and password.`;
+            const schoolName = schoolsList[idx].schoolName || email;
+            const loginUrl   = window.location.origin + (window.location.pathname.replace('portal-admin.html','')) + 'school-login.html';
 
-                fetch(`https://formsubmit.co/ajax/${email}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        _subject: emailSubject,
-                        message: emailMessage
-                    })
+            // ── Send OTP email via FormSubmit ──
+            const emailBody = `
+विद्यालय दर्ता अनुमोदन सफल! (School Registration APPROVED)
+
+नमस्कार, ${schoolName} टोली,
+
+तपाईंको विद्यालयको दर्ता Digital Khata Pana प्रणालीमा सफलतापूर्वक अनुमोदित भएको छ।
+
+════════════════════════════════
+  लगइन प्रमाणपत्र (Login Credentials)
+════════════════════════════════
+  दर्ता इमेल  : ${email}
+  एक पटक पासवर्ड (OTP) : ${otp}
+════════════════════════════════
+
+⚠️  यो OTP एक पटक मात्र प्रयोग गर्न सकिन्छ।
+पहिलो लगइनपछि तपाईंले आफ्नो मनपर्ने पासवर्ड सेट गर्नुहुनेछ।
+
+लगइन गर्न यहाँ क्लिक गर्नुहोस्:
+${loginUrl}
+
+यदि कुनै सहयोग चाहिएमा Admin लाई सम्पर्क गर्नुहोस्।
+
+- Digital Khata Pana प्रशासन
+            `;
+
+            fetch(`https://formsubmit.co/ajax/${email}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                    _subject: `✅ Khata Pana Login OTP - ${schoolName}`,
+                    message:  emailBody
                 })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(`Approval email sent successfully to ${email}:`, data);
-                })
-                .catch(error => {
-                    console.error('Error sending approval email:', error);
-                });
+            })
+            .then(r => r.json())
+            .then(() => console.log(`OTP email sent to ${email}`))
+            .catch(err => console.warn('OTP email failed (FormSubmit):', err));
 
-                showSuperToast(`School ${schoolName} approved and verification email sent!`, 'success');
-                initSuperDashboard();
-            }
+            showSuperToast(`✅ "${schoolName}" approved! OTP: ${otp} — sent to ${email}`, 'success');
+            initSuperDashboard();
+        }
+
+
+        function handleResendOTP(email) {
+            let schoolsList = [];
+            try {
+                const raw = localStorage.getItem('nepal_registered_schools');
+                if (raw) schoolsList = JSON.parse(raw);
+            } catch(e) {}
+
+            const idx = schoolsList.findIndex(s => s.schoolEmail.toLowerCase() === email.toLowerCase());
+            if (idx === -1) return;
+
+            // Generate fresh OTP
+            const otpChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let otp = '';
+            for (let i = 0; i < 8; i++) otp += otpChars[Math.floor(Math.random() * otpChars.length)];
+
+            schoolsList[idx].otp     = otp;
+            schoolsList[idx].otpUsed = false;
+            localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+
+            const schoolName = schoolsList[idx].schoolName || email;
+            const loginUrl   = window.location.origin + (window.location.pathname.replace('portal-admin.html','')) + 'school-login.html';
+
+            const emailBody = `
+नयाँ OTP पठाइएको छ! (New One-Time Password)
+
+नमस्कार, ${schoolName} टोली,
+
+तपाईंको खातामा नयाँ लगइन OTP उत्पन्न गरिएको छ।
+
+════════════════════════════════
+  नयाँ लगइन प्रमाणपत्र (New Login Credentials)
+════════════════════════════════
+  दर्ता इमेल  : ${email}
+  नयाँ OTP    : ${otp}
+════════════════════════════════
+
+⚠️ यो OTP एक पटक मात्र प्रयोग गर्न सकिन्छ।
+
+लगइन लिंक: ${loginUrl}
+
+- Digital Khata Pana प्रशासन
+            `;
+
+            fetch(`https://formsubmit.co/ajax/${email}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ _subject: `🔁 Khata Pana New OTP - ${schoolName}`, message: emailBody })
+            })
+            .then(r => r.json())
+            .then(() => console.log(`Resend OTP email sent to ${email}`))
+            .catch(err => console.warn('Resend OTP email failed:', err));
+
+            showSuperToast(`🔁 New OTP: ${otp} — resent to ${email}`, 'success');
         }
 
         function handleRejectSchool(email) {

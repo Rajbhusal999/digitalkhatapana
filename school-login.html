@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Login - Digital Khata Pana</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: radial-gradient(circle at 40% 40%, #0c2340 0%, #060e1b 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: var(--font-primary);
+            color: #f8fafc;
+        }
+
+        .login-hero {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(229,169,59,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(229,169,59,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+
+        .login-card {
+            background: rgba(30,41,59,0.5);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 48px 40px;
+            max-width: 460px;
+            width: 100%;
+            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.5);
+            text-align: center;
+            z-index: 10;
+            animation: cardIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .brand-badge {
+            width: 80px; height: 80px;
+            background: radial-gradient(circle, #e5a93b 0%, #a6741a 100%);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 30px rgba(229,169,59,0.35);
+            font-size: 2rem;
+        }
+
+        .login-card h2 {
+            font-family: var(--font-nepali);
+            font-size: 1.7rem;
+            color: #fff;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .login-card .sub {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 30px;
+        }
+
+        /* Step panels */
+        .step-panel { display: none; }
+        .step-panel.active { display: block; animation: fadeIn 0.35s ease; }
+
+        @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+        /* Step indicator */
+        .step-indicator {
+            display: flex; justify-content: center; gap: 8px;
+            margin-bottom: 28px;
+        }
+        .step-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            transition: all 0.3s;
+        }
+        .step-dot.active { background: var(--accent); box-shadow: 0 0 8px rgba(229,169,59,0.5); }
+        .step-dot.done   { background: #10b981; }
+
+        /* Input group */
+        .inp-group {
+            text-align: left;
+            margin-bottom: 18px;
+        }
+        .inp-group label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .inp-group input {
+            width: 100%;
+            background: rgba(15,23,42,0.7);
+            border: 1.5px solid rgba(255,255,255,0.12);
+            color: #fff;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+        .inp-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(229,169,59,0.2);
+        }
+
+        /* Password strength */
+        .pw-strength-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255,255,255,0.1);
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .pw-strength-fill {
+            height: 100%;
+            border-radius: 2px;
+            width: 0;
+            transition: width 0.3s, background 0.3s;
+        }
+        .pw-strength-label {
+            font-size: 0.72rem;
+            margin-top: 4px;
+            text-align: right;
+            color: #94a3b8;
+        }
+
+        /* Submit btn */
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent) 0%, #c08a1e 100%);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.25s;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(229,169,59,0.4); }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* Info box */
+        .info-box {
+            background: rgba(16,185,129,0.08);
+            border: 1px solid rgba(16,185,129,0.25);
+            border-radius: 10px;
+            padding: 14px 16px;
+            text-align: left;
+            margin-bottom: 20px;
+            font-size: 0.82rem;
+            color: #6ee7b7;
+            line-height: 1.6;
+        }
+        .info-box strong { color: #34d399; }
+
+        /* Error box */
+        .err-box {
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.25);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #fca5a5;
+            font-size: 0.82rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        /* Success screen */
+        .success-screen {
+            text-align: center;
+            padding: 10px 0 20px;
+        }
+        .success-icon {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: rgba(16,185,129,0.1);
+            border: 3px solid #10b981;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.2rem;
+            margin: 0 auto 18px;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 18px; height: 18px;
+            border: 2.5px solid rgba(0,0,0,0.3);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .back-link {
+            display: block;
+            margin-top: 18px;
+            color: #64748b;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .back-link:hover { color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+    <!-- Top Gov Bar -->
+    <div class="top-gov-bar">
+        <span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            नेपाल सरकार | शिक्षा, विज्ञान तथा प्रविधि मन्त्रालय
+        </span>
+        <span>
+            <a href="index.html" style="color:white; text-decoration:none; font-weight:bold;">🏠 मुख्य द्वार</a>
+        </span>
+    </div>
+
+    <div class="login-hero">
+        <div class="login-card">
+
+            <div class="brand-badge">🏫</div>
+            <h2>विद्यालय पोर्टल प्रवेश</h2>
+            <p class="sub">School Admin Login — Digital Khata Pana</p>
+
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step-dot active" id="dot-1"></div>
+                <div class="step-dot" id="dot-2"></div>
+                <div class="step-dot" id="dot-3"></div>
+            </div>
+
+            <!-- ── STEP 1: Email + OTP Login ── -->
+            <div class="step-panel active" id="step-1">
+                <div class="info-box">
+                    <strong>📧 One-Time Password Login</strong><br>
+                    अनुमोदन पछि तपाईंको दर्ता इमेलमा एक पटक प्रयोग गरिने पासवर्ड (OTP) पठाइएको छ। त्यो OTP प्रयोग गरेर लगइन गर्नुहोस्।
+                </div>
+                <div class="err-box" id="step1-err"></div>
+                <div class="inp-group">
+                    <label for="login-email">दर्ता इमेल (Registered Email) *</label>
+                    <input type="email" id="login-email" placeholder="school@gmail.com" autocomplete="email">
+                </div>
+                <div class="inp-group">
+                    <label for="login-otp">एक पटक पासवर्ड (One-Time Password) *</label>
+                    <input type="password" id="login-otp" placeholder="OTP इमेलबाट टाइप गर्नुहोस्" autocomplete="off">
+                </div>
+                <button class="submit-btn" id="btn-step1" onclick="handleOTPLogin()">
+                    <span id="btn1-text">प्रवेश गर्नुहोस् (Login with OTP)</span>
+                    <div class="spinner" id="spin1"></div>
+                </button>
+                <a class="back-link" onclick="window.location.href='index.html'">← पोर्टल गेटवेमा फर्कनुहोस्</a>
+            </div>
+
+            <!-- ── STEP 2: Set New Password ── -->
+            <div class="step-panel" id="step-2">
+                <div class="info-box">
+                    <strong>🔐 नयाँ पासवर्ड सेट गर्नुहोस्</strong><br>
+                    OTP प्रमाणित भयो! अब आफ्नो मनपर्ने पासवर्ड सेट गर्नुहोस्। यो पासवर्ड अगामी सबै लगइनमा प्रयोग हुनेछ।
+                </div>
+                <div class="err-box" id="step2-err"></div>
+                <div class="inp-group">
+                    <label for="new-password">नयाँ पासवर्ड (New Password) *</label>
+                    <input type="password" id="new-password" placeholder="कम्तिमा ८ अक्षर" oninput="checkStrength(this.value)">
+                    <div class="pw-strength-bar"><div class="pw-strength-fill" id="pw-fill"></div></div>
+                    <div class="pw-strength-label" id="pw-label"></div>
+                </div>
+                <div class="inp-group">
+                    <label for="confirm-password">पासवर्ड पुष्टि गर्नुहोस् (Confirm Password) *</label>
+                    <input type="password" id="confirm-password" placeholder="माथिको पासवर्ड दोहोर्‍याउनुहोस्">
+                </div>
+                <button class="submit-btn" id="btn-step2" onclick="handleSetPassword()">
+                    <span id="btn2-text">पासवर्ड सुरक्षित गर्नुहोस् (Save Password)</span>
+                    <div class="spinner" id="spin2"></div>
+                </button>
+            </div>
+
+            <!-- ── STEP 3: Success ── -->
+            <div class="step-panel" id="step-3">
+                <div class="success-screen">
+                    <div class="success-icon">✓</div>
+                    <h3 style="color:#34d399; font-family:var(--font-nepali); font-size:1.4rem; margin-bottom:8px;">लगइन सफल भयो!</h3>
+                    <p style="color:#94a3b8; font-size:0.88rem; margin-bottom:5px;">तपाईंको विद्यालयको लेखा प्रशासन केन्द्रमा स्वागत छ।</p>
+                    <p style="color:#34d399; font-size:0.85rem; font-weight:700;" id="success-school-name"></p>
+                    <p style="color:#64748b; font-size:0.78rem; margin-top:16px; font-style:italic;">Admin Dashboard मा रिडाइरेक्ट हुँदैछ...</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="login-toast-container"></div>
+
+    <script>
+        let _verifiedEmail = null;
+
+        // ─── Check if already logged in ───
+        document.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem('school_user_logged_in') === 'true') {
+                window.location.href = 'admin.html';
+            }
+        });
+
+        // ─── STEP 1: Verify Email + OTP ───
+        function handleOTPLogin() {
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const otp   = document.getElementById('login-otp').value.trim();
+            const errBox = document.getElementById('step1-err');
+            errBox.style.display = 'none';
+
+            if (!email || !otp) {
+                showErr(errBox, 'कृपया इमेल र OTP दुवै भर्नुहोस्।');
+                return;
+            }
+
+            setLoading('spin1', 'btn1-text', 'btn-step1', true);
+
+            setTimeout(() => {
+                setLoading('spin1', 'btn1-text', 'btn-step1', false);
+
+                // Look up school in registered list
+                let schoolsList = [];
+                try {
+                    const raw = localStorage.getItem('nepal_registered_schools');
+                    if (raw) schoolsList = JSON.parse(raw);
+                } catch(e) {}
+
+                const school = schoolsList.find(s =>
+                    s.schoolEmail && s.schoolEmail.toLowerCase() === email
+                );
+
+                if (!school) {
+                    showErr(errBox, 'यो इमेलमा कुनै दर्ता भएको विद्यालय फेला परेन।');
+                    return;
+                }
+
+                if (school.status !== 'Approved') {
+                    showErr(errBox, 'तपाईंको विद्यालय अझै अनुमोदित भएको छैन। Super Admin को अनुमोदन पर्खनुहोस्।');
+                    return;
+                }
+
+                // Verify OTP
+                const storedOTP = school.otp;
+                const otpUsed   = school.otpUsed;
+
+                if (!storedOTP) {
+                    showErr(errBox, 'यो खातामा कुनै OTP उपलब्ध छैन। Admin लाई सम्पर्क गर्नुहोस्।');
+                    return;
+                }
+
+                if (otpUsed) {
+                    // OTP already used — check if user has set a permanent password
+                    const permanentPw = school.permanentPassword;
+                    if (permanentPw && otp === permanentPw) {
+                        // Normal login with permanent password
+                        loginSuccess(school);
+                        return;
+                    } else {
+                        showErr(errBox, 'यो OTP पहिले नै प्रयोग गरिसकिएको छ। आफ्नो स्थायी पासवर्ड प्रयोग गर्नुहोस् वा Admin लाई सम्पर्क गर्नुहोस्।');
+                        return;
+                    }
+                }
+
+                if (otp !== storedOTP) {
+                    showErr(errBox, 'OTP गलत छ। इमेलमा प्राप्त OTP ध्यानपूर्वक टाइप गर्नुहोस्।');
+                    return;
+                }
+
+                // OTP is correct — move to set password
+                _verifiedEmail = email;
+                goToStep(2);
+            }, 1000);
+        }
+
+        // ─── STEP 2: Set Permanent Password ───
+        function handleSetPassword() {
+            const pw1 = document.getElementById('new-password').value;
+            const pw2 = document.getElementById('confirm-password').value;
+            const errBox = document.getElementById('step2-err');
+            errBox.style.display = 'none';
+
+            if (pw1.length < 8) {
+                showErr(errBox, 'पासवर्ड कम्तिमा ८ अक्षरको हुनुपर्छ।');
+                return;
+            }
+            if (pw1 !== pw2) {
+                showErr(errBox, 'दुवै पासवर्ड मेल खाएनन्। पुनः जाँच गर्नुहोस्।');
+                return;
+            }
+
+            setLoading('spin2', 'btn2-text', 'btn-step2', true);
+
+            setTimeout(() => {
+                setLoading('spin2', 'btn2-text', 'btn-step2', false);
+
+                // Save permanent password and mark OTP as used
+                let schoolsList = [];
+                try {
+                    const raw = localStorage.getItem('nepal_registered_schools');
+                    if (raw) schoolsList = JSON.parse(raw);
+                } catch(e) {}
+
+                const idx = schoolsList.findIndex(s =>
+                    s.schoolEmail && s.schoolEmail.toLowerCase() === _verifiedEmail
+                );
+                if (idx === -1) {
+                    showErr(document.getElementById('step2-err'), 'School data not found. Please contact admin.');
+                    return;
+                }
+
+                schoolsList[idx].permanentPassword = pw1;
+                schoolsList[idx].otpUsed = true;
+                localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+
+                // Also update nepal_school_registered_info if it matches
+                try {
+                    const activeRaw = localStorage.getItem('nepal_school_registered_info');
+                    if (activeRaw) {
+                        const active = JSON.parse(activeRaw);
+                        if (active.schoolEmail && active.schoolEmail.toLowerCase() === _verifiedEmail) {
+                            active.permanentPassword = pw1;
+                            active.otpUsed = true;
+                            localStorage.setItem('nepal_school_registered_info', JSON.stringify(active));
+                        }
+                    }
+                } catch(e) {}
+
+                loginSuccess(schoolsList[idx]);
+            }, 800);
+        }
+
+        function loginSuccess(school) {
+            // Set active school
+            localStorage.setItem('nepal_school_registered_info', JSON.stringify(school));
+            sessionStorage.setItem('school_user_logged_in', 'true');
+            sessionStorage.setItem('school_user_email', school.schoolEmail);
+            sessionStorage.setItem('admin_logged_in', 'true'); // also unlock admin panel
+
+            document.getElementById('success-school-name').innerText = school.schoolName || school.schoolEmail;
+            goToStep(3);
+
+            setTimeout(() => {
+                window.location.href = 'admin.html';
+            }, 2200);
+        }
+
+        // ─── Password strength checker ───
+        function checkStrength(val) {
+            const fill  = document.getElementById('pw-fill');
+            const label = document.getElementById('pw-label');
+            let score = 0;
+            if (val.length >= 8)  score++;
+            if (/[A-Z]/.test(val))  score++;
+            if (/[0-9]/.test(val))  score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            const colors = ['#ef4444','#f97316','#eab308','#10b981'];
+            const labels = ['कमजोर (Weak)','ठीकठाक (Fair)','राम्रो (Good)','बलियो (Strong)'];
+            const pct    = [25, 50, 75, 100];
+
+            if (val.length === 0) {
+                fill.style.width = '0'; label.innerText = '';
+            } else {
+                const s = Math.max(0, score - 1);
+                fill.style.width  = pct[s] + '%';
+                fill.style.background = colors[s];
+                label.innerText   = labels[s];
+                label.style.color = colors[s];
+            }
+        }
+
+        // ─── Step navigation ───
+        function goToStep(n) {
+            document.querySelectorAll('.step-panel').forEach((p,i) => {
+                p.classList.toggle('active', i + 1 === n);
+            });
+            document.querySelectorAll('.step-dot').forEach((d,i) => {
+                d.classList.remove('active','done');
+                if (i + 1 < n) d.classList.add('done');
+                if (i + 1 === n) d.classList.add('active');
+            });
+        }
+
+        // ─── UI helpers ───
+        function showErr(el, msg) {
+            el.innerText = '⚠️ ' + msg;
+            el.style.display = 'block';
+        }
+
+        function setLoading(spinId, textId, btnId, loading) {
+            document.getElementById(spinId).style.display = loading ? 'block' : 'none';
+            document.getElementById(textId).style.display = loading ? 'none' : 'inline';
+            document.getElementById(btnId).disabled = loading;
+        }
+    </script>
+</body>
+</html>
