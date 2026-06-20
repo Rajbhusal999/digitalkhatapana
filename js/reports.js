@@ -787,6 +787,10 @@ function renderIncomeExpenditure(data) {
     });
 
     let headerHtml = `
+        <div style="text-align:center; font-family:var(--font-nepali); margin-bottom:10px; line-height:1.4;">
+            <div style="font-size:1.4rem; font-weight:bold;">${window.schoolProfile ? window.schoolProfile.name : 'श्री विद्यालयको नाम'}</div>
+            <div style="font-size:1.1rem;">${window.schoolProfile ? window.schoolProfile.address : 'ठेगाना'}</div>
+        </div>
         <div style="overflow-x:auto; margin-top:20px;">
         <table class="data-table aya-vyaya-table" style="margin-bottom:0; font-family:var(--font-nepali); border-collapse: collapse; width:100%; border:2px solid #000;">
             <thead>
@@ -894,6 +898,10 @@ function renderTrialBalance(data) {
     let totalDiff = totalDr - totalCr;
 
     let html = `
+        <div style="text-align:center; font-family:var(--font-nepali); margin-bottom:10px; line-height:1.4;">
+            <div style="font-size:1.4rem; font-weight:bold;">${window.schoolProfile ? window.schoolProfile.name : 'श्री विद्यालयको नाम'}</div>
+            <div style="font-size:1.1rem;">${window.schoolProfile ? window.schoolProfile.address : 'ठेगाना'}</div>
+        </div>
         <div style="overflow-x:auto; margin-top:20px;">
         <table class="data-table trial-balance-table" style="margin-bottom:0; font-family:var(--font-nepali); border-collapse: collapse; width:100%; border:1px solid #000;">
             <thead>
