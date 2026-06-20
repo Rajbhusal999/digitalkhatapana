@@ -15,6 +15,6 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
  * 3. Create an Email Template using variables: {{to_email}}, {{to_name}}, {{school_name}}
  * 4. Paste your keys here:
  */
-const EMAILJS_PUBLIC_KEY = ""; // e.g. "x1Y2Z3..."
-const EMAILJS_SERVICE_ID = ""; // e.g. "service_123"
-const EMAILJS_TEMPLATE_ID = ""; // e.g. "template_abc"
+const EMAILJS_PUBLIC_KEY = "ek5-6CQ_K5BnjROxc";
+const EMAILJS_SERVICE_ID = "service_fgchy0c";
+const EMAILJS_TEMPLATE_ID = "template_v9i46h3";
