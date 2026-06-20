@@ -105,24 +105,35 @@ const TRANSLATIONS = {
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Override default school details dynamically if custom school registered
-    let schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
-    // Fallback recovery: if active session missing, try to get first approved school
-    if (!schoolInfoStr) {
-        const schoolsListStr = localStorage.getItem('nepal_registered_schools');
-        if (schoolsListStr) {
-            try {
-                const schoolsList = JSON.parse(schoolsListStr);
-                const approvedSchool = schoolsList.find(s => s.status === 'Approved');
-                if (approvedSchool) {
-                    schoolInfoStr = JSON.stringify(approvedSchool);
+    // ── Resolve active school from login session ──────────────────────────────
+    // Priority: sessionStorage email (set by school-login.html) > nepal_school_registered_info
+    // Never fall back to "first approved school" — that causes data cross-contamination.
+    const sessionEmail = sessionStorage.getItem('school_user_email');
+    let schoolInfoStr  = null;
+
+    if (sessionEmail) {
+        // Find the exact school the user logged in as
+        try {
+            const listRaw = localStorage.getItem('nepal_registered_schools');
+            if (listRaw) {
+                const list = JSON.parse(listRaw);
+                const match = list.find(s => s.schoolEmail && s.schoolEmail.toLowerCase() === sessionEmail.toLowerCase());
+                if (match) {
+                    schoolInfoStr = JSON.stringify(match);
                     localStorage.setItem('nepal_school_registered_info', schoolInfoStr);
                 }
-            } catch (e) {
-                console.error('Error recovering school info in user.js:', e);
             }
+        } catch(e) {
+            console.error('Error resolving school from session in user.js:', e);
         }
     }
+
+    // If no session, fall back to whatever is in nepal_school_registered_info (e.g. first-time subscription flow)
+    if (!schoolInfoStr) {
+        schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     if (schoolInfoStr) {
         try {
             const schoolInfo = JSON.parse(schoolInfoStr);
@@ -174,6 +185,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderTransactionsTable();
     renderFeedbacks();
 });
+
 
 /**
  * Handle Language Toggling

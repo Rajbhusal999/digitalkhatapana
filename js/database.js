@@ -10,22 +10,26 @@ let HEADINGS_KEY = 'nepal_school_ledger_headings';
 let dbSuffix = '';
 
 function initKeys() {
-    let schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
-    if (!schoolInfoStr) {
-        const schoolsListStr = localStorage.getItem('nepal_registered_schools');
-        if (schoolsListStr) {
-            try {
-                const schoolsList = JSON.parse(schoolsListStr);
-                const approvedSchool = schoolsList.find(s => s.status === 'Approved');
-                if (approvedSchool) {
-                    schoolInfoStr = JSON.stringify(approvedSchool);
-                    localStorage.setItem('nepal_school_registered_info', schoolInfoStr);
+    // ── Step 1: Resolve the active school from session (set by school-login.html) ──
+    const sessionEmail = sessionStorage.getItem('school_user_email');
+    if (sessionEmail) {
+        // Always load the exact school the user logged in as
+        try {
+            const listRaw = localStorage.getItem('nepal_registered_schools');
+            if (listRaw) {
+                const list = JSON.parse(listRaw);
+                const match = list.find(s => s.schoolEmail && s.schoolEmail.toLowerCase() === sessionEmail.toLowerCase());
+                if (match) {
+                    localStorage.setItem('nepal_school_registered_info', JSON.stringify(match));
                 }
-            } catch (e) {
-                console.error('Error recovering school info in initKeys:', e);
             }
+        } catch(e) {
+            console.error('Error resolving school from session in initKeys:', e);
         }
     }
+
+    // ── Step 2: Build dbSuffix from the now-correct school info ──
+    const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
     if (schoolInfoStr) {
         try {
             const schoolInfo = JSON.parse(schoolInfoStr);
@@ -36,12 +40,14 @@ function initKeys() {
             console.error(e);
         }
     }
-    DB_KEY = 'nepal_school_finances' + dbSuffix;
-    BUDGET_KEY = 'nepal_school_budgets' + dbSuffix;
-    FEEDBACK_KEY = 'nepal_school_feedbacks' + dbSuffix;
+
+    DB_KEY       = 'nepal_school_finances'      + dbSuffix;
+    BUDGET_KEY   = 'nepal_school_budgets'       + dbSuffix;
+    FEEDBACK_KEY = 'nepal_school_feedbacks'     + dbSuffix;
     HEADINGS_KEY = 'nepal_school_ledger_headings' + dbSuffix;
     loadDynamicCategories();
 }
+
 
 // Default Seed Categories
 const DEFAULT_INCOME_CATEGORIES = {

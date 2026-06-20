@@ -29,21 +29,26 @@ document.addEventListener('DOMContentLoaded', async () => {
  * Brand header updater
  */
 function updateSchoolHeader() {
-    let schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
-    if (!schoolInfoStr) {
-        const schoolsListStr = localStorage.getItem('nepal_registered_schools');
-        if (schoolsListStr) {
-            try {
-                const schoolsList = JSON.parse(schoolsListStr);
-                const approvedSchool = schoolsList.find(s => s.status === 'Approved');
-                if (approvedSchool) {
-                    schoolInfoStr = JSON.stringify(approvedSchool);
+    let schoolInfoStr = null;
+    const sessionEmail = sessionStorage.getItem('school_user_email');
+    if (sessionEmail) {
+        try {
+            const listRaw = localStorage.getItem('nepal_registered_schools');
+            if (listRaw) {
+                const list = JSON.parse(listRaw);
+                const match = list.find(s => s.schoolEmail && s.schoolEmail.toLowerCase() === sessionEmail.toLowerCase());
+                if (match) {
+                    schoolInfoStr = JSON.stringify(match);
                     localStorage.setItem('nepal_school_registered_info', schoolInfoStr);
                 }
-            } catch (e) {
-                console.error('Error recovering school info:', e);
             }
+        } catch(e) {
+            console.error('Error resolving school from session:', e);
         }
+    }
+
+    if (!schoolInfoStr) {
+        schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
     }
     if (schoolInfoStr) {
         try {

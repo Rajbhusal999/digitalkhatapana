@@ -84,21 +84,28 @@ function initAdminPage() {
 }
 
 function updateSchoolHeader() {
-    let schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
-    if (!schoolInfoStr) {
-        const schoolsListStr = localStorage.getItem('nepal_registered_schools');
-        if (schoolsListStr) {
-            try {
-                const schoolsList = JSON.parse(schoolsListStr);
-                const approvedSchool = schoolsList.find(s => s.status === 'Approved');
-                if (approvedSchool) {
-                    schoolInfoStr = JSON.stringify(approvedSchool);
+    // Priority: sessionStorage email (set by school-login.html) > nepal_school_registered_info
+    const sessionEmail = sessionStorage.getItem('school_user_email');
+    let schoolInfoStr = null;
+
+    if (sessionEmail) {
+        try {
+            const listRaw = localStorage.getItem('nepal_registered_schools');
+            if (listRaw) {
+                const list = JSON.parse(listRaw);
+                const match = list.find(s => s.schoolEmail && s.schoolEmail.toLowerCase() === sessionEmail.toLowerCase());
+                if (match) {
+                    schoolInfoStr = JSON.stringify(match);
                     localStorage.setItem('nepal_school_registered_info', schoolInfoStr);
                 }
-            } catch (e) {
-                console.error('Error recovering school info in updateSchoolHeader:', e);
             }
+        } catch(e) {
+            console.error('Error resolving school from session in updateSchoolHeader:', e);
         }
+    }
+
+    if (!schoolInfoStr) {
+        schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
     }
     if (schoolInfoStr) {
         try {
@@ -106,7 +113,6 @@ function updateSchoolHeader() {
             const titleEl = document.getElementById('adm-school-name');
             const subEl = document.getElementById('adm-school-sub');
             const userEl = document.getElementById('adm-user-name');
-            const txnEl = document.getElementById('adm-school-txn');
             if (titleEl && schoolInfo.schoolName) {
                 titleEl.innerText = schoolInfo.schoolName;
             }
@@ -115,13 +121,6 @@ function updateSchoolHeader() {
             }
             if (userEl && schoolInfo.accountant) {
                 userEl.innerText = `प्रयोक्ता: ${schoolInfo.accountant} (लेखापाल) | प्र.अ.: ${schoolInfo.principal || '-'}`;
-            }
-            if (txnEl) {
-                if (schoolInfo.transactionCode) {
-                    txnEl.innerText = `Transaction Code: ${schoolInfo.transactionCode}`;
-                } else {
-                    txnEl.innerText = '';
-                }
             }
 
             // Update School Logo if custom logo uploaded
