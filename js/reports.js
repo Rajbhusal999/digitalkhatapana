@@ -226,22 +226,22 @@ function renderBankNagadi(data) {
     <table class="data-table bank-cash-book-table">
         <thead>
             <tr>
-                <th rowspan="2" style="vertical-align:middle;">मिति</th>
-                <th rowspan="2" style="vertical-align:middle;">भौचर नं</th>
-                <th rowspan="2" style="vertical-align:middle;">विवरण</th>
-                <th colspan="2" style="text-align:center;background:#f0f4ff;">नगद मौज्दात</th>
-                <th colspan="2" style="text-align:center;background:#f0fff4;">बैंक मौज्दात</th>
-                <th style="text-align:center;background:#fff8f0;">बजेट खर्च</th>
-                <th colspan="2" style="text-align:center;background:#fff0f0;">विविध</th>
+                <th rowspan="2" style="vertical-align:middle;color:#fff;">मिति</th>
+                <th rowspan="2" style="vertical-align:middle;color:#fff;">भौचर नं</th>
+                <th rowspan="2" style="vertical-align:middle;color:#fff;">विवरण</th>
+                <th colspan="2" style="text-align:center;background:#f0f4ff;color:#333;">नगद मौज्दात</th>
+                <th colspan="2" style="text-align:center;background:#f0fff4;color:#333;">बैंक मौज्दात</th>
+                <th style="text-align:center;background:#fff8f0;color:#333;">बजेट खर्च</th>
+                <th colspan="2" style="text-align:center;background:#fff0f0;color:#333;">विविध</th>
             </tr>
             <tr>
-                <th style="text-align:center;background:#f0f4ff;">डेबिट (Dr)</th>
-                <th style="text-align:center;background:#f0f4ff;">क्रेडिट (Cr)</th>
-                <th style="text-align:center;background:#f0fff4;">डेबिट (Dr)</th>
-                <th style="text-align:center;background:#f0fff4;">क्रेडिट (Cr)</th>
-                <th style="text-align:center;background:#fff8f0;">रकम</th>
-                <th style="text-align:center;background:#fff0f0;">डेबिट (Dr)</th>
-                <th style="text-align:center;background:#fff0f0;">क्रेडिट (Cr)</th>
+                <th style="text-align:center;background:#f0f4ff;color:#333;">डेबिट (Dr)</th>
+                <th style="text-align:center;background:#f0f4ff;color:#333;">क्रेडिट (Cr)</th>
+                <th style="text-align:center;background:#f0fff4;color:#333;">डेबिट (Dr)</th>
+                <th style="text-align:center;background:#f0fff4;color:#333;">क्रेडिट (Cr)</th>
+                <th style="text-align:center;background:#fff8f0;color:#333;">रकम</th>
+                <th style="text-align:center;background:#fff0f0;color:#333;">डेबिट (Dr)</th>
+                <th style="text-align:center;background:#fff0f0;color:#333;">क्रेडिट (Cr)</th>
             </tr>
         </thead>
         <tbody>
