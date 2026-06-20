@@ -451,19 +451,41 @@ function renderCashBank(data) {
         <th>बैंक जम्मा</th><th>बैंक भुक्तानी</th><th>कुल मौज्दात</th>
     </tr></thead><tbody>`;
     let balance = 0;
+    let tCashIn = 0, tCashOut = 0, tBankIn = 0, tBankOut = 0;
     data.forEach(t => {
-        let bIn=0, bOut=0;
-        if (t.type==='income') { bIn=Number(t.amount); balance+=bIn; }
-        else { bOut=Number(t.amount); balance-=bOut; }
+        let amt = Number(t.amount);
+        let pm = t.payment_method || 'bank';
+        let cIn = 0, cOut = 0, bIn = 0, bOut = 0;
+
+        if (t.type === 'income') { 
+            balance += amt; 
+            if (pm === 'cash') { cIn = amt; tCashIn += amt; }
+            else { bIn = amt; tBankIn += amt; }
+        } else { 
+            balance -= amt; 
+            if (pm === 'cash') { cOut = amt; tCashOut += amt; }
+            else { bOut = amt; tBankOut += amt; }
+        }
+        
         html += `<tr>
             <td>${t.date}</td><td>${t.particulars||t.description||''}</td>
-            <td class="num-cell">${bIn?formatCurrency(bIn):'–'}</td>
-            <td class="num-cell">${bOut?formatCurrency(bOut):'–'}</td>
+            <td class="num-cell">${cIn?formatCurrency(cIn):'–'}</td>
+            <td class="num-cell">${cOut?formatCurrency(cOut):'–'}</td>
             <td class="num-cell">${bIn?formatCurrency(bIn):'–'}</td>
             <td class="num-cell">${bOut?formatCurrency(bOut):'–'}</td>
             <td class="num-cell" style="font-weight:bold;">${formatCurrency(balance)}</td>
         </tr>`;
     });
+    
+    html += `<tr class="khata-total-row">
+        <td colspan="2" style="text-align:center;font-weight:bold;">जम्मा (Total)</td>
+        <td class="num-cell">${tCashIn ? formatCurrency(tCashIn) : '–'}</td>
+        <td class="num-cell">${tCashOut ? formatCurrency(tCashOut) : '–'}</td>
+        <td class="num-cell">${tBankIn ? formatCurrency(tBankIn) : '–'}</td>
+        <td class="num-cell">${tBankOut ? formatCurrency(tBankOut) : '–'}</td>
+        <td class="num-cell" style="font-weight:bold;">${formatCurrency(balance)}</td>
+    </tr>`;
+
     html += `</tbody></table>`;
     return html;
 }
