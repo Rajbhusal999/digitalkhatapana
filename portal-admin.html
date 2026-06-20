@@ -6,9 +6,6 @@
     <title>Super Admin Portal - Digital Khata Pana</title>
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
-    <!-- Supabase & Config -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js"></script>
     <style>
         /* Custom styles for Super Admin Portal */
         body.super-admin-body {
@@ -597,7 +594,7 @@
             const password = document.getElementById('super-password').value;
 
             // Credentials check
-            if (email === 'smartschool@gmail.com' && password === 'qWERTY@1234') {
+            if (email === 'khatapanadigital2083@gmail.com' && password === 'Khatapana@2083') {
                 sessionStorage.setItem('super_admin_logged_in', 'true');
                 showSuperToast('Access Granted! Redirecting to dashboard...', 'success');
                 setTimeout(() => {
@@ -750,21 +747,23 @@
 
                 // Actions buttons
                 let actionHTML = '';
-                const deleteBtn = `<button class="btn-action-reject" style="background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%); margin-left: 5px;" onclick="handleDeleteSchool('${school.schoolEmail}')">Delete</button>`;
-                
                 if (school.status === 'Pending') {
                     actionHTML = `
                         <div class="btn-action-group" style="justify-content: center; gap: 8px;">
-                            <button class="btn-action-approve" onclick="handleApproveSchool('${school.schoolEmail}')">Approve</button>
-                            <button class="btn-action-reject" onclick="handleRejectSchool('${school.schoolEmail}')">Reject</button>
-                            ${deleteBtn}
+                            <button class="btn-action-approve" onclick="handleApproveSchool('${school.schoolEmail}')">
+                                Approve
+                            </button>
+                            <button class="btn-action-reject" onclick="handleRejectSchool('${school.schoolEmail}')">
+                                Reject
+                            </button>
                         </div>
                     `;
                 } else if (school.status === 'Rejected') {
                     actionHTML = `
-                        <div class="btn-action-group" style="justify-content: center; gap: 8px;">
-                            <button class="btn-action-approve" onclick="handleApproveSchool('${school.schoolEmail}')">Approve</button>
-                            ${deleteBtn}
+                        <div class="btn-action-group" style="justify-content: center;">
+                            <button class="btn-action-approve" onclick="handleApproveSchool('${school.schoolEmail}')">
+                                Approve
+                            </button>
                         </div>
                     `;
                 } else {
@@ -773,8 +772,9 @@
                             <span style="font-size:0.8rem; color:#10b981; font-weight:bold; display:flex; align-items:center; gap:3px;">
                                 ✓ Approved
                             </span>
-                            <button class="btn-action-reject" style="padding: 4px 8px; font-size: 0.7rem; opacity: 0.7;" onclick="handleRejectSchool('${school.schoolEmail}')">Suspend</button>
-                            ${deleteBtn}
+                            <button class="btn-action-reject" style="padding: 4px 8px; font-size: 0.7rem; opacity: 0.7;" onclick="handleRejectSchool('${school.schoolEmail}')">
+                                Suspend
+                            </button>
                         </div>
                     `;
                 }
@@ -908,66 +908,6 @@
                     initSuperDashboard();
                 }
             }
-
-        async function handleDeleteSchool(email) {
-            if (!confirm(`WARNING! Are you sure you want to PERMANENTLY DELETE all data for ${email}? This action cannot be undone.`)) {
-                return;
-            }
-
-            const schoolId = email.replace(/[^a-zA-Z0-9@.]/g, '');
-
-            // 1. Remove from local storage registered schools
-            let schoolsList = [];
-            const schoolsListStr = localStorage.getItem('nepal_registered_schools');
-            if (schoolsListStr) {
-                try {
-                    schoolsList = JSON.parse(schoolsListStr);
-                } catch(e) {}
-            }
-            const newList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== email.toLowerCase());
-            localStorage.setItem('nepal_registered_schools', JSON.stringify(newList));
-
-            // 2. Remove active session if it matches
-            const currentActiveStr = localStorage.getItem('nepal_school_registered_info');
-            if (currentActiveStr) {
-                try {
-                    const currentActive = JSON.parse(currentActiveStr);
-                    if (currentActive.schoolEmail.toLowerCase() === email.toLowerCase()) {
-                        localStorage.removeItem('nepal_school_registered_info');
-                    }
-                } catch(e) {}
-            }
-
-            // 3. Clear all related local storage data
-            localStorage.removeItem(`nepal_income_expense_${schoolId}`);
-            localStorage.removeItem(`nepal_budget_${schoolId}`);
-            localStorage.removeItem(`nepal_feedback_${schoolId}`);
-            localStorage.removeItem(`nepal_headings_${schoolId}`);
-
-            // 4. Delete from Supabase if configured
-            const hasConfig = typeof SUPABASE_URL !== 'undefined' && 
-                              typeof SUPABASE_ANON_KEY !== 'undefined' &&
-                              SUPABASE_URL && SUPABASE_ANON_KEY &&
-                              !SUPABASE_URL.includes('YOUR_SUPABASE_PROJECT_URL');
-            
-            if (hasConfig && window.supabase) {
-                try {
-                    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                    showSuperToast('Deleting data from remote database...', 'info');
-                    
-                    await Promise.all([
-                        client.from('transactions').delete().eq('school_id', schoolId),
-                        client.from('budgets').delete().eq('school_id', schoolId),
-                        client.from('feedbacks').delete().eq('school_id', schoolId),
-                        client.from('ledger_headings').delete().eq('school_id', schoolId)
-                    ]);
-                } catch (err) {
-                    console.error('Error deleting from Supabase:', err);
-                }
-            }
-
-            showSuperToast(`Successfully deleted ${email} and all associated data.`, 'success');
-            initSuperDashboard();
         }
 
         // Beautiful toast helper
