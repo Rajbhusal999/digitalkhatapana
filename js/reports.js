@@ -236,38 +236,7 @@ function generateReport() {
 // 1. BANK NAGADI KITAB (Enhanced)
 // ─────────────────────────────────────────────────────────────────
 function renderBankNagadi(data) {
-    let html = `
-    <table class="data-table bank-cash-book-table">
-        <thead>
-            <tr>
-                <th rowspan="2" style="vertical-align:middle;color:#fff;">मिति</th>
-                <th rowspan="2" style="vertical-align:middle;color:#fff;">भौचर नं</th>
-                <th rowspan="2" style="vertical-align:middle;color:#fff;">विवरण</th>
-                <th colspan="2" style="text-align:center;background:#f0f4ff;color:#333;">नगद मौज्दात</th>
-                <th colspan="2" style="text-align:center;background:#f0fff4;color:#333;">बैंक मौज्दात</th>
-                <th style="text-align:center;background:#fff8f0;color:#333;">बजेट खर्च</th>
-                <th colspan="2" style="text-align:center;background:#fff0f0;color:#333;">विविध</th>
-            </tr>
-            <tr>
-                <th style="text-align:center;background:#f0f4ff;color:#333;">डेबिट (Dr)</th>
-                <th style="text-align:center;background:#f0f4ff;color:#333;">क्रेडिट (Cr)</th>
-                <th style="text-align:center;background:#f0fff4;color:#333;">डेबिट (Dr)</th>
-                <th style="text-align:center;background:#f0fff4;color:#333;">क्रेडिट (Cr)</th>
-                <th style="text-align:center;background:#fff8f0;color:#333;">रकम</th>
-                <th style="text-align:center;background:#fff0f0;color:#333;">डेबिट (Dr)</th>
-                <th style="text-align:center;background:#fff0f0;color:#333;">क्रेडिट (Cr)</th>
-            </tr>
-        </thead>
-        <tbody>
-    `;
-
-    if (data.length === 0) {
-        html += `<tr><td colspan="10" style="text-align:center;padding:20px;">कुनै तथ्यांक भेटिएन।</td></tr></tbody></table>`;
-        return html;
-    }
-
-    let tCashDr=0, tCashCr=0, tBankDr=0, tBankCr=0, tBudgetExp=0, tMiscDr=0, tMiscCr=0;
-
+    let allRows = [];
     data.forEach(t => {
         let rows = [];
         if (t.type === 'direct_entry') {
@@ -291,42 +260,100 @@ function renderBankNagadi(data) {
         }
 
         rows.forEach((r, idx) => {
-            const cashDr = Number(r.cash_dr) || 0, cashCr = Number(r.cash_cr) || 0;
-            const bankDr = Number(r.bank_dr) || 0, bankCr = Number(r.bank_cr) || 0;
-            const budgetExp = Number(r.budget_exp) || 0, miscDr = Number(r.misc_dr) || 0, miscCr = Number(r.misc_cr) || 0;
-
-            tCashDr += cashDr; tCashCr += cashCr;
-            tBankDr += bankDr; tBankCr += bankCr;
-            tBudgetExp += budgetExp; tMiscDr += miscDr; tMiscCr += miscCr;
-
-            html += `
-                <tr>
-                    <td>${idx === 0 ? t.date : ''}</td>
-                    <td>${idx === 0 ? (t.voucher_no || t.voucherNo || '–') : ''}</td>
-                    <td>${idx === 0 ? (t.particulars || t.description || '') : ''}</td>
-                    <td class="num-cell">${cashDr ? formatCurrency(cashDr) : ''}</td>
-                    <td class="num-cell">${cashCr ? formatCurrency(cashCr) : ''}</td>
-                    <td class="num-cell">${bankDr ? formatCurrency(bankDr) : ''}</td>
-                    <td class="num-cell">${bankCr ? formatCurrency(bankCr) : ''}</td>
-                    <td class="num-cell">${budgetExp ? formatCurrency(budgetExp) : ''}</td>
-                    <td class="num-cell">${miscDr ? formatCurrency(miscDr) : ''}</td>
-                    <td class="num-cell">${miscCr ? formatCurrency(miscCr) : ''}</td>
-                </tr>`;
+            allRows.push({
+                date: idx === 0 ? t.date : '',
+                voucher_no: idx === 0 ? (t.voucher_no || t.voucherNo || '–') : '',
+                particulars: idx === 0 ? (t.particulars || t.description || '') : '',
+                cashDr: Number(r.cash_dr) || 0,
+                cashCr: Number(r.cash_cr) || 0,
+                bankDr: Number(r.bank_dr) || 0,
+                bankCr: Number(r.bank_cr) || 0,
+                budgetExp: Number(r.budget_exp) || 0,
+                miscDr: Number(r.misc_dr) || 0,
+                miscCr: Number(r.misc_cr) || 0
+            });
         });
     });
 
-    html += `
-        <tr class="khata-total-row">
-            <td colspan="3" style="text-align:center;font-weight:bold;">जम्मा (Total)</td>
-            <td class="num-cell">${tCashDr ? formatCurrency(tCashDr) : ''}</td>
-            <td class="num-cell">${tCashCr ? formatCurrency(tCashCr) : ''}</td>
-            <td class="num-cell">${tBankDr ? formatCurrency(tBankDr) : ''}</td>
-            <td class="num-cell">${tBankCr ? formatCurrency(tBankCr) : ''}</td>
-            <td class="num-cell">${tBudgetExp ? formatCurrency(tBudgetExp) : ''}</td>
-            <td class="num-cell">${tMiscDr ? formatCurrency(tMiscDr) : ''}</td>
-            <td class="num-cell">${tMiscCr ? formatCurrency(tMiscCr) : ''}</td>
-        </tr>
-    </tbody></table>`;
+    let headerHtml = `
+        <table class="data-table bank-cash-book-table" style="margin-bottom:0;">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="vertical-align:middle;color:#fff;">मिति</th>
+                    <th rowspan="2" style="vertical-align:middle;color:#fff;">भौचर नं</th>
+                    <th rowspan="2" style="vertical-align:middle;color:#fff;">विवरण</th>
+                    <th colspan="2" style="text-align:center;background:#f0f4ff;color:#333;">नगद मौज्दात</th>
+                    <th colspan="2" style="text-align:center;background:#f0fff4;color:#333;">बैंक मौज्दात</th>
+                    <th style="text-align:center;background:#fff8f0;color:#333;">बजेट खर्च</th>
+                    <th colspan="2" style="text-align:center;background:#fff0f0;color:#333;">विविध</th>
+                </tr>
+                <tr>
+                    <th style="text-align:center;background:#f0f4ff;color:#333;">डेबिट (Dr)</th>
+                    <th style="text-align:center;background:#f0f4ff;color:#333;">क्रेडिट (Cr)</th>
+                    <th style="text-align:center;background:#f0fff4;color:#333;">डेबिट (Dr)</th>
+                    <th style="text-align:center;background:#f0fff4;color:#333;">क्रेडिट (Cr)</th>
+                    <th style="text-align:center;background:#fff8f0;color:#333;">रकम</th>
+                    <th style="text-align:center;background:#fff0f0;color:#333;">डेबिट (Dr)</th>
+                    <th style="text-align:center;background:#fff0f0;color:#333;">क्रेडिट (Cr)</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    if (allRows.length === 0) {
+        return `<div style="overflow-x:auto;">${headerHtml}<tr><td colspan="10" style="text-align:center;padding:20px;">कुनै तथ्यांक भेटिएन।</td></tr></tbody></table></div>`;
+    }
+
+    let html = '';
+    const ROWS_PER_PAGE = 15;
+    let tCashDr=0, tCashCr=0, tBankDr=0, tBankCr=0, tBudgetExp=0, tMiscDr=0, tMiscCr=0;
+
+    for (let i = 0; i < allRows.length; i += ROWS_PER_PAGE) {
+        let pageRows = allRows.slice(i, i + ROWS_PER_PAGE);
+        let isLastPage = (i + ROWS_PER_PAGE >= allRows.length);
+        
+        html += `<div style="page-break-inside: avoid; page-break-after: ${isLastPage ? 'auto' : 'always'}; margin-bottom: ${isLastPage ? '0' : '20px'};">`;
+        html += headerHtml;
+        
+        pageRows.forEach(r => {
+            tCashDr += r.cashDr; tCashCr += r.cashCr;
+            tBankDr += r.bankDr; tBankCr += r.bankCr;
+            tBudgetExp += r.budgetExp; tMiscDr += r.miscDr; tMiscCr += r.miscCr;
+            
+            html += `
+                <tr>
+                    <td>${r.date}</td>
+                    <td>${r.voucher_no}</td>
+                    <td>${r.particulars}</td>
+                    <td class="num-cell">${r.cashDr ? formatCurrency(r.cashDr) : ''}</td>
+                    <td class="num-cell">${r.cashCr ? formatCurrency(r.cashCr) : ''}</td>
+                    <td class="num-cell">${r.bankDr ? formatCurrency(r.bankDr) : ''}</td>
+                    <td class="num-cell">${r.bankCr ? formatCurrency(r.bankCr) : ''}</td>
+                    <td class="num-cell">${r.budgetExp ? formatCurrency(r.budgetExp) : ''}</td>
+                    <td class="num-cell">${r.miscDr ? formatCurrency(r.miscDr) : ''}</td>
+                    <td class="num-cell">${r.miscCr ? formatCurrency(r.miscCr) : ''}</td>
+                </tr>`;
+        });
+
+        const emptyRowsCount = ROWS_PER_PAGE - pageRows.length;
+        for(let e=0; e<emptyRowsCount; e++) {
+            html += `<tr style="height:28px;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
+        }
+
+        html += `
+            <tr class="khata-total-row">
+                <td colspan="3" style="text-align:center;font-weight:bold;">${isLastPage ? 'कुल जम्मा (Grand Total)' : 'पृष्ठ जम्मा (Page Total / CF)'}</td>
+                <td class="num-cell">${tCashDr ? formatCurrency(tCashDr) : ''}</td>
+                <td class="num-cell">${tCashCr ? formatCurrency(tCashCr) : ''}</td>
+                <td class="num-cell">${tBankDr ? formatCurrency(tBankDr) : ''}</td>
+                <td class="num-cell">${tBankCr ? formatCurrency(tBankCr) : ''}</td>
+                <td class="num-cell">${tBudgetExp ? formatCurrency(tBudgetExp) : ''}</td>
+                <td class="num-cell">${tMiscDr ? formatCurrency(tMiscDr) : ''}</td>
+                <td class="num-cell">${tMiscCr ? formatCurrency(tMiscCr) : ''}</td>
+            </tr>
+        </tbody></table></div>`;
+    }
+    
     return html;
 }
 
