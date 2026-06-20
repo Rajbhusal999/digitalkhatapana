@@ -317,10 +317,16 @@ function renderBankNagadi(data) {
         html += `<div style="page-break-after: ${isLastPage ? 'auto' : 'always'}; margin-bottom: ${isLastPage ? '0' : '20px'};">`;
         html += headerHtml;
         
+        let pCashDr=0, pCashCr=0, pBankDr=0, pBankCr=0, pBudgetExp=0, pMiscDr=0, pMiscCr=0;
+
         pageRows.forEach(r => {
             tCashDr += r.cashDr; tCashCr += r.cashCr;
             tBankDr += r.bankDr; tBankCr += r.bankCr;
             tBudgetExp += r.budgetExp; tMiscDr += r.miscDr; tMiscCr += r.miscCr;
+
+            pCashDr += r.cashDr; pCashCr += r.cashCr;
+            pBankDr += r.bankDr; pBankCr += r.bankCr;
+            pBudgetExp += r.budgetExp; pMiscDr += r.miscDr; pMiscCr += r.miscCr;
             
             html += `
                 <tr>
@@ -344,7 +350,20 @@ function renderBankNagadi(data) {
 
         html += `
             <tr class="khata-total-row">
-                <td colspan="3" style="text-align:center;font-weight:bold;">${isLastPage ? 'कुल जम्मा (Grand Total)' : 'पृष्ठ जम्मा (Page Total / CF)'}</td>
+                <td colspan="3" style="text-align:center;font-weight:bold;">पृष्ठ जम्मा (Page Total)</td>
+                <td class="num-cell">${pCashDr ? formatCurrency(pCashDr) : ''}</td>
+                <td class="num-cell">${pCashCr ? formatCurrency(pCashCr) : ''}</td>
+                <td class="num-cell">${pBankDr ? formatCurrency(pBankDr) : ''}</td>
+                <td class="num-cell">${pBankCr ? formatCurrency(pBankCr) : ''}</td>
+                <td class="num-cell">${pBudgetExp ? formatCurrency(pBudgetExp) : ''}</td>
+                <td class="num-cell">${pMiscDr ? formatCurrency(pMiscDr) : ''}</td>
+                <td class="num-cell">${pMiscCr ? formatCurrency(pMiscCr) : ''}</td>
+            </tr>`;
+
+        if (isLastPage) {
+            html += `
+            <tr class="khata-total-row">
+                <td colspan="3" style="text-align:center;font-weight:bold;">कुल जम्मा (Grand Total)</td>
                 <td class="num-cell">${tCashDr ? formatCurrency(tCashDr) : ''}</td>
                 <td class="num-cell">${tCashCr ? formatCurrency(tCashCr) : ''}</td>
                 <td class="num-cell">${tBankDr ? formatCurrency(tBankDr) : ''}</td>
@@ -352,8 +371,10 @@ function renderBankNagadi(data) {
                 <td class="num-cell">${tBudgetExp ? formatCurrency(tBudgetExp) : ''}</td>
                 <td class="num-cell">${tMiscDr ? formatCurrency(tMiscDr) : ''}</td>
                 <td class="num-cell">${tMiscCr ? formatCurrency(tMiscCr) : ''}</td>
-            </tr>
-        </tbody></table></div>`;
+            </tr>`;
+        }
+
+        html += `</tbody></table></div>`;
     }
     
     return html;
