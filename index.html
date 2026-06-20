@@ -668,10 +668,7 @@
                         <label for="widget-login-email">Registered Email (इमेल ठेगाना)</label>
                         <input type="email" id="widget-login-email" required placeholder="name@domain.com">
                     </div>
-                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                        <label for="widget-login-pass">Password (सुरक्षा साँचो)</label>
-                        <input type="password" id="widget-login-pass" required placeholder="••••••••">
-                    </div>
+
                     <button type="submit" class="auth-submit-btn">Login to Citizen Hub</button>
                     <p style="font-size:0.75rem; text-align:center; color:#94A3B8; margin-top:10px;">
                         प्रशासकीय लगइनका लागि सिधै <a href="portal-admin.html" style="color:var(--accent); font-weight:bold;">Admin Portal</a> मा जानुहोस्।
@@ -729,23 +726,6 @@
                         <input type="file" id="reg-logo" accept="image/*" required>
                     </div>
 
-                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                        <label for="reg-public-board">Public Board Settings (सार्वजनिक बोर्ड) *</label>
-                        <select id="reg-public-board" required>
-                            <option value="yes">Publicly Visible (नागरिकका लागि खुल्ला राख्ने)</option>
-                            <option value="no">Keep Private (गोप्य राख्ने - प्रशासनिक मात्र)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                        <label for="reg-pass">Create Password (पासवर्ड) *</label>
-                        <input type="password" id="reg-pass" required placeholder="नयाँ पासवर्ड">
-                    </div>
-
-                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
-                        <label for="reg-confirm-pass">Confirm Password (पासवर्ड पुष्टि) *</label>
-                        <input type="password" id="reg-confirm-pass" required placeholder="पासवर्ड पुनः टाइप गर्नुहोस्">
-                    </div>
 
                     <button type="submit" class="auth-submit-btn" style="background: linear-gradient(135deg, var(--success) 0%, #059669 100%); color:white;">
                         Register School & Choose Plan
@@ -955,7 +935,6 @@
         function handleWidgetLogin(event) {
             event.preventDefault();
             const email = document.getElementById('widget-login-email').value.trim();
-            const pass = document.getElementById('widget-login-pass').value;
 
             // Check if there is a matching school registration
             let matchedSchool = null;
@@ -970,11 +949,6 @@
             }
 
             if (matchedSchool) {
-                // Verify password
-                if (matchedSchool.password !== pass) {
-                    showGatewayToast('Incorrect password! (गलत पासवर्ड)', 'error');
-                    return;
-                }
 
                 // Verify approval status
                 if (matchedSchool.status === 'Pending') {
@@ -1014,15 +988,7 @@
             const pPhone = document.getElementById('reg-principal-phone').value.trim();
             const accountant = document.getElementById('reg-accountant-name').value.trim();
             const aPhone = document.getElementById('reg-accountant-phone').value.trim();
-            const publicBoard = document.getElementById('reg-public-board').value;
-            const pass = document.getElementById('reg-pass').value;
-            const confirmPass = document.getElementById('reg-confirm-pass').value;
 
-            // Password check
-            if (pass !== confirmPass) {
-                showGatewayToast('Passwords do not match! (पासवर्डहरू मिलेनन्)', 'error');
-                return;
-            }
 
             // Email format validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1080,8 +1046,7 @@
                     pPhone,
                     accountant,
                     aPhone,
-                    publicBoard,
-                    password: pass,
+                    publicBoard: 'yes',
                     logo: logoBase64,
                     status: 'Pending',
                     registeredAt: new Date().toISOString()
