@@ -886,6 +886,13 @@ function renderTrialBalance(data) {
     let totalDr = tCashDr + tBankDr + tBudgetExp + tMiscDr;
     let totalCr = tCashCr + tBankCr + tMiscCr;
 
+    let cashDiff = tCashDr - tCashCr;
+    let bankDiff = tBankDr - tBankCr;
+    let expDiff = tBudgetExp - 0;
+    let advDiff = 0 - 0;
+    let miscDiff = tMiscDr - tMiscCr;
+    let totalDiff = totalDr - totalCr;
+
     let html = `
         <div style="overflow-x:auto; margin-top:20px;">
         <table class="data-table trial-balance-table" style="margin-bottom:0; font-family:var(--font-nepali); border-collapse: collapse; width:100%; border:1px solid #000;">
@@ -907,41 +914,41 @@ function renderTrialBalance(data) {
                     <td style="text-align:right;border:1px solid #000;padding:4px 8px;">नगद</td>
                     <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${tCashDr ? formatCurrency(tCashDr) : ''}</td>
                     <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${tCashCr ? formatCurrency(tCashCr) : ''}</td>
-                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">०</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${cashDiff ? formatCurrency(cashDiff) : '०'}</td>
                 </tr>
                 <tr>
                     <td style="text-align:center;border:1px solid #000;padding:4px 8px;">२</td>
                     <td style="text-align:right;border:1px solid #000;padding:4px 8px;">बैंक</td>
                     <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${tBankDr ? formatCurrency(tBankDr) : ''}</td>
                     <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${tBankCr ? formatCurrency(tBankCr) : ''}</td>
-                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">०</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${bankDiff ? formatCurrency(bankDiff) : '०'}</td>
                 </tr>
                 <tr>
                     <td style="text-align:center;border:1px solid #000;padding:4px 8px;">३</td>
                     <td style="text-align:right;border:1px solid #000;padding:4px 8px;">खर्च</td>
                     <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${tBudgetExp ? formatCurrency(tBudgetExp) : ''}</td>
                     <td class="num-cell" style="border:1px solid #000;padding:4px 8px;"></td>
-                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">०</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${expDiff ? formatCurrency(expDiff) : '०'}</td>
                 </tr>
                 <tr>
                     <td style="text-align:center;border:1px solid #000;padding:4px 8px;">४</td>
                     <td style="text-align:right;border:1px solid #000;padding:4px 8px;">पेश्की</td>
                     <td class="num-cell" style="border:1px solid #000;padding:4px 8px;"></td>
                     <td class="num-cell" style="border:1px solid #000;padding:4px 8px;"></td>
-                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">०</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${advDiff ? formatCurrency(advDiff) : '०'}</td>
                 </tr>
                 <tr>
                     <td style="text-align:center;border:1px solid #000;padding:4px 8px;">५</td>
                     <td style="text-align:right;border:1px solid #000;padding:4px 8px;">विविध</td>
                     <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${tMiscDr ? formatCurrency(tMiscDr) : ''}</td>
                     <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${tMiscCr ? formatCurrency(tMiscCr) : ''}</td>
-                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">०</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:4px 8px;">${miscDiff ? formatCurrency(miscDiff) : '०'}</td>
                 </tr>
                 <tr style="font-weight:bold;">
                     <td colspan="2" style="text-align:center;border:1px solid #000;padding:6px;">जम्मा</td>
                     <td class="num-cell" style="border:1px solid #000;padding:6px;">${totalDr ? formatCurrency(totalDr) : '०'}</td>
                     <td class="num-cell" style="border:1px solid #000;padding:6px;">${totalCr ? formatCurrency(totalCr) : '०'}</td>
-                    <td class="num-cell" style="border:1px solid #000;padding:6px;">०</td>
+                    <td class="num-cell" style="border:1px solid #000;padding:6px;">${totalDiff ? formatCurrency(totalDiff) : '०'}</td>
                 </tr>
             </tbody>
         </table>
