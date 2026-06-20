@@ -316,6 +316,8 @@ function renderBankNagadi(data) {
     });
 
     html += `
+        </tbody>
+        <tfoot>
         <tr class="khata-total-row">
             <td colspan="3" style="text-align:center;font-weight:bold;">जम्मा (Total)</td>
             <td class="num-cell">${tCashDr ? formatCurrency(tCashDr) : ''}</td>
@@ -326,7 +328,8 @@ function renderBankNagadi(data) {
             <td class="num-cell">${tMiscDr ? formatCurrency(tMiscDr) : ''}</td>
             <td class="num-cell">${tMiscCr ? formatCurrency(tMiscCr) : ''}</td>
         </tr>
-    </tbody></table>`;
+        </tfoot>
+    </table>`;
     return html;
 }
 
@@ -449,8 +452,10 @@ function renderKhata(data, type) {
         </thead>
         <tbody>
             ${dataRows}
-            ${totalRow}
         </tbody>
+        <tfoot>
+            ${totalRow}
+        </tfoot>
     </table>
     </div>`;
 }
@@ -491,16 +496,18 @@ function renderCashBank(data) {
         </tr>`;
     });
     
-    html += `<tr class="khata-total-row">
+    html += `</tbody>
+    <tfoot>
+    <tr class="khata-total-row">
         <td colspan="2" style="text-align:center;font-weight:bold;">जम्मा (Total)</td>
         <td class="num-cell">${tCashIn ? formatCurrency(tCashIn) : '–'}</td>
         <td class="num-cell">${tCashOut ? formatCurrency(tCashOut) : '–'}</td>
         <td class="num-cell">${tBankIn ? formatCurrency(tBankIn) : '–'}</td>
         <td class="num-cell">${tBankOut ? formatCurrency(tBankOut) : '–'}</td>
         <td class="num-cell" style="font-weight:bold;">${formatCurrency(balance)}</td>
-    </tr>`;
-
-    html += `</tbody></table>`;
+    </tr>
+    </tfoot>
+    </table>`;
     return html;
 }
 
@@ -528,12 +535,16 @@ function renderIncomeExpenditure(data) {
         </tr>`;
     }
     const net = totalInc - totalExp;
-    html += `<tr class="khata-total-row">
+    html += `</tbody>
+    <tfoot>
+    <tr class="khata-total-row">
         <td>कुल जम्मा</td>
         <td class="num-cell">${formatCurrency(totalInc)}</td>
         <td class="num-cell">${formatCurrency(totalExp)}</td>
         <td class="num-cell" style="color:${net>=0?'var(--success)':'var(--danger)'};">${formatCurrency(net)}</td>
-    </tr></tbody></table>`;
+    </tr>
+    </tfoot>
+    </table>`;
     renderSummaryCards([
         { label: 'कुल आम्दानी', value: totalInc, type: 'surplus' },
         { label: 'कुल खर्च', value: totalExp, type: 'deficit' },
@@ -569,11 +580,15 @@ function renderTrialBalance(data) {
         html += `<tr><td>${sn++}</td><td>बैंक तथा नगद मौज्दात</td><td class="num-cell">${formatCurrency(netBank)}</td><td>–</td></tr>`;
         totalDr += netBank;
     }
-    html += `<tr class="khata-total-row">
+    html += `</tbody>
+    <tfoot>
+    <tr class="khata-total-row">
         <td colspan="2" style="text-align:center;">कुल जम्मा</td>
         <td class="num-cell">${formatCurrency(totalDr)}</td>
         <td class="num-cell">${formatCurrency(totalCr)}</td>
-    </tr></tbody></table>`;
+    </tr>
+    </tfoot>
+    </table>`;
     return html;
 }
 
