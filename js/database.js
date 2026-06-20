@@ -678,7 +678,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     } catch(e) {}
                 }
 
-                let text = `© २०८२ ${schoolName}`;
+                let nepaliYearStr = '२०८२';
+                if (window.NepaliFunctions) {
+                    try {
+                        nepaliYearStr = window.toNepaliDigits(window.NepaliFunctions.GetCurrentBsDate().year);
+                    } catch(e){}
+                } else {
+                    nepaliYearStr = window.toNepaliDigits(new Date().getFullYear() + 57);
+                }
+
+                let text = `© ${nepaliYearStr} ${schoolName}`;
                 if (address) text += ` | ${address}`;
                 if (phone) text += ` | फोन: ${phone}`;
                 if (email) text += ` | इमेल: ${email}`;
