@@ -945,9 +945,49 @@
                                 </p>
                             </div>
                             <form onsubmit="submitTransactionCode(event, 'eSewa')" style="margin-top: 15px;">
-                                <p style="font-size: 0.82rem; color: #CBD5E1; text-align: center; margin-bottom: 10px;">QR स्क्यान गरेपछि तलको बटन थिच्नुहोस्। कारोबार कोड स्वतः उत्पन्न हुनेछ।</p>
-                                <button type="submit" class="pay-submit-btn esewa-pay-btn" style="margin-top: 5px;">
-                                    Submit Payment for Approval
+                                <!-- ⚠️ Remarks Notice -->
+                                <div style="
+                                    background: rgba(229,169,59,0.08);
+                                    border: 1.5px solid rgba(229,169,59,0.5);
+                                    border-radius: 8px;
+                                    padding: 14px 16px;
+                                    margin-bottom: 16px;
+                                    display: flex;
+                                    gap: 12px;
+                                    align-items: flex-start;
+                                ">
+                                    <span style="font-size:1.4rem; line-height:1; flex-shrink:0;">⚠️</span>
+                                    <div>
+                                        <div style="color:#fbbf24; font-weight:800; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">
+                                            महत्त्वपूर्ण सूचना — Remarks अनिवार्य!
+                                        </div>
+                                        <div style="color:#e2e8f0; font-size:0.82rem; line-height:1.6;">
+                                            भुक्तानी गर्नुअघि eSewa मा <strong style="color:#fbbf24;">Remarks / Description</strong> फिल्डमा तलको विवरण लेख्नुहोस्:
+                                        </div>
+                                        <div style="
+                                            background: rgba(0,0,0,0.3);
+                                            border-radius: 6px;
+                                            padding: 8px 12px;
+                                            margin-top: 8px;
+                                            font-family: monospace;
+                                            font-size: 0.82rem;
+                                            color: #34d399;
+                                            border-left: 3px solid #34d399;
+                                            word-break: break-all;
+                                        " id="esewa-remarks-hint">
+                                            [विद्यालयको नाम] - Khatapana [योजना] Subscription
+                                        </div>
+                                        <div style="color:#94a3b8; font-size:0.75rem; margin-top:6px;">
+                                            उदाहरण: <em>Himalaya Basic School - Khatapana Standard Subscription</em>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                                    <label for="esewa-txn-code">Enter Transaction Verification Code (कारोबार प्रमाणिकरण कोड) *</label>
+                                    <input type="text" id="esewa-txn-code" required placeholder="उदा: 8X9Y2Z1W" style="text-align: center; text-transform: uppercase; font-weight: bold; letter-spacing: 2px;">
+                                </div>
+                                <button type="submit" class="pay-submit-btn esewa-pay-btn" style="margin-top: 15px;">
+                                    Submit Transaction Code for Approval
                                 </button>
                             </form>
                         </div>
@@ -974,9 +1014,49 @@
                                 </p>
                             </div>
                             <form onsubmit="submitTransactionCode(event, 'Mobile Banking')" style="margin-top: 15px;">
-                                <p style="font-size: 0.82rem; color: #CBD5E1; text-align: center; margin-bottom: 10px;">QR स्क्यान गरेपछि तलको बटन थिच्नुहोस्। कारोबार कोड स्वतः उत्पन्न हुनेछ।</p>
-                                <button type="submit" class="pay-submit-btn mobilebanking-pay-btn" style="background: linear-gradient(135deg, #003893 0%, #002B70 100%); color: white; margin-top: 5px;">
-                                    Submit Payment for Approval
+                                <!-- ⚠️ Remarks Notice -->
+                                <div style="
+                                    background: rgba(0,56,147,0.15);
+                                    border: 1.5px solid rgba(56,130,230,0.5);
+                                    border-radius: 8px;
+                                    padding: 14px 16px;
+                                    margin-bottom: 16px;
+                                    display: flex;
+                                    gap: 12px;
+                                    align-items: flex-start;
+                                ">
+                                    <span style="font-size:1.4rem; line-height:1; flex-shrink:0;">⚠️</span>
+                                    <div>
+                                        <div style="color:#60a5fa; font-weight:800; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">
+                                            महत्त्वपूर्ण सूचना — Remarks अनिवार्य!
+                                        </div>
+                                        <div style="color:#e2e8f0; font-size:0.82rem; line-height:1.6;">
+                                            भुक्तानी गर्नुअघि Mobile Banking मा <strong style="color:#60a5fa;">Remarks / Description</strong> फिल्डमा तलको विवरण लेख्नुहोस्:
+                                        </div>
+                                        <div style="
+                                            background: rgba(0,0,0,0.3);
+                                            border-radius: 6px;
+                                            padding: 8px 12px;
+                                            margin-top: 8px;
+                                            font-family: monospace;
+                                            font-size: 0.82rem;
+                                            color: #34d399;
+                                            border-left: 3px solid #34d399;
+                                            word-break: break-all;
+                                        " id="mb-remarks-hint">
+                                            [विद्यालयको नाम] - Khatapana [योजना] Subscription
+                                        </div>
+                                        <div style="color:#94a3b8; font-size:0.75rem; margin-top:6px;">
+                                            उदाहरण: <em>Himalaya Basic School - Khatapana Standard Subscription</em>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                                    <label for="mb-txn-code">Enter Transaction Verification Code (कारोबार प्रमाणिकरण कोड) *</label>
+                                    <input type="text" id="mb-txn-code" required placeholder="उदा: FT-98765432" style="text-align: center; text-transform: uppercase; font-weight: bold; letter-spacing: 2px;">
+                                </div>
+                                <button type="submit" class="pay-submit-btn mobilebanking-pay-btn" style="background: linear-gradient(135deg, #003893 0%, #002B70 100%); color: white; margin-top: 15px;">
+                                    Submit Transaction Code for Approval
                                 </button>
                             </form>
                         </div>
@@ -1092,6 +1172,22 @@
                 }, 1500);
                 return;
             }
+
+            // Build dynamic remarks hint text from real school name
+            let schoolDisplayName = 'तपाईंको विद्यालयको नाम';
+            try {
+                const raw = localStorage.getItem('nepal_school_registered_info');
+                if (raw) {
+                    const info = JSON.parse(raw);
+                    if (info.schoolName) schoolDisplayName = info.schoolName;
+                }
+            } catch(e) {}
+            const remarksText = `${schoolDisplayName} - Khatapana ${planName} Subscription`;
+            const esewaHint = document.getElementById('esewa-remarks-hint');
+            const mbHint    = document.getElementById('mb-remarks-hint');
+            if (esewaHint) esewaHint.innerText = remarksText;
+            if (mbHint)    mbHint.innerText    = remarksText;
+
 
             // Open pricing modal
             document.getElementById('bill-plan-name').innerText = `${planName} प्याकेज`;
@@ -1279,17 +1375,18 @@
         function submitTransactionCode(event, gateway) {
             event.preventDefault();
             
-            // Auto-generate 5-character transaction code (letters, numbers, special chars)
-            function generateTxnCode() {
-                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%&*';
-                let code = '';
-                for (let i = 0; i < 5; i++) {
-                    code += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
-                return code;
+            // Find the correct code input
+            let txnCode = '';
+            if (gateway === 'eSewa') {
+                txnCode = document.getElementById('esewa-txn-code').value.trim();
+            } else {
+                txnCode = document.getElementById('mb-txn-code').value.trim();
             }
             
-            const txnCode = generateTxnCode();
+            if (!txnCode) {
+                showSubToast('Please enter the transaction verification code!', 'error');
+                return;
+            }
 
             const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
             let schoolInfo = {};
