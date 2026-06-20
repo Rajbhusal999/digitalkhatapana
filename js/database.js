@@ -12,7 +12,9 @@ let dbSuffix = '';
 function initKeys() {
     // ── Step 1: Resolve the active school from session (set by school-login.html) ──
     const sessionEmail = sessionStorage.getItem('school_user_email');
-    if (sessionEmail) {
+    const isAdmin = sessionStorage.getItem('admin_logged_in') === 'true';
+
+    if (sessionEmail && isAdmin) {
         // Always load the exact school the user logged in as
         try {
             const listRaw = localStorage.getItem('nepal_registered_schools');

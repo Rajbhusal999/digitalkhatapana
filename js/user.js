@@ -109,9 +109,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Priority: sessionStorage email (set by school-login.html) > nepal_school_registered_info
     // Never fall back to "first approved school" — that causes data cross-contamination.
     const sessionEmail = sessionStorage.getItem('school_user_email');
+    const isAdmin = sessionStorage.getItem('admin_logged_in') === 'true';
     let schoolInfoStr  = null;
 
-    if (sessionEmail) {
+    if (sessionEmail && isAdmin) {
         // Find the exact school the user logged in as
         try {
             const listRaw = localStorage.getItem('nepal_registered_schools');

@@ -978,6 +978,11 @@
                     isValid = true;
                 } else if (matchedSchool.otp === password) {
                     if (!matchedSchool.otpUsed) {
+                        // Clear any old session so school-login.html doesn't bounce to previous school
+                        sessionStorage.removeItem('school_user_logged_in');
+                        sessionStorage.removeItem('school_user_email');
+                        sessionStorage.removeItem('admin_logged_in');
+                        
                         showGatewayToast('OTP Verified! Redirecting to setup your permanent password...', 'success');
                         setTimeout(() => {
                             window.location.href = 'school-login.html';

@@ -69,7 +69,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 function updateSchoolHeader() {
     let schoolInfoStr = null;
     const sessionEmail = sessionStorage.getItem('school_user_email');
-    if (sessionEmail) {
+    const isAdmin = sessionStorage.getItem('admin_logged_in') === 'true';
+    if (sessionEmail && isAdmin) {
         try {
             const listRaw = localStorage.getItem('nepal_registered_schools');
             if (listRaw) {
