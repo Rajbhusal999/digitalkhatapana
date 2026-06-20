@@ -306,8 +306,10 @@ function syncFromLocalStorage() {
  */
 async function syncFromSupabase() {
     try {
+        const schoolId = getSchoolId();
+
         // Fetch transactions
-        const txRes = await supabaseClient.from('transactions').select('*');
+        const txRes = await supabaseClient.from('transactions').select('*').eq('school_id', schoolId);
         if (txRes.error) throw txRes.error;
         // Map database naming (snake_case) to application (camelCase)
         cachedTransactions = txRes.data.map(item => ({
@@ -329,7 +331,7 @@ async function syncFromSupabase() {
         }));
 
         // Fetch budgets
-        const bgRes = await supabaseClient.from('budgets').select('*');
+        const bgRes = await supabaseClient.from('budgets').select('*').eq('school_id', schoolId);
         if (bgRes.error) throw bgRes.error;
         cachedBudgets = {};
         bgRes.data.forEach(item => {
@@ -337,7 +339,7 @@ async function syncFromSupabase() {
         });
 
         // Fetch feedbacks
-        const fbRes = await supabaseClient.from('feedbacks').select('*');
+        const fbRes = await supabaseClient.from('feedbacks').select('*').eq('school_id', schoolId);
         if (fbRes.error) throw fbRes.error;
         cachedFeedbacks = fbRes.data.map(item => ({
             id: item.id,
@@ -352,7 +354,7 @@ async function syncFromSupabase() {
         }));
 
         // Fetch ledger headings
-        const hdRes = await supabaseClient.from('ledger_headings').select('*').order('sort_order');
+        const hdRes = await supabaseClient.from('ledger_headings').select('*').eq('school_id', schoolId).order('sort_order');
         if (!hdRes.error && hdRes.data && hdRes.data.length > 0) {
             cachedHeadings = hdRes.data;
         } else {
@@ -406,6 +408,7 @@ async function saveTransaction(tx) {
         // Prepare DB payload (snake_case)
         const dbPayload = {
             id: tx.id || 'tx-' + Date.now(),
+            school_id: getSchoolId(),
             date: tx.date,
             type: tx.type,
             category: tx.category,
@@ -472,6 +475,7 @@ async function saveBudget(category, amount) {
         const { error } = await supabaseClient
             .from('budgets')
             .upsert({
+                school_id: getSchoolId(),
                 category: category,
                 amount: Number(amount)
             });
@@ -499,6 +503,7 @@ async function saveFeedback(fb) {
     if (useSupabase) {
         const dbPayload = {
             id: fb.id,
+            school_id: getSchoolId(),
             name: fb.name,
             role: fb.role,
             phone: fb.phone || null,
