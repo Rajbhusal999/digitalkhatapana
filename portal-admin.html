@@ -466,6 +466,24 @@
             }
         }
 
+        /* Subscription expiry badges */
+        .sub-expiry-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .sub-expiry-badge.active   { background: rgba(16,185,129,0.15);  color: #34d399; border: 1px solid rgba(16,185,129,0.3);  }
+        .sub-expiry-badge.warning  { background: rgba(245,158,11,0.15);  color: #fbbf24; border: 1px solid rgba(245,158,11,0.3);  }
+        .sub-expiry-badge.expired  { background: rgba(239,68,68,0.15);   color: #f87171; border: 1px solid rgba(239,68,68,0.3);   }
+        .sub-expiry-badge.lifetime { background: rgba(99,102,241,0.15);  color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);  }
+        .sub-expiry-badge.none     { background: rgba(148,163,184,0.1);  color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); }
+
         .email-bubble {
             background: rgba(15, 23, 42, 0.6);
             border-left: 4px solid var(--accent);
@@ -645,6 +663,7 @@
                                 <th>Email Address</th>
                                 <th>Payment</th>
                                 <th>Transaction Code</th>
+                                <th>Subscription / Expiry</th>
                                 <th style="text-align: center;">Status</th>
                                 <th style="text-align: center; width: 260px;">Actions</th>
                             </tr>
@@ -927,6 +946,36 @@
 
                 const regDate = school.registeredAt ? new Date(school.registeredAt).toLocaleDateString() : '-';
 
+                // Build subscription/expiry cell
+                let expiryHTML = '';
+                const sub = school.subscription;
+                if (sub && sub.planName === 'Free') {
+                    expiryHTML = `
+                        <div style="font-size:0.8rem; font-weight:700; color:#a5b4fc; margin-bottom:4px;">Free</div>
+                        <span class="sub-expiry-badge lifetime">∞ Lifetime</span>
+                    `;
+                } else if (sub && sub.expiresAt) {
+                    const expiryDate = new Date(sub.expiresAt);
+                    const now = new Date();
+                    const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+                    const formattedExpiry = expiryDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                    let badgeClass = 'active';
+                    let badgeIcon = '✅';
+                    let daysLabel = `${daysLeft}d left`;
+                    if (daysLeft <= 0) {
+                        badgeClass = 'expired'; badgeIcon = '❌'; daysLabel = 'Expired';
+                    } else if (daysLeft <= 30) {
+                        badgeClass = 'warning'; badgeIcon = '⚠️'; daysLabel = `${daysLeft}d left`;
+                    }
+                    expiryHTML = `
+                        <div style="font-size:0.8rem; font-weight:700; color:#e2e8f0; margin-bottom:4px;">${sub.planName || '-'}</div>
+                        <div style="font-size:0.72rem; color:#94a3b8; margin-bottom:5px;">Expires: ${formattedExpiry}</div>
+                        <span class="sub-expiry-badge ${badgeClass}">${badgeIcon} ${daysLabel}</span>
+                    `;
+                } else {
+                    expiryHTML = `<span class="sub-expiry-badge none">— Not set</span>`;
+                }
+
                 row.innerHTML = `
                     <td>${regDate}</td>
                     <td>
@@ -937,6 +986,7 @@
                     <td>${school.schoolEmail}</td>
                     <td>${school.paymentMethod || 'None (Free)'}</td>
                     <td><code>${school.transactionCode || 'N/A'}</code></td>
+                    <td>${expiryHTML}</td>
                     <td style="text-align:center;">${statusBadge}</td>
                     <td style="text-align:center;">${actionHTML}</td>
                 `;
