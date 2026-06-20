@@ -777,10 +777,6 @@ function renderIncomeExpenditure(data) {
         delete incTotals[h.id];
         delete incTotals[h.name_ne];
     });
-    for(let key in incTotals) {
-        incomes.push({ label: key, amount: incTotals[key] });
-        totalInc += incTotals[key];
-    }
 
     expHeadings.forEach(h => {
         let amt = (expTotals[h.id] || 0) + (expTotals[h.name_ne] || 0);
@@ -789,10 +785,6 @@ function renderIncomeExpenditure(data) {
         delete expTotals[h.id];
         delete expTotals[h.name_ne];
     });
-    for(let key in expTotals) {
-        expenses.push({ label: key, amount: expTotals[key] });
-        totalExp += expTotals[key];
-    }
 
     let headerHtml = `
         <div style="overflow-x:auto; margin-top:20px;">
