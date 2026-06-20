@@ -461,7 +461,7 @@ async function deleteTransaction(id) {
 
 async function saveBudget(category, amount) {
     if (useSupabase) {
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('budgets')
             .upsert({
                 category: category,
@@ -501,7 +501,7 @@ async function saveFeedback(fb) {
             date: fb.date
         };
 
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('feedbacks')
             .insert(dbPayload);
 
@@ -521,7 +521,7 @@ async function saveFeedback(fb) {
 
 async function replyToFeedback(id, text) {
     if (useSupabase) {
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('feedbacks')
             .update({
                 replied: true,
