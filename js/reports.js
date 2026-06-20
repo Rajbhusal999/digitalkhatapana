@@ -277,9 +277,9 @@ function renderBankNagadi(data) {
         }
 
         rows.forEach((r, idx) => {
-            const cashDr = r.cash_dr || 0, cashCr = r.cash_cr || 0;
-            const bankDr = r.bank_dr || 0, bankCr = r.bank_cr || 0;
-            const budgetExp = r.budget_exp || 0, miscDr = r.misc_dr || 0, miscCr = r.misc_cr || 0;
+            const cashDr = Number(r.cash_dr) || 0, cashCr = Number(r.cash_cr) || 0;
+            const bankDr = Number(r.bank_dr) || 0, bankCr = Number(r.bank_cr) || 0;
+            const budgetExp = Number(r.budget_exp) || 0, miscDr = Number(r.misc_dr) || 0, miscCr = Number(r.misc_cr) || 0;
 
             tCashDr += cashDr; tCashCr += cashCr;
             tBankDr += bankDr; tBankCr += bankCr;
