@@ -322,6 +322,70 @@ function updateDashboardMetrics() {
     document.getElementById('val-budget-utilization').innerText = isDevanagari 
         ? toNepaliDigits(utilizationRate) + '%' 
         : utilizationRate + '%';
+        
+    generateFinancialNarrative(transactions);
+}
+
+/**
+ * Generate a textual narrative of the financial status
+ */
+function generateFinancialNarrative(transactions) {
+    let incomeCats = {};
+    let expenseCats = {};
+    
+    transactions.forEach(tx => {
+        if (tx.type === 'income') {
+            incomeCats[tx.category] = (incomeCats[tx.category] || 0) + Number(tx.amount);
+        } else if (tx.type === 'expense') {
+            expenseCats[tx.category] = (expenseCats[tx.category] || 0) + Number(tx.amount);
+        }
+    });
+
+    const getTopTwo = (catDict, sourceMap, lang) => {
+        return Object.entries(catDict)
+            .sort((a,b) => b[1] - a[1])
+            .slice(0, 2)
+            .map(entry => {
+                const catObj = sourceMap[entry[0]];
+                return catObj ? catObj[lang] : entry[0];
+            });
+    };
+
+    const topIncomes = getTopTwo(incomeCats, INCOME_CATEGORIES, 'ne');
+    const topExpenses = getTopTwo(expenseCats, EXPENSE_CATEGORIES, 'ne');
+
+    let narrative = "यस आर्थिक वर्षमा विद्यालयको आर्थिक अवस्था पारदर्शी र व्यवस्थित रहेको छ। ";
+    
+    if (topIncomes.length > 0) {
+        narrative += `विद्यालयको आम्दानीका मुख्य स्रोतहरूमा विशेष गरी <strong>${topIncomes.join(' र ')}</strong> रहेका छन्। `;
+    }
+    
+    if (topExpenses.length > 0) {
+        narrative += `त्यसैगरी, प्राप्त बजेट मुख्य रूपमा <strong>${topExpenses.join(' र ')}</strong> जस्ता महत्त्वपूर्ण क्षेत्रहरूमा खर्च गरिएको छ। `;
+    }
+
+    narrative += "विद्यालयको सम्पूर्ण आर्थिक कारोबार बैंकिङ प्रणाली मार्फत व्यवस्थित गरिएको छ जसले सुशासन र नागरिकप्रतिको जवाफदेहिता सुनिश्चित गर्दछ।";
+
+    // English version
+    let enNarrative = "This fiscal year, the financial status of the school is transparent and well-managed. ";
+    
+    const topIncomesEn = getTopTwo(incomeCats, INCOME_CATEGORIES, 'en');
+    const topExpensesEn = getTopTwo(expenseCats, EXPENSE_CATEGORIES, 'en');
+    
+    if (topIncomesEn.length > 0) {
+        enNarrative += `The main sources of income are primarily <strong>${topIncomesEn.join(' and ')}</strong>. `;
+    }
+    
+    if (topExpensesEn.length > 0) {
+        enNarrative += `Similarly, the budget is mainly spent on crucial areas like <strong>${topExpensesEn.join(' and ')}</strong>. `;
+    }
+    
+    enNarrative += "All financial transactions are conducted through the banking system, ensuring good governance and accountability to the citizens.";
+
+    const narrativeEl = document.getElementById('txt-financial-narrative');
+    if (narrativeEl) {
+        narrativeEl.innerHTML = currentLang === 'en' ? enNarrative : narrative;
+    }
 }
 
 /**

@@ -150,32 +150,24 @@
             </div>
         </section>
 
-        <!-- Ledger Reports Grid -->
-        <section class="reports-section-wrapper" style="margin: 0 40px 30px;">
-            <h3 class="reports-section-title">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        <!-- Financial Narrative Summary -->
+        <section class="narrative-summary" style="margin: 0 40px 30px; background: white; padding: 30px; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border-left: 5px solid var(--accent);">
+            <h3 style="font-family: var(--font-nepali); color: var(--secondary); margin-bottom: 15px; font-size: 1.4rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
                 </svg>
-                वार्षिक वित्तीय प्रतिवेदनहरू (Annual Financial Reports)
+                वित्तीय अवस्थाको सारांश (Financial Health Summary)
             </h3>
-            <div class="reports-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
-                <a href="reports.html?report=aaya_vyaya" class="report-card">
-                    <div class="report-card-icon">⚖️</div>
-                    <div>
-                        <h4>आय व्यय विवरण</h4>
-                        <p>Income & Expenditure Summary</p>
-                    </div>
-                </a>
-                <a href="reports.html?report=trial_balance" class="report-card">
-                    <div class="report-card-icon">🧮</div>
-                    <div>
-                        <h4>सन्तुलन परीक्षण</h4>
-                        <p>Trial Balance</p>
-                    </div>
-                </a>
-            </div>
+            <p id="txt-financial-narrative" style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.8;">
+                यस आर्थिक वर्षमा विद्यालयको आम्दानी र खर्चको अवस्था सन्तुलित रहेको छ। विस्तृत विवरण लोड हुँदैछ...
+            </p>
         </section>
+
+
 
         <!-- Visualization Graphs -->
         <section class="dashboard-middle">
