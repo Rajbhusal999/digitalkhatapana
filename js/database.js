@@ -655,3 +655,45 @@ window.getSchoolId = getSchoolId;
 window.formatCurrency = formatCurrency;
 window.formatNepaliStyleNumber = formatNepaliStyleNumber;
 window.toNepaliDigits = toNepaliDigits;
+
+// Inject Dynamic Footer across all pages
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        try {
+            const footerBottom = document.querySelector('footer .footer-bottom');
+            if (footerBottom) {
+                let schoolName = 'श्री जन जागृति माध्यमिक विद्यालय';
+                let address = '';
+                let phone = '';
+                let email = '';
+                
+                const infoStr = localStorage.getItem('nepal_school_registered_info');
+                if (infoStr) {
+                    try {
+                        const info = JSON.parse(infoStr);
+                        if (info.schoolName) schoolName = info.schoolName;
+                        if (info.address) address = info.address;
+                        if (info.pPhone || info.phone) phone = info.pPhone || info.phone;
+                        if (info.schoolEmail || info.email) email = info.schoolEmail || info.email;
+                    } catch(e) {}
+                }
+
+                let text = `© २०८२ ${schoolName}`;
+                if (address) text += ` | ${address}`;
+                if (phone) text += ` | फोन: ${phone}`;
+                if (email) text += ` | इमेल: ${email}`;
+                
+                const currentText = footerBottom.innerText;
+                if (currentText.includes('प्रशासनिक')) {
+                    text += ` | प्रशासनिक लेखा व्यवस्थापन पोर्टल`;
+                } else if (currentText.includes('सुशासन')) {
+                    text += ` | सुशासन, पारदर्शिता र गुणस्तरीय शिक्षा`;
+                } else if (currentText.includes('केन्द्रीय')) {
+                    text += ` | केन्द्रीय सुपर एडमिन प्रशासन प्रणाली`;
+                }
+
+                footerBottom.innerText = text;
+            }
+        } catch(e) {}
+    }, 300); // Runs slightly after user.js or page scripts
+});
