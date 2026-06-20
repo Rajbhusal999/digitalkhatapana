@@ -583,25 +583,25 @@ function renderCashBank(data) {
             <div style="font-size:1.3rem;font-weight:700;font-family:var(--font-nepali);margin-top:4px;">${title} (${fiscalYear})</div>
         </div>
         <div style="overflow-x:auto;">
-        <table class="data-table bank-cash-book-table" style="margin-bottom:0; font-family:var(--font-nepali);">
+        <table class="data-table bank-cash-book-table" style="margin-bottom:0; font-family:var(--font-nepali); border-collapse: collapse;">
             <thead>
                 <tr>
-                    <th rowspan="2" style="vertical-align:middle;text-align:center;background:#fff;color:#000;">पाना नं.</th>
-                    <th colspan="2" style="text-align:center;background:#fff;color:#000;">नगद</th>
-                    <th colspan="2" style="text-align:center;background:#fff;color:#000;">बैङ्क</th>
-                    <th rowspan="2" style="vertical-align:middle;text-align:center;background:#fff;color:#000;">खर्च</th>
-                    <th colspan="2" style="text-align:center;background:#fff;color:#000;">पेश्की</th>
-                    <th colspan="2" style="text-align:center;background:#fff;color:#000;">विविध</th>
+                    <th rowspan="2" style="vertical-align:middle;text-align:center;background:#fff;color:#000;border:1px solid #333;padding:4px;">पाना नं.</th>
+                    <th colspan="2" style="text-align:center;background:#fff;color:#000;border:1px solid #333;padding:4px;">नगद</th>
+                    <th colspan="2" style="text-align:center;background:#fff;color:#000;border:1px solid #333;padding:4px;">बैङ्क</th>
+                    <th rowspan="2" style="vertical-align:middle;text-align:center;background:#fff;color:#000;border:1px solid #333;padding:4px;">खर्च</th>
+                    <th colspan="2" style="text-align:center;background:#fff;color:#000;border:1px solid #333;padding:4px;">पेश्की</th>
+                    <th colspan="2" style="text-align:center;background:#fff;color:#000;border:1px solid #333;padding:4px;">विविध</th>
                 </tr>
                 <tr>
-                    <th style="text-align:center;background:#fff;color:#000;">डेबिट</th>
-                    <th style="text-align:center;background:#fff;color:#000;">क्रेडिट</th>
-                    <th style="text-align:center;background:#fff;color:#000;">डेबिट</th>
-                    <th style="text-align:center;background:#fff;color:#000;">क्रेडिट</th>
-                    <th style="text-align:center;background:#fff;color:#000;">पाएको</th>
-                    <th style="text-align:center;background:#fff;color:#000;">फर्छ्यौट</th>
-                    <th style="text-align:center;background:#fff;color:#000;">डेबिट</th>
-                    <th style="text-align:center;background:#fff;color:#000;">क्रेडिट</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #333;padding:4px;">डेबिट</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #333;padding:4px;">क्रेडिट</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #333;padding:4px;">डेबिट</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #333;padding:4px;">क्रेडिट</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #333;padding:4px;">पाएको</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #333;padding:4px;">फर्छ्यौट</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #333;padding:4px;">डेबिट</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #333;padding:4px;">क्रेडिट</th>
                 </tr>
             </thead>
             <tbody>
