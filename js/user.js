@@ -707,11 +707,14 @@ async function submitPublicFeedback(event) {
             
             emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
                 .then(() => {
+                    alert("✅ SUCCESS! The auto-reply email was sent by EmailJS to " + emailVal + ".\n\nIf you don't see it, PLEASE CHECK YOUR SPAM/JUNK FOLDER.");
                     console.log('Auto-reply email sent successfully to ' + emailVal);
                 }, (error) => {
+                    alert("❌ EmailJS Failed to send! Error: " + JSON.stringify(error));
                     console.error('EmailJS Failed...', error);
                 });
         } else {
+            alert("⚠️ EmailJS is skipped! Your browser is still using the old cached config.js file.\n\nPlease do a HARD REFRESH by pressing [Ctrl] + [F5] on your keyboard to load the new keys!");
             console.warn('EmailJS is not configured. Auto-reply email was not sent. Please add keys to config.js.');
         }
         
