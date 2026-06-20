@@ -707,38 +707,146 @@ function renderCashBank(data) {
 // ─────────────────────────────────────────────────────────────────
 // 5. INCOME VS EXPENDITURE
 // ─────────────────────────────────────────────────────────────────
-function renderIncomeExpenditure(data) {
-    let cats = {}, totalInc = 0, totalExp = 0;
-    data.forEach(t => {
-        if (!cats[t.category]) cats[t.category] = { income: 0, expense: 0 };
-        const amt = Number(t.amount);
-        if (t.type === 'income') { cats[t.category].income += amt; totalInc += amt; }
-        else { cats[t.category].expense += amt; totalExp += amt; }
+window.recalcAyaVyaya = function() {
+    let tInc = 0;
+    document.querySelectorAll('.inc-amt-cell').forEach(td => {
+        let valStr = td.innerText || td.textContent;
+        let val = Number(valStr.replace(/,/g, '').trim()) || 0;
+        tInc += val;
     });
-    let html = `<table class="data-table"><thead><tr>
-        <th>शीर्षक</th><th>कुल आम्दानी (रू.)</th><th>कुल खर्च (रू.)</th><th>बचत/घाटा (रू.)</th>
-    </tr></thead><tbody>`;
-    for (const [cat, v] of Object.entries(cats)) {
-        const diff = v.income - v.expense;
-        html += `<tr>
-            <td>${cat}</td>
-            <td class="num-cell">${formatCurrency(v.income)}</td>
-            <td class="num-cell">${formatCurrency(v.expense)}</td>
-            <td class="num-cell" style="color:${diff>=0?'var(--success)':'var(--danger)'};">${formatCurrency(diff)}</td>
-        </tr>`;
+    const incTotalEl = document.getElementById('aya-vyaya-total-inc');
+    if (incTotalEl) incTotalEl.innerText = tInc > 0 ? formatCurrency(tInc) : '0.00';
+
+    let tExp = 0;
+    document.querySelectorAll('.exp-amt-cell').forEach(td => {
+        let valStr = td.innerText || td.textContent;
+        let val = Number(valStr.replace(/,/g, '').trim()) || 0;
+        tExp += val;
+    });
+    const expTotalEl = document.getElementById('aya-vyaya-total-exp');
+    if (expTotalEl) expTotalEl.innerText = tExp > 0 ? formatCurrency(tExp) : '0.00';
+};
+
+function renderIncomeExpenditure(data) {
+    const fyEl = document.getElementById('filter-fiscal-year');
+    const fiscalYear = fyEl ? fyEl.value : '२०८२/८३';
+    const title = 'आय / व्यय विवरण';
+
+    let incomes = [];
+    let expenses = [];
+    let totalInc = 0;
+    let totalExp = 0;
+
+    let incTotals = {};
+    let expTotals = {};
+    
+    // Sum from transactions
+    data.forEach(t => {
+        const amt = Number(t.subheading_amount || t.amount || 0);
+        if (t.type === 'income') {
+            incTotals[t.category] = (incTotals[t.category] || 0) + amt;
+        } else if (t.type === 'expense') {
+            expTotals[t.category] = (expTotals[t.category] || 0) + amt;
+        }
+    });
+
+    // We get headings so they appear in correct ledger order
+    const incHeadings = window.getLedgerHeadings('income').filter(h => !h.parent_id).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+    const expHeadings = window.getLedgerHeadings('expense').filter(h => !h.parent_id).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+
+    incHeadings.forEach(h => {
+        let amt = incTotals[h.name_ne] || 0;
+        incomes.push({ label: h.name_ne, amount: amt });
+        totalInc += amt;
+        delete incTotals[h.name_ne];
+    });
+    for(let cat in incTotals) {
+        incomes.push({ label: cat, amount: incTotals[cat] });
+        totalInc += incTotals[cat];
     }
-    const net = totalInc - totalExp;
-    html += `<tr class="khata-total-row">
-        <td>कुल जम्मा</td>
-        <td class="num-cell">${formatCurrency(totalInc)}</td>
-        <td class="num-cell">${formatCurrency(totalExp)}</td>
-        <td class="num-cell" style="color:${net>=0?'var(--success)':'var(--danger)'};">${formatCurrency(net)}</td>
-    </tr></tbody></table>`;
-    renderSummaryCards([
-        { label: 'कुल आम्दानी', value: totalInc, type: 'surplus' },
-        { label: 'कुल खर्च', value: totalExp, type: 'deficit' },
-        { label: 'बाँकी', value: net, type: net>=0?'surplus':'deficit' }
-    ]);
+
+    expHeadings.forEach(h => {
+        let amt = expTotals[h.name_ne] || 0;
+        expenses.push({ label: h.name_ne, amount: amt });
+        totalExp += amt;
+        delete expTotals[h.name_ne];
+    });
+    for(let cat in expTotals) {
+        expenses.push({ label: cat, amount: expTotals[cat] });
+        totalExp += expTotals[cat];
+    }
+
+    let headerHtml = `
+        <div style="overflow-x:auto; margin-top:20px;">
+        <table class="data-table aya-vyaya-table" style="margin-bottom:0; font-family:var(--font-nepali); border-collapse: collapse; width:100%; border:2px solid #000;">
+            <thead>
+                <tr>
+                    <th colspan="4" style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:8px;font-size:1.3rem;">आ.व. ${fiscalYear} को ${title}</th>
+                </tr>
+                <tr>
+                    <th colspan="2" style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:6px;width:50%;font-size:1.1rem;">आम्दानी</th>
+                    <th colspan="2" style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:6px;width:50%;font-size:1.1rem;">खर्च</th>
+                </tr>
+                <tr>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:4px;width:30%;">शीर्षक</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:4px;width:20%;">रकम</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:4px;width:30%;">शीर्षक</th>
+                    <th style="text-align:center;background:#fff;color:#000;border:1px solid #000;padding:4px;width:20%;">रकम</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    let html = headerHtml;
+    let maxLen = Math.max(incomes.length, expenses.length);
+
+    for(let i=0; i<maxLen; i++) {
+        let inc = incomes[i] || { label: '', amount: 0 };
+        let exp = expenses[i] || { label: '', amount: 0 };
+        
+        let incAmt = inc.amount > 0 ? formatCurrency(inc.amount) : '';
+        let expAmt = exp.amount > 0 ? formatCurrency(exp.amount) : '';
+
+        html += `
+            <tr>
+                <td style="text-align:right;border:1px solid #000;padding:4px 8px;">${inc.label}</td>
+                <td class="num-cell inc-amt-cell" style="border:1px solid #000;padding:4px 8px;">${incAmt}</td>
+                <td style="text-align:right;border:1px solid #000;padding:4px 8px;">${exp.label}</td>
+                <td class="num-cell exp-amt-cell" style="border:1px solid #000;padding:4px 8px;">${expAmt}</td>
+            </tr>
+        `;
+    }
+
+    const predefinedManual = [
+        { inc: '', exp: 'नगद' },
+        { inc: '', exp: 'रा.वा. बैंक' },
+        { inc: '', exp: '' },
+        { inc: '', exp: '' }
+    ];
+
+    predefinedManual.forEach(row => {
+        html += `
+            <tr>
+                <td contenteditable="true" class="editable-cell" style="text-align:right;border:1px solid #000;padding:4px 8px;outline:none;background:#fefefe;min-height:24px;" title="Click to edit">${row.inc}</td>
+                <td contenteditable="true" class="editable-cell num-cell inc-amt-cell" style="border:1px solid #000;padding:4px 8px;outline:none;background:#fefefe;min-height:24px;" oninput="window.recalcAyaVyaya()" title="Click to enter amount"></td>
+                <td contenteditable="true" class="editable-cell" style="text-align:right;border:1px solid #000;padding:4px 8px;outline:none;background:#fefefe;min-height:24px;" title="Click to edit">${row.exp}</td>
+                <td contenteditable="true" class="editable-cell num-cell exp-amt-cell" style="border:1px solid #000;padding:4px 8px;outline:none;background:#fefefe;min-height:24px;" oninput="window.recalcAyaVyaya()" title="Click to enter amount"></td>
+            </tr>
+        `;
+    });
+
+    html += `
+        <tr style="font-weight:bold;">
+            <td style="text-align:center;border:1px solid #000;padding:6px;">जम्मा</td>
+            <td class="num-cell" id="aya-vyaya-total-inc" style="border:1px solid #000;padding:6px;">${totalInc > 0 ? formatCurrency(totalInc) : '0.00'}</td>
+            <td style="text-align:center;border:1px solid #000;padding:6px;">जम्मा</td>
+            <td class="num-cell" id="aya-vyaya-total-exp" style="border:1px solid #000;padding:6px;">${totalExp > 0 ? formatCurrency(totalExp) : '0.00'}</td>
+        </tr>
+    `;
+
+    html += `</tbody></table></div>`;
+    renderSummaryCards([]);
+
     return html;
 }
 
