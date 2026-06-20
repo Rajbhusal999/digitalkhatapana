@@ -7,7 +7,6 @@ let activeTab = 'overview';
 let activeEditId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    checkAuth();
     updateSchoolHeader(); // Show school details (name, logo, background) instantly from localStorage on load/refresh
     
     // Initialize keys and populate UI instantly with local/cached data
@@ -33,32 +32,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 /**
  * Authentication Gate Checks
  */
-function checkAuth() {
-    const isLoggedIn = sessionStorage.getItem('admin_logged_in') === 'true';
-    const overlay = document.getElementById('login-overlay');
-    
-    if (isLoggedIn) {
-        overlay.classList.add('hidden');
-    } else {
-        overlay.classList.remove('hidden');
-    }
-}
-
-function handleAdminLogin(event) {
-    event.preventDefault();
-    const pin = document.getElementById('admin-pin').value;
-    
-    // Security PIN: 1234
-    if (pin === '1234') {
-        sessionStorage.setItem('admin_logged_in', 'true');
-        document.getElementById('login-overlay').classList.add('hidden');
-        showAdmToast('Access Granted. Welcome to Ledger Terminal.', 'success');
-        initAdminPage();
-    } else {
-        showAdmToast('Invalid Security Passcode! Please try again.', 'error');
-        document.getElementById('admin-pin').value = '';
-    }
-}
 
 function handleLogout() {
     sessionStorage.removeItem('admin_logged_in');
