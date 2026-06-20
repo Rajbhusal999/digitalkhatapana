@@ -1630,7 +1630,7 @@ footer {
    A3 PRINT MEDIA
 ══════════════════════════════════════════════════════════════ */
 @media print {
-    @page { size: A3 landscape; margin: 8mm 10mm; }
+    @page { margin: 8mm 10mm; }
     .no-print,
     .reports-sidebar,
     .reports-content-header,

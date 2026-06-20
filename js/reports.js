@@ -219,6 +219,16 @@ function generateReport() {
         case 'trial_balance': html = renderTrialBalance(filteredData); break;
     }
 
+    // Dynamic Print Page Size Setup
+    let styleEl = document.getElementById('dynamic-print-style');
+    if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'dynamic-print-style';
+        document.head.appendChild(styleEl);
+    }
+    const isA3 = (currentReport === 'aamdani_khata' || currentReport === 'kharcha_khata');
+    styleEl.innerHTML = `@media print { @page { size: ${isA3 ? 'A3' : 'A4'} landscape; } }`;
+
     document.getElementById('report-table-wrapper').innerHTML = html;
 }
 
@@ -823,12 +833,16 @@ function exportReportPDF() {
     const element = document.getElementById('report-printable-area');
     if (typeof html2pdf === 'undefined') { window.print(); return; }
     const config = reportConfigs[currentReport];
+    
+    const isA3 = (currentReport === 'aamdani_khata' || currentReport === 'kharcha_khata');
+    const formatSize = isA3 ? 'a3' : 'a4';
+
     html2pdf().set({
         margin: 0.3,
         filename: `${currentReport}_${new Date().toISOString().split('T')[0]}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'a3', orientation: 'landscape' }
+        jsPDF: { unit: 'in', format: formatSize, orientation: 'landscape' }
     }).from(element).save();
 }
 
@@ -840,11 +854,8 @@ function exportReportExcel() {
     XLSX.writeFile(wb, `${currentReport}_${new Date().toISOString().split('T')[0]}.xlsx`);
 }
 
-function printA3() {
-    const body = document.body;
-    body.classList.add('a3-print-mode');
+function printReport() {
     window.print();
-    setTimeout(() => body.classList.remove('a3-print-mode'), 1000);
 }
 
 // ─────────────────────────────────────────────────────────────────
