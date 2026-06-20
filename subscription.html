@@ -289,6 +289,9 @@
             border-radius: var(--radius-lg);
             width: 90%;
             max-width: 500px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             overflow: hidden;
             transform: scale(0.95);
@@ -306,6 +309,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .checkout-header h3 {
@@ -331,6 +335,7 @@
 
         .checkout-body {
             padding: 25px;
+            overflow-y: auto;
         }
 
         .billing-summary {
