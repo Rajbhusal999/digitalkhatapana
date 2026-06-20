@@ -17,4 +17,4 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
  */
 const EMAILJS_PUBLIC_KEY = "ek5-6CQ_K5BnjROxc";
 const EMAILJS_SERVICE_ID = "service_fgchy0c";
-const EMAILJS_TEMPLATE_ID = "template_gv6r8ue";
+const EMAILJS_TEMPLATE_ID = "template_j4t18ws";
