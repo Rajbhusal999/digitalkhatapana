@@ -157,48 +157,20 @@
                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                 </svg>
-                खाता तथा स्रेस्ता प्रतिवेदनहरू (Ledger & Cash Books)
+                वार्षिक वित्तीय प्रतिवेदनहरू (Annual Financial Reports)
             </h3>
-            <div class="reports-grid">
-                <a href="reports.html?report=bank_nagadi" class="report-card">
-                    <div class="report-card-icon">🏦</div>
-                    <div>
-                        <h4>बैंक नगदी किताब</h4>
-                        <p>Bank Cash Book</p>
-                    </div>
-                </a>
-                <a href="reports.html?report=aamdani_khata" class="report-card">
-                    <div class="report-card-icon">📥</div>
-                    <div>
-                        <h4>आम्दानी खाता</h4>
-                        <p>Income Ledger</p>
-                    </div>
-                </a>
-                <a href="reports.html?report=kharcha_khata" class="report-card">
-                    <div class="report-card-icon">📤</div>
-                    <div>
-                        <h4>खर्च खाता</h4>
-                        <p>Expenditure Ledger</p>
-                    </div>
-                </a>
-                <a href="reports.html?report=nagad_bank" class="report-card">
-                    <div class="report-card-icon">💵</div>
-                    <div>
-                        <h4>नगद बैंक खाता</h4>
-                        <p>Cash Bank Ledger</p>
-                    </div>
-                </a>
+            <div class="reports-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
                 <a href="reports.html?report=aaya_vyaya" class="report-card">
                     <div class="report-card-icon">⚖️</div>
                     <div>
                         <h4>आय व्यय विवरण</h4>
-                        <p>Income & Expenditure</p>
+                        <p>Income & Expenditure Summary</p>
                     </div>
                 </a>
                 <a href="reports.html?report=trial_balance" class="report-card">
                     <div class="report-card-icon">🧮</div>
                     <div>
-                        <h4>ट्रायल ब्यालेन्स</h4>
+                        <h4>सन्तुलन परीक्षण</h4>
                         <p>Trial Balance</p>
                     </div>
                 </a>
@@ -243,75 +215,7 @@
             </div>
         </section>
 
-        <!-- Dynamic Data Logs -->
-        <section class="data-card">
-            <div class="card-title-row">
-                <div>
-                    <h3 id="txt-table-title">Full Transaction Audit Ledger</h3>
-                    <p class="card-subtitle" id="txt-table-sub">विद्यालयको विस्तृत आय-व्यय स्रेस्ता र भौचर विवरण</p>
-                </div>
-                <div class="export-actions">
-                    <button class="btn-secondary" onclick="exportCSV()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        <span id="txt-export-csv-btn">Export CSV</span>
-                    </button>
-                    <button class="btn-secondary" onclick="window.print()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                            <rect x="6" y="14" width="12" height="8"></rect>
-                        </svg>
-                        <span id="txt-print-btn">Print Report</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Filters -->
-            <div class="filters-row">
-                <div class="filter-group search">
-                    <label for="search-input" id="lbl-search">Search Details / Particulars</label>
-                    <input type="text" id="search-input" placeholder="खोज्नुहोस् (विवरण, भौचर नं., स्रोत...)" oninput="filterTransactions()">
-                </div>
-                <div class="filter-group">
-                    <label for="filter-type" id="lbl-filter-type">Transaction Type</label>
-                    <select id="filter-type" onchange="filterTransactions()">
-                        <option value="all">All (सबै विवरण)</option>
-                        <option value="income">Income (आम्दानी)</option>
-                        <option value="expense">Expenditure (खर्च)</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="filter-category" id="lbl-filter-cat">Category / शीर्षक</label>
-                    <select id="filter-category" onchange="filterTransactions()">
-                        <!-- Dynamic options loaded by JS -->
-                    </select>
-                </div>
-            </div>
-
-            <!-- Table Wrapper -->
-            <div class="table-wrapper">
-                <table id="transaction-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 110px;" id="th-date">Date (मिति)</th>
-                            <th style="width: 120px;" id="th-voucher">Voucher / भौचर</th>
-                            <th id="th-particulars">Particulars & Source (विवरण र कोषको स्रोत)</th>
-                            <th style="width: 130px;" id="th-category">Category (शीर्षक)</th>
-                            <th style="width: 120px;" id="th-type">Type (प्रकार)</th>
-                            <th style="width: 150px; text-align: right;" id="th-amount">Amount (रकम)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transaction-tbody">
-                        <!-- Loaded dynamically -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
+        <!-- Detailed Transaction Table Hidden for Public Privacy -->
         <!-- Feedback & Grievance Box -->
         <section class="feedback-grid">
             <!-- Feedback Form -->
@@ -375,7 +279,6 @@
                 <h4 id="txt-footer-links-title">Quick Actions</h4>
                 <ul class="footer-links">
                     <li><a href="portal-admin.html" id="txt-link-admin">Admin Portal Login</a></li>
-                    <li><a href="#transaction-table" id="txt-link-ledger">Audit Ledger Table</a></li>
                     <li><a href="#public-feedback-form" id="txt-link-feedback">File a Grievance</a></li>
                 </ul>
             </div>
