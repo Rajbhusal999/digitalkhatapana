@@ -668,6 +668,11 @@
                         <label for="widget-login-email">Registered Email (इमेल ठेगाना)</label>
                         <input type="email" id="widget-login-email" required placeholder="name@domain.com">
                     </div>
+                    
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px; margin-top:10px;">
+                        <label for="widget-login-password">Password / OTP (पासवर्ड वा OTP)</label>
+                        <input type="password" id="widget-login-password" placeholder="Enter your password or OTP" required>
+                    </div>
 
                     <button type="submit" class="auth-submit-btn">Login to Citizen Hub</button>
                     <p style="font-size:0.75rem; text-align:center; color:#94A3B8; margin-top:10px;">
@@ -935,6 +940,7 @@
         function handleWidgetLogin(event) {
             event.preventDefault();
             const email = document.getElementById('widget-login-email').value.trim();
+            const password = document.getElementById('widget-login-password').value.trim();
 
             // Check if there is a matching school registration
             let matchedSchool = null;
@@ -961,8 +967,37 @@
                     return;
                 }
 
+                if (!password) {
+                    showGatewayToast('Please enter your Password or OTP to log in to your school! (कृपया पासवर्ड वा OTP हाल्नुहोस्)', 'error');
+                    return;
+                }
+
+                // Verify Password / OTP
+                let isValid = false;
+                if (matchedSchool.permanentPassword && matchedSchool.permanentPassword === password) {
+                    isValid = true;
+                } else if (matchedSchool.otp === password) {
+                    if (!matchedSchool.otpUsed) {
+                        showGatewayToast('OTP Verified! Redirecting to setup your permanent password...', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'school-login.html';
+                        }, 1500);
+                        return;
+                    } else if (matchedSchool.otpUsed && !matchedSchool.permanentPassword) {
+                        // Edge case where OTP is used but no permanent password set
+                         isValid = true;
+                    }
+                }
+
+                if (!isValid) {
+                    showGatewayToast('Invalid Password or OTP! (पासवर्ड वा OTP मिलेन)', 'error');
+                    return;
+                }
+
                 // Successful school admin login
                 localStorage.setItem('nepal_school_registered_info', JSON.stringify(matchedSchool));
+                sessionStorage.setItem('school_user_logged_in', 'true');
+                sessionStorage.setItem('school_user_email', matchedSchool.schoolEmail);
                 sessionStorage.setItem('admin_logged_in', 'true');
                 showGatewayToast(`Access Granted! Welcome to ${matchedSchool.schoolName} admin panel.`, 'success');
                 setTimeout(() => {
