@@ -106,6 +106,7 @@ function updateSchoolHeader() {
             const titleEl = document.getElementById('adm-school-name');
             const subEl = document.getElementById('adm-school-sub');
             const userEl = document.getElementById('adm-user-name');
+            const txnEl = document.getElementById('adm-school-txn');
             if (titleEl && schoolInfo.schoolName) {
                 titleEl.innerText = schoolInfo.schoolName;
             }
@@ -114,6 +115,13 @@ function updateSchoolHeader() {
             }
             if (userEl && schoolInfo.accountant) {
                 userEl.innerText = `प्रयोक्ता: ${schoolInfo.accountant} (लेखापाल) | प्र.अ.: ${schoolInfo.principal || '-'}`;
+            }
+            if (txnEl) {
+                if (schoolInfo.transactionCode) {
+                    txnEl.innerText = `Transaction Code: ${schoolInfo.transactionCode}`;
+                } else {
+                    txnEl.innerText = '';
+                }
             }
 
             // Update School Logo if custom logo uploaded
