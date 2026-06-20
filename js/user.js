@@ -655,9 +655,11 @@ async function submitPublicFeedback(event) {
     
     const nameVal = document.getElementById('fb-name').value.trim();
     const roleVal = document.getElementById('fb-role').value;
+    const phoneVal = document.getElementById('fb-phone').value.trim();
+    const emailVal = document.getElementById('fb-email').value.trim();
     const msgVal = document.getElementById('fb-message').value.trim();
     
-    if (!nameVal || !msgVal) {
+    if (!nameVal || !msgVal || !phoneVal || !emailVal) {
         showToast(currentLang === 'en' ? 'Please fill in all fields.' : 'कृपया सबै क्षेत्रहरू भर्नुहोस्।', 'error');
         return;
     }
@@ -666,17 +668,35 @@ async function submitPublicFeedback(event) {
         await saveFeedback({
             name: nameVal,
             role: roleVal,
+            phone: phoneVal,
+            email: emailVal,
             message: msgVal
         });
         
         // Clear inputs
         document.getElementById('fb-name').value = '';
+        document.getElementById('fb-phone').value = '';
+        document.getElementById('fb-email').value = '';
         document.getElementById('fb-message').value = '';
         
         showToast(currentLang === 'en' ? 'Feedback submitted successfully!' : 'सुझाव/गुनासो सफलतापूर्वक दर्ता भयो!', 'success');
         
         // Reload feed
         renderFeedbacks();
+        
+        // Simulate email sent to user
+        let schoolName = '';
+        try {
+            const schoolInfo = JSON.parse(localStorage.getItem('nepal_school_registered_info'));
+            if (schoolInfo && schoolInfo.schoolName) {
+                schoolName = schoolInfo.schoolName;
+            }
+        } catch (e) {}
+        
+        setTimeout(() => {
+            alert(`[Simulated Email Sent to ${emailVal}]\n\nSubject: Gunaso/Sujhav Received\n\nDear parents/citizens,\nThank you for your gunaso/sujhav.\n\nRegards,\n${schoolName || 'School Administration'}`);
+        }, 800);
+        
     } catch (err) {
         showToast(currentLang === 'en' ? 'Failed to submit feedback. Try again.' : 'गुनासो दर्ता गर्न असफल भयो। पुनः प्रयास गर्नुहोस्।', 'error');
     }
