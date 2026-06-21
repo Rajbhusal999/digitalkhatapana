@@ -133,7 +133,9 @@
             max-width: 1500px;
             margin: 0 auto;
             width: 100%;
+            box-sizing: border-box;
             animation: fadeIn 0.5s ease-out;
+            overflow-x: hidden;
         }
 
         .super-dash-header {
@@ -208,6 +210,8 @@
             border-radius: var(--radius-md);
             padding: 30px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            min-width: 0;
+            box-sizing: border-box;
         }
 
         .super-data-card .card-title-row h3 {
@@ -218,6 +222,8 @@
         .super-table-wrapper {
             border: 1px solid rgba(255, 255, 255, 0.08);
             background: rgba(15, 23, 42, 0.2);
+            overflow-x: auto;
+            max-width: 100%;
         }
 
         .super-table-wrapper table {
