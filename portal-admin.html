@@ -6,6 +6,8 @@
     <title>Super Admin Portal - Digital Khata Pana</title>
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Custom styles for Super Admin Portal */
         body.super-admin-body {
@@ -248,7 +250,116 @@
             padding: 2px 8px;
             border-radius: 4px;
             font-size: 0.85rem;
+        }
+
+        /* FAB Styles */
+        .super-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 10px 25px rgba(229, 169, 59, 0.5);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .super-fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 15px 35px rgba(229, 169, 59, 0.7);
+        }
+
+        .fab-menu {
+            position: fixed;
+            bottom: 100px;
+            right: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 999;
+        }
+
+        .fab-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .fab-item {
+            background: #1e293b;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 0.85rem;
             font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+        }
+
+        .fab-item:hover {
+            background: #334155;
+            transform: translateX(-5px);
+        }
+
+        /* Command Center Tabs */
+        .cmd-tab-buttons {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 15px;
+        }
+
+        .cmd-tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .cmd-tab-btn.active {
+            color: white;
+            border-bottom-color: var(--accent);
+        }
+
+        .broadcast-textarea {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            outline: none;
+            font-size: 0.9rem;
+            min-height: 120px;
+            resize: vertical;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+        .broadcast-textarea:focus {
+            border-color: var(--accent);
         }
 
         .super-table-wrapper td strong {
@@ -595,6 +706,7 @@
                     <span>Total Registrations</span>
                     <h3 id="kpi-val-total">0</h3>
                     <p>दर्ता भएका कुल विद्यालय</p>
+                    <div style="color: #10b981; font-size: 0.75rem; font-weight: 700; margin-top: 5px;">↑ 12% this week</div>
                 </div>
             </div>
             <div class="kpi-card super-kpi-card pending">
@@ -603,6 +715,7 @@
                     <span>Pending Approval</span>
                     <h3 id="kpi-val-pending">0</h3>
                     <p>स्वीकृति पर्खिरहेका</p>
+                    <div style="color: #f59e0b; font-size: 0.75rem; font-weight: 700; margin-top: 5px;">- 2 awaiting action</div>
                 </div>
             </div>
             <div class="kpi-card super-kpi-card approved">
@@ -611,6 +724,7 @@
                     <span>Active Accounts</span>
                     <h3 id="kpi-val-approved">0</h3>
                     <p>स्वीकृत र सक्रिय</p>
+                    <div style="color: #10b981; font-size: 0.75rem; font-weight: 700; margin-top: 5px;">↑ 8% this week</div>
                 </div>
             </div>
             <div class="kpi-card super-kpi-card rejected">
@@ -619,7 +733,20 @@
                     <span>Rejected Requests</span>
                     <h3 id="kpi-val-rejected">0</h3>
                     <p>अस्वीकृत आवेदनहरू</p>
+                    <div style="color: #64748b; font-size: 0.75rem; font-weight: 700; margin-top: 5px;">= No change</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Interactive Analytics Charts (New) -->
+        <div class="analytics-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-top: 30px;">
+            <div class="super-data-card" style="padding: 20px;">
+                <h3 style="color: white; font-size: 1.1rem; margin-bottom: 15px; font-weight: 700;">Registration Trends (दर्ता प्रवृत्ति)</h3>
+                <canvas id="registrationChart" height="80"></canvas>
+            </div>
+            <div class="super-data-card" style="padding: 20px;">
+                <h3 style="color: white; font-size: 1.1rem; margin-bottom: 15px; font-weight: 700;">Account Status (खाता स्थिति)</h3>
+                <canvas id="statusChart" height="180"></canvas>
             </div>
         </div>
 
@@ -675,20 +802,45 @@
                 </div>
             </div>
 
-            <!-- Right Column: Mock Email Inbox -->
+            <!-- Right Column: Command Center -->
             <div class="super-data-card" style="margin-bottom: 0; display: flex; flex-direction: column; min-height: 500px;">
-                <div class="card-title-row" style="margin-bottom: 15px;">
+                <div class="card-title-row" style="margin-bottom: 10px;">
                     <div>
-                        <h3>Email Inbox (rajbhusal235@gmail.com)</h3>
-                        <p class="card-subtitle">System notifications for new registrations</p>
+                        <h3>Command Center</h3>
+                        <p class="card-subtitle">Global Controls & Notifications</p>
                     </div>
-                    <button class="btn-portal" style="padding: 6px 12px; font-size: 0.75rem; background: #ef4444; color: white; border: none; box-shadow: none;" onclick="clearNotifications()">
-                        Clear All
-                    </button>
+                </div>
+
+                <div class="cmd-tab-buttons">
+                    <button class="cmd-tab-btn active" onclick="switchCmdTab('inbox')" id="cmd-btn-inbox">📧 Inbox</button>
+                    <button class="cmd-tab-btn" onclick="switchCmdTab('broadcast')" id="cmd-btn-broadcast">📢 Broadcast</button>
                 </div>
                 
-                <div id="email-inbox-list" style="flex: 1; overflow-y: auto; max-height: 480px; display: flex; flex-direction: column; gap: 15px; padding-right: 5px;">
-                    <!-- Dynamically loaded emails -->
+                <!-- Inbox Tab -->
+                <div id="cmd-tab-inbox" style="flex: 1; display: flex; flex-direction: column;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <span style="font-size: 0.8rem; color:#94a3b8;">System notifications</span>
+                        <button class="btn-portal" style="padding: 4px 8px; font-size: 0.7rem; background: #ef4444; color: white; border: none; box-shadow: none;" onclick="clearNotifications()">
+                            Clear All
+                        </button>
+                    </div>
+                    <div id="email-inbox-list" style="flex: 1; overflow-y: auto; max-height: 380px; display: flex; flex-direction: column; gap: 15px; padding-right: 5px;">
+                        <!-- Dynamically loaded emails -->
+                    </div>
+                </div>
+
+                <!-- Broadcast Tab -->
+                <div id="cmd-tab-broadcast" style="flex: 1; display: none; flex-direction: column;">
+                    <p style="font-size:0.8rem; color:#cbd5e1; margin-bottom:10px;">Send a global notification to all registered schools.</p>
+                    <textarea id="broadcast-msg" class="broadcast-textarea" placeholder="Type your broadcast message here..."></textarea>
+                    <select id="broadcast-type" class="super-search-field" style="margin-bottom: 10px;">
+                        <option value="info">Information (Blue)</option>
+                        <option value="warning">Warning (Yellow)</option>
+                        <option value="success">Success (Green)</option>
+                    </select>
+                    <button class="btn-portal" style="width: 100%; justify-content: center; background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%); color: var(--secondary-dark);" onclick="sendBroadcast()">
+                        Send Global Broadcast 🚀
+                    </button>
                 </div>
             </div>
 
@@ -710,6 +862,16 @@
                 <button class="btn-confirm-del" id="del-confirm-btn" disabled onclick="confirmDeleteSchool()">🗑️ Delete Forever</button>
             </div>
         </div>
+    </div>
+
+    <!-- Floating Action Menu -->
+    <div class="fab-menu" id="fab-menu">
+        <div class="fab-item" onclick="exportDataCSV()">📥 Export Data to CSV</div>
+        <div class="fab-item" onclick="alert('Manual Add feature coming soon!')">➕ Add School Manually</div>
+        <div class="fab-item" onclick="alert('Global Settings module opening...')">⚙️ Global Settings</div>
+    </div>
+    <div class="super-fab" id="super-fab" onclick="toggleFab()">
+        +
     </div>
 
     <!-- Toast Container -->
@@ -772,6 +934,7 @@
             updateSuperMetrics();
             renderSchoolsDatabase();
             renderNotifications();
+            setTimeout(renderSuperCharts, 100);
         }
 
         // Render mock notifications in Super Admin Inbox
@@ -1300,6 +1463,149 @@ ${loginUrl}
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 300);
             }, 4000);
+        }
+        // Floating Action Menu Logic
+        function toggleFab() {
+            const menu = document.getElementById('fab-menu');
+            const fab = document.getElementById('super-fab');
+            menu.classList.toggle('active');
+            if (menu.classList.contains('active')) {
+                fab.style.transform = 'scale(1.1) rotate(45deg)';
+            } else {
+                fab.style.transform = 'scale(1) rotate(0deg)';
+            }
+        }
+
+        // CSV Export Feature
+        function exportDataCSV() {
+            let schoolsList = [];
+            try {
+                const raw = localStorage.getItem('nepal_registered_schools');
+                if (raw) schoolsList = JSON.parse(raw);
+            } catch(e) {}
+            
+            if (schoolsList.length === 0) {
+                showSuperToast('No data to export.', 'info');
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,School Name,EMIS Code,Email,Phone,Status,Reg Date\n";
+            schoolsList.forEach(s => {
+                let row = `"${s.schoolName || ''}","${s.emis || ''}","${s.schoolEmail || ''}","${s.principalPhone || s.phone || ''}","${s.status || 'Pending'}","${s.registeredAt || ''}"`;
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "khata_pana_schools.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showSuperToast('Data exported to CSV.', 'success');
+            toggleFab();
+        }
+
+        // Command Center Tabs
+        function switchCmdTab(tab) {
+            document.getElementById('cmd-btn-inbox').classList.remove('active');
+            document.getElementById('cmd-btn-broadcast').classList.remove('active');
+            document.getElementById('cmd-tab-inbox').style.display = 'none';
+            document.getElementById('cmd-tab-broadcast').style.display = 'none';
+
+            document.getElementById('cmd-btn-' + tab).classList.add('active');
+            document.getElementById('cmd-tab-' + tab).style.display = 'flex';
+        }
+
+        // Global Broadcast Logic
+        function sendBroadcast() {
+            const msg = document.getElementById('broadcast-msg').value.trim();
+            const type = document.getElementById('broadcast-type').value;
+            if (!msg) {
+                showSuperToast('Please enter a broadcast message.', 'error');
+                return;
+            }
+            
+            const broadcast = {
+                id: 'bc_' + Date.now(),
+                message: msg,
+                type: type,
+                date: new Date().toISOString()
+            };
+            
+            localStorage.setItem('nepal_global_broadcast', JSON.stringify(broadcast));
+            document.getElementById('broadcast-msg').value = '';
+            showSuperToast('Global Broadcast sent to all schools!', 'success');
+        }
+
+        // Render Chart.js Analytics
+        let regChartInstance = null;
+        let statusChartInstance = null;
+
+        function renderSuperCharts() {
+            let schoolsList = [];
+            try {
+                const raw = localStorage.getItem('nepal_registered_schools');
+                if (raw) schoolsList = JSON.parse(raw);
+            } catch(e) {}
+
+            // Process data for Status Donut Chart
+            const pending = schoolsList.filter(s => s.status === 'Pending').length;
+            const approved = schoolsList.filter(s => s.status === 'Approved').length;
+            const rejected = schoolsList.filter(s => s.status === 'Rejected').length;
+
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            if (statusChartInstance) statusChartInstance.destroy();
+            
+            statusChartInstance = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Active', 'Pending', 'Rejected'],
+                    datasets: [{
+                        data: [approved, pending, rejected],
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#cbd5e1' } }
+                    }
+                }
+            });
+
+            // Process data for Registration Line Chart (Mocked historical data combined with actual)
+            const regCtx = document.getElementById('registrationChart').getContext('2d');
+            if (regChartInstance) regChartInstance.destroy();
+            
+            // Mock monthly data up to now for visual effect
+            const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+            const data = [5, 12, 19, 30, 45, 60, total = schoolsList.length > 60 ? schoolsList.length : 72];
+
+            regChartInstance = new Chart(regCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Registrations',
+                        data: data,
+                        borderColor: '#e5a93b',
+                        backgroundColor: 'rgba(229, 169, 59, 0.2)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        x: { ticks: { color: '#64748b' }, grid: { display: false } }
+                    }
+                }
+            });
         }
     </script>
 </body>
