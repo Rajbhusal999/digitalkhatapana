@@ -1240,6 +1240,7 @@ tr:hover td {
 
 .toast {
     background: white;
+    color: var(--secondary-dark);
     border-radius: var(--radius-sm);
     box-shadow: var(--shadow-lg);
     border-left: 4px solid var(--success);
