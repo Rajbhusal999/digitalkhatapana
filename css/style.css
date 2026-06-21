@@ -156,21 +156,25 @@ header {
     gap: 15px;
 }
 
-.lang-toggle {
-    background: #E5E7EB;
-    border: none;
-    border-radius: 20px;
+.theme-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 6px 12px;
-    font-family: var(--font-nepali);
-    font-size: 0.85rem;
-    cursor: pointer;
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    font-family: var(--font-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
     transition: var(--transition);
 }
-.lang-toggle:hover {
-    background: #D1D5DB;
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
 }
 
 .btn-portal {
@@ -1654,4 +1658,82 @@ footer {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DARK MODE OVERRIDES
+══════════════════════════════════════════════════════════════ */
+[data-theme="dark"] {
+    --bg-main: #0B1329;
+    --bg-card: #1E293B;
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
+    --border: rgba(255, 255, 255, 0.1);
+    --border-accent: rgba(255, 255, 255, 0.15);
+}
+[data-theme="dark"] body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+[data-theme="dark"] header {
+    background: rgba(11, 19, 41, 0.85) !important;
+}
+[data-theme="dark"] .brand-titles h1,
+[data-theme="dark"] .brand-titles h2,
+[data-theme="dark"] .section-title h2,
+[data-theme="dark"] .form-group label,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4 {
+    color: var(--text-light) !important;
+}
+[data-theme="dark"] .white-card,
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .glass-panel,
+[data-theme="dark"] .contact-info-panel,
+[data-theme="dark"] .reports-sidebar,
+[data-theme="dark"] .reports-content-pane,
+[data-theme="dark"] .reports-filters-bar,
+[data-theme="dark"] .report-summary-card,
+[data-theme="dark"] .reports-tab-bar,
+[data-theme="dark"] .table-container {
+    background: var(--bg-card) !important;
+    border-color: var(--border) !important;
+    color: var(--text-main);
+}
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea,
+[data-theme="dark"] .form-control {
+    background-color: #0F172A !important;
+    color: white !important;
+    border-color: var(--border) !important;
+}
+[data-theme="dark"] .data-table th,
+[data-theme="dark"] .khata-table th,
+[data-theme="dark"] .bank-cash-book-table th {
+    background: #0f1c3f !important;
+    color: #e2e8f0 !important;
+    border-color: var(--border) !important;
+}
+[data-theme="dark"] .data-table td,
+[data-theme="dark"] .khata-table td,
+[data-theme="dark"] .bank-cash-book-table td {
+    background: #1e293b !important;
+    border-color: var(--border) !important;
+    color: #e2e8f0 !important;
+}
+[data-theme="dark"] .data-table tbody tr:hover td {
+    background: #334155 !important;
+}
+[data-theme="dark"] .data-table tbody tr:nth-child(even) td {
+    background: #0F172A !important;
+}
+[data-theme="dark"] .top-gov-bar {
+    background: #061024 !important;
+}
+[data-theme="dark"] .report-nav-btn {
+    color: var(--text-main);
+}
+[data-theme="dark"] .report-nav-btn:hover {
+    background: rgba(255,255,255,0.05);
 }

@@ -780,3 +780,26 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e) {}
     }, 300); // Runs slightly after user.js or page scripts
 });
+
+// Global Theme Toggle
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    
+    const themeIcon = document.getElementById('theme-icon');
+    const themeText = document.getElementById('theme-text');
+    if (themeIcon) themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    if (themeText) themeText.textContent = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const themeIcon = document.getElementById('theme-icon');
+    const themeText = document.getElementById('theme-text');
+    if (isDark && themeIcon) {
+        themeIcon.textContent = '☀️';
+        if(themeText) themeText.textContent = 'Light Mode';
+    }
+});

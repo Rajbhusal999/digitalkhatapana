@@ -6,6 +6,12 @@
     <title>Digital Khata Pana - School Ledger & Financial Governance System</title>
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
+    <script>
+        // Initialize Theme from LocalStorage immediately to prevent flash
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
     <!-- Inline CSS for Portal Homepage -->
     <style>
         html {
@@ -615,8 +621,8 @@
             </svg>
             नेपाल सरकार | शिक्षा, विज्ञान तथा प्रविधि मन्त्रालय (Ministry of Education, Science & Technology)
         </span>
-        <button class="lang-toggle" id="lang-toggle" onclick="toggleLanguage()">
-            🌐 English
+        <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">
+            <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
         </button>
     </div>
 
@@ -962,6 +968,25 @@
                 setInterval(updateClock, 1000);
             }
         })();
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            document.getElementById('theme-text').textContent = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+        }
+
+        // Set initial toggle text
+        document.addEventListener('DOMContentLoaded', () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                document.getElementById('theme-icon').textContent = '☀️';
+                document.getElementById('theme-text').textContent = 'Light Mode';
+            }
+        });
+
         function toggleAuthTab(tab) {
             const btnLogin = document.getElementById('tab-btn-login');
             const btnRegister = document.getElementById('tab-btn-register');
