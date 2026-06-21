@@ -59,7 +59,7 @@ const TRANSLATIONS = {
         'lang-btn-text': 'English Version',
         'txt-school-name': 'श्री जन जागृति माध्यमिक विद्यालय',
         'txt-school-sub': 'नेपाल सरकार | सामुदायिक विद्यालय',
-        'txt-gov-subtitle': 'पोखरा १५, कास्की, नेपाल (स्थापित: २०१६)',
+        'txt-gov-subtitle': 'Khairahani-1, Chitwan (स्थापित: २०१६)',
         'txt-admin-portal-btn': 'लेखा प्रशासन लगइन',
         'txt-hero-title': 'सार्वजनिक आय-व्यय तथा बजेट पारदर्शिता बोर्ड',
         'txt-hero-desc': 'नेपाल सरकारको "सुशासन तथा पारदर्शिता सम्बन्धी निर्देशिका" बमोजिम विद्यालयको आर्थिक कारोबारलाई समुदायमा सार्वजनिकिकरण गर्ने डिजिटल प्रणाली। यहाँ सबै आम्दानी र खर्चको विवरण पारदर्शी रूपमा हेर्न सकिन्छ।',
@@ -162,9 +162,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (footerContactDesc) {
                     footerContactDesc.innerHTML = `
                         <strong>${schoolInfo.schoolName}</strong><br>
-                        ${schoolInfo.address}<br>
-                        फोन: ${schoolInfo.pPhone || '+९७७-६१-XXXXXX'}<br>
-                        इमेल: ${schoolInfo.schoolEmail || ('info@' + (schoolInfo.schoolName || 'school').toLowerCase().replace(/[^a-z0-9]/g, '') + '.edu.np')}
+                        <a href="https://maps.app.goo.gl/D39cBnAvLxvtyRXn6" target="_blank" style="color: inherit; text-decoration: none;">${schoolInfo.address}</a><br>
+                        फोन: <a href="tel:${schoolInfo.pPhone ? schoolInfo.pPhone.replace(/[^0-9+]/g, '') : '+9779861079061'}" style="color: inherit; text-decoration: none;">${schoolInfo.pPhone || '+977-9861079061'}</a><br>
+                        इमेल: <a href="mailto:${schoolInfo.schoolEmail || 'khatapanadigital2083@gmail.com'}" style="color: inherit; text-decoration: none;">${schoolInfo.schoolEmail || ('info@' + (schoolInfo.schoolName || 'school').toLowerCase().replace(/[^a-z0-9]/g, '') + '.edu.np')}</a>
                     `;
                 }
                 if (footerBottom) {
