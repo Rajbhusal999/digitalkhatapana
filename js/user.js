@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     `;
                 }
                 if (footerBottom) {
-                    footerBottom.innerText = `© २०८२ ${schoolInfo.schoolName} | सुशासन, पारदर्शिता र गुणस्तरीय शिक्षा`;
+                    footerBottom.innerText = `© २०८२ खातापाना Digital | सुशासन, पारदर्शिता र गुणस्तरीय शिक्षा`;
                 }
             }, 50);
         } catch (e) {
