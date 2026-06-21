@@ -695,7 +695,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } catch(e) {}
                 }
 
-                let nepaliYearStr = '२०८२';
+                let nepaliYearStr = '२०८३';
                 if (window.NepaliFunctions) {
                     try {
                         nepaliYearStr = window.toNepaliDigits(window.NepaliFunctions.GetCurrentBsDate().year);
@@ -704,10 +704,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     nepaliYearStr = window.toNepaliDigits(new Date().getFullYear() + 57);
                 }
 
-                let text = `© ${nepaliYearStr} ${schoolName}`;
-                if (address) text += ` | ${address}`;
-                if (phone) text += ` | फोन: ${phone}`;
-                if (email) text += ` | इमेल: ${email}`;
+                let text = `© ${nepaliYearStr} खातापाना Digital`;
                 
                 const currentText = footerBottom.innerText;
                 if (currentText.includes('प्रशासनिक')) {
