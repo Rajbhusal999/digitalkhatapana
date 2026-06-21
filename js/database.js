@@ -675,19 +675,14 @@ window.toNepaliDigits = toNepaliDigits;
 
 // Inject Dynamic Footer and Global Nepali Clock across all pages
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Setup Global Nepali Clock
-    const topBar = document.querySelector('.top-gov-bar');
-    if (topBar) {
+    // 1. Setup Global Nepali Clock in Header
+    const header = document.querySelector('header');
+    if (header) {
         const clockDiv = document.createElement('div');
         clockDiv.id = 'live-nepali-clock';
-        clockDiv.style.cssText = 'margin-left: auto; margin-right: 15px; font-weight: 700; font-family: var(--font-nepali), sans-serif; display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2);';
+        clockDiv.style.cssText = 'position: absolute; left: 50%; transform: translateX(-50%); font-weight: 700; font-family: var(--font-nepali), sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 1.1rem; color: #ffffff; background: linear-gradient(135deg, var(--secondary-dark), #1e293b); padding: 8px 24px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); text-align: center; z-index: 10;';
         
-        const btn = topBar.querySelector('button, a:last-child');
-        if (btn && btn.parentElement === topBar) {
-            topBar.insertBefore(clockDiv, btn);
-        } else {
-            topBar.appendChild(clockDiv);
-        }
+        header.appendChild(clockDiv);
 
         const engToNep = {'0':'०','1':'१','2':'२','3':'३','4':'४','5':'५','6':'६','7':'७','8':'८','9':'९'};
 
@@ -718,7 +713,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const nepaliStrTime = strTime.replace(/[0-9]/g, m => engToNep[m]);
-            clockDiv.innerHTML = `<span>🕒</span> <span>${bsDateStr}${nepaliStrTime}</span>`;
+            clockDiv.innerHTML = `<span style="font-size: 0.8rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">${bsDateStr}</span> <div style="display:flex; align-items:center; gap:6px;"><span style="color:#e5a93b;">🕒</span> <span>${nepaliStrTime}</span></div>`;
         }
         
         updateClock();
