@@ -514,14 +514,13 @@
 
         /* Contact Section */
         .contact-grid {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 40px;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         @media (max-width: 768px) {
             .contact-grid {
-                grid-template-columns: 1fr;
+                width: 100%;
             }
         }
 
@@ -881,24 +880,7 @@
                     </div>
                 </div>
 
-                <!-- Contact form -->
-                <div class="feedback-card" style="margin-bottom:0;">
-                    <form onsubmit="handleGatewayContactSubmit(event)">
-                        <div class="form-group">
-                            <label>Your Name (नाम)</label>
-                            <input type="text" required placeholder="तपाईंको नाम">
-                        </div>
-                        <div class="form-group">
-                            <label>Your Email (इमेल)</label>
-                            <input type="email" required placeholder="name@domain.com">
-                        </div>
-                        <div class="form-group">
-                            <label>Message (सन्देश)</label>
-                            <textarea rows="4" required placeholder="तपाईंको जिज्ञासा वा सुझाव..."></textarea>
-                        </div>
-                        <button type="submit" class="form-submit-btn" style="background:var(--secondary);">सम्पर्क सन्देश पठाउनुहोस्</button>
-                    </form>
-                </div>
+
             </div>
         </div>
     </section>
