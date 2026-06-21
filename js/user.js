@@ -168,7 +168,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     `;
                 }
                 if (footerBottom) {
-                    footerBottom.innerText = `© २०८३ खातापाना Digital | सुशासन, पारदर्शिता र गुणस्तरीय शिक्षा`;
+                    let nepaliYearStr = '२०८३';
+                    if (window.NepaliFunctions) {
+                        try { nepaliYearStr = window.toNepaliDigits(window.NepaliFunctions.GetCurrentBsDate().year); } catch(e){}
+                    }
+                    footerBottom.innerText = `© ${nepaliYearStr} ${schoolInfo.schoolName || 'खातापाना Digital'} | सुशासन, पारदर्शिता र गुणस्तरीय शिक्षा`;
                 }
             }, 50);
         } catch (e) {

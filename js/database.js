@@ -679,20 +679,31 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const footerBottom = document.querySelector('footer .footer-bottom');
             if (footerBottom) {
-                let schoolName = 'श्री जन जागृति माध्यमिक विद्यालय';
+                let schoolName = 'खातापाना Digital';
                 let address = '';
                 let phone = '';
                 let email = '';
-                
-                const infoStr = localStorage.getItem('nepal_school_registered_info');
-                if (infoStr) {
-                    try {
-                        const info = JSON.parse(infoStr);
-                        if (info.schoolName) schoolName = info.schoolName;
-                        if (info.address) address = info.address;
-                        if (info.pPhone || info.phone) phone = info.pPhone || info.phone;
-                        if (info.schoolEmail || info.email) email = info.schoolEmail || info.email;
-                    } catch(e) {}
+
+                // Determine if we are on a platform-level page
+                const path = window.location.pathname.toLowerCase();
+                const isPlatformPage = path.includes('index.html') || 
+                                       path.includes('select-school.html') || 
+                                       path.includes('school-login.html') || 
+                                       path.includes('portal-admin.html') || 
+                                       path.includes('subscription.html') || 
+                                       path.endsWith('/');
+
+                if (!isPlatformPage) {
+                    const infoStr = localStorage.getItem('nepal_school_registered_info');
+                    if (infoStr) {
+                        try {
+                            const info = JSON.parse(infoStr);
+                            if (info.schoolName) schoolName = info.schoolName;
+                            if (info.address) address = info.address;
+                            if (info.pPhone || info.phone) phone = info.pPhone || info.phone;
+                            if (info.schoolEmail || info.email) email = info.schoolEmail || info.email;
+                        } catch(e) {}
+                    }
                 }
 
                 let nepaliYearStr = '२०८३';
@@ -704,7 +715,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     nepaliYearStr = window.toNepaliDigits(new Date().getFullYear() + 57);
                 }
 
-                let text = `© ${nepaliYearStr} खातापाना Digital`;
+                let text = `© ${nepaliYearStr} ${schoolName}`;
+                if (address) text += ` | ${address}`;
+                if (phone) text += ` | फोन: ${phone}`;
+                if (email) text += ` | इमेल: ${email}`;
                 
                 const currentText = footerBottom.innerText;
                 if (currentText.includes('प्रशासनिक')) {
