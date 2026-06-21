@@ -673,8 +673,59 @@ window.formatCurrency = formatCurrency;
 window.formatNepaliStyleNumber = formatNepaliStyleNumber;
 window.toNepaliDigits = toNepaliDigits;
 
-// Inject Dynamic Footer across all pages
+// Inject Dynamic Footer and Global Nepali Clock across all pages
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Setup Global Nepali Clock
+    const topBar = document.querySelector('.top-gov-bar');
+    if (topBar) {
+        const clockDiv = document.createElement('div');
+        clockDiv.id = 'live-nepali-clock';
+        clockDiv.style.cssText = 'margin-left: auto; margin-right: 15px; font-weight: 700; font-family: var(--font-nepali), sans-serif; display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2);';
+        
+        const btn = topBar.querySelector('button, a:last-child');
+        if (btn && btn.parentElement === topBar) {
+            topBar.insertBefore(clockDiv, btn);
+        } else {
+            topBar.appendChild(clockDiv);
+        }
+
+        const engToNep = {'0':'०','1':'१','2':'२','3':'३','4':'४','5':'५','6':'६','7':'७','8':'८','9':'९'};
+
+        function updateClock() {
+            const now = new Date();
+            // Nepali time is UTC + 5:45
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const nepaliDate = new Date(utc + (3600000 * 5.75));
+
+            let hours = nepaliDate.getHours();
+            let minutes = nepaliDate.getMinutes();
+            let seconds = nepaliDate.getSeconds();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            
+            const strTime = (hours < 10 ? '0'+hours : hours) + ':' + 
+                            (minutes < 10 ? '0'+minutes : minutes) + ':' + 
+                            (seconds < 10 ? '0'+seconds : seconds) + ' ' + ampm;
+
+            let bsDateStr = '';
+            if (window.NepaliFunctions) {
+                try {
+                    const bsDate = window.NepaliFunctions.GetCurrentBsDate();
+                    bsDateStr = window.NepaliFunctions.GetBsFullDate(bsDate, true) + ' | ';
+                } catch(e) {}
+            }
+
+            const nepaliStrTime = strTime.replace(/[0-9]/g, m => engToNep[m]);
+            clockDiv.innerHTML = `<span>🕒</span> <span>${bsDateStr}${nepaliStrTime}</span>`;
+        }
+        
+        updateClock();
+        setInterval(updateClock, 1000);
+    }
+
+    // 2. Dynamic Footer Logic
     setTimeout(() => {
         try {
             const footerBottom = document.querySelector('footer .footer-bottom');
