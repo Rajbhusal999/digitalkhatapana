@@ -732,7 +732,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Determine if we are on a platform-level page
                 const path = window.location.pathname.toLowerCase();
-                const isPlatformPage = path.includes('index.html') || 
+                const isPlatformPage = path.includes('digitalkhatapana.html') || 
                                        path.includes('select-school.html') || 
                                        path.includes('school-login.html') || 
                                        path.includes('portal-admin.html') || 

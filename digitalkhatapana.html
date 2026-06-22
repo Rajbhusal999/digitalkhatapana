@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Khata Pana - School Ledger & Financial Governance System</title>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        // Initialize Theme from LocalStorage immediately to prevent flash
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+    <!-- Inline CSS for Portal Homepage -->
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Dark Glassmorphic Header overrides for Digital Theme */
+        header {
+            background: rgba(6, 14, 27, 0.75) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+
+        header .brand-titles h1 {
+            color: #ffffff !important;
+        }
+
+        header .brand-titles h2 {
+            color: var(--accent) !important;
+        }
+
+        header .brand-titles p {
+            color: #94A3B8 !important;
+        }
+
+        header nav.nav-links a {
+            color: #CBD5E1 !important;
+        }
+
+        header nav.nav-links a:hover {
+            color: var(--accent) !important;
+        }
+
+        .top-gov-bar {
+            background: rgba(6, 14, 27, 0.9) !important;
+            border-bottom: 1px solid rgba(193, 11, 48, 0.3) !important;
+        }
+
+        /* Digital Network Background Styles */
+        .digital-hero {
+            position: relative;
+            background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e1b4b 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 5% 60px;
+            overflow: hidden;
+            border-bottom: 4px solid var(--primary);
+        }
+
+        /* Animated Grid Overlay */
+        .digital-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(193, 11, 48, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(11, 43, 97, 0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center;
+            pointer-events: none;
+        }
+
+        /* Glowing digital node animation elements */
+        .glow-node {
+            position: absolute;
+            background: radial-gradient(circle, var(--accent) 0%, rgba(229,169,59,0) 70%);
+            border-radius: 50%;
+            opacity: 0.15;
+            filter: blur(40px);
+            animation: pulse-node 10s infinite alternate ease-in-out;
+        }
+
+        .glow-node:nth-child(1) { width: 500px; height: 500px; top: -10%; left: -5%; background: radial-gradient(circle, #3b82f6 0%, transparent 70%); }
+        .glow-node:nth-child(2) { width: 600px; height: 600px; bottom: -10%; right: -10%; background: radial-gradient(circle, #e11d48 0%, transparent 70%); animation-delay: 3s; }
+        .glow-node:nth-child(3) { width: 400px; height: 400px; top: 30%; left: 40%; background: radial-gradient(circle, #8b5cf6 0%, transparent 70%); animation-delay: 5s; }
+
+        @keyframes pulse-node {
+            0% { transform: scale(0.8) translate(0, 0); opacity: 0.1; }
+            50% { opacity: 0.25; }
+            100% { transform: scale(1.2) translate(30px, -30px); opacity: 0.15; }
+        }
+
+        .hero-container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            align-items: center;
+            gap: 50px;
+        }
+
+        @media (max-width: 1024px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding-top: 40px;
+            }
+        }
+
+        .hero-text h2 {
+            font-size: 1.4rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-text h1 {
+            font-family: var(--font-nepali);
+            font-size: 3.5rem;
+            line-height: 1.15;
+            margin-bottom: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .hero-text p {
+            font-size: 1.05rem;
+            color: #94A3B8;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        @media (max-width: 1024px) {
+            .hero-buttons {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Nav links active styles */
+        nav.nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            font-family: var(--font-nepali);
+            font-size: 1rem;
+        }
+
+        nav.nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 12px;
+            transition: var(--transition);
+        }
+
+        nav.nav-links a:hover {
+            color: var(--secondary);
+        }
+
+        /* Split Gateway Access section */
+        .section-padding {
+            padding: 80px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-family: var(--font-nepali);
+            font-size: 2.2rem;
+            color: var(--secondary);
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+
+        .section-title p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* Features Cards Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .feature-item-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .feature-item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--border-accent);
+        }
+
+        .feature-item-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(11, 43, 97, 0.06);
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 20px;
+        }
+
+        .feature-item-card h3 {
+            font-family: var(--font-nepali);
+            font-size: 1.35rem;
+            color: var(--secondary);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .feature-item-card p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Split Access Grid (Citizen & Admin Gateway) */
+        .gateway-split-section {
+            background: #f0f4f8;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .gateway-grid-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            max-width: 700px;
+            margin: 0 auto;
+            gap: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .gateway-grid-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .gateway-board-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .gateway-board-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .gateway-board-card.admin-theme {
+            border-left: 6px solid var(--primary);
+        }
+
+        .gateway-board-card.user-theme {
+            border-left: 6px solid var(--secondary);
+        }
+
+        .gateway-board-card h3 {
+            font-family: var(--font-nepali);
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .gateway-board-card.admin-theme h3 {
+            color: var(--primary);
+        }
+
+        .gateway-board-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* Register & Login split forms wrapper in Hero Right */
+        .auth-widget-wrapper {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            width: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .auth-widget-wrapper:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+        }
+
+        .auth-tab-buttons {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 25px;
+            gap: 10px;
+        }
+
+        .auth-tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            color: #94A3B8;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            border-bottom: 3px solid transparent;
+        }
+
+        .auth-tab-btn.active {
+            color: white;
+            border-bottom-color: var(--accent);
+        }
+
+        .auth-widget-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .auth-widget-form .form-group {
+            margin-bottom: 0;
+        }
+
+        .auth-widget-form label {
+            color: #E2E8F0;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .auth-widget-form input, .auth-widget-form select {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid transparent;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 6px;
+            padding: 12px 14px;
+            outline: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .auth-widget-form input:focus, .auth-widget-form select:focus {
+            background: rgba(0, 0, 0, 0.4);
+            border-bottom: 2px solid var(--accent);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .auth-widget-form input::placeholder {
+            color: #64748B;
+        }
+
+        .auth-submit-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%);
+            color: var(--secondary-dark);
+            border: none;
+            padding: 14px;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(229, 169, 59, 0.4);
+        }
+
+        .auth-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(229, 169, 59, 0.6);
+            background: linear-gradient(135deg, #fcd34d 0%, #d97706 100%);
+        }
+
+        #form-widget-register {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        #form-widget-register::-webkit-scrollbar {
+            width: 6px;
+        }
+        #form-widget-register::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-sm);
+        }
+        #form-widget-register::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-sm);
+        }
+        #form-widget-register::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* About Us styling */
+        .about-split-view {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .about-split-view {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .about-desc h3 {
+            font-family: var(--font-nepali);
+            font-size: 1.6rem;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .about-desc p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-size: 0.92rem;
+            margin-bottom: 20px;
+        }
+
+        .about-graphic {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            color: white;
+            box-shadow: var(--shadow-md);
+            position: relative;
+        }
+
+        .about-graphic h4 {
+            font-family: var(--font-nepali);
+            font-size: 1.4rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .about-graphic p {
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #CBD5E1;
+            margin-bottom: 20px;
+        }
+
+        .about-fact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .about-fact-item {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            padding: 15px;
+            text-align: center;
+        }
+
+        .about-fact-item h5 {
+            font-size: 1.6rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .about-fact-item span {
+            font-size: 0.75rem;
+            color: #94A3B8;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Contact Section */
+        .contact-grid {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .contact-grid {
+                width: 100%;
+            }
+        }
+
+        .contact-info-panel {
+            background: var(--secondary-dark);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: 45px 35px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .contact-info-panel h3 {
+            font-family: var(--font-nepali);
+            font-size: 1.6rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .contact-info-panel p {
+            color: #94A3B8;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .contact-detail-row {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .contact-detail-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+        }
+
+        .contact-detail-text h5 {
+            font-size: 0.9rem;
+            color: white;
+            margin-bottom: 3px;
+        }
+
+        .contact-detail-text p {
+            color: #94A3B8;
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Gov Bar -->
+    <div class="top-gov-bar">
+        <span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            नेपाल सरकार | शिक्षा, विज्ञान तथा प्रविधि मन्त्रालय (Ministry of Education, Science & Technology)
+        </span>
+        <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">
+            <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="brand-section">
+            <svg class="gov-logo" viewBox="0 0 100 100" width="65" height="65">
+                <circle cx="50" cy="50" r="46" fill="#0b2b61" />
+                <circle cx="50" cy="50" r="42" fill="white" />
+                <circle cx="50" cy="50" r="38" fill="#e63946" opacity="0.15" />
+                <path d="M25 65 L40 40 L52 55 L65 30 L80 65 Z" fill="#b0c4de" stroke="#0b2b61" stroke-width="1.5" />
+                <path d="M35 65 L48 45 L58 58 L72 38 L80 65 Z" fill="#ffffff" opacity="0.8" />
+                <path d="M22 35 L32 30 L27 42 L35 42 L25 52 L25 35" fill="#dc143c" stroke="#003893" stroke-width="1" />
+                <path d="M42 68 C45 66, 55 66, 58 68" stroke="#0b2b61" stroke-width="3" stroke-linecap="round" />
+                <path d="M45 23 L50 17 L55 23 L50 25 Z" fill="#ffb300" />
+                <circle cx="50" cy="8" r="2.5" fill="#ffb300" />
+                <text x="50" y="85" text-anchor="middle" font-size="6.5" font-family="'Mukta', sans-serif" font-weight="bold" fill="#0b2b61">जननी जन्मभूमिश्च...</text>
+            </svg>
+            <div class="brand-titles">
+                <h1 style="font-family: var(--font-nepali); font-size:1.6rem; color:var(--secondary); font-weight:800;">खातापाना Digital</h1>
+                <h2 style="font-size:0.9rem; color:var(--primary); font-weight:600;">Digital Khata Pana Portal</h2>
+                <p style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">विद्यालय वित्तीय सुशासन र पारदर्शिता प्रणाली</p>
+            </div>
+        </div>
+        
+        <nav class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#portals">Portal Entry</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </nav>
+    </header>
+
+    <!-- 1. Digital Hero Section -->
+    <section class="digital-hero" id="home">
+        <!-- Glowing Grid Background Nodes -->
+        <div class="glow-node"></div>
+        <div class="glow-node"></div>
+        <div class="glow-node"></div>
+
+        <div class="hero-container">
+            <!-- Left Info -->
+            <div class="hero-text">
+                <h2>डिजिटल खातापाना</h2>
+                <h1>सामुदायिक विद्यालय वित्तीय सुशासन र पारदर्शिता प्रणाली</h1>
+                <p>सामुदायिक विद्यालयहरूको आर्थिक कारोबारलाई डिजिटल माध्यमबाट व्यवस्थित गरी अभिभावक तथा नागरिक समक्ष आम्दानी, खर्च र बजेटको विवरण पारदर्शी बनाउन विकसित अत्याधुनिक प्रणाली।</p>
+                <div class="hero-buttons">
+                    <a href="#portals" class="btn-portal">
+                        बोर्ड प्रविष्ट गर्नुहोस् (Access Boards)
+                    </a>
+                    <a href="#about" class="btn-secondary" style="background:transparent; color:white; border-color:rgba(255,255,255,0.4);">
+                        थप जान्नुहोस् (Read More)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Registration & Login Widget -->
+            <div class="auth-widget-wrapper">
+                <div class="auth-tab-buttons">
+                    <button class="auth-tab-btn active" id="tab-btn-login" onclick="toggleAuthTab('login')">Login (लगइन)</button>
+                    <button class="auth-tab-btn" id="tab-btn-register" onclick="toggleAuthTab('register')">Register (दर्ता)</button>
+                </div>
+
+                <!-- A. Login Form -->
+                <form id="form-widget-login" class="auth-widget-form" onsubmit="handleWidgetLogin(event)">
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="widget-login-email">Registered Email (इमेल ठेगाना)</label>
+                        <input type="email" id="widget-login-email" required placeholder="name@domain.com">
+                    </div>
+                    
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px; margin-top:10px;">
+                        <label for="widget-login-password">Password / OTP (पासवर्ड वा OTP)</label>
+                        <input type="password" id="widget-login-password" placeholder="Enter your password or OTP" required>
+                    </div>
+
+                    <button type="submit" class="auth-submit-btn">Login to Citizen Hub</button>
+                    <p style="font-size:0.75rem; text-align:center; color:#94A3B8; margin-top:10px;">
+                        प्रशासकीय लगइनका लागि सिधै <a href="portal-admin.html" style="color:var(--accent); font-weight:bold;">Admin Portal</a> मा जानुहोस्।
+                    </p>
+                </form>
+
+                <!-- B. Register Form -->
+                <form id="form-widget-register" class="auth-widget-form hidden" onsubmit="handleWidgetRegister(event)">
+                    <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #FCA5A5; font-size: 0.75rem; padding: 10px; border-radius: var(--radius-sm); text-align: center; font-weight: 600; margin-bottom: 5px;">
+                        ⚠️ सरकारी विद्यालय मात्र दर्ता योग्य (Only Government Schools Eligible)
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-school-name">School Name (विद्यालयको नाम) *</label>
+                        <input type="text" id="reg-school-name" required placeholder="उदा: श्री जन जागृति मा.वि.">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-address">School Address (ठेगाना) *</label>
+                        <input type="text" id="reg-address" required placeholder="उदा: Khairahani-1, Chitwan">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-school-email">School Email (विद्यालयको इमेल) *</label>
+                        <input type="email" id="reg-school-email" required placeholder="उदा: info@school.edu.np">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-emis">EMIS Code (इमिस कोड) *</label>
+                        <input type="text" id="reg-emis" required pattern="\d{9}" title="EMIS code must be exactly 9 digits" placeholder="९-अङ्कको कोड (उदा: १२३४५६७८९)">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-principal-name">Principal Name (प्रधानाध्यापकको नाम) *</label>
+                        <input type="text" id="reg-principal-name" required placeholder="प्रधानाध्यापकको पूरा नाम">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-principal-phone">Principal Phone (प्र.अ. फोन नम्बर) *</label>
+                        <input type="tel" id="reg-principal-phone" required placeholder="उदा: ९८XXXXXXXX">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-accountant-name">Accountant Name (लेखापालको नाम) *</label>
+                        <input type="text" id="reg-accountant-name" required placeholder="लेखापालको पूरा नाम">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-accountant-phone">Accountant Phone (लेखापाल फोन नम्बर) *</label>
+                        <input type="tel" id="reg-accountant-phone" required placeholder="उदा: ९८XXXXXXXX">
+                    </div>
+
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
+                        <label for="reg-logo">School Logo Upload (विद्यालयको लोगो) *</label>
+                        <input type="file" id="reg-logo" accept="image/*" required>
+                    </div>
+
+
+                    <button type="submit" class="auth-submit-btn" style="background: linear-gradient(135deg, var(--success) 0%, #059669 100%); color:white;">
+                        Register School & Choose Plan
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. About Us Section -->
+    <section class="section-padding" id="about">
+        <div class="about-split-view">
+            <div class="about-desc">
+                <h3 id="txt-about-title">हाम्रो अभियान र प्रतिबद्धता</h3>
+                <p>डिजिटल खातापाना प्रणाली सामुदायिक विद्यालयहरूको आर्थिक कारोबारलाई पारदर्शी र व्यवस्थित बनाउन विकास गरिएको एक डिजिटल प्लेटफर्म हो। यस प्रणाली मार्फत विद्यालयको सम्पूर्ण आर्थिक पक्षलाई आम नागरिक समक्ष सुलभ र प्रविधिमैत्री बनाउने हाम्रो प्रतिबद्धता छ।</p>
+                <p>यस प्रणाली अन्तर्गत, स्थानीय सरकारबाट प्राप्त सशर्त अनुदान, दिवा खाजा कार्यक्रम, छात्रवृत्ति कोष, र समुदायबाट प्राप्त हुने चन्दा सहयोगको प्रत्येक रुपैयाँ पारदर्शी ढंगले सार्वजनिक लेखा भौचरमा प्रविष्टि गरिन्छ।</p>
+                <a href="#portals" class="btn-portal" style="width:fit-content;">अभिलेखहरू हेर्नुहोस्</a>
+            </div>
+            
+            <div class="about-graphic">
+                <h4>वित्तीय सुशासनको तस्बिर</h4>
+                <p>डिजिटल खातापाना प्रणालीमा जोडिएपछि विद्यालयले हासिल गरेका मुख्य वित्तीय उपलब्धि सूचकहरू:</p>
+                
+                <div class="about-fact-grid">
+                    <div class="about-fact-item">
+                        <h5>१००%</h5>
+                        <span>पारदर्शिता दर</span>
+                    </div>
+                    <div class="about-fact-item">
+                        <h5>२४/७</h5>
+                        <span>अभिलेख पहुँच</span>
+                    </div>
+                    <div class="about-fact-item">
+                        <h5>शून्य</h5>
+                        <span>वित्तीय असन्तुलन</span>
+                    </div>
+                    <div class="about-fact-item">
+                        <h5>रू. ६१ लाख+</h5>
+                        <span>वार्षिक बजेट व्यवस्थापन</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Features Section -->
+    <section class="gateway-split-section" id="features">
+        <div class="section-padding">
+            <div class="section-title">
+                <h2>प्रणालीका मुख्य सुविधाहरू (Core Features)</h2>
+                <p>पारदर्शी विद्यालय प्रशासनका लागि प्रणालीमा समाविष्ट प्रमुख विशेषताहरू</p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Feature 1 -->
+                <div class="feature-item-card">
+                    <div class="feature-item-icon">⚡</div>
+                    <h3>रियल-टाइम क्लाउड सिंक</h3>
+                    <p>Supabase क्लाउड डाटाबेस जडानले गर्दा लेखा अधिकृतले प्रविष्टि गरेका विवरणहरू तत्कालै सार्वजनिक बोर्डमा देखा पर्छन्।</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="feature-item-card">
+                    <div class="feature-item-icon">📝</div>
+                    <h3>सार्वजनिक सुझाव र गुनासो सुनुवाइ</h3>
+                    <p>अभिभावक तथा सरोकारवालाहरूले अनलाइनबाटै सुझाव दिन र विद्यालय प्रशासनको आधिकारिक जवाफ हेर्न सक्छन्।</p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="feature-item-card">
+                    <div class="feature-item-icon">📊</div>
+                    <h3>बजेट सीमा सतर्कता</h3>
+                    <p>कुनै पनि बजेट शीर्षकमा विनियोजन गरिएको सीमा काट्न थालेमा प्रणालीले स्वचालित रूपमा सचेत गराउँछ।</p>
+                </div>
+                <!-- Feature 4 -->
+                <div class="feature-item-card">
+                    <div class="feature-item-icon">💾</div>
+                    <h3>बिल्ट-इन रिपोर्ट निर्यात</h3>
+                    <p>सम्पूर्ण लेखा भौचर विवरणहरूलाई सिधै प्रिन्ट गर्न वा थप लेखा परीक्षणका लागि Excel/CSV मा डाउनलोड गर्न मिल्छ।</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Portal Entry Cards -->
+    <section class="section-padding" id="portals">
+        <div class="section-title">
+            <h2>वित्तीय पोर्टल प्रवेशद्वार (Gateway Hub)</h2>
+            <p>कृपया आफ्नो आवश्यक्ता अनुसार उपयुक्त बोर्ड वा लेखा शाखामा प्रवेश गर्नुहोस्</p>
+        </div>
+
+        <div class="gateway-grid-cards">
+            <!-- Card User -->
+            <div class="gateway-board-card user-theme">
+                <div>
+                    <h3>नागरिक सार्वजनिक बोर्ड</h3>
+                    <p>विद्यालयको आर्थिक पारदर्शिता विवरण, आय-व्यय प्रवृत्ति विश्लेषण ग्राफ र बजेट खर्चको अवस्था हेर्न र प्रतिक्रिया दर्ता गर्न।</p>
+                </div>
+                <a href="select-school.html" class="btn-portal" style="background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%); text-align:center; justify-content:center;">
+                    सार्वजनिक बोर्डमा प्रवेश (Enter Public Board)
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Contact Section -->
+    <section class="gateway-split-section" id="contact">
+        <div class="section-padding">
+            <div class="section-title">
+                <h2>सम्पर्क कार्यालय (Contact Office)</h2>
+                <p>कुनै जिज्ञासा, सहयोग वा सल्लाहका लागि हामीलाई सम्पर्क गर्नुहोस्।</p>
+            </div>
+
+            <div class="contact-grid">
+                <!-- Contact info panel -->
+                <div class="contact-info-panel">
+                    <h3>सम्पर्क विवरण</h3>
+                    <p>विद्यालय व्यवस्थापन समिति र लेखा शाखासँग सिधै सम्पर्क राख्नुहोस्।</p>
+                    
+                    <div class="contact-details">
+                        <div class="contact-detail-row">
+                            <div class="contact-detail-icon">📍</div>
+                            <div class="contact-detail-text">
+                                <p><a href="https://maps.app.goo.gl/D39cBnAvLxvtyRXn6" target="_blank" style="color: inherit; text-decoration: none;">Khairahani-1, Chitwan</a></p>
+                            </div>
+                        </div>
+                        <div class="contact-detail-row">
+                            <div class="contact-detail-icon">📞</div>
+                            <div class="contact-detail-text">
+                                <p><a href="tel:+9779861079061" style="color: inherit; text-decoration: none;">+977-9861079061</a></p>
+                            </div>
+                        </div>
+                        <div class="contact-detail-row">
+                            <div class="contact-detail-icon">✉️</div>
+                            <div class="contact-detail-text">
+                                <p><a href="mailto:khatapanadigital2083@gmail.com" style="color: inherit; text-decoration: none;">khatapanadigital2083@gmail.com</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Toast Notifications container -->
+    <div class="toast-container" id="gateway-toast-container"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-bottom" style="border-top:none; padding-top:0;">
+            © २०८३ खातापाना Digital | सुशासन, पारदर्शिता र प्रविधिमैत्री शैक्षिक प्रशासन
+        </div>
+    </footer>
+
+    <!-- Scripts for widget toggles and mock auth -->
+    <script>
+        (function() {
+            // Setup Global Nepali Clock in Header
+            const header = document.querySelector('header');
+            if (header) {
+                const clockDiv = document.createElement('div');
+                clockDiv.id = 'live-nepali-clock';
+                clockDiv.style.cssText = 'position: absolute; left: 50%; transform: translateX(-50%); font-weight: 700; font-family: var(--font-nepali), sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 1.1rem; color: #ffffff; background: linear-gradient(135deg, var(--secondary-dark), #1e293b); padding: 8px 24px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); text-align: center; z-index: 10;';
+                
+                header.appendChild(clockDiv);
+
+                const engToNep = {'0':'०','1':'१','2':'२','3':'३','4':'४','5':'५','6':'६','7':'७','8':'८','9':'९'};
+
+                function updateClock() {
+                    const now = new Date();
+                    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+                    const nepaliDate = new Date(utc + (3600000 * 5.75));
+
+                    let hours = nepaliDate.getHours();
+                    let minutes = nepaliDate.getMinutes();
+                    let seconds = nepaliDate.getSeconds();
+                    const ampm = hours >= 12 ? 'PM' : 'AM';
+                    
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    
+                    const strTime = (hours < 10 ? '0'+hours : hours) + ':' + 
+                                    (minutes < 10 ? '0'+minutes : minutes) + ':' + 
+                                    (seconds < 10 ? '0'+seconds : seconds) + ' ' + ampm;
+
+                    let bsDateStr = '';
+                    if (window.NepaliFunctions) {
+                        try {
+                            const bsDate = window.NepaliFunctions.GetCurrentBsDate();
+                            bsDateStr = window.NepaliFunctions.GetBsFullDate(bsDate, true) + ' | ';
+                        } catch(e) {}
+                    }
+
+                    const nepaliStrTime = strTime.replace(/[0-9]/g, m => engToNep[m]);
+                    clockDiv.innerHTML = `<span style="font-size: 0.8rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">${bsDateStr}</span> <div style="display:flex; align-items:center; gap:6px;"><span style="color:#e5a93b;">🕒</span> <span>${nepaliStrTime}</span></div>`;
+                }
+                
+                updateClock();
+                setInterval(updateClock, 1000);
+            }
+        })();
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            document.getElementById('theme-text').textContent = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+        }
+
+        // Set initial toggle text
+        document.addEventListener('DOMContentLoaded', () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                document.getElementById('theme-icon').textContent = '☀️';
+                document.getElementById('theme-text').textContent = 'Light Mode';
+            }
+        });
+
+        function toggleAuthTab(tab) {
+            const btnLogin = document.getElementById('tab-btn-login');
+            const btnRegister = document.getElementById('tab-btn-register');
+            const formLogin = document.getElementById('form-widget-login');
+            const formRegister = document.getElementById('form-widget-register');
+
+            if (tab === 'login') {
+                btnLogin.classList.add('active');
+                btnRegister.classList.remove('active');
+                formLogin.classList.remove('hidden');
+                formRegister.classList.add('hidden');
+            } else {
+                btnLogin.classList.remove('active');
+                btnRegister.classList.add('active');
+                formLogin.classList.add('hidden');
+                formRegister.classList.remove('hidden');
+            }
+        }
+
+        function handleWidgetLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('widget-login-email').value.trim();
+            const password = document.getElementById('widget-login-password').value.trim();
+
+            // Check if there is a matching school registration
+            let matchedSchool = null;
+            const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+            if (schoolsListStr) {
+                try {
+                    const schoolsList = JSON.parse(schoolsListStr);
+                    matchedSchool = schoolsList.find(s => s.schoolEmail.toLowerCase() === email.toLowerCase());
+                } catch (e) {
+                    console.error('Error parsing registered schools list', e);
+                }
+            }
+
+            if (matchedSchool) {
+
+                // Verify approval status
+                if (matchedSchool.status === 'Pending') {
+                    showGatewayToast('School registration is pending admin approval! (दर्ता स्वीकृति हुन बाँकी छ)', 'error');
+                    return;
+                }
+
+                if (matchedSchool.status === 'Rejected') {
+                    showGatewayToast('School registration has been rejected! (दर्ता अस्वीकृत गरिएको छ)', 'error');
+                    return;
+                }
+
+                if (!password) {
+                    showGatewayToast('Please enter your Password or OTP to log in to your school! (कृपया पासवर्ड वा OTP हाल्नुहोस्)', 'error');
+                    return;
+                }
+
+                // Verify Password / OTP
+                let isValid = false;
+                if (matchedSchool.permanentPassword && matchedSchool.permanentPassword === password) {
+                    isValid = true;
+                } else if (matchedSchool.otp === password) {
+                    if (!matchedSchool.otpUsed) {
+                        // Clear any old session so school-login.html doesn't bounce to previous school
+                        sessionStorage.removeItem('school_user_logged_in');
+                        sessionStorage.removeItem('school_user_email');
+                        sessionStorage.removeItem('admin_logged_in');
+                        
+                        showGatewayToast('OTP Verified! Redirecting to setup your permanent password...', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'school-login.html';
+                        }, 1500);
+                        return;
+                    } else if (matchedSchool.otpUsed && !matchedSchool.permanentPassword) {
+                        // Edge case where OTP is used but no permanent password set
+                         isValid = true;
+                    }
+                }
+
+                if (!isValid) {
+                    showGatewayToast('Invalid Password or OTP! (पासवर्ड वा OTP मिलेन)', 'error');
+                    return;
+                }
+
+                // Successful school admin login
+                localStorage.setItem('nepal_school_registered_info', JSON.stringify(matchedSchool));
+                sessionStorage.setItem('school_user_logged_in', 'true');
+                sessionStorage.setItem('school_user_email', matchedSchool.schoolEmail);
+                sessionStorage.setItem('admin_logged_in', 'true');
+                showGatewayToast(`Access Granted! Welcome to ${matchedSchool.schoolName} admin panel.`, 'success');
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 1500);
+            } else {
+                // Fallback to citizen login
+                showGatewayToast(`Citizen login successful! Welcome, ${email}. Please select a school...`, 'success');
+                setTimeout(() => {
+                    window.location.href = 'select-school.html';
+                }, 1500);
+            }
+        }
+
+        function handleWidgetRegister(event) {
+            event.preventDefault();
+            
+            const schoolName = document.getElementById('reg-school-name').value.trim();
+            const address = document.getElementById('reg-address').value.trim();
+            const schoolEmail = document.getElementById('reg-school-email').value.trim();
+            const emis = document.getElementById('reg-emis').value.trim();
+            const principal = document.getElementById('reg-principal-name').value.trim();
+            const pPhone = document.getElementById('reg-principal-phone').value.trim();
+            const accountant = document.getElementById('reg-accountant-name').value.trim();
+            const aPhone = document.getElementById('reg-accountant-phone').value.trim();
+
+
+            // Email format validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(schoolEmail)) {
+                showGatewayToast('Please enter a valid email address! (कृपया मान्य इमेल ठेगाना प्रविष्ट गर्नुहोस्)', 'error');
+                return;
+            }
+
+            // Email uniqueness validation
+            let schoolsListCheck = [];
+            const schoolsListCheckStr = localStorage.getItem('nepal_registered_schools');
+            if (schoolsListCheckStr) {
+                try {
+                    schoolsListCheck = JSON.parse(schoolsListCheckStr);
+                } catch (e) {
+                    console.error('Error reading schools list for validation', e);
+                }
+            }
+            const emailExists = schoolsListCheck.some(s => s.schoolEmail.toLowerCase() === schoolEmail.toLowerCase());
+            if (emailExists) {
+                showGatewayToast('This email is already registered! (यो इमेल पहिले नै दर्ता भइसकेको छ)', 'error');
+                return;
+            }
+
+            // EMIS validation
+            if (emis.length !== 9 || isNaN(emis)) {
+                showGatewayToast('EMIS Code must be exactly 9 digits! (इमिस कोड ९-अङ्कको हुनुपर्छ)', 'error');
+                return;
+            }
+
+            // Read file uploads asynchronously
+            const logoFile = document.getElementById('reg-logo').files[0];
+
+            const readAsDataURL = (file) => {
+                return new Promise((resolve) => {
+                    if (!file) {
+                        resolve('');
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            Promise.all([
+                readAsDataURL(logoFile)
+            ]).then(([logoBase64]) => {
+                const registeredSchool = {
+                    schoolName,
+                    address,
+                    schoolEmail,
+                    emis,
+                    principal,
+                    pPhone,
+                    accountant,
+                    aPhone,
+                    publicBoard: 'yes',
+                    logo: logoBase64,
+                    status: 'Pending',
+                    registeredAt: new Date().toISOString()
+                };
+
+                localStorage.setItem('nepal_school_registered_info', JSON.stringify(registeredSchool));
+
+                // Save to registered schools database list
+                let schoolsList = [];
+                const schoolsListStr = localStorage.getItem('nepal_registered_schools');
+                if (schoolsListStr) {
+                    try {
+                        schoolsList = JSON.parse(schoolsListStr);
+                    } catch (e) {
+                        console.error('Error reading schools list', e);
+                    }
+                }
+                schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== schoolEmail.toLowerCase());
+                schoolsList.push(registeredSchool);
+                localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+
+                showGatewayToast('Registration Successful! Redirecting to subscription checkout...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'subscription.html';
+                }, 1800);
+            });
+        }
+
+        function handleGatewayContactSubmit(event) {
+            event.preventDefault();
+            showGatewayToast('Your contact message has been sent successfully. We will reply to your email soon.', 'success');
+            event.target.reset();
+        }
+
+        function showGatewayToast(message, type = 'success') {
+            const container = document.getElementById('gateway-toast-container');
+            if (!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-content" style="font-size:0.85rem; font-weight:500;">${message}</div>
+                <button style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight:bold;" onclick="this.parentElement.remove()">×</button>
+            `;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 50);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

@@ -2,7 +2,7 @@
   "name": "nepal-gov-school-income-expenditure",
   "version": "1.0.0",
   "description": "Income & Expenditure Transparency Board and Administration System for Nepal Government School System",
-  "main": "index.html",
+  "main": "digitalkhatapana.html",
   "scripts": {
     "start": "npx -y browser-sync start --server --files \"*.html, css/*.css, js/*.js\""
   },
