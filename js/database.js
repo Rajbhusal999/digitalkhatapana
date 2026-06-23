@@ -198,6 +198,7 @@ let cachedTransactions = [];
 let cachedBudgets = {};
 let cachedFeedbacks = [];
 let cachedHeadings = [];
+let cachedRegisteredSchools = [];
 
 /**
  * Initialize Database
@@ -368,10 +369,101 @@ async function syncFromSupabase() {
         }
 
         console.log("Supabase data synchronized successfully.");
+        await fetchRegisteredSchools();
     } catch (err) {
         console.error("Failed to fetch data from Supabase. Falling back to LocalStorage.", err);
         useSupabase = false;
         syncFromLocalStorage();
+    }
+}
+
+async function fetchRegisteredSchools() {
+    if (!useSupabase) return;
+    try {
+        const { data, error } = await supabaseClient.from('registered_schools').select('*');
+        if (error) throw error;
+        cachedRegisteredSchools = data.map(item => ({
+            id: item.id,
+            schoolName: item.school_name,
+            address: item.address,
+            schoolEmail: item.school_email,
+            emis: item.emis,
+            principalName: item.principal_name,
+            pPhone: item.principal_phone,
+            accountantName: item.accountant_name,
+            aPhone: item.accountant_phone,
+            logo: item.logo,
+            status: item.status,
+            otp: item.otp,
+            otpUsed: item.otp_used,
+            permanentPassword: item.permanent_password,
+            subscription: item.subscription,
+            paymentMethod: item.payment_method,
+            transactionCode: item.transaction_code,
+            registeredAt: item.registered_at
+        }));
+        localStorage.setItem('nepal_registered_schools', JSON.stringify(cachedRegisteredSchools));
+    } catch (e) {
+        console.error("Failed to fetch registered schools from Supabase", e);
+    }
+}
+
+async function upsertRegisteredSchool(school) {
+    if (!useSupabase) {
+        let list = JSON.parse(localStorage.getItem('nepal_registered_schools') || '[]');
+        list = list.filter(s => s.schoolEmail.toLowerCase() !== school.schoolEmail.toLowerCase());
+        list.push(school);
+        localStorage.setItem('nepal_registered_schools', JSON.stringify(list));
+        return;
+    }
+    
+    const dbPayload = {
+        school_name: school.schoolName,
+        address: school.address,
+        school_email: school.schoolEmail,
+        emis: school.emis,
+        principal_name: school.principalName,
+        principal_phone: school.pPhone,
+        accountant_name: school.accountantName,
+        accountant_phone: school.aPhone,
+        logo: school.logo,
+        status: school.status || 'Pending',
+        otp: school.otp,
+        otp_used: school.otpUsed || false,
+        permanent_password: school.permanentPassword,
+        subscription: school.subscription,
+        payment_method: school.paymentMethod,
+        transaction_code: school.transactionCode
+    };
+    
+    if (school.id) {
+        dbPayload.id = school.id;
+    }
+
+    try {
+        const { error } = await supabaseClient.from('registered_schools').upsert(dbPayload, { onConflict: 'school_email' });
+        if (error) throw error;
+        await fetchRegisteredSchools();
+    } catch(e) {
+        console.error('Error upserting registered school', e);
+        throw e;
+    }
+}
+
+async function deleteRegisteredSchool(email) {
+    if (!useSupabase) {
+        let list = JSON.parse(localStorage.getItem('nepal_registered_schools') || '[]');
+        list = list.filter(s => s.schoolEmail.toLowerCase() !== email.toLowerCase());
+        localStorage.setItem('nepal_registered_schools', JSON.stringify(list));
+        return;
+    }
+    try {
+        const { error } = await supabaseClient.from('registered_schools').delete().eq('school_email', email);
+        if (error) throw error;
+        await fetchRegisteredSchools();
+    } catch(e) {
+        console.error('Error deleting registered school', e);
+        throw e;
     }
 }
 
@@ -660,6 +752,9 @@ function formatDate(dateStr, isDevanagari = false) {
 
 // Explicitly attach to window to prevent "is not defined" errors when caching goes wrong
 window.initDatabase = initDatabase;
+window.fetchRegisteredSchools = fetchRegisteredSchools;
+window.upsertRegisteredSchool = upsertRegisteredSchool;
+window.deleteRegisteredSchool = deleteRegisteredSchool;
 window.getTransactions = getTransactions;
 window.saveTransaction = saveTransaction;
 window.deleteTransaction = deleteTransaction;

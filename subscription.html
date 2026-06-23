@@ -1135,7 +1135,15 @@
     </footer>
 
     <!-- Subscription Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.initDatabase) {
+                await window.initDatabase();
+            }
+        });
         let currentSelectedPlan = '';
         let currentSelectedPrice = 0;
         let currentPaymentGateway = '';
@@ -1372,6 +1380,9 @@
             schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== schoolInfo.schoolEmail.toLowerCase());
             schoolsList.push(schoolInfo);
             localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+            if (window.upsertRegisteredSchool) {
+                window.upsertRegisteredSchool(schoolInfo).catch(console.error);
+            }
             
             // Dispatch email notification to rajbhusal235@gmail.com
             sendAdminNotification(schoolInfo.schoolName, schoolInfo.schoolEmail, 'Approved');
@@ -1436,6 +1447,9 @@
             schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== schoolInfo.schoolEmail.toLowerCase());
             schoolsList.push(schoolInfo);
             localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+            if (window.upsertRegisteredSchool) {
+                window.upsertRegisteredSchool(schoolInfo).catch(console.error);
+            }
 
             // Dispatch email notification to rajbhusal235@gmail.com
             sendAdminNotification(schoolInfo.schoolName, schoolInfo.schoolEmail, 'Pending');

@@ -325,7 +325,15 @@
     <!-- Toast -->
     <div class="toast-container" id="login-toast-container"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.initDatabase) {
+                await window.initDatabase();
+            }
+        });
         let _verifiedEmail = null;
 
         // ─── Check if already logged in ───
@@ -336,7 +344,7 @@
         });
 
         // ─── STEP 1: Verify Email + OTP ───
-        function handleOTPLogin() {
+        async function handleOTPLogin() {
             const email = document.getElementById('login-email').value.trim().toLowerCase();
             const otp   = document.getElementById('login-otp').value.trim();
             const errBox = document.getElementById('step1-err');
@@ -348,6 +356,10 @@
             }
 
             setLoading('spin1', 'btn1-text', 'btn-step1', true);
+
+            if (window.fetchRegisteredSchools) {
+                await window.fetchRegisteredSchools();
+            }
 
             setTimeout(() => {
                 setLoading('spin1', 'btn1-text', 'btn-step1', false);
@@ -407,7 +419,7 @@
         }
 
         // ─── STEP 2: Set Permanent Password ───
-        function handleSetPassword() {
+        async function handleSetPassword() {
             const pw1 = document.getElementById('new-password').value;
             const pw2 = document.getElementById('confirm-password').value;
             const errBox = document.getElementById('step2-err');
@@ -424,7 +436,11 @@
 
             setLoading('spin2', 'btn2-text', 'btn-step2', true);
 
-            setTimeout(() => {
+            if (window.fetchRegisteredSchools) {
+                await window.fetchRegisteredSchools();
+            }
+
+            setTimeout(async () => {
                 setLoading('spin2', 'btn2-text', 'btn-step2', false);
 
                 // Save permanent password and mark OTP as used
@@ -445,6 +461,10 @@
                 schoolsList[idx].permanentPassword = pw1;
                 schoolsList[idx].otpUsed = true;
                 localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+                
+                if (window.upsertRegisteredSchool) {
+                    await window.upsertRegisteredSchool(schoolsList[idx]);
+                }
 
                 // Also update nepal_school_registered_info if it matches
                 try {

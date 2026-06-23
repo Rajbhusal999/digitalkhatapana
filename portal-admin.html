@@ -888,7 +888,15 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.initDatabase) {
+                await window.initDatabase();
+            }
+        });
         // Session validation
         document.addEventListener('DOMContentLoaded', () => {
             checkSuperAuth();
@@ -935,7 +943,10 @@
         }
 
         // Initialize dashboard and metrics
-        function initSuperDashboard() {
+        async function initSuperDashboard() {
+            if (window.fetchRegisteredSchools) {
+                await window.fetchRegisteredSchools();
+            }
             updateSuperMetrics();
             renderSchoolsDatabase();
             renderNotifications();
@@ -1192,6 +1203,9 @@
             schoolsList[idx].approvedAt = new Date().toISOString();
             if (schoolsList[idx].subscription) schoolsList[idx].subscription.status = 'Active';
             localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+            if (window.upsertRegisteredSchool) {
+                window.upsertRegisteredSchool(schoolsList[idx]).catch(console.error);
+            }
 
             // Sync active school info
             try {
@@ -1272,6 +1286,9 @@ ${loginUrl}
             schoolsList[idx].otp     = otp;
             schoolsList[idx].otpUsed = false;
             localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+            if (window.upsertRegisteredSchool) {
+                window.upsertRegisteredSchool(schoolsList[idx]).catch(console.error);
+            }
 
             const schoolName = schoolsList[idx].schoolName || email;
             const loginUrl   = window.location.origin + (window.location.pathname.replace('portal-admin.html','')) + 'school-login.html';
@@ -1328,6 +1345,9 @@ ${loginUrl}
                         schoolsList[idx].subscription.status = 'Rejected';
                     }
                     localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+                    if (window.upsertRegisteredSchool) {
+                        window.upsertRegisteredSchool(schoolsList[idx]).catch(console.error);
+                    }
 
                     // Also sync active school info if it matches
                     const currentActiveStr = localStorage.getItem('nepal_school_registered_info');
@@ -1394,6 +1414,9 @@ ${loginUrl}
             } catch(e) {}
             schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== email.toLowerCase());
             localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+            if (window.deleteRegisteredSchool) {
+                await window.deleteRegisteredSchool(email);
+            }
 
             // 2. Remove active school info if it matches
             try {

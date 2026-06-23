@@ -913,7 +913,15 @@
     </footer>
 
     <!-- Scripts for widget toggles and mock auth -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.initDatabase) {
+                await window.initDatabase();
+            }
+        });
         (function() {
             // Setup Global Nepali Clock in Header
             const header = document.querySelector('header');
@@ -997,13 +1005,16 @@
             }
         }
 
-        function handleWidgetLogin(event) {
+        async function handleWidgetLogin(event) {
             event.preventDefault();
             const email = document.getElementById('widget-login-email').value.trim();
             const password = document.getElementById('widget-login-password').value.trim();
 
             // Check if there is a matching school registration
             let matchedSchool = null;
+            if (window.fetchRegisteredSchools) {
+                await window.fetchRegisteredSchools();
+            }
             const schoolsListStr = localStorage.getItem('nepal_registered_schools');
             if (schoolsListStr) {
                 try {
@@ -1038,28 +1049,22 @@
                     isValid = true;
                 } else if (matchedSchool.otp === password) {
                     if (!matchedSchool.otpUsed) {
-                        // Clear any old session so school-login.html doesn't bounce to previous school
                         sessionStorage.removeItem('school_user_logged_in');
                         sessionStorage.removeItem('school_user_email');
                         sessionStorage.removeItem('admin_logged_in');
-                        
                         showGatewayToast('OTP Verified! Redirecting to setup your permanent password...', 'success');
                         setTimeout(() => {
                             window.location.href = 'school-login.html';
                         }, 1500);
                         return;
                     } else if (matchedSchool.otpUsed && !matchedSchool.permanentPassword) {
-                        // Edge case where OTP is used but no permanent password set
                          isValid = true;
                     }
                 }
-
                 if (!isValid) {
                     showGatewayToast('Invalid Password or OTP! (पासवर्ड वा OTP मिलेन)', 'error');
                     return;
                 }
-
-                // Successful school admin login
                 localStorage.setItem('nepal_school_registered_info', JSON.stringify(matchedSchool));
                 sessionStorage.setItem('school_user_logged_in', 'true');
                 sessionStorage.setItem('school_user_email', matchedSchool.schoolEmail);
@@ -1069,7 +1074,6 @@
                     window.location.href = 'admin.html';
                 }, 1500);
             } else {
-                // Fallback to citizen login
                 showGatewayToast(`Citizen login successful! Welcome, ${email}. Please select a school...`, 'success');
                 setTimeout(() => {
                     window.location.href = 'select-school.html';
@@ -1077,7 +1081,7 @@
             }
         }
 
-        function handleWidgetRegister(event) {
+        async function handleWidgetRegister(event) {
             event.preventDefault();
             
             const schoolName = document.getElementById('reg-school-name').value.trim();
