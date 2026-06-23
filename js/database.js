@@ -397,7 +397,10 @@ async function fetchRegisteredSchools() {
             otp: item.otp,
             otpUsed: item.otp_used,
             permanentPassword: item.permanent_password,
-            subscription: item.subscription,
+            subscription: (function(){
+                try { return typeof item.subscription === 'string' ? JSON.parse(item.subscription) : item.subscription; } 
+                catch(e) { return item.subscription; }
+            })(),
             paymentMethod: item.payment_method,
             transactionCode: item.transaction_code,
             registeredAt: item.registered_at
@@ -431,7 +434,7 @@ async function upsertRegisteredSchool(school) {
         otp: school.otp,
         otp_used: school.otpUsed || false,
         permanent_password: school.permanentPassword,
-        subscription: school.subscription,
+        subscription: typeof school.subscription === 'object' ? JSON.stringify(school.subscription) : school.subscription,
         payment_method: school.paymentMethod,
         transaction_code: school.transactionCode
     };

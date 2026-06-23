@@ -1146,13 +1146,16 @@
                     address,
                     schoolEmail,
                     emis,
-                    principal,
+                    principalName: principal,
                     pPhone,
-                    accountant,
+                    accountantName: accountant,
                     aPhone,
                     publicBoard: 'yes',
                     logo: logoBase64,
                     status: 'Pending',
+                    otp: Math.floor(100000 + Math.random() * 900000).toString(),
+                    otpUsed: false,
+                    permanentPassword: null,
                     registeredAt: new Date().toISOString()
                 };
 
