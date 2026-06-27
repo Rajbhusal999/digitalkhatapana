@@ -892,65 +892,84 @@
     <script src="js/config.js"></script>
     <script src="js/database.js"></script>
     <script>
+        // ✅ SINGLE unified init — no race condition, Supabase client owned by admin panel
+        let superAdminSupabase = null;
+
         document.addEventListener('DOMContentLoaded', async () => {
-            if (window.initDatabase) {
-                await window.initDatabase();
-            }
-        });
-        // Session validation
-        document.addEventListener('DOMContentLoaded', () => {
+            // Reset filter
             const filterSelect = document.getElementById('filter-status-select');
             if (filterSelect) filterSelect.value = 'all';
+
+            // Create dedicated Supabase client for super admin (no dependency on database.js)
+            if (window.supabase && typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_ANON_KEY !== 'undefined') {
+                try {
+                    superAdminSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    console.log('[SuperAdmin] Own Supabase client created successfully.');
+                } catch(e) {
+                    console.error('[SuperAdmin] Failed to create Supabase client:', e);
+                }
+            }
+
             checkSuperAuth();
         });
 
-        function checkSuperAuth() {
-            const isLoggedIn = sessionStorage.getItem('super_admin_logged_in') === 'true';
-            const loginSection = document.getElementById('super-login-section');
-            const dashboardSection = document.getElementById('super-dashboard-section');
+        // ─── Fetch registered_schools DIRECTLY from Supabase ───────────────────────
+        async function fetchSchoolsFromSupabase() {
+            if (!superAdminSupabase) {
+                console.warn('[SuperAdmin] No Supabase client — falling back to localStorage.');
+                try {
+                    return JSON.parse(localStorage.getItem('nepal_registered_schools') || '[]');
+                } catch(e) { return []; }
+            }
+            try {
+                const { data, error } = await superAdminSupabase
+                    .from('registered_schools')
+                    .select('*')
+                    .order('registered_at', { ascending: false });
+                if (error) throw error;
 
-            if (isLoggedIn) {
-                loginSection.style.display = 'none';
-                dashboardSection.style.display = 'block';
-                initSuperDashboard();
-            } else {
-                loginSection.style.display = 'flex';
-                dashboardSection.style.display = 'none';
+                // Map snake_case → camelCase
+                const schools = (data || []).map(item => ({
+                    id: item.id,
+                    schoolName: item.school_name,
+                    address: item.address,
+                    schoolEmail: item.school_email,
+                    emis: item.emis,
+                    principalName: item.principal_name,
+                    pPhone: item.principal_phone,
+                    accountantName: item.accountant_name,
+                    aPhone: item.accountant_phone,
+                    logo: item.logo,
+                    status: item.status,
+                    otp: item.otp,
+                    otpUsed: item.otp_used,
+                    permanentPassword: item.permanent_password,
+                    subscription: (function(){
+                        try { return typeof item.subscription === 'string' ? JSON.parse(item.subscription) : item.subscription; }
+                        catch(e) { return item.subscription; }
+                    })(),
+                    paymentMethod: item.payment_method,
+                    transactionCode: item.transaction_code,
+                    registeredAt: item.registered_at
+                }));
+
+                // Also mirror to localStorage so other functions still work
+                localStorage.setItem('nepal_registered_schools', JSON.stringify(schools));
+                console.log(`[SuperAdmin] Loaded ${schools.length} schools from Supabase.`);
+                return schools;
+            } catch(e) {
+                console.error('[SuperAdmin] Supabase fetch failed, falling back to localStorage:', e);
+                try {
+                    return JSON.parse(localStorage.getItem('nepal_registered_schools') || '[]');
+                } catch(ex) { return []; }
             }
         }
 
-        function handleSuperLogin(event) {
-            event.preventDefault();
-            const email = document.getElementById('super-email').value.trim();
-            const password = document.getElementById('super-password').value;
-
-            // Credentials check
-            if (email === 'khatapanadigital2083@gmail.com' && password === 'Khatapana@2083') {
-                sessionStorage.setItem('super_admin_logged_in', 'true');
-                showSuperToast('Access Granted! Redirecting to dashboard...', 'success');
-                setTimeout(() => {
-                    checkSuperAuth();
-                }, 1000);
-            } else {
-                showSuperToast('Invalid Credentials! Access Denied.', 'error');
-            }
-        }
-
-        function handleSuperLogout() {
-            sessionStorage.removeItem('super_admin_logged_in');
-            showSuperToast('Logged out successfully.', 'info');
-            setTimeout(() => {
-                checkSuperAuth();
-            }, 500);
-        }
-
-        // Initialize dashboard and metrics
+        // ─── Initialize dashboard (always pulls fresh from Supabase) ───────────────
         async function initSuperDashboard() {
-            if (window.fetchRegisteredSchools) {
-                await window.fetchRegisteredSchools();
-            }
-            updateSuperMetrics();
-            renderSchoolsDatabase();
+            const schools = await fetchSchoolsFromSupabase();
+            updateSuperMetrics(schools);
+            renderSchoolsDatabase(schools);
             renderNotifications();
             setTimeout(renderSuperCharts, 100);
         }
@@ -1026,16 +1045,41 @@
             }
         }
 
-        function updateSuperMetrics() {
-            let schoolsList = [];
-            const schoolsListStr = localStorage.getItem('nepal_registered_schools');
-            if (schoolsListStr) {
-                try {
-                    schoolsList = JSON.parse(schoolsListStr);
-                } catch(e) {
-                    console.error(e);
-                }
+        function checkSuperAuth() {
+            const isLoggedIn = sessionStorage.getItem('super_admin_logged_in') === 'true';
+            const loginSection = document.getElementById('super-login-section');
+            const dashboardSection = document.getElementById('super-dashboard-section');
+            if (isLoggedIn) {
+                loginSection.style.display = 'none';
+                dashboardSection.style.display = 'block';
+                initSuperDashboard();
+            } else {
+                loginSection.style.display = 'flex';
+                dashboardSection.style.display = 'none';
             }
+        }
+
+        function handleSuperLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('super-email').value.trim();
+            const password = document.getElementById('super-password').value;
+            if (email === 'khatapanadigital2083@gmail.com' && password === 'Khatapana@2083') {
+                sessionStorage.setItem('super_admin_logged_in', 'true');
+                showSuperToast('Access Granted! Redirecting to dashboard...', 'success');
+                setTimeout(() => { checkSuperAuth(); }, 1000);
+            } else {
+                showSuperToast('Invalid Credentials! Access Denied.', 'error');
+            }
+        }
+
+        function handleSuperLogout() {
+            sessionStorage.removeItem('super_admin_logged_in');
+            showSuperToast('Logged out successfully.', 'info');
+            setTimeout(() => { checkSuperAuth(); }, 500);
+        }
+
+        function updateSuperMetrics(schoolsList) {
+            schoolsList = schoolsList || [];
 
             const total = schoolsList.length;
             const pending = schoolsList.filter(s => s.status === 'Pending').length;
@@ -1048,21 +1092,19 @@
             document.getElementById('kpi-val-rejected').innerText = rejected;
         }
 
-        function renderSchoolsDatabase() {
+        async function renderSchoolsDatabase(schoolsList) {
             const tbody = document.getElementById('super-schools-tbody');
             if (!tbody) return;
 
-            tbody.innerHTML = '';
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#94a3b8;padding:20px;">Loading schools from database...</td></tr>';
 
-            let schoolsList = [];
-            const schoolsListStr = localStorage.getItem('nepal_registered_schools');
-            if (schoolsListStr) {
-                try {
-                    schoolsList = JSON.parse(schoolsListStr);
-                } catch(e) {
-                    console.error(e);
-                }
+            // ✅ Always fetch fresh from Supabase if no list was passed
+            if (!schoolsList) {
+                schoolsList = await fetchSchoolsFromSupabase();
+                updateSuperMetrics(schoolsList);
             }
+
+            tbody.innerHTML = '';
 
             // Sort by date descending
             schoolsList.sort((a, b) => new Date(b.registeredAt || 0) - new Date(a.registeredAt || 0));
