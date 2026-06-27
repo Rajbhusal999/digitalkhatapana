@@ -1057,7 +1057,7 @@
         function handleSuperLogin(event) {
             event.preventDefault();
             const email = document.getElementById('super-email').value.trim();
-            const password = document.getElementById('super-password').value;
+            const password = document.getElementById('super-password').value.trim();
             if (email === 'khatapana2083@gmail.com' && password === 'Khatapana@2083') {
                 sessionStorage.setItem('super_admin_logged_in', 'true');
                 showSuperToast('Access Granted! Redirecting to dashboard...', 'success');
