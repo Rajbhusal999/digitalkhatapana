@@ -1166,7 +1166,7 @@
 
             Promise.all([
                 resizeAndCompressImage(logoFile)
-            ]).then(([logoBase64]) => {
+            ]).then(async ([logoBase64]) => {
                 const registeredSchool = {
                     schoolName,
                     address,
@@ -1187,7 +1187,7 @@
 
                 localStorage.setItem('nepal_school_registered_info', JSON.stringify(registeredSchool));
 
-                // Save to registered schools database list
+                // Save to registered schools database list (localStorage)
                 let schoolsList = [];
                 const schoolsListStr = localStorage.getItem('nepal_registered_schools');
                 if (schoolsListStr) {
@@ -1200,6 +1200,16 @@
                 schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== schoolEmail.toLowerCase());
                 schoolsList.push(registeredSchool);
                 localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+
+                // ✅ CRITICAL FIX: Also save to Supabase immediately so the super admin panel can see it
+                if (window.upsertRegisteredSchool) {
+                    try {
+                        await window.upsertRegisteredSchool(registeredSchool);
+                        console.log('School registration saved to Supabase successfully.');
+                    } catch (e) {
+                        console.error('Failed to save registration to Supabase (will rely on localStorage):', e);
+                    }
+                }
 
                 showGatewayToast('Registration Successful! Redirecting to subscription checkout...', 'success');
                 setTimeout(() => {

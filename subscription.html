@@ -1353,15 +1353,18 @@
                 }
             }
 
-            schoolInfo.status = 'Approved'; // Free plans are approved automatically
+            // ✅ FIX: Status stays Pending — admin must approve even for Free plan
+            schoolInfo.status = 'Pending';
+            schoolInfo.paymentMethod = gateway || 'Free';
+            schoolInfo.transactionCode = txnId;
             const years = planName === 'Premium' ? 3 : 1;
             schoolInfo.subscription = {
                 planName: planName,
                 price: price,
-                gateway: gateway,
+                gateway: gateway || 'Free',
                 transactionId: txnId,
-                status: 'Active',
-                activatedAt: new Date().toISOString(),
+                status: 'Pending',
+                submittedAt: new Date().toISOString(),
                 expiresAt: new Date(new Date().setFullYear(new Date().getFullYear() + years)).toISOString()
             };
 
@@ -1377,19 +1380,22 @@
                     console.error(e);
                 }
             }
-            schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== schoolInfo.schoolEmail.toLowerCase());
+            schoolsList = schoolsList.filter(s => (s.schoolEmail || '').toLowerCase() !== (schoolInfo.schoolEmail || '').toLowerCase());
             schoolsList.push(schoolInfo);
             localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+
+            // ✅ FIX: Save to Supabase so admin panel shows the school
             if (window.upsertRegisteredSchool) {
                 try {
                     await window.upsertRegisteredSchool(schoolInfo);
+                    console.log('Subscription info saved to Supabase successfully.');
                 } catch(e) {
-                    console.error('Supabase save failed:', e);
+                    console.error('Supabase save failed (data is in localStorage):', e);
                 }
             }
             
-            // Dispatch email notification to rajbhusal235@gmail.com
-            sendAdminNotification(schoolInfo.schoolName, schoolInfo.schoolEmail, 'Approved');
+            // Notify admin with plan and transaction details
+            sendAdminNotification(schoolInfo.schoolName, schoolInfo.schoolEmail, 'Pending', planName, txnId);
         }
 
         async function submitTransactionCode(event, gateway) {
@@ -1448,12 +1454,12 @@
             }
             
             // Find and replace
-            schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== schoolInfo.schoolEmail.toLowerCase());
+            schoolsList = schoolsList.filter(s => (s.schoolEmail || '').toLowerCase() !== (schoolInfo.schoolEmail || '').toLowerCase());
             schoolsList.push(schoolInfo);
             localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
             
-            // Dispatch email notification to rajbhusal235@gmail.com
-            sendAdminNotification(schoolInfo.schoolName, schoolInfo.schoolEmail, 'Pending');
+            // ✅ FIX: Notify admin with plan + transaction code
+            sendAdminNotification(schoolInfo.schoolName, schoolInfo.schoolEmail, 'Pending', currentSelectedPlan, txnCode);
 
             if (window.upsertRegisteredSchool) {
                 try {
@@ -1490,7 +1496,7 @@
         }
 
         // Email notification simulation helper
-        function sendAdminNotification(schoolName, email, status) {
+        function sendAdminNotification(schoolName, email, status, planName, txnCode) {
             const notificationsKey = 'nepal_admin_notifications';
             let notifications = [];
             const notificationsStr = localStorage.getItem(notificationsKey);
@@ -1502,13 +1508,17 @@
                 }
             }
             
-            const bodyText = `New user has registered in your khatapana. School Name: ${schoolName}, Email: ${email}, Status: ${status}.`;
+            // ✅ FIX: Include plan and transaction code in notification body so admin can see details
+            let bodyText = `New school registered and awaiting approval. School: ${schoolName}, Email: ${email}, Status: ${status}.`;
+            if (planName) bodyText += ` Plan: ${planName}.`;
+            if (txnCode) bodyText += ` Transaction Code: ${txnCode}.`;
             
             const newNotification = {
                 id: 'notif-' + Date.now(),
                 to: 'rajbhusal235@gmail.com',
-                subject: 'New User Registered in your Khatapana',
+                subject: `⏳ School Pending Approval: ${schoolName}`,
                 body: bodyText,
+                schoolName: schoolName,
                 timestamp: new Date().toISOString()
             };
             

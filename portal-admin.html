@@ -992,12 +992,18 @@
                 
                 // Add click event to filter for this school
                 bubble.style.cursor = 'pointer';
+                bubble.title = 'Click to find this school in the table below';
                 bubble.onclick = () => {
                     document.getElementById('filter-status-select').value = 'all';
-                    // Extract school name if it exists in the subject or body, or simply clear search
-                    document.getElementById('search-school-input').value = ''; 
+                    // Auto-search for the school by name if available in notification
+                    const searchInput = document.getElementById('search-school-input');
+                    if (notif.schoolName) {
+                        searchInput.value = notif.schoolName;
+                    } else {
+                        searchInput.value = '';
+                    }
                     renderSchoolsDatabase();
-                    showSuperToast('Filter reset to All Registrations. Please search for the school manually.', 'info');
+                    showSuperToast('Showing registration for: ' + (notif.schoolName || 'all schools'), 'info');
                 };
 
                 listEl.appendChild(bubble);
