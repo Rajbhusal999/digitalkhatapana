@@ -100,6 +100,9 @@
             <button class="admin-nav-item" id="nav-btn-budget" onclick="switchTab('budget')">
                 बजेट योजना (Budget Planner)
             </button>
+            <button class="admin-nav-item" id="nav-btn-assets" onclick="switchTab('assets')">
+                सम्पत्ति (Fixed Assets)
+            </button>
             <button class="admin-nav-item" id="nav-btn-feedback" onclick="switchTab('feedback')">
                 नागरिक सुझाव (Grievances)
                 <span id="feedback-badge-count" class="warning-badge" style="display:none; margin-left:5px;">0</span>
@@ -256,6 +259,10 @@
                             <label for="tx-amount">Amount (रकम रू.) *</label>
                             <input type="number" id="tx-amount" min="1" step="any" required placeholder="रकम प्रविष्ट गर्नुहोस्">
                         </div>
+                        <div class="form-group">
+                            <label for="tx-receipt">Upload Bill/Receipt (बिल वा भौचरको फोटो)</label>
+                            <input type="file" id="tx-receipt" accept="image/*" style="background: rgba(15, 23, 42, 0.6); padding: 8px; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.1); color: white; width: 100%;">
+                        </div>
                         <div class="btn-action-group" style="margin-top: 20px;">
                             <button type="submit" class="form-submit-btn" style="flex: 2;">Save Voucher (भौचर सुरक्षित गर्नुहोस्)</button>
                             <button type="button" class="btn-secondary" onclick="resetForm()" style="flex: 1;">Cancel</button>
@@ -330,7 +337,90 @@
             </div>
         </section>
 
-        <!-- TAB 4: CITIZEN FEEDBACKS INBOX -->
+        <!-- TAB 4: ASSETS MANAGEMENT -->
+        <section id="tab-assets" class="admin-tab-content hidden">
+            <div class="feedback-grid">
+                <!-- Asset Entry Form -->
+                <div class="feedback-card">
+                    <div class="card-title-row">
+                        <div>
+                            <h3>सम्पत्ति प्रविष्टि (Add Fixed Asset)</h3>
+                            <p class="card-subtitle">Record new school properties and assets</p>
+                        </div>
+                    </div>
+                    <form id="asset-entry-form" onsubmit="handleAssetSubmit(event)">
+                        <input type="hidden" id="asset-id-input">
+                        <div class="form-group">
+                            <label for="asset-name">Asset Name (सम्पत्तिको नाम) *</label>
+                            <input type="text" id="asset-name" required placeholder="उदा: डेस्कटप कम्प्युटर, फर्निचर">
+                        </div>
+                        <div class="form-group">
+                            <label for="asset-category">Category (प्रकार)</label>
+                            <select id="asset-category">
+                                <option value="Furniture">Furniture (फर्निचर)</option>
+                                <option value="Electronics">Electronics (इलेक्ट्रोनिक्स)</option>
+                                <option value="Building">Building (भवन/पूर्वाधार)</option>
+                                <option value="Land">Land (जग्गा)</option>
+                                <option value="Vehicles">Vehicles (सवारी साधन)</option>
+                                <option value="Other">Other (अन्य)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="asset-date">Purchase/Record Date (मिति) *</label>
+                            <input type="date" id="asset-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="asset-value">Estimated Value (अनुमानित मूल्य रू.)</label>
+                            <input type="number" id="asset-value" min="0" step="any" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="asset-condition">Condition (अवस्था)</label>
+                            <select id="asset-condition">
+                                <option value="Good">Good (राम्रो)</option>
+                                <option value="Fair">Fair (सामान्य)</option>
+                                <option value="Poor">Poor (मर्मत गर्नुपर्ने)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="asset-location">Location (स्थान)</label>
+                            <input type="text" id="asset-location" placeholder="उदा: कम्प्युटर ल्याब, कक्षा १०">
+                        </div>
+                        <div class="btn-action-group" style="margin-top: 20px;">
+                            <button type="submit" class="form-submit-btn" style="flex: 2;">Save Asset (सुरक्षित गर्नुहोस्)</button>
+                            <button type="button" class="btn-secondary" onclick="resetAssetForm()" style="flex: 1;">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Asset List -->
+                <div class="feedback-card">
+                    <div class="card-title-row">
+                        <div>
+                            <h3>सम्पत्ति विवरण (Assets List)</h3>
+                            <p class="card-subtitle">Manage registered fixed assets</p>
+                        </div>
+                    </div>
+                    <div class="table-wrapper" style="max-height: 500px; overflow-y: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Value</th>
+                                    <th>Condition</th>
+                                    <th style="width: 100px; text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adm-assets-tbody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: CITIZEN FEEDBACKS INBOX -->
         <section id="tab-feedback" class="admin-tab-content hidden">
             <div class="data-card">
                 <div class="card-title-row">

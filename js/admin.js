@@ -54,6 +54,7 @@ function initAdminPage() {
     renderBudgetPlanner();
     renderFeedbackInbox();
     renderAdmTransactionsTable();
+    renderAssetsTable();
 }
 
 function updateSchoolHeader() {
@@ -142,6 +143,8 @@ function switchTab(tabId) {
         renderBudgetPlanner();
     } else if (tabId === 'feedback') {
         renderFeedbackInbox();
+    } else if (tabId === 'assets') {
+        renderAssetsTable();
     }
 }
 
@@ -295,6 +298,7 @@ function renderAdmTransactionsTable() {
             </td>
             <td style="text-align:center;">
                 <div class="btn-action-group" style="justify-content:center;">
+                    ${t.receipt_url ? `<button class="btn-icon view" title="View Receipt" onclick="window.open('${t.receipt_url}', '_blank')">🧾</button>` : ''}
                     <button class="btn-icon edit" onclick="handleEditTransaction('${t.id}')">
                         ✏️
                     </button>
@@ -321,12 +325,27 @@ async function handleLedgerSubmit(event) {
     const part = document.getElementById('tx-particulars').value.trim();
     const src = document.getElementById('tx-source').value.trim();
     const amt = Number(document.getElementById('tx-amount').value);
+    const receiptFile = document.getElementById('tx-receipt').files[0];
     
     if (!vch || !part || !src || isNaN(amt) || amt <= 0) {
         showAdmToast('Please check form fields for accuracy.', 'error');
         return;
     }
     
+    let receipt_url = null;
+    if (receiptFile) {
+        try {
+            receipt_url = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(receiptFile);
+            });
+        } catch (e) {
+            console.error("Error reading receipt file:", e);
+        }
+    }
+
     const transaction = {
         type: type,
         category: cat,
@@ -334,7 +353,8 @@ async function handleLedgerSubmit(event) {
         voucherNo: vch,
         particulars: part,
         source: src,
-        amount: amt
+        amount: amt,
+        receipt_url: receipt_url
     };
     
     if (activeEditId) {
@@ -668,5 +688,116 @@ function showAdmToast(message, type = 'success') {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
     }, 4500);
+}
+
+/**
+ * ══════════════════════════════════════════════
+ * ASSETS MANAGEMENT
+ * ══════════════════════════════════════════════
+ */
+async function handleAssetSubmit(event) {
+    event.preventDefault();
+    const id = document.getElementById('asset-id-input').value;
+    const name = document.getElementById('asset-name').value.trim();
+    const category = document.getElementById('asset-category').value;
+    const date = document.getElementById('asset-date').value;
+    const value = document.getElementById('asset-value').value || 0;
+    const condition = document.getElementById('asset-condition').value;
+    const location = document.getElementById('asset-location').value.trim();
+
+    if (!name || !date) {
+        showAdmToast('Please fill in required fields.', 'error');
+        return;
+    }
+
+    const asset = {
+        asset_name: name,
+        category: category,
+        purchase_date: date,
+        value: Number(value),
+        condition: condition,
+        location: location
+    };
+
+    if (id) {
+        asset.id = id;
+    }
+
+    try {
+        await saveAsset(asset);
+        showAdmToast(id ? 'Asset updated successfully.' : 'Asset added successfully.', 'success');
+        resetAssetForm();
+        renderAssetsTable();
+    } catch (err) {
+        showAdmToast('Failed to save asset.', 'error');
+    }
+}
+
+function renderAssetsTable() {
+    const tbody = document.getElementById('adm-assets-tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    const assets = getAssets();
+    
+    if (assets.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No assets recorded.</td></tr>`;
+        return;
+    }
+
+    assets.forEach(a => {
+        let conditionColor = 'var(--success)';
+        if (a.condition === 'Fair') conditionColor = 'var(--warning)';
+        else if (a.condition === 'Poor') conditionColor = 'var(--danger)';
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>
+                <div style="font-weight: 500;">${a.asset_name}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">${a.location ? 'Loc: ' + a.location : ''} | Date: ${formatDate(a.purchase_date)}</div>
+            </td>
+            <td>${a.category}</td>
+            <td class="amount-col income" style="font-weight: 600;">${formatCurrency(a.value)}</td>
+            <td><span style="color:${conditionColor}; font-weight: bold; font-size: 0.8rem;">${a.condition}</span></td>
+            <td style="text-align:center;">
+                <div class="btn-action-group" style="justify-content:center;">
+                    <button class="btn-icon edit" onclick="handleEditAsset('${a.id}')">✏️</button>
+                    <button class="btn-icon delete" onclick="handleDeleteAsset('${a.id}')">🗑️</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function handleEditAsset(id) {
+    const assets = getAssets();
+    const asset = assets.find(a => a.id === id);
+    if (!asset) return;
+
+    document.getElementById('asset-id-input').value = asset.id;
+    document.getElementById('asset-name').value = asset.asset_name;
+    document.getElementById('asset-category').value = asset.category;
+    document.getElementById('asset-date').value = asset.purchase_date;
+    document.getElementById('asset-value').value = asset.value;
+    document.getElementById('asset-condition').value = asset.condition;
+    document.getElementById('asset-location').value = asset.location;
+}
+
+async function handleDeleteAsset(id) {
+    if (confirm('Are you sure you want to delete this asset?')) {
+        try {
+            await deleteAsset(id);
+            showAdmToast('Asset deleted successfully.', 'info');
+            renderAssetsTable();
+        } catch (err) {
+            showAdmToast('Failed to delete asset.', 'error');
+        }
+    }
+}
+
+function resetAssetForm() {
+    document.getElementById('asset-entry-form').reset();
+    document.getElementById('asset-id-input').value = '';
 }
 

@@ -7,6 +7,7 @@ let DB_KEY = 'nepal_school_finances';
 let BUDGET_KEY = 'nepal_school_budgets';
 let FEEDBACK_KEY = 'nepal_school_feedbacks';
 let HEADINGS_KEY = 'nepal_school_ledger_headings';
+let ASSETS_KEY = 'nepal_school_assets';
 let dbSuffix = '';
 
 function initKeys() {
@@ -47,6 +48,7 @@ function initKeys() {
     BUDGET_KEY   = 'nepal_school_budgets'       + dbSuffix;
     FEEDBACK_KEY = 'nepal_school_feedbacks'     + dbSuffix;
     HEADINGS_KEY = 'nepal_school_ledger_headings' + dbSuffix;
+    ASSETS_KEY   = 'nepal_school_assets'        + dbSuffix;
     loadDynamicCategories();
 }
 
@@ -199,6 +201,7 @@ let cachedBudgets = {};
 let cachedFeedbacks = [];
 let cachedHeadings = [];
 let cachedRegisteredSchools = [];
+let cachedAssets = [];
 
 /**
  * Initialize Database
@@ -300,6 +303,14 @@ function syncFromLocalStorage() {
     } catch (e) {
         cachedHeadings = [...DEFAULT_INCOME_HEADINGS, ...DEFAULT_EXPENSE_HEADINGS];
     }
+
+    try {
+        cachedAssets = JSON.parse(localStorage.getItem(ASSETS_KEY)) || [];
+    } catch (e) {
+        console.error("Error parsing ASSETS_KEY, resetting:", e);
+        cachedAssets = [];
+        localStorage.setItem(ASSETS_KEY, JSON.stringify(cachedAssets));
+    }
 }
 
 /**
@@ -328,7 +339,8 @@ async function syncFromSupabase() {
             subheading_id: item.subheading_id || null,
             subheading_amount: Number(item.subheading_amount || 0),
             fiscal_year: item.fiscal_year || null,
-            description: item.description || item.particulars || ''
+            description: item.description || item.particulars || '',
+            receipt_url: item.receipt_url || null
         }));
 
         // Fetch budgets
@@ -366,6 +378,23 @@ async function syncFromSupabase() {
             } catch(e) {
                 cachedHeadings = [...DEFAULT_INCOME_HEADINGS, ...DEFAULT_EXPENSE_HEADINGS];
             }
+        }
+
+        // Fetch assets
+        const astRes = await supabaseClient.from('assets').select('*').eq('school_id', schoolId);
+        if (!astRes.error && astRes.data) {
+            cachedAssets = astRes.data.map(item => ({
+                id: item.id,
+                asset_name: item.asset_name,
+                category: item.category,
+                purchase_date: item.purchase_date,
+                value: Number(item.value),
+                condition: item.condition,
+                location: item.location,
+                recorded_by: item.recorded_by
+            }));
+        } else {
+            cachedAssets = [];
         }
 
         console.log("Supabase data synchronized successfully.");
@@ -516,7 +545,8 @@ async function saveTransaction(tx) {
             payment_method: tx.payment_method || 'bank',
             fiscal_year: tx.fiscal_year || null,
             subheading_id: tx.subheading_id || null,
-            subheading_amount: Number(tx.subheading_amount || tx.amount || 0)
+            subheading_amount: Number(tx.subheading_amount || tx.amount || 0),
+            receipt_url: tx.receipt_url || null
         };
 
         const { error } = await supabaseClient

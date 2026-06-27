@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS public.transactions (
     fiscal_year TEXT,
     subheading_id TEXT,
     subheading_amount NUMERIC DEFAULT 0,
+    receipt_url TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
@@ -84,6 +85,35 @@ ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.budgets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.feedbacks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.ledger_headings ENABLE ROW LEVEL SECURITY;
+
+-- 6. Fixed Assets Table
+CREATE TABLE IF NOT EXISTS public.assets (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    school_id TEXT NOT NULL,
+    asset_name TEXT NOT NULL,
+    category TEXT,
+    purchase_date TEXT,
+    value NUMERIC DEFAULT 0,
+    condition TEXT DEFAULT 'Good',
+    location TEXT,
+    recorded_by TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+ALTER TABLE public.assets ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow anonymous read/write on assets" ON public.assets FOR ALL USING (true) WITH CHECK (true);
+
+-- 7. Audit Logs Table
+CREATE TABLE IF NOT EXISTS public.audit_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    school_id TEXT NOT NULL,
+    action TEXT NOT NULL,
+    table_name TEXT NOT NULL,
+    record_id TEXT NOT NULL,
+    changed_by TEXT,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow anonymous read/write on audit_logs" ON public.audit_logs FOR ALL USING (true) WITH CHECK (true);
 
 CREATE POLICY "Allow anonymous read/write on registered_schools" ON public.registered_schools FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow anonymous read/write on transactions" ON public.transactions FOR ALL USING (true) WITH CHECK (true);
