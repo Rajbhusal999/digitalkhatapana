@@ -3,7 +3,7 @@
  * Handles visual chart drawing, translations, transaction filtering, and feedback board updates.
  */
 
-let currentLang = localStorage.getItem('school_lang') || 'ne'; // Default to Nepali for realistic gov feel
+let currentLang = sessionStorage.getItem('school_lang') || 'ne'; // Default to Nepali for realistic gov feel
 let trendChart = null;
 
 // Translation dictionary
@@ -105,39 +105,11 @@ const TRANSLATIONS = {
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // ── Resolve active school from login session ──────────────────────────────
-    // Priority: sessionStorage email (set by school-login.html) > nepal_school_registered_info
-    // Never fall back to "first approved school" — that causes data cross-contamination.
-    const sessionEmail = sessionStorage.getItem('school_user_email');
-    const isAdmin = sessionStorage.getItem('admin_logged_in') === 'true';
-    let schoolInfoStr  = null;
+    // Use window._activeSchoolInfo resolved from Supabase by database.js
+    const schoolInfo = window._activeSchoolInfo;
 
-    if (sessionEmail && isAdmin) {
-        // Find the exact school the user logged in as
+    if (schoolInfo) {
         try {
-            const listRaw = localStorage.getItem('nepal_registered_schools');
-            if (listRaw) {
-                const list = JSON.parse(listRaw);
-                const match = list.find(s => s.schoolEmail && s.schoolEmail.toLowerCase() === sessionEmail.toLowerCase());
-                if (match) {
-                    schoolInfoStr = JSON.stringify(match);
-                    localStorage.setItem('nepal_school_registered_info', schoolInfoStr);
-                }
-            }
-        } catch(e) {
-            console.error('Error resolving school from session in user.js:', e);
-        }
-    }
-
-    // If no session, fall back to whatever is in nepal_school_registered_info (e.g. first-time subscription flow)
-    if (!schoolInfoStr) {
-        schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
-    }
-    // ─────────────────────────────────────────────────────────────────────────
-
-    if (schoolInfoStr) {
-        try {
-            const schoolInfo = JSON.parse(schoolInfoStr);
             if (schoolInfo.schoolName) {
                 TRANSLATIONS.ne['txt-school-name'] = schoolInfo.schoolName;
                 TRANSLATIONS.en['txt-school-name'] = schoolInfo.schoolName;
@@ -147,15 +119,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 TRANSLATIONS.en['txt-gov-subtitle'] = `Community School - ${schoolInfo.address} (EMIS: ${schoolInfo.emis})`;
             }
 
-            // Inject custom school logo into the header logo container
+            // Inject custom school logo
             if (schoolInfo.logo) {
                 const logoContainer = document.getElementById('user-school-logo-container');
                 if (logoContainer) {
                     logoContainer.innerHTML = `<img src="${schoolInfo.logo}" alt="${schoolInfo.schoolName || 'School Logo'}" class="gov-logo" style="width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--secondary); box-shadow: 0 4px 12px rgba(0,0,0,0.18);">`;
                 }
             }
-            
-            // Wait for DOM elements to load then override static footer parts
+
+            // Update footer contact info
             setTimeout(() => {
                 const footerContactDesc = document.getElementById('txt-footer-contact-desc');
                 const footerBottom = document.querySelector('footer .footer-bottom');
@@ -181,7 +153,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     applyLanguage();
-    initKeys(); // Load keys and categories synchronously from local storage
     populateCategoryDropdowns();
     await initDatabase();
     updateDashboardMetrics();
@@ -197,7 +168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
  */
 function toggleLanguage() {
     currentLang = currentLang === 'en' ? 'ne' : 'en';
-    localStorage.setItem('school_lang', currentLang);
+    sessionStorage.setItem('school_lang', currentLang);
     applyLanguage();
     
     // Re-render UI elements which depend on selected language
@@ -460,7 +431,7 @@ function renderBudgetBars() {
                     </span>
                 </div>
                 <div class="progress-track">
-                    <div class="progress-fill ${progressClass}" style="width: ${Math.min(percentage, 100)}%;"></div>
+                    <div class="progress-fill ${progressClass}" style="width: ${Math.min(percentage, 100)};"></div>
                 </div>
             </div>
         `;
@@ -475,15 +446,11 @@ function renderCharts() {
     const transactions = getTransactions();
     const isDev = currentLang === 'ne';
     
-    // Group transaction amounts by months (for realistic representation, e.g., April, May, June)
-    // In Nepal, Baishakh (~April/May), Jestha (~May/June), Ashad (~June/July), etc.
     const MONTH_LABELS = {
         en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         ne: ['बैशाख', 'जेठ', 'असार', 'साउन', 'भदौ', 'असोज', 'कात्तिक', 'मंसिर', 'पुस', 'माघ', 'फागुन', 'चैत']
     };
     
-    // Let's map standard dates 01-12 to Nepal calendar months (for simulation, simply map JavaScript month index to Nepal fiscal or solar month)
-    // 0 = Jan/Baishakh, 1 = Feb/Jestha, etc. for visual ease
     const monthlyIncome = Array(12).fill(0);
     const monthlyExpense = Array(12).fill(0);
     
@@ -498,8 +465,6 @@ function renderCharts() {
         }
     });
     
-    // Get non-zero data range to make chart display look nice
-    // Filter months that have activity to zoom the chart view or show 4 primary months
     const activeLabels = MONTH_LABELS[currentLang];
     
     const ctx = document.getElementById('monthlyTrendChart');
@@ -703,12 +668,8 @@ async function submitPublicFeedback(event) {
         
         // Send real email to user using EmailJS
         let schoolName = 'School Administration';
-        try {
-            const schoolInfo = JSON.parse(localStorage.getItem('nepal_school_registered_info'));
-            if (schoolInfo && schoolInfo.schoolName) {
-                schoolName = schoolInfo.schoolName;
-            }
-        } catch (e) {}
+        const si = window._activeSchoolInfo;
+        if (si && si.schoolName) schoolName = si.schoolName;
         
         if (typeof emailjs !== 'undefined' && typeof EMAILJS_PUBLIC_KEY !== 'undefined' && EMAILJS_PUBLIC_KEY) {
             emailjs.init({

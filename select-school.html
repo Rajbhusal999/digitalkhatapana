@@ -190,16 +190,13 @@
             }
             const selectElement = document.getElementById('school-select');
             
-            // Fetch approved schools
+            // Fetch approved schools from Supabase (already fetched above)
             let approvedSchools = [];
-            try {
-                const schoolsListStr = localStorage.getItem('nepal_registered_schools');
-                if (schoolsListStr) {
-                    const schoolsList = JSON.parse(schoolsListStr);
-                    approvedSchools = schoolsList;
-                }
-            } catch (e) {
-                console.error("Error loading schools", e);
+            if (window.cachedRegisteredSchools) {
+                // cachedRegisteredSchools is populated by fetchRegisteredSchools() in database.js
+                approvedSchools = window.cachedRegisteredSchools || [];
+            } else if (window.fetchRegisteredSchools) {
+                approvedSchools = await window.fetchRegisteredSchools();
             }
 
             // Populate dropdown
@@ -248,8 +245,9 @@
                 errorMsg.style.display = 'none';
                 const schoolObj = JSON.parse(selectedOption.dataset.fullObj);
                 
-                // Save to local storage so user.html loads this school's DB
-                localStorage.setItem('nepal_school_registered_info', JSON.stringify(schoolObj));
+                // Store selected school info in memory for user portal use
+                window._activeSchoolInfo = schoolObj;
+                sessionStorage.setItem('school_user_email', schoolObj.schoolEmail || '');
                 
                 // Clear any admin session
                 sessionStorage.removeItem('admin_logged_in');

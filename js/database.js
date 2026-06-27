@@ -1,59 +1,12 @@
 /**
- * database.js - Data Access Layer & Shared Utilities
- * Refactored to support Supabase Cloud Database with LocalStorage Fallback.
+ * database.js - Data Access Layer
+ * Supabase Cloud Database (Primary and Only Storage).
+ * LocalStorage is used ONLY for the 'theme' UI preference key.
  */
 
-let DB_KEY = 'nepal_school_finances';
-let BUDGET_KEY = 'nepal_school_budgets';
-let FEEDBACK_KEY = 'nepal_school_feedbacks';
-let HEADINGS_KEY = 'nepal_school_ledger_headings';
-let ASSETS_KEY = 'nepal_school_assets';
-let dbSuffix = '';
-
-function initKeys() {
-    // ── Step 1: Resolve the active school from session (set by school-login.html) ──
-    const sessionEmail = sessionStorage.getItem('school_user_email');
-    const isAdmin = sessionStorage.getItem('admin_logged_in') === 'true';
-
-    if (sessionEmail && isAdmin) {
-        // Always load the exact school the user logged in as
-        try {
-            const listRaw = localStorage.getItem('nepal_registered_schools');
-            if (listRaw) {
-                const list = JSON.parse(listRaw);
-                const match = list.find(s => s.schoolEmail && s.schoolEmail.toLowerCase() === sessionEmail.toLowerCase());
-                if (match) {
-                    localStorage.setItem('nepal_school_registered_info', JSON.stringify(match));
-                }
-            }
-        } catch(e) {
-            console.error('Error resolving school from session in initKeys:', e);
-        }
-    }
-
-    // ── Step 2: Build dbSuffix from the now-correct school info ──
-    const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
-    if (schoolInfoStr) {
-        try {
-            const schoolInfo = JSON.parse(schoolInfoStr);
-            if (schoolInfo.schoolEmail) {
-                dbSuffix = '_' + schoolInfo.schoolEmail.replace(/[^a-zA-Z0-9]/g, '');
-            }
-        } catch(e) {
-            console.error(e);
-        }
-    }
-
-    DB_KEY       = 'nepal_school_finances'      + dbSuffix;
-    BUDGET_KEY   = 'nepal_school_budgets'       + dbSuffix;
-    FEEDBACK_KEY = 'nepal_school_feedbacks'     + dbSuffix;
-    HEADINGS_KEY = 'nepal_school_ledger_headings' + dbSuffix;
-    ASSETS_KEY   = 'nepal_school_assets'        + dbSuffix;
-    loadDynamicCategories();
-}
-
-
+// ──────────────────────────────────────────────────────────────
 // Default Seed Categories
+// ──────────────────────────────────────────────────────────────
 const DEFAULT_INCOME_CATEGORIES = {
     'gov_conditional': { en: 'Government Conditional Grant', ne: 'संघीय सशर्त अनुदान' },
     'local_level': { en: 'Local Government Budget', ne: 'स्थानीय तह अनुदान' },
@@ -73,90 +26,15 @@ const DEFAULT_EXPENSE_CATEGORIES = {
     'misc_expense': { en: 'Miscellaneous Expense', enShort: 'Misc', ne: 'विविध खर्च' }
 };
 
-// Dynamic Categories
+// ──────────────────────────────────────────────────────────────
+// Dynamic Categories (loaded from Supabase per school)
+// ──────────────────────────────────────────────────────────────
 let INCOME_CATEGORIES = {};
 let EXPENSE_CATEGORIES = {};
 
-function loadDynamicCategories() {
-    const incKey = 'nepal_school_income_categories' + dbSuffix;
-    const expKey = 'nepal_school_expense_categories' + dbSuffix;
-    
-    const incStored = localStorage.getItem(incKey);
-    const expStored = localStorage.getItem(expKey);
-    
-    let incParsed = null;
-    let expParsed = null;
-    
-    try {
-        if (incStored && incStored !== 'null' && incStored !== 'undefined') {
-            incParsed = JSON.parse(incStored);
-        }
-    } catch(e) {}
-    
-    try {
-        if (expStored && expStored !== 'null' && expStored !== 'undefined') {
-            expParsed = JSON.parse(expStored);
-        }
-    } catch(e) {}
-    
-    // Seed defaults if empty, missing, or corrupt
-    if (!incParsed || Object.keys(incParsed).length === 0) {
-        localStorage.setItem(incKey, JSON.stringify(DEFAULT_INCOME_CATEGORIES));
-        INCOME_CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_INCOME_CATEGORIES));
-    } else {
-        INCOME_CATEGORIES = incParsed;
-    }
-    
-    if (!expParsed || Object.keys(expParsed).length === 0) {
-        localStorage.setItem(expKey, JSON.stringify(DEFAULT_EXPENSE_CATEGORIES));
-        EXPENSE_CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_EXPENSE_CATEGORIES));
-    } else {
-        EXPENSE_CATEGORIES = expParsed;
-    }
-}
-
-function saveCustomCategory(type, key, neName, enName) {
-    const incKey = 'nepal_school_income_categories' + dbSuffix;
-    const expKey = 'nepal_school_expense_categories' + dbSuffix;
-    
-    if (type === 'income') {
-        INCOME_CATEGORIES[key] = { en: enName, ne: neName };
-        localStorage.setItem(incKey, JSON.stringify(INCOME_CATEGORIES));
-    } else {
-        EXPENSE_CATEGORIES[key] = { en: enName, enShort: enName.substring(0, 15), ne: neName };
-        localStorage.setItem(expKey, JSON.stringify(EXPENSE_CATEGORIES));
-    }
-}
-
-// Seed/Mock Data for Local Storage Fallback
-const DEFAULT_TRANSACTIONS = [
-    { id: 'tx-1', date: '2026-04-15', type: 'income', category: 'gov_conditional', particulars: 'First Trimester Teacher Salary Grant (पहिलो चौमासिक शिक्षक तलब अनुदान)', amount: 1250000, voucherNo: 'V-8081-01', source: 'Federal Ministry of Education', recordedBy: 'Ram Bahadur Thapa (Accountant)' },
-    { id: 'tx-2', date: '2026-04-18', type: 'income', category: 'mid_day_meal', particulars: 'Mid-day Meal Grant for Grades 1-5 (दिवा खाजा बजेट प्राप्त - कक्षा १-५)', amount: 280000, voucherNo: 'V-8081-02', source: 'Local Municipality Office', recordedBy: 'Ram Bahadur Thapa (Accountant)' },
-    { id: 'tx-3', date: '2026-04-20', type: 'expense', category: 'salary', particulars: 'Salary Distribution for Baishakh Month (बैशाख महिनाको शिक्षक कर्मचारी पारिश्रमिक भुक्तानी)', amount: 980000, voucherNo: 'EXP-8081-01', source: 'Conditional Grant Account', recordedBy: 'Ram Bahadur Thapa (Accountant)' },
-    { id: 'tx-4', date: '2026-04-25', type: 'expense', category: 'meal_cost', particulars: 'Payment for midday meal grains & catering (दिवा खाजा खाद्यान्न तथा खाजा खर्च भुक्तानी)', amount: 140000, voucherNo: 'EXP-8081-02', source: 'Meal Account', recordedBy: 'Ram Bahadur Thapa (Accountant)' },
-    { id: 'tx-5', date: '2026-05-02', type: 'income', category: 'donation', particulars: 'Donation from local community for Computer Lab (कम्प्युटर प्रयोगशाला सहयोग - स्थानीय समुदाय)', amount: 120000, voucherNo: 'V-8081-03', source: 'Rotary Club of Pokhara', recordedBy: 'Ram Bahadur Thapa (Accountant)' },
-    { id: 'tx-6', date: '2026-05-10', type: 'expense', category: 'materials', particulars: 'Purchase of 3 Desktop Computers & Router (३ थान डेस्कटप कम्प्युटर तथा राउटर खरिद)', amount: 950000, voucherNo: 'EXP-8081-03', source: 'Internal / Donation Pool', recordedBy: 'Ram Bahadur Thapa (Accountant)' },
-    { id: 'tx-7', date: '2026-05-12', type: 'expense', category: 'infrastructure', particulars: 'Primary school building roof leakage repair (प्राथमिक भवन छाना मर्मत तथा रङ्गरोगन)', amount: 115000, voucherNo: 'EXP-8081-04', source: 'Local Gov Budget', recordedBy: 'Ram Bahadur Thapa (Accountant)' },
-    { id: 'tx-8', date: '2026-05-18', type: 'income', category: 'local_level', particulars: 'Matching grant for school playground fence (विद्यालय खेलमैदान पर्खाल निर्माण अनुदान)', amount: 250000, voucherNo: 'V-8081-04', source: 'Ward No. 4 Office', recordedBy: 'Ram Bahadur Thapa (Accountant)' },
-    { id: 'tx-9', date: '2026-05-25', type: 'expense', category: 'scholarship', particulars: 'Distribution of annual scholarship for underprivileged students (जेहेन्दार तथा विपन्न छात्रवृत्ति वितरण)', amount: 450000, voucherNo: 'EXP-8081-05', source: 'Local Gov & School Pool', recordedBy: 'Ram Bahadur Thapa (Accountant)' }
-];
-
-const DEFAULT_BUDGETS = {
-    'salary': 2000000,
-    'infrastructure': 500000,
-    'materials': 800000,
-    'meal_cost': 400000,
-    'scholarship': 300000,
-    'office_ops': 150000,
-    'misc_expense': 100000
-};
-
-const DEFAULT_FEEDBACKS = [
-    { id: 'fb-1', name: 'Hari Prasad Baskota', role: 'Parent (अभिभावक)', date: '2026-05-20', message: 'विद्यालयको आय-व्यय विवरण अनलाइनमा राखेर एकदमै राम्रो काम गर्नुभयो। दिवा खाजाको गुणस्तर अझै थप सुधार गरिदिनुहुन अनुरोध गर्दछु।', replied: false, replyText: null },
-    { id: 'fb-2', name: 'Sushma Regmi', role: 'Local Citizen (स्थानीय नागरिक)', date: '2026-05-26', message: 'कम्प्युटर ल्याबमा इन्टरनेट कहिले जडान हुन्छ? विद्यार्थीहरूलाई डिजिटल साक्षरता धेरै आवश्यक छ। बजेट पर्याप्त छुट्टिएको देखिन्छ।', replied: true, replyText: 'सुझावका लागि धन्यवाद। कम्प्युटर खरिद भइसकेको छ र यसै महिनाभित्र वाइफाइ जडान गरेर सञ्चालनमा ल्याइनेछ।' }
-];
-
-// Default ledger headings seed (matching picture format)
+// ──────────────────────────────────────────────────────────────
+// Default ledger headings seed
+// ──────────────────────────────────────────────────────────────
 const DEFAULT_INCOME_HEADINGS = [
     { id: 'a1-001', type: 'income', parent_id: null, name_ne: 'सरकारी अनुदान', name_en: 'Govt Conditional Grant', sort_order: 1 },
     { id: 'a1-001-a', type: 'income', parent_id: 'a1-001', name_ne: 'तलब भत्ता', name_en: 'Salary Allowance', sort_order: 1 },
@@ -191,11 +69,11 @@ const DEFAULT_EXPENSE_HEADINGS = [
     { id: 'c1-008', type: 'expense', parent_id: null, name_ne: 'विविध', name_en: 'Miscellaneous', sort_order: 8 }
 ];
 
-// Connection variables
+// ──────────────────────────────────────────────────────────────
+// Supabase Client & Memory Cache
+// ──────────────────────────────────────────────────────────────
 let supabaseClient = null;
-let useSupabase = false;
 
-// Memory Cache
 let cachedTransactions = [];
 let cachedBudgets = {};
 let cachedFeedbacks = [];
@@ -203,127 +81,113 @@ let cachedHeadings = [];
 let cachedRegisteredSchools = [];
 let cachedAssets = [];
 
-/**
- * Initialize Database
- * Resolves connection details, determines if to use Supabase or Fallback LocalStorage
- */
-async function initDatabase() {
-    initKeys();
-    // Check if configuration parameters exist and are not defaults
-    const hasConfig = typeof SUPABASE_URL !== 'undefined' && 
-                      typeof SUPABASE_ANON_KEY !== 'undefined' &&
-                      SUPABASE_URL && 
-                      SUPABASE_ANON_KEY &&
-                      !SUPABASE_URL.includes('YOUR_SUPABASE_PROJECT_URL') &&
-                      !SUPABASE_ANON_KEY.includes('YOUR_SUPABASE_ANON_PUBLIC_KEY');
+// Active school info — set from Supabase after login, no localStorage
+window._activeSchoolInfo = null;
 
-    if (hasConfig && window.supabase) {
-        try {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            useSupabase = true;
-            console.log("Supabase client initialized successfully.");
-        } catch (err) {
-            console.error("Failed to initialize Supabase client. Falling back to local storage.", err);
-            useSupabase = false;
-        }
-    } else {
-        console.warn("Supabase credentials not configured. Falling back to Demo LocalStorage Mode.");
-        useSupabase = false;
-    }
-
-    if (useSupabase) {
-        await syncFromSupabase();
-    } else {
-        syncFromLocalStorage();
-    }
-}
-
-/**
- * School ID helper — returns a sanitized school email key for multi-tenancy
- */
+// ──────────────────────────────────────────────────────────────
+// School ID Helper — reads from sessionStorage (set at login)
+// ──────────────────────────────────────────────────────────────
 function getSchoolId() {
-    const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
-    if (schoolInfoStr) {
-        try {
-            const info = JSON.parse(schoolInfoStr);
-            if (info.schoolEmail) return info.schoolEmail.replace(/[^a-zA-Z0-9@.]/g, '');
-        } catch(e) {}
+    const email = sessionStorage.getItem('school_user_email');
+    if (email) return email.replace(/[^a-zA-Z0-9@.]/g, '');
+    if (window._activeSchoolInfo && window._activeSchoolInfo.schoolEmail) {
+        return window._activeSchoolInfo.schoolEmail.replace(/[^a-zA-Z0-9@.]/g, '');
     }
     return 'default';
 }
 
-/**
- * LocalStorage Fallback Handlers
- */
-function syncFromLocalStorage() {
-    if (!localStorage.getItem(DB_KEY) || localStorage.getItem(DB_KEY) === 'null' || localStorage.getItem(DB_KEY) === 'undefined') {
-        const initialTransactions = dbSuffix ? [] : DEFAULT_TRANSACTIONS;
-        localStorage.setItem(DB_KEY, JSON.stringify(initialTransactions));
-    }
-    if (!localStorage.getItem(BUDGET_KEY) || localStorage.getItem(BUDGET_KEY) === 'null' || localStorage.getItem(BUDGET_KEY) === 'undefined') {
-        localStorage.setItem(BUDGET_KEY, JSON.stringify(DEFAULT_BUDGETS));
-    }
-    if (!localStorage.getItem(FEEDBACK_KEY) || localStorage.getItem(FEEDBACK_KEY) === 'null' || localStorage.getItem(FEEDBACK_KEY) === 'undefined') {
-        const initialFeedbacks = dbSuffix ? [] : DEFAULT_FEEDBACKS;
-        localStorage.setItem(FEEDBACK_KEY, JSON.stringify(initialFeedbacks));
-    }
-    // Seed default headings if not present
-    const storedHeadings = localStorage.getItem(HEADINGS_KEY);
-    if (!storedHeadings || storedHeadings === 'null' || storedHeadings === 'undefined' || JSON.parse(storedHeadings || '[]').length === 0) {
-        const allDefaults = [...DEFAULT_INCOME_HEADINGS, ...DEFAULT_EXPENSE_HEADINGS];
-        localStorage.setItem(HEADINGS_KEY, JSON.stringify(allDefaults));
+// ──────────────────────────────────────────────────────────────
+// Initialize Database
+// ──────────────────────────────────────────────────────────────
+async function initDatabase() {
+    const hasConfig = typeof SUPABASE_URL !== 'undefined' &&
+                      typeof SUPABASE_ANON_KEY !== 'undefined' &&
+                      SUPABASE_URL &&
+                      SUPABASE_ANON_KEY &&
+                      !SUPABASE_URL.includes('YOUR_SUPABASE_PROJECT_URL') &&
+                      !SUPABASE_ANON_KEY.includes('YOUR_SUPABASE_ANON_PUBLIC_KEY');
+
+    if (!hasConfig || !window.supabase) {
+        console.error('Supabase credentials not configured. Database unavailable.');
+        return;
     }
 
     try {
-        cachedTransactions = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-    } catch (e) {
-        console.error("Error parsing DB_KEY, resetting:", e);
-        cachedTransactions = dbSuffix ? [] : DEFAULT_TRANSACTIONS;
-        localStorage.setItem(DB_KEY, JSON.stringify(cachedTransactions));
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('Supabase client initialized successfully.');
+    } catch (err) {
+        console.error('Failed to initialize Supabase client.', err);
+        return;
     }
 
-    try {
-        cachedBudgets = JSON.parse(localStorage.getItem(BUDGET_KEY)) || {};
-    } catch (e) {
-        console.error("Error parsing BUDGET_KEY, resetting:", e);
-        cachedBudgets = DEFAULT_BUDGETS;
-        localStorage.setItem(BUDGET_KEY, JSON.stringify(cachedBudgets));
+    // Resolve active school info from Supabase using session email
+    const sessionEmail = sessionStorage.getItem('school_user_email');
+    if (sessionEmail) {
+        await _resolveActiveSchoolInfo(sessionEmail);
     }
 
-    try {
-        cachedFeedbacks = JSON.parse(localStorage.getItem(FEEDBACK_KEY)) || [];
-    } catch (e) {
-        console.error("Error parsing FEEDBACK_KEY, resetting:", e);
-        cachedFeedbacks = dbSuffix ? [] : DEFAULT_FEEDBACKS;
-        localStorage.setItem(FEEDBACK_KEY, JSON.stringify(cachedFeedbacks));
-    }
+    await syncFromSupabase();
+    await loadCategoriesFromSupabase();
+}
 
+// ──────────────────────────────────────────────────────────────
+// Resolve & cache active school info from Supabase
+// ──────────────────────────────────────────────────────────────
+async function _resolveActiveSchoolInfo(email) {
+    if (!supabaseClient || !email) return;
     try {
-        cachedHeadings = JSON.parse(localStorage.getItem(HEADINGS_KEY)) || [...DEFAULT_INCOME_HEADINGS, ...DEFAULT_EXPENSE_HEADINGS];
+        const { data, error } = await supabaseClient
+            .from('registered_schools')
+            .select('*')
+            .ilike('school_email', email)
+            .single();
+        if (error || !data) return;
+        window._activeSchoolInfo = _mapSchool(data);
     } catch (e) {
-        cachedHeadings = [...DEFAULT_INCOME_HEADINGS, ...DEFAULT_EXPENSE_HEADINGS];
-    }
-
-    try {
-        cachedAssets = JSON.parse(localStorage.getItem(ASSETS_KEY)) || [];
-    } catch (e) {
-        console.error("Error parsing ASSETS_KEY, resetting:", e);
-        cachedAssets = [];
-        localStorage.setItem(ASSETS_KEY, JSON.stringify(cachedAssets));
+        console.error('Error resolving active school from Supabase:', e);
     }
 }
 
-/**
- * Supabase Data Sync Handlers
- */
+// ──────────────────────────────────────────────────────────────
+// Map Supabase snake_case row → camelCase app object
+// ──────────────────────────────────────────────────────────────
+function _mapSchool(item) {
+    return {
+        id: item.id,
+        schoolName: item.school_name,
+        address: item.address,
+        schoolEmail: item.school_email,
+        emis: item.emis,
+        principalName: item.principal_name,
+        pPhone: item.principal_phone,
+        accountantName: item.accountant_name,
+        aPhone: item.accountant_phone,
+        logo: item.logo,
+        status: item.status,
+        otp: item.otp,
+        otpUsed: item.otp_used,
+        permanentPassword: item.permanent_password,
+        subscription: (function(){
+            try { return typeof item.subscription === 'string' ? JSON.parse(item.subscription) : item.subscription; }
+            catch(e) { return item.subscription; }
+        })(),
+        paymentMethod: item.payment_method,
+        transactionCode: item.transaction_code,
+        registeredAt: item.registered_at
+    };
+}
+
+// ──────────────────────────────────────────────────────────────
+// Sync All Data From Supabase into Memory Cache
+// ──────────────────────────────────────────────────────────────
 async function syncFromSupabase() {
+    if (!supabaseClient) return;
     try {
         const schoolId = getSchoolId();
 
         // Fetch transactions
         const txRes = await supabaseClient.from('transactions').select('*').eq('school_id', schoolId);
         if (txRes.error) throw txRes.error;
-        // Map database naming (snake_case) to application (camelCase)
         cachedTransactions = txRes.data.map(item => ({
             id: item.id,
             date: item.date,
@@ -371,13 +235,7 @@ async function syncFromSupabase() {
         if (!hdRes.error && hdRes.data && hdRes.data.length > 0) {
             cachedHeadings = hdRes.data;
         } else {
-            // Fallback to localStorage or defaults
-            try {
-                const stored = localStorage.getItem(HEADINGS_KEY);
-                cachedHeadings = (stored && stored !== 'null') ? JSON.parse(stored) : [...DEFAULT_INCOME_HEADINGS, ...DEFAULT_EXPENSE_HEADINGS];
-            } catch(e) {
-                cachedHeadings = [...DEFAULT_INCOME_HEADINGS, ...DEFAULT_EXPENSE_HEADINGS];
-            }
+            cachedHeadings = [...DEFAULT_INCOME_HEADINGS, ...DEFAULT_EXPENSE_HEADINGS];
         }
 
         // Fetch assets
@@ -397,58 +255,129 @@ async function syncFromSupabase() {
             cachedAssets = [];
         }
 
-        console.log("Supabase data synchronized successfully.");
+        console.log('Supabase data synchronized successfully.');
         await fetchRegisteredSchools();
     } catch (err) {
-        console.error("Failed to fetch data from Supabase. Falling back to LocalStorage.", err);
-        useSupabase = false;
-        syncFromLocalStorage();
+        console.error('Failed to sync from Supabase:', err);
     }
 }
 
+// ──────────────────────────────────────────────────────────────
+// Categories — Load from Supabase (seed defaults if none exist)
+// ──────────────────────────────────────────────────────────────
+async function loadCategoriesFromSupabase() {
+    if (!supabaseClient) {
+        INCOME_CATEGORIES = { ...DEFAULT_INCOME_CATEGORIES };
+        EXPENSE_CATEGORIES = { ...DEFAULT_EXPENSE_CATEGORIES };
+        return;
+    }
+
+    const schoolId = getSchoolId();
+    try {
+        const { data, error } = await supabaseClient
+            .from('school_categories')
+            .select('*')
+            .eq('school_id', schoolId);
+
+        if (error) throw error;
+
+        const incomeRows = data.filter(r => r.type === 'income');
+        const expenseRows = data.filter(r => r.type === 'expense');
+
+        if (incomeRows.length === 0) {
+            // Seed defaults to Supabase
+            await _seedDefaultCategories(schoolId, 'income', DEFAULT_INCOME_CATEGORIES);
+            INCOME_CATEGORIES = { ...DEFAULT_INCOME_CATEGORIES };
+        } else {
+            INCOME_CATEGORIES = {};
+            incomeRows.forEach(r => { INCOME_CATEGORIES[r.key] = { en: r.name_en, ne: r.name_ne }; });
+        }
+
+        if (expenseRows.length === 0) {
+            await _seedDefaultCategories(schoolId, 'expense', DEFAULT_EXPENSE_CATEGORIES);
+            EXPENSE_CATEGORIES = { ...DEFAULT_EXPENSE_CATEGORIES };
+        } else {
+            EXPENSE_CATEGORIES = {};
+            expenseRows.forEach(r => { EXPENSE_CATEGORIES[r.key] = { en: r.name_en, enShort: r.name_en_short || r.name_en, ne: r.name_ne }; });
+        }
+    } catch (e) {
+        console.error('Error loading categories from Supabase, using defaults:', e);
+        INCOME_CATEGORIES = { ...DEFAULT_INCOME_CATEGORIES };
+        EXPENSE_CATEGORIES = { ...DEFAULT_EXPENSE_CATEGORIES };
+    }
+}
+
+async function _seedDefaultCategories(schoolId, type, defaults) {
+    if (!supabaseClient) return;
+    const rows = Object.entries(defaults).map(([key, val]) => ({
+        school_id: schoolId,
+        type: type,
+        key: key,
+        name_ne: val.ne,
+        name_en: val.en,
+        name_en_short: val.enShort || val.en,
+        is_default: true
+    }));
+    try {
+        await supabaseClient.from('school_categories').upsert(rows, { onConflict: 'school_id,type,key' });
+    } catch (e) {
+        console.error('Error seeding default categories:', e);
+    }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Save Custom Category to Supabase
+// ──────────────────────────────────────────────────────────────
+async function saveCustomCategory(type, key, neName, enName) {
+    const schoolId = getSchoolId();
+    const row = {
+        school_id: schoolId,
+        type: type,
+        key: key,
+        name_ne: neName,
+        name_en: enName,
+        name_en_short: enName.substring(0, 15),
+        is_default: false
+    };
+
+    if (supabaseClient) {
+        try {
+            const { error } = await supabaseClient
+                .from('school_categories')
+                .upsert(row, { onConflict: 'school_id,type,key' });
+            if (error) throw error;
+        } catch (e) {
+            console.error('Error saving category to Supabase:', e);
+            throw e;
+        }
+    }
+
+    // Update in-memory
+    if (type === 'income') {
+        INCOME_CATEGORIES[key] = { en: enName, ne: neName };
+    } else {
+        EXPENSE_CATEGORIES[key] = { en: enName, enShort: enName.substring(0, 15), ne: neName };
+    }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Registered Schools CRUD
+// ──────────────────────────────────────────────────────────────
 async function fetchRegisteredSchools() {
-    if (!useSupabase) return;
+    if (!supabaseClient) return cachedRegisteredSchools;
     try {
         const { data, error } = await supabaseClient.from('registered_schools').select('*');
         if (error) throw error;
-        cachedRegisteredSchools = data.map(item => ({
-            id: item.id,
-            schoolName: item.school_name,
-            address: item.address,
-            schoolEmail: item.school_email,
-            emis: item.emis,
-            principalName: item.principal_name,
-            pPhone: item.principal_phone,
-            accountantName: item.accountant_name,
-            aPhone: item.accountant_phone,
-            logo: item.logo,
-            status: item.status,
-            otp: item.otp,
-            otpUsed: item.otp_used,
-            permanentPassword: item.permanent_password,
-            subscription: (function(){
-                try { return typeof item.subscription === 'string' ? JSON.parse(item.subscription) : item.subscription; } 
-                catch(e) { return item.subscription; }
-            })(),
-            paymentMethod: item.payment_method,
-            transactionCode: item.transaction_code,
-            registeredAt: item.registered_at
-        }));
-        localStorage.setItem('nepal_registered_schools', JSON.stringify(cachedRegisteredSchools));
+        cachedRegisteredSchools = data.map(_mapSchool);
+        console.log(`Fetched ${cachedRegisteredSchools.length} registered schools from Supabase.`);
+        return cachedRegisteredSchools;
     } catch (e) {
-        console.error("Failed to fetch registered schools from Supabase", e);
+        console.error('Failed to fetch registered schools from Supabase:', e);
+        return cachedRegisteredSchools;
     }
 }
 
 async function upsertRegisteredSchool(school) {
-    if (!useSupabase) {
-        let list = JSON.parse(localStorage.getItem('nepal_registered_schools') || '[]');
-        list = list.filter(s => s.schoolEmail.toLowerCase() !== school.schoolEmail.toLowerCase());
-        list.push(school);
-        localStorage.setItem('nepal_registered_schools', JSON.stringify(list));
-        return;
-    }
-    
     const dbPayload = {
         school_name: school.schoolName,
         address: school.address,
@@ -467,52 +396,54 @@ async function upsertRegisteredSchool(school) {
         payment_method: school.paymentMethod,
         transaction_code: school.transactionCode
     };
-    
+
     if (school.id) {
         dbPayload.id = school.id;
     }
 
-    try {
-        const { error } = await supabaseClient.from('registered_schools').upsert(dbPayload, { onConflict: 'school_email' });
-        if (error) throw error;
-        await fetchRegisteredSchools();
-    } catch(e) {
-        console.error('Error upserting registered school', e);
-        throw e;
+    if (supabaseClient) {
+        try {
+            const { error } = await supabaseClient
+                .from('registered_schools')
+                .upsert(dbPayload, { onConflict: 'school_email' });
+            if (error) throw error;
+            await fetchRegisteredSchools();
+        } catch (e) {
+            console.error('Error upserting registered school:', e);
+            throw e;
+        }
+    } else {
+        // Update in-memory cache if Supabase not available
+        cachedRegisteredSchools = cachedRegisteredSchools.filter(s => s.schoolEmail.toLowerCase() !== school.schoolEmail.toLowerCase());
+        cachedRegisteredSchools.push(school);
     }
 }
 
 async function deleteRegisteredSchool(email) {
-    if (!useSupabase) {
-        let list = JSON.parse(localStorage.getItem('nepal_registered_schools') || '[]');
-        list = list.filter(s => s.schoolEmail.toLowerCase() !== email.toLowerCase());
-        localStorage.setItem('nepal_registered_schools', JSON.stringify(list));
-        return;
+    if (supabaseClient) {
+        try {
+            const { error } = await supabaseClient
+                .from('registered_schools')
+                .delete()
+                .eq('school_email', email);
+            if (error) throw error;
+            await fetchRegisteredSchools();
+        } catch (e) {
+            console.error('Error deleting registered school:', e);
+            throw e;
+        }
+    } else {
+        cachedRegisteredSchools = cachedRegisteredSchools.filter(s => s.schoolEmail.toLowerCase() !== email.toLowerCase());
     }
-    try {
-        const { error } = await supabaseClient.from('registered_schools').delete().eq('school_email', email);
-        if (error) throw error;
-        await fetchRegisteredSchools();
-    } catch(e) {
-        console.error('Error deleting registered school', e);
-        throw e;
-    }
 }
 
-/**
- * Getters (return cached data immediately for synchronous UI drawing)
- */
-function getTransactions() {
-    return cachedTransactions || [];
-}
-
-function getBudgets() {
-    return cachedBudgets || {};
-}
-
-function getFeedbacks() {
-    return cachedFeedbacks || [];
-}
+// ──────────────────────────────────────────────────────────────
+// Getters (return in-memory cache)
+// ──────────────────────────────────────────────────────────────
+function getTransactions() { return cachedTransactions || []; }
+function getBudgets()      { return cachedBudgets || {}; }
+function getFeedbacks()    { return cachedFeedbacks || []; }
+function getAssets()       { return cachedAssets || []; }
 
 function getLedgerHeadings(type) {
     const all = cachedHeadings || [];
@@ -524,108 +455,83 @@ function getLedgerHeadingById(id) {
     return (cachedHeadings || []).find(h => h.id === id) || null;
 }
 
-/**
- * Mutation Writers (Async)
- */
+// ──────────────────────────────────────────────────────────────
+// Transactions CRUD
+// ──────────────────────────────────────────────────────────────
 async function saveTransaction(tx) {
-    if (useSupabase) {
-        // Prepare DB payload (snake_case)
-        const dbPayload = {
-            id: tx.id || 'tx-' + Date.now(),
-            school_id: getSchoolId(),
-            date: tx.date,
-            type: tx.type,
-            category: tx.category,
-            particulars: tx.particulars || tx.description || '',
-            description: tx.description || tx.particulars || '',
-            amount: Number(tx.amount),
-            voucher_no: tx.voucherNo || tx.voucher_no,
-            source: tx.source || tx.fund_source || 'Internal',
-            recorded_by: tx.recordedBy || 'Accountant',
-            payment_method: tx.payment_method || 'bank',
-            fiscal_year: tx.fiscal_year || null,
-            subheading_id: tx.subheading_id || null,
-            subheading_amount: Number(tx.subheading_amount || tx.amount || 0),
-            receipt_url: tx.receipt_url || null
-        };
+    const dbPayload = {
+        id: tx.id || 'tx-' + Date.now(),
+        school_id: getSchoolId(),
+        date: tx.date,
+        type: tx.type,
+        category: tx.category,
+        particulars: tx.particulars || tx.description || '',
+        description: tx.description || tx.particulars || '',
+        amount: Number(tx.amount),
+        voucher_no: tx.voucherNo || tx.voucher_no,
+        source: tx.source || tx.fund_source || 'Internal',
+        recorded_by: tx.recordedBy || 'Accountant',
+        payment_method: tx.payment_method || 'bank',
+        fiscal_year: tx.fiscal_year || null,
+        subheading_id: tx.subheading_id || null,
+        subheading_amount: Number(tx.subheading_amount || tx.amount || 0),
+        receipt_url: tx.receipt_url || null
+    };
 
-        const { error } = await supabaseClient
-            .from('transactions')
-            .upsert(dbPayload);
-
-        if (error) {
-            console.error("Error saving to Supabase:", error);
-            throw error;
-        }
+    if (supabaseClient) {
+        const { error } = await supabaseClient.from('transactions').upsert(dbPayload);
+        if (error) { console.error('Error saving transaction to Supabase:', error); throw error; }
         await syncFromSupabase();
     } else {
-        // LocalStorage logic
-        const transactions = getTransactions();
-        if (tx.id) {
-            const idx = transactions.findIndex(t => t.id === tx.id);
-            if (idx !== -1) transactions[idx] = { ...transactions[idx], ...tx };
+        const idx = cachedTransactions.findIndex(t => t.id === dbPayload.id);
+        if (idx !== -1) {
+            cachedTransactions[idx] = { ...cachedTransactions[idx], ...tx, id: dbPayload.id };
         } else {
-            tx.id = 'tx-' + Date.now();
-            if (!tx.recordedBy) tx.recordedBy = 'Accountant';
-            transactions.push(tx);
+            tx.id = dbPayload.id;
+            cachedTransactions.push(tx);
         }
-        localStorage.setItem(DB_KEY, JSON.stringify(transactions));
-        cachedTransactions = transactions;
     }
     return tx;
 }
 
 async function deleteTransaction(id) {
-    if (useSupabase) {
-        const { error } = await supabaseClient
-            .from('transactions')
-            .delete()
-            .eq('id', id);
-
-        if (error) {
-            console.error("Error deleting from Supabase:", error);
-            throw error;
-        }
+    if (supabaseClient) {
+        const { error } = await supabaseClient.from('transactions').delete().eq('id', id);
+        if (error) { console.error('Error deleting transaction from Supabase:', error); throw error; }
         await syncFromSupabase();
     } else {
-        let transactions = getTransactions();
-        transactions = transactions.filter(t => t.id !== id);
-        localStorage.setItem(DB_KEY, JSON.stringify(transactions));
-        cachedTransactions = transactions;
+        cachedTransactions = cachedTransactions.filter(t => t.id !== id);
     }
 }
 
+// ──────────────────────────────────────────────────────────────
+// Budgets CRUD
+// ──────────────────────────────────────────────────────────────
 async function saveBudget(category, amount) {
-    if (useSupabase) {
-        const { error } = await supabaseClient
-            .from('budgets')
-            .upsert({
-                school_id: getSchoolId(),
-                category: category,
-                amount: Number(amount)
-            });
-
-        if (error) {
-            console.error("Error saving budget to Supabase:", error);
-            throw error;
-        }
+    if (supabaseClient) {
+        const { error } = await supabaseClient.from('budgets').upsert({
+            school_id: getSchoolId(),
+            category: category,
+            amount: Number(amount)
+        });
+        if (error) { console.error('Error saving budget to Supabase:', error); throw error; }
         await syncFromSupabase();
     } else {
-        const budgets = getBudgets();
-        budgets[category] = Number(amount);
-        localStorage.setItem(BUDGET_KEY, JSON.stringify(budgets));
-        cachedBudgets = budgets;
+        cachedBudgets[category] = Number(amount);
     }
     return cachedBudgets;
 }
 
+// ──────────────────────────────────────────────────────────────
+// Feedbacks CRUD
+// ──────────────────────────────────────────────────────────────
 async function saveFeedback(fb) {
     fb.id = 'fb-' + Date.now();
     fb.date = new Date().toISOString().split('T')[0];
     fb.replied = false;
     fb.replyText = null;
 
-    if (useSupabase) {
+    if (supabaseClient) {
         const dbPayload = {
             id: fb.id,
             school_id: getSchoolId(),
@@ -638,55 +544,34 @@ async function saveFeedback(fb) {
             reply_text: fb.replyText,
             date: fb.date
         };
-
-        const { error } = await supabaseClient
-            .from('feedbacks')
-            .insert(dbPayload);
-
-        if (error) {
-            console.error("Error sending feedback to Supabase:", error);
-            throw error;
-        }
+        const { error } = await supabaseClient.from('feedbacks').insert(dbPayload);
+        if (error) { console.error('Error saving feedback to Supabase:', error); throw error; }
         await syncFromSupabase();
     } else {
-        const feedbacks = getFeedbacks();
-        feedbacks.push(fb);
-        localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
-        cachedFeedbacks = feedbacks;
+        cachedFeedbacks.push(fb);
     }
     return fb;
 }
 
 async function replyToFeedback(id, text) {
-    if (useSupabase) {
-        const { error } = await supabaseClient
-            .from('feedbacks')
-            .update({
-                replied: true,
-                reply_text: text
-            })
+    if (supabaseClient) {
+        const { error } = await supabaseClient.from('feedbacks')
+            .update({ replied: true, reply_text: text })
             .eq('id', id);
-
-        if (error) {
-            console.error("Error updating feedback on Supabase:", error);
-            throw error;
-        }
+        if (error) { console.error('Error updating feedback on Supabase:', error); throw error; }
         await syncFromSupabase();
     } else {
-        const feedbacks = getFeedbacks();
-        const idx = feedbacks.findIndex(f => f.id === id);
+        const idx = cachedFeedbacks.findIndex(f => f.id === id);
         if (idx !== -1) {
-            feedbacks[idx].replied = true;
-            feedbacks[idx].replyText = text;
-            localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbacks));
-            cachedFeedbacks = feedbacks;
+            cachedFeedbacks[idx].replied = true;
+            cachedFeedbacks[idx].replyText = text;
         }
     }
 }
 
-/**
- * Ledger Heading CRUD (Async)
- */
+// ──────────────────────────────────────────────────────────────
+// Ledger Headings CRUD
+// ──────────────────────────────────────────────────────────────
 async function saveLedgerHeading(heading) {
     if (!heading.id) {
         heading.id = 'hd-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
@@ -694,7 +579,7 @@ async function saveLedgerHeading(heading) {
     heading.school_id = heading.school_id || getSchoolId();
     heading.sort_order = heading.sort_order || 0;
 
-    if (useSupabase) {
+    if (supabaseClient) {
         const payload = {
             id: heading.id,
             school_id: heading.school_id,
@@ -708,34 +593,154 @@ async function saveLedgerHeading(heading) {
         if (error) { console.error('Error saving heading:', error); throw error; }
         await syncFromSupabase();
     } else {
-        const existing = cachedHeadings.findIndex(h => h.id === heading.id);
-        if (existing !== -1) {
-            cachedHeadings[existing] = heading;
-        } else {
-            cachedHeadings.push(heading);
-        }
-        localStorage.setItem(HEADINGS_KEY, JSON.stringify(cachedHeadings));
+        const idx = cachedHeadings.findIndex(h => h.id === heading.id);
+        if (idx !== -1) { cachedHeadings[idx] = heading; }
+        else { cachedHeadings.push(heading); }
     }
     return heading;
 }
 
 async function deleteLedgerHeading(id) {
-    if (useSupabase) {
-        // Delete children first
+    if (supabaseClient) {
         await supabaseClient.from('ledger_headings').delete().eq('parent_id', id);
         const { error } = await supabaseClient.from('ledger_headings').delete().eq('id', id);
         if (error) { console.error('Error deleting heading:', error); throw error; }
         await syncFromSupabase();
     } else {
-        // Remove heading and all its children
         cachedHeadings = cachedHeadings.filter(h => h.id !== id && h.parent_id !== id);
-        localStorage.setItem(HEADINGS_KEY, JSON.stringify(cachedHeadings));
     }
 }
 
-/**
- * Currency Formatting Helpers (unchanged)
- */
+// ──────────────────────────────────────────────────────────────
+// Assets CRUD
+// ──────────────────────────────────────────────────────────────
+async function saveAsset(asset) {
+    const schoolId = getSchoolId();
+    const dbPayload = {
+        school_id: schoolId,
+        asset_name: asset.asset_name,
+        category: asset.category,
+        purchase_date: asset.purchase_date,
+        value: Number(asset.value || 0),
+        condition: asset.condition || 'Good',
+        location: asset.location || null,
+        recorded_by: asset.recorded_by || sessionStorage.getItem('school_user_email') || 'Accountant'
+    };
+
+    if (asset.id) dbPayload.id = asset.id;
+
+    if (supabaseClient) {
+        const { data, error } = await supabaseClient.from('assets').upsert(dbPayload).select().single();
+        if (error) { console.error('Error saving asset to Supabase:', error); throw error; }
+        await syncFromSupabase();
+        return data;
+    } else {
+        const newAsset = { ...dbPayload, id: asset.id || 'ast-' + Date.now() };
+        const idx = cachedAssets.findIndex(a => a.id === newAsset.id);
+        if (idx !== -1) { cachedAssets[idx] = newAsset; }
+        else { cachedAssets.push(newAsset); }
+        return newAsset;
+    }
+}
+
+async function deleteAsset(id) {
+    if (supabaseClient) {
+        const { error } = await supabaseClient.from('assets').delete().eq('id', id);
+        if (error) { console.error('Error deleting asset from Supabase:', error); throw error; }
+        await syncFromSupabase();
+    } else {
+        cachedAssets = cachedAssets.filter(a => a.id !== id);
+    }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Notifications CRUD (Super Admin use only)
+// ──────────────────────────────────────────────────────────────
+async function saveNotification(notification) {
+    if (!supabaseClient) return;
+    try {
+        const payload = {
+            id: 'notif-' + Date.now(),
+            to_email: notification.to,
+            subject: notification.subject,
+            body: notification.body,
+            school_name: notification.schoolName || null,
+            timestamp: notification.timestamp || new Date().toISOString()
+        };
+        await supabaseClient.from('notifications').insert(payload);
+    } catch (e) {
+        console.error('Error saving notification to Supabase:', e);
+    }
+}
+
+async function fetchNotifications() {
+    if (!supabaseClient) return [];
+    try {
+        const { data, error } = await supabaseClient
+            .from('notifications')
+            .select('*')
+            .order('timestamp', { ascending: false });
+        if (error) throw error;
+        return (data || []).map(n => ({
+            id: n.id,
+            to: n.to_email,
+            subject: n.subject,
+            body: n.body,
+            schoolName: n.school_name,
+            timestamp: n.timestamp
+        }));
+    } catch (e) {
+        console.error('Error fetching notifications from Supabase:', e);
+        return [];
+    }
+}
+
+async function clearNotifications() {
+    if (!supabaseClient) return;
+    try {
+        await supabaseClient.from('notifications').delete().neq('id', '');
+    } catch (e) {
+        console.error('Error clearing notifications from Supabase:', e);
+    }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Broadcasts CRUD
+// ──────────────────────────────────────────────────────────────
+async function saveBroadcast(msg, type) {
+    if (!supabaseClient) return;
+    try {
+        const payload = {
+            id: 'bc_' + Date.now(),
+            message: msg,
+            type: type || 'info',
+            date: new Date().toISOString()
+        };
+        await supabaseClient.from('broadcasts').upsert([payload]);
+    } catch (e) {
+        console.error('Error saving broadcast to Supabase:', e);
+    }
+}
+
+async function fetchLatestBroadcast() {
+    if (!supabaseClient) return null;
+    try {
+        const { data, error } = await supabaseClient
+            .from('broadcasts')
+            .select('*')
+            .order('date', { ascending: false })
+            .limit(1);
+        if (error || !data || data.length === 0) return null;
+        return data[0];
+    } catch (e) {
+        console.error('Error fetching broadcast:', e);
+        return null;
+    }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Currency Formatting Helpers
+// ──────────────────────────────────────────────────────────────
 const NEPALI_DIGITS = {
     '0': '०', '1': '१', '2': '२', '3': '३', '4': '४',
     '5': '५', '6': '६', '7': '७', '8': '८', '9': '९'
@@ -749,17 +754,17 @@ function formatNepaliStyleNumber(num) {
     const parts = Number(num).toFixed(2).split('.');
     let intPart = parts[0];
     const decPart = parts[1];
-    
+
     let lastThree = intPart.substring(intPart.length - 3);
     const otherNumbers = intPart.substring(0, intPart.length - 3);
-    
+
     if (otherNumbers !== '') {
-        const groupedOthers = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+        const groupedOthers = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ',');
         intPart = groupedOthers + ',' + lastThree;
     } else {
         intPart = lastThree;
     }
-    
+
     return intPart + '.' + decPart;
 }
 
@@ -776,32 +781,50 @@ function formatDate(dateStr, isDevanagari = false) {
     const dateObj = new Date(dateStr);
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     const englishDate = dateObj.toLocaleDateString('en-US', options);
-    
+
     if (isDevanagari) {
         return toNepaliDigits(dateStr.replace(/-/g, '/'));
     }
     return englishDate;
 }
 
-// Explicitly attach to window to prevent "is not defined" errors when caching goes wrong
-window.initDatabase = initDatabase;
+// ──────────────────────────────────────────────────────────────
+// Expose all functions to window
+// ──────────────────────────────────────────────────────────────
+window.initDatabase           = initDatabase;
 window.fetchRegisteredSchools = fetchRegisteredSchools;
 window.upsertRegisteredSchool = upsertRegisteredSchool;
 window.deleteRegisteredSchool = deleteRegisteredSchool;
-window.getTransactions = getTransactions;
-window.saveTransaction = saveTransaction;
-window.deleteTransaction = deleteTransaction;
-window.loadDynamicCategories = loadDynamicCategories;
-window.getLedgerHeadings = getLedgerHeadings;
-window.getLedgerHeadingById = getLedgerHeadingById;
-window.saveLedgerHeading = saveLedgerHeading;
-window.deleteLedgerHeading = deleteLedgerHeading;
-window.getSchoolId = getSchoolId;
-window.formatCurrency = formatCurrency;
-window.formatNepaliStyleNumber = formatNepaliStyleNumber;
-window.toNepaliDigits = toNepaliDigits;
+window.getTransactions        = getTransactions;
+window.saveTransaction        = saveTransaction;
+window.deleteTransaction      = deleteTransaction;
+window.getBudgets             = getBudgets;
+window.saveBudget             = saveBudget;
+window.getFeedbacks           = getFeedbacks;
+window.saveFeedback           = saveFeedback;
+window.replyToFeedback        = replyToFeedback;
+window.getAssets              = getAssets;
+window.saveAsset              = saveAsset;
+window.deleteAsset            = deleteAsset;
+window.loadCategoriesFromSupabase = loadCategoriesFromSupabase;
+window.saveCustomCategory     = saveCustomCategory;
+window.getLedgerHeadings      = getLedgerHeadings;
+window.getLedgerHeadingById   = getLedgerHeadingById;
+window.saveLedgerHeading      = saveLedgerHeading;
+window.deleteLedgerHeading    = deleteLedgerHeading;
+window.saveNotification       = saveNotification;
+window.fetchNotifications     = fetchNotifications;
+window.clearNotifications     = clearNotifications;
+window.saveBroadcast          = saveBroadcast;
+window.fetchLatestBroadcast   = fetchLatestBroadcast;
+window.getSchoolId            = getSchoolId;
+window.formatCurrency         = formatCurrency;
+window.formatNepaliStyleNumber= formatNepaliStyleNumber;
+window.toNepaliDigits         = toNepaliDigits;
 
-// Inject Dynamic Footer and Global Nepali Clock across all pages
+// ──────────────────────────────────────────────────────────────
+// Inject Dynamic Footer and Global Nepali Clock
+// ──────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Setup Global Nepali Clock in Header
     const header = document.querySelector('header');
@@ -809,14 +832,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const clockDiv = document.createElement('div');
         clockDiv.id = 'live-nepali-clock';
         clockDiv.style.cssText = 'position: absolute; left: 50%; transform: translateX(-50%); font-weight: 700; font-family: var(--font-nepali), sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 1.1rem; color: #ffffff; background: linear-gradient(135deg, var(--secondary-dark), #1e293b); padding: 8px 24px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); text-align: center; z-index: 10;';
-        
+
         header.appendChild(clockDiv);
 
         const engToNep = {'0':'०','1':'१','2':'२','3':'३','4':'४','5':'५','6':'६','7':'७','8':'८','9':'९'};
 
         function updateClock() {
             const now = new Date();
-            // Nepali time is UTC + 5:45
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
             const nepaliDate = new Date(utc + (3600000 * 5.75));
 
@@ -824,12 +846,12 @@ document.addEventListener('DOMContentLoaded', () => {
             let minutes = nepaliDate.getMinutes();
             let seconds = nepaliDate.getSeconds();
             const ampm = hours >= 12 ? 'PM' : 'AM';
-            
+
             hours = hours % 12;
             hours = hours ? hours : 12;
-            
-            const strTime = (hours < 10 ? '0'+hours : hours) + ':' + 
-                            (minutes < 10 ? '0'+minutes : minutes) + ':' + 
+
+            const strTime = (hours < 10 ? '0'+hours : hours) + ':' +
+                            (minutes < 10 ? '0'+minutes : minutes) + ':' +
                             (seconds < 10 ? '0'+seconds : seconds) + ' ' + ampm;
 
             let bsDateStr = '';
@@ -843,7 +865,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const nepaliStrTime = strTime.replace(/[0-9]/g, m => engToNep[m]);
             clockDiv.innerHTML = `<span style="font-size: 0.8rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">${bsDateStr}</span> <div style="display:flex; align-items:center; gap:6px;"><span style="color:#e5a93b;">🕒</span> <span>${nepaliStrTime}</span></div>`;
         }
-        
+
         updateClock();
         setInterval(updateClock, 1000);
     }
@@ -858,26 +880,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 let phone = '';
                 let email = '';
 
-                // Determine if we are on a platform-level page
                 const path = window.location.pathname.toLowerCase();
-                const isPlatformPage = path.includes('digitalkhatapana.html') || 
-                                       path.includes('select-school.html') || 
-                                       path.includes('school-login.html') || 
-                                       path.includes('portal-admin.html') || 
-                                       path.includes('subscription.html') || 
+                const isPlatformPage = path.includes('digitalkhatapana.html') ||
+                                       path.includes('select-school.html') ||
+                                       path.includes('school-login.html') ||
+                                       path.includes('portal-admin.html') ||
+                                       path.includes('subscription.html') ||
                                        path.endsWith('/');
 
-                if (!isPlatformPage) {
-                    const infoStr = localStorage.getItem('nepal_school_registered_info');
-                    if (infoStr) {
-                        try {
-                            const info = JSON.parse(infoStr);
-                            if (info.schoolName) schoolName = info.schoolName;
-                            if (info.address) address = info.address;
-                            if (info.pPhone || info.phone) phone = info.pPhone || info.phone;
-                            if (info.schoolEmail || info.email) email = info.schoolEmail || info.email;
-                        } catch(e) {}
-                    }
+                if (!isPlatformPage && window._activeSchoolInfo) {
+                    const info = window._activeSchoolInfo;
+                    if (info.schoolName) schoolName = info.schoolName;
+                    if (info.address) address = info.address;
+                    if (info.pPhone) phone = info.pPhone;
+                    if (info.schoolEmail) email = info.schoolEmail;
                 }
 
                 let nepaliYearStr = '२०८३';
@@ -893,7 +909,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (address) text += ` | ${address}`;
                 if (phone) text += ` | फोन: ${phone}`;
                 if (email) text += ` | इमेल: ${email}`;
-                
+
                 const currentText = footerBottom.innerText;
                 if (currentText.includes('प्रशासनिक')) {
                     text += ` | प्रशासनिक लेखा व्यवस्थापन पोर्टल`;
@@ -906,16 +922,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 footerBottom.innerText = text;
             }
         } catch(e) {}
-    }, 300); // Runs slightly after user.js or page scripts
+    }, 300);
 });
 
-// Global Theme Toggle
+// ──────────────────────────────────────────────────────────────
+// Global Theme Toggle (localStorage is intentionally kept for
+// UI preference only — not business data)
+// ──────────────────────────────────────────────────────────────
 function toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
-    
+
     const themeIcon = document.getElementById('theme-icon');
     const themeText = document.getElementById('theme-text');
     if (themeIcon) themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
@@ -928,6 +947,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeText = document.getElementById('theme-text');
     if (isDark && themeIcon) {
         themeIcon.textContent = '☀️';
-        if(themeText) themeText.textContent = 'Light Mode';
+        if (themeText) themeText.textContent = 'Light Mode';
     }
 });

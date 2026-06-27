@@ -11,21 +11,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // 2. Set default brand layout
-    updateSchoolHeader();
-
-    // 3. Initialize keys and populate category dropdown instantly
-    initKeys();
-    handleTypeChange();
-
-    // 4. Initialize database connection in the background
+    // 2. Initialize database (resolves school from Supabase)
     try {
         await initDatabase();
     } catch (e) {
-        console.error("Database initialization failed:", e);
+        console.error('Database initialization failed:', e);
     }
 
-    // 5. Default date is today
+    // 3. Set brand layout and populate category dropdown
+    updateSchoolHeader();
+    handleTypeChange();
+
+    // 4. Default date is today
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('tx-date').value = today;
 });
@@ -34,51 +31,29 @@ document.addEventListener('DOMContentLoaded', async () => {
  * Brand header updater
  */
 function updateSchoolHeader() {
-    let schoolInfoStr = null;
-    const sessionEmail = sessionStorage.getItem('school_user_email');
-    const isAdmin = sessionStorage.getItem('admin_logged_in') === 'true';
-    if (sessionEmail && isAdmin) {
-        try {
-            const listRaw = localStorage.getItem('nepal_registered_schools');
-            if (listRaw) {
-                const list = JSON.parse(listRaw);
-                const match = list.find(s => s.schoolEmail && s.schoolEmail.toLowerCase() === sessionEmail.toLowerCase());
-                if (match) {
-                    schoolInfoStr = JSON.stringify(match);
-                    localStorage.setItem('nepal_school_registered_info', schoolInfoStr);
-                }
-            }
-        } catch(e) {
-            console.error('Error resolving school from session:', e);
+    // Use window._activeSchoolInfo resolved from Supabase by database.js
+    const schoolInfo = window._activeSchoolInfo;
+    if (!schoolInfo) return;
+    try {
+        const titleEl = document.getElementById('adm-school-name');
+        const subEl = document.getElementById('adm-school-sub');
+        const userEl = document.getElementById('adm-user-name');
+        if (titleEl && schoolInfo.schoolName) {
+            titleEl.innerText = schoolInfo.schoolName;
         }
-    }
-
-    if (!schoolInfoStr) {
-        schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
-    }
-    if (schoolInfoStr) {
-        try {
-            const schoolInfo = JSON.parse(schoolInfoStr);
-            const titleEl = document.getElementById('adm-school-name');
-            const subEl = document.getElementById('adm-school-sub');
-            const userEl = document.getElementById('adm-user-name');
-            if (titleEl && schoolInfo.schoolName) {
-                titleEl.innerText = schoolInfo.schoolName;
-            }
-            if (subEl && schoolInfo.address) {
-                subEl.innerText = `लेखा तथा बजेट प्रशासन केन्द्र (${schoolInfo.address})`;
-            }
-            if (userEl && schoolInfo.accountant) {
-                userEl.innerText = `प्रयोक्ता: ${schoolInfo.accountant} (लेखापाल) | प्र.अ.: ${schoolInfo.principal || '-'}`;
-            }
-
-            const logoContainer = document.getElementById('adm-school-logo-container');
-            if (logoContainer && schoolInfo.logo) {
-                logoContainer.innerHTML = `<img src="${schoolInfo.logo}" alt="Logo" class="gov-logo" style="width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--secondary); box-shadow: 0 4px 6px rgba(0,0,0,0.15);">`;
-            }
-        } catch (e) {
-            console.error('Error loading school details:', e);
+        if (subEl && schoolInfo.address) {
+            subEl.innerText = `लेखा तथा बजेट प्रशासन केन्द्र (${schoolInfo.address})`;
         }
+        if (userEl && (schoolInfo.accountantName || schoolInfo.principalName)) {
+            userEl.innerText = `प्रयोक्ता: ${schoolInfo.accountantName || '-'} (लेखापाल) | प्र.अ.: ${schoolInfo.principalName || '-'}`;
+        }
+
+        const logoContainer = document.getElementById('adm-school-logo-container');
+        if (logoContainer && schoolInfo.logo) {
+            logoContainer.innerHTML = `<img src="${schoolInfo.logo}" alt="Logo" class="gov-logo" style="width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--secondary); box-shadow: 0 4px 6px rgba(0,0,0,0.15);">`;
+        }
+    } catch (e) {
+        console.error('Error loading school details:', e);
     }
 }
 

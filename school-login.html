@@ -357,65 +357,57 @@
 
             setLoading('spin1', 'btn1-text', 'btn-step1', true);
 
+            let schoolsList = [];
             if (window.fetchRegisteredSchools) {
-                await window.fetchRegisteredSchools();
+                schoolsList = await window.fetchRegisteredSchools();
             }
 
-            setTimeout(() => {
-                setLoading('spin1', 'btn1-text', 'btn-step1', false);
+            setLoading('spin1', 'btn1-text', 'btn-step1', false);
 
-                // Look up school in registered list
-                let schoolsList = [];
-                try {
-                    const raw = localStorage.getItem('nepal_registered_schools');
-                    if (raw) schoolsList = JSON.parse(raw);
-                } catch(e) {}
+            const school = schoolsList.find(s =>
+                s.schoolEmail && s.schoolEmail.toLowerCase() === email
+            );
 
-                const school = schoolsList.find(s =>
-                    s.schoolEmail && s.schoolEmail.toLowerCase() === email
-                );
+            if (!school) {
+                showErr(errBox, 'यो इमेलमा कुनै दर्ता भएको विद्यालय फेला परेन।');
+                return;
+            }
 
-                if (!school) {
-                    showErr(errBox, 'यो इमेलमा कुनै दर्ता भएको विद्यालय फेला परेन।');
+            if (school.status !== 'Approved') {
+                showErr(errBox, 'तपाईंको विद्यालय अझै अनुमोदित भएको छैन। Super Admin को अनुमोदन पर्खनुहोस्।');
+                return;
+            }
+
+            // Verify OTP
+            const storedOTP = school.otp;
+            const otpUsed   = school.otpUsed;
+
+            if (!storedOTP) {
+                showErr(errBox, 'यो खातामा कुनै OTP उपलब्ध छैन। Admin लाई सम्पर्क गर्नुहोस्।');
+                return;
+            }
+
+            if (otpUsed) {
+                // OTP already used — check if user has set a permanent password
+                const permanentPw = school.permanentPassword;
+                if (permanentPw && otp === permanentPw) {
+                    // Normal login with permanent password
+                    loginSuccess(school);
+                    return;
+                } else {
+                    showErr(errBox, 'यो OTP पहिले नै प्रयोग गरिसकिएको छ। आफ्नो स्थायी पासवर्ड प्रयोग गर्नुहोस् वा Admin लाई सम्पर्क गर्नुहोस्।');
                     return;
                 }
+            }
 
-                if (school.status !== 'Approved') {
-                    showErr(errBox, 'तपाईंको विद्यालय अझै अनुमोदित भएको छैन। Super Admin को अनुमोदन पर्खनुहोस्।');
-                    return;
-                }
+            if (otp !== storedOTP) {
+                showErr(errBox, 'OTP गलत छ। इमेलमा प्राप्त OTP ध्यानपूर्वक टाइप गर्नुहोस्।');
+                return;
+            }
 
-                // Verify OTP
-                const storedOTP = school.otp;
-                const otpUsed   = school.otpUsed;
-
-                if (!storedOTP) {
-                    showErr(errBox, 'यो खातामा कुनै OTP उपलब्ध छैन। Admin लाई सम्पर्क गर्नुहोस्।');
-                    return;
-                }
-
-                if (otpUsed) {
-                    // OTP already used — check if user has set a permanent password
-                    const permanentPw = school.permanentPassword;
-                    if (permanentPw && otp === permanentPw) {
-                        // Normal login with permanent password
-                        loginSuccess(school);
-                        return;
-                    } else {
-                        showErr(errBox, 'यो OTP पहिले नै प्रयोग गरिसकिएको छ। आफ्नो स्थायी पासवर्ड प्रयोग गर्नुहोस् वा Admin लाई सम्पर्क गर्नुहोस्।');
-                        return;
-                    }
-                }
-
-                if (otp !== storedOTP) {
-                    showErr(errBox, 'OTP गलत छ। इमेलमा प्राप्त OTP ध्यानपूर्वक टाइप गर्नुहोस्।');
-                    return;
-                }
-
-                // OTP is correct — move to set password
-                _verifiedEmail = email;
-                goToStep(2);
-            }, 1000);
+            // OTP is correct — move to set password
+            _verifiedEmail = email;
+            goToStep(2);
         }
 
         // ─── STEP 2: Set Permanent Password ───
@@ -434,58 +426,39 @@
                 return;
             }
 
+
             setLoading('spin2', 'btn2-text', 'btn-step2', true);
 
+            // Fetch fresh list from Supabase
+            let schoolsList = [];
             if (window.fetchRegisteredSchools) {
-                await window.fetchRegisteredSchools();
+                schoolsList = await window.fetchRegisteredSchools();
             }
 
-            setTimeout(async () => {
-                setLoading('spin2', 'btn2-text', 'btn-step2', false);
+            setLoading('spin2', 'btn2-text', 'btn-step2', false);
 
-                // Save permanent password and mark OTP as used
-                let schoolsList = [];
-                try {
-                    const raw = localStorage.getItem('nepal_registered_schools');
-                    if (raw) schoolsList = JSON.parse(raw);
-                } catch(e) {}
+            const idx = schoolsList.findIndex(s =>
+                s.schoolEmail && s.schoolEmail.toLowerCase() === _verifiedEmail
+            );
+            if (idx === -1) {
+                showErr(document.getElementById('step2-err'), 'School data not found. Please contact admin.');
+                return;
+            }
 
-                const idx = schoolsList.findIndex(s =>
-                    s.schoolEmail && s.schoolEmail.toLowerCase() === _verifiedEmail
-                );
-                if (idx === -1) {
-                    showErr(document.getElementById('step2-err'), 'School data not found. Please contact admin.');
-                    return;
-                }
+            schoolsList[idx].permanentPassword = pw1;
+            schoolsList[idx].otpUsed = true;
 
-                schoolsList[idx].permanentPassword = pw1;
-                schoolsList[idx].otpUsed = true;
-                localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
-                
-                if (window.upsertRegisteredSchool) {
-                    await window.upsertRegisteredSchool(schoolsList[idx]);
-                }
+            if (window.upsertRegisteredSchool) {
+                await window.upsertRegisteredSchool(schoolsList[idx]);
+            }
 
-                // Also update nepal_school_registered_info if it matches
-                try {
-                    const activeRaw = localStorage.getItem('nepal_school_registered_info');
-                    if (activeRaw) {
-                        const active = JSON.parse(activeRaw);
-                        if (active.schoolEmail && active.schoolEmail.toLowerCase() === _verifiedEmail) {
-                            active.permanentPassword = pw1;
-                            active.otpUsed = true;
-                            localStorage.setItem('nepal_school_registered_info', JSON.stringify(active));
-                        }
-                    }
-                } catch(e) {}
-
-                loginSuccess(schoolsList[idx]);
-            }, 800);
+            loginSuccess(schoolsList[idx]);
         }
 
+
         function loginSuccess(school) {
-            // Set active school
-            localStorage.setItem('nepal_school_registered_info', JSON.stringify(school));
+            // Store active school in memory — Supabase is source of truth
+            window._activeSchoolInfo = school;
             sessionStorage.setItem('school_user_logged_in', 'true');
             sessionStorage.setItem('school_user_email', school.schoolEmail);
             sessionStorage.setItem('admin_logged_in', 'true'); // also unlock admin panel

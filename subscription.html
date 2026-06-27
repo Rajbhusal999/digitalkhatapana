@@ -1150,7 +1150,7 @@
 
         // Load registered school details
         document.addEventListener('DOMContentLoaded', () => {
-            const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+            const schoolInfoStr = sessionStorage.getItem('temp_registration_info');
             if (schoolInfoStr) {
                 try {
                     const schoolInfo = JSON.parse(schoolInfoStr);
@@ -1189,7 +1189,7 @@
             // Build dynamic remarks hint text from real school name
             let schoolDisplayName = 'तपाईंको विद्यालयको नाम';
             try {
-                const raw = localStorage.getItem('nepal_school_registered_info');
+                const raw = sessionStorage.getItem('temp_registration_info');
                 if (raw) {
                     const info = JSON.parse(raw);
                     if (info.schoolName) schoolDisplayName = info.schoolName;
@@ -1329,7 +1329,7 @@
                 document.getElementById('receipt-txnid').innerText = txnId;
                 document.getElementById('receipt-amount').innerText = `रू. ${currentSelectedPrice.toLocaleString()}/-`;
 
-                // Save to localStorage
+                // Save to Supabase
                 saveSubscriptionInfo(currentSelectedPlan, currentSelectedPrice, gatewayFormatted, txnId);
 
                 // Auto redirect to Admin Dashboard
@@ -1340,9 +1340,9 @@
             }, 1200);
         }
 
-        // Save subscription details to localStorage
+        // Save subscription details directly to Supabase via database.js
         async function saveSubscriptionInfo(planName, price, gateway, txnId) {
-            const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+            const schoolInfoStr = sessionStorage.getItem('temp_registration_info');
             let schoolInfo = {};
             
             if (schoolInfoStr) {
@@ -1353,7 +1353,7 @@
                 }
             }
 
-            // ✅ FIX: Status stays Pending — admin must approve even for Free plan
+            // Status stays Pending — admin must approve even for Free plan
             schoolInfo.status = 'Pending';
             schoolInfo.paymentMethod = gateway || 'Free';
             schoolInfo.transactionCode = txnId;
@@ -1368,29 +1368,13 @@
                 expiresAt: new Date(new Date().setFullYear(new Date().getFullYear() + years)).toISOString()
             };
 
-            localStorage.setItem('nepal_school_registered_info', JSON.stringify(schoolInfo));
-
-            // Also update in registered list
-            let schoolsList = [];
-            const schoolsListStr = localStorage.getItem('nepal_registered_schools');
-            if (schoolsListStr) {
-                try {
-                    schoolsList = JSON.parse(schoolsListStr);
-                } catch (e) {
-                    console.error(e);
-                }
-            }
-            schoolsList = schoolsList.filter(s => (s.schoolEmail || '').toLowerCase() !== (schoolInfo.schoolEmail || '').toLowerCase());
-            schoolsList.push(schoolInfo);
-            localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
-
-            // ✅ FIX: Save to Supabase so admin panel shows the school
+            // Save to Supabase
             if (window.upsertRegisteredSchool) {
                 try {
                     await window.upsertRegisteredSchool(schoolInfo);
                     console.log('Subscription info saved to Supabase successfully.');
                 } catch(e) {
-                    console.error('Supabase save failed (data is in localStorage):', e);
+                    console.error('Supabase save failed:', e);
                 }
             }
             
@@ -1414,7 +1398,7 @@
                 return;
             }
 
-            const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
+            const schoolInfoStr = sessionStorage.getItem('temp_registration_info');
             let schoolInfo = {};
             if (schoolInfoStr) {
                 try {
@@ -1439,28 +1423,6 @@
                 expiresAt: new Date(new Date().setFullYear(new Date().getFullYear() + yearsCode)).toISOString()
             };
 
-            // Write back to nepal_school_registered_info
-            localStorage.setItem('nepal_school_registered_info', JSON.stringify(schoolInfo));
-
-            // Also update this school inside the global list nepal_registered_schools
-            let schoolsList = [];
-            const schoolsListStr = localStorage.getItem('nepal_registered_schools');
-            if (schoolsListStr) {
-                try {
-                    schoolsList = JSON.parse(schoolsListStr);
-                } catch(e) {
-                    console.error(e);
-                }
-            }
-            
-            // Find and replace
-            schoolsList = schoolsList.filter(s => (s.schoolEmail || '').toLowerCase() !== (schoolInfo.schoolEmail || '').toLowerCase());
-            schoolsList.push(schoolInfo);
-            localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
-            
-            // ✅ FIX: Notify admin with plan + transaction code
-            sendAdminNotification(schoolInfo.schoolName, schoolInfo.schoolEmail, 'Pending', currentSelectedPlan, txnCode);
-
             if (window.upsertRegisteredSchool) {
                 try {
                     await window.upsertRegisteredSchool(schoolInfo);
@@ -1468,6 +1430,9 @@
                     console.error('Supabase save failed:', e);
                 }
             }
+            
+            // Notify admin with plan + transaction code
+            sendAdminNotification(schoolInfo.schoolName, schoolInfo.schoolEmail, 'Pending', currentSelectedPlan, txnCode);
 
             // Show success alert in checkout modal
             // Transition to Step 3 success screen
@@ -1497,33 +1462,9 @@
 
         // Email notification simulation helper
         function sendAdminNotification(schoolName, email, status, planName, txnCode) {
-            const notificationsKey = 'nepal_admin_notifications';
-            let notifications = [];
-            const notificationsStr = localStorage.getItem(notificationsKey);
-            if (notificationsStr) {
-                try {
-                    notifications = JSON.parse(notificationsStr);
-                } catch(e) {
-                    console.error('Error reading admin notifications', e);
-                }
-            }
-            
-            // ✅ FIX: Include plan and transaction code in notification body so admin can see details
             let bodyText = `New school registered and awaiting approval. School: ${schoolName}, Email: ${email}, Status: ${status}.`;
             if (planName) bodyText += ` Plan: ${planName}.`;
             if (txnCode) bodyText += ` Transaction Code: ${txnCode}.`;
-            
-            const newNotification = {
-                id: 'notif-' + Date.now(),
-                to: 'rajbhusal235@gmail.com',
-                subject: `⏳ School Pending Approval: ${schoolName}`,
-                body: bodyText,
-                schoolName: schoolName,
-                timestamp: new Date().toISOString()
-            };
-            
-            notifications.push(newNotification);
-            localStorage.setItem(notificationsKey, JSON.stringify(notifications));
             
             console.log(`[EMAIL SENDING] Posting to rajbhusal235@gmail.com: ${bodyText}`);
 

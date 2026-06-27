@@ -67,61 +67,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 // SCHOOL HEADER
 // ─────────────────────────────────────────────────────────────────
 function updateSchoolHeader() {
-    let schoolInfoStr = null;
-    const sessionEmail = sessionStorage.getItem('school_user_email');
-    const isAdmin = sessionStorage.getItem('admin_logged_in') === 'true';
-    if (sessionEmail && isAdmin) {
-        try {
-            const listRaw = localStorage.getItem('nepal_registered_schools');
-            if (listRaw) {
-                const list = JSON.parse(listRaw);
-                const match = list.find(s => s.schoolEmail && s.schoolEmail.toLowerCase() === sessionEmail.toLowerCase());
-                if (match) {
-                    schoolInfoStr = JSON.stringify(match);
-                    localStorage.setItem('nepal_school_registered_info', schoolInfoStr);
-                }
-            }
-        } catch(e) {}
-    }
-
-    if (!schoolInfoStr) {
-        schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
-    }
-    if (schoolInfoStr) {
-        try {
-            const info = JSON.parse(schoolInfoStr);
-            const titleEl = document.getElementById('txt-school-name');
-            if (titleEl && info.schoolName) titleEl.innerText = info.schoolName;
-            const subEl = document.getElementById('txt-gov-subtitle');
-            if (subEl && info.address) subEl.innerText = info.address;
-            const logoContainer = document.getElementById('user-school-logo-container');
-            if (logoContainer && info.logo) {
-                logoContainer.innerHTML = `<img src="${info.logo}" alt="Logo" class="gov-logo" style="width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid var(--secondary);">`;
-            }
-        } catch(e) {}
-    }
+    // Use window._activeSchoolInfo resolved from Supabase by database.js
+    const info = window._activeSchoolInfo;
+    if (!info) return;
+    try {
+        const titleEl = document.getElementById('txt-school-name');
+        if (titleEl && info.schoolName) titleEl.innerText = info.schoolName;
+        const subEl = document.getElementById('txt-gov-subtitle');
+        if (subEl && info.address) subEl.innerText = info.address;
+        const logoContainer = document.getElementById('user-school-logo-container');
+        if (logoContainer && info.logo) {
+            logoContainer.innerHTML = `<img src="${info.logo}" alt="Logo" class="gov-logo" style="width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid var(--secondary);">`;
+        }
+    } catch(e) {}
 }
 
 function getSchoolDisplayName() {
-    const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
-    if (schoolInfoStr) {
-        try {
-            const info = JSON.parse(schoolInfoStr);
-            return info.schoolName || 'श्री जन जागृति माध्यमिक विद्यालय';
-        } catch(e) {}
-    }
-    return 'श्री जन जागृति माध्यमिक विद्यालय';
+    const info = window._activeSchoolInfo;
+    return (info && info.schoolName) ? info.schoolName : 'श्री जन जागृति माध्यमिक विद्यालय';
 }
 
 function getSchoolAddress() {
-    const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
-    if (schoolInfoStr) {
-        try {
-            const info = JSON.parse(schoolInfoStr);
-            return info.address || 'तिलोत्तमा-३, रुपन्देही';
-        } catch(e) {}
-    }
-    return 'तिलोत्तमा-३, रुपन्देही';
+    const info = window._activeSchoolInfo;
+    return (info && info.address) ? info.address : 'तिलोत्तमा-३, रुपन्देही';
 }
 
 // ─────────────────────────────────────────────────────────────────

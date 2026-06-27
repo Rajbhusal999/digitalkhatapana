@@ -916,10 +916,8 @@
         // ─── Fetch registered_schools DIRECTLY from Supabase ───────────────────────
         async function fetchSchoolsFromSupabase() {
             if (!superAdminSupabase) {
-                console.warn('[SuperAdmin] No Supabase client — falling back to localStorage.');
-                try {
-                    return JSON.parse(localStorage.getItem('nepal_registered_schools') || '[]');
-                } catch(e) { return []; }
+                console.warn('[SuperAdmin] No Supabase client.');
+                return [];
             }
             try {
                 const { data, error } = await superAdminSupabase
@@ -953,15 +951,12 @@
                     registeredAt: item.registered_at
                 }));
 
-                // Also mirror to localStorage so other functions still work
-                localStorage.setItem('nepal_registered_schools', JSON.stringify(schools));
+                _cachedSchoolsList = schools;
                 console.log(`[SuperAdmin] Loaded ${schools.length} schools from Supabase.`);
                 return schools;
             } catch(e) {
-                console.error('[SuperAdmin] Supabase fetch failed, falling back to localStorage:', e);
-                try {
-                    return JSON.parse(localStorage.getItem('nepal_registered_schools') || '[]');
-                } catch(ex) { return []; }
+                console.error('[SuperAdmin] Supabase fetch failed:', e);
+                return _cachedSchoolsList || [];
             }
         }
 
@@ -974,22 +969,22 @@
             setTimeout(renderSuperCharts, 100);
         }
 
-        // Render mock notifications in Super Admin Inbox
-        function renderNotifications() {
+        // In-memory cache for admin panel
+        let _cachedSchoolsList = [];
+
+        // ─── Render mock notifications in Super Admin Inbox (from Supabase) ──────
+        async function renderNotifications() {
             const listEl = document.getElementById('email-inbox-list');
             if (!listEl) return;
             
-            listEl.innerHTML = '';
+            listEl.innerHTML = '<div style="text-align:center; color:#94a3b8; padding:20px;">Loading notifications...</div>';
             
             let notifications = [];
-            const notificationsStr = localStorage.getItem('nepal_admin_notifications');
-            if (notificationsStr) {
-                try {
-                    notifications = JSON.parse(notificationsStr);
-                } catch(e) {
-                    console.error(e);
-                }
+            if (window.fetchNotifications) {
+                notifications = await window.fetchNotifications();
             }
+            
+            listEl.innerHTML = '';
             
             // Sort by timestamp descending
             notifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -1009,12 +1004,10 @@
                     <div class="email-body">${notif.body}</div>
                 `;
                 
-                // Add click event to filter for this school
                 bubble.style.cursor = 'pointer';
                 bubble.title = 'Click to find this school in the table below';
                 bubble.onclick = () => {
                     document.getElementById('filter-status-select').value = 'all';
-                    // Auto-search for the school by name if available in notification
                     const searchInput = document.getElementById('search-school-input');
                     if (notif.schoolName) {
                         searchInput.value = notif.schoolName;
@@ -1037,9 +1030,11 @@
             }
         }
         
-        function clearNotifications() {
+        async function clearNotifications() {
             if (confirm('Are you sure you want to clear all system email notifications?')) {
-                localStorage.removeItem('nepal_admin_notifications');
+                if (window.clearNotifications) {
+                    await window.clearNotifications();
+                }
                 showSuperToast('Email notifications cleared.', 'info');
                 renderNotifications();
             }
@@ -1241,15 +1236,9 @@
             }
         }
 
-        function handleApproveSchool(email) {
-            let schoolsList = [];
-            const schoolsListStr = localStorage.getItem('nepal_registered_schools');
-            if (schoolsListStr) {
-                try {
-                    schoolsList = JSON.parse(schoolsListStr);
-                } catch (e) { console.error(e); }
-            }
-
+        async function handleApproveSchool(email) {
+            // Fetch fresh list from Supabase
+            const schoolsList = await fetchSchoolsFromSupabase();
             const idx = schoolsList.findIndex(s => s.schoolEmail.toLowerCase() === email.toLowerCase());
             if (idx === -1) return;
 
@@ -1263,28 +1252,25 @@
             schoolsList[idx].otpUsed   = false;
             schoolsList[idx].approvedAt = new Date().toISOString();
             if (schoolsList[idx].subscription) schoolsList[idx].subscription.status = 'Active';
-            localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
-            if (window.upsertRegisteredSchool) {
-                window.upsertRegisteredSchool(schoolsList[idx]).catch(console.error);
-            }
 
-            // Sync active school info
-            try {
-                const activeRaw = localStorage.getItem('nepal_school_registered_info');
-                if (activeRaw) {
-                    const active = JSON.parse(activeRaw);
-                    if (active.schoolEmail && active.schoolEmail.toLowerCase() === email.toLowerCase()) {
-                        active.status  = 'Approved';
-                        active.otp     = otp;
-                        active.otpUsed = false;
-                        if (active.subscription) active.subscription.status = 'Active';
-                        localStorage.setItem('nepal_school_registered_info', JSON.stringify(active));
-                    }
-                }
-            } catch(e) { console.error(e); }
+            // Save to Supabase
+            if (window.upsertRegisteredSchool) {
+                await window.upsertRegisteredSchool(schoolsList[idx]);
+            }
 
             const schoolName = schoolsList[idx].schoolName || email;
             const loginUrl   = window.location.origin + (window.location.pathname.replace('portal-admin.html','')) + 'school-login.html';
+
+            // Save notification to Supabase
+            if (window.saveNotification) {
+                await window.saveNotification({
+                    to: email,
+                    subject: `✅ Khata Pana Login OTP - ${schoolName}`,
+                    body: `OTP: ${otp} — Login at: ${loginUrl}`,
+                    schoolName: schoolName,
+                    timestamp: new Date().toISOString()
+                });
+            }
 
             // ── Send OTP email via FormSubmit ──
             const emailBody = `
@@ -1328,14 +1314,8 @@ ${loginUrl}
             initSuperDashboard();
         }
 
-
-        function handleResendOTP(email) {
-            let schoolsList = [];
-            try {
-                const raw = localStorage.getItem('nepal_registered_schools');
-                if (raw) schoolsList = JSON.parse(raw);
-            } catch(e) {}
-
+        async function handleResendOTP(email) {
+            const schoolsList = await fetchSchoolsFromSupabase();
             const idx = schoolsList.findIndex(s => s.schoolEmail.toLowerCase() === email.toLowerCase());
             if (idx === -1) return;
 
@@ -1346,9 +1326,8 @@ ${loginUrl}
 
             schoolsList[idx].otp     = otp;
             schoolsList[idx].otpUsed = false;
-            localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
             if (window.upsertRegisteredSchool) {
-                window.upsertRegisteredSchool(schoolsList[idx]).catch(console.error);
+                await window.upsertRegisteredSchool(schoolsList[idx]);
             }
 
             const schoolName = schoolsList[idx].schoolName || email;
@@ -1387,46 +1366,18 @@ ${loginUrl}
             showSuperToast(`🔁 New OTP: ${otp} — resent to ${email}`, 'success');
         }
 
-        function handleRejectSchool(email) {
+        async function handleRejectSchool(email) {
             if (confirm('Are you sure you want to reject/suspend this school registration?')) {
-                let schoolsList = [];
-                const schoolsListStr = localStorage.getItem('nepal_registered_schools');
-                if (schoolsListStr) {
-                    try {
-                        schoolsList = JSON.parse(schoolsListStr);
-                    } catch (e) {
-                        console.error(e);
-                    }
-                }
-
+                const schoolsList = await fetchSchoolsFromSupabase();
                 const idx = schoolsList.findIndex(s => s.schoolEmail.toLowerCase() === email.toLowerCase());
                 if (idx !== -1) {
                     schoolsList[idx].status = 'Rejected';
                     if (schoolsList[idx].subscription) {
                         schoolsList[idx].subscription.status = 'Rejected';
                     }
-                    localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
                     if (window.upsertRegisteredSchool) {
-                        window.upsertRegisteredSchool(schoolsList[idx]).catch(console.error);
+                        await window.upsertRegisteredSchool(schoolsList[idx]);
                     }
-
-                    // Also sync active school info if it matches
-                    const currentActiveStr = localStorage.getItem('nepal_school_registered_info');
-                    if (currentActiveStr) {
-                        try {
-                            const currentActive = JSON.parse(currentActiveStr);
-                            if (currentActive.schoolEmail.toLowerCase() === email.toLowerCase()) {
-                                currentActive.status = 'Rejected';
-                                if (currentActive.subscription) {
-                                    currentActive.subscription.status = 'Rejected';
-                                }
-                                localStorage.setItem('nepal_school_registered_info', JSON.stringify(currentActive));
-                            }
-                        } catch(e) {
-                            console.error(e);
-                        }
-                    }
-
                     showSuperToast(`Registration for ${schoolsList[idx].schoolName} has been rejected/suspended.`, 'info');
                     initSuperDashboard();
                 }
@@ -1464,29 +1415,11 @@ ${loginUrl}
             const email = _pendingDeleteEmail;
             const schoolName = _pendingDeleteName || email;
 
-            // Build the same suffix logic used in database.js
-            const suffix = '_' + email.replace(/[^a-zA-Z0-9]/g, '');
-
-            // 1. Remove from registered schools list
-            let schoolsList = [];
-            try {
-                const raw = localStorage.getItem('nepal_registered_schools');
-                if (raw) schoolsList = JSON.parse(raw);
-            } catch(e) {}
-            schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== email.toLowerCase());
-            localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
+            // 1. Delete from Supabase registered_schools
             if (window.deleteRegisteredSchool) {
                 await window.deleteRegisteredSchool(email);
             }
 
-            // 2. Remove active school info if it matches
-            try {
-                const activeRaw = localStorage.getItem('nepal_school_registered_info');
-                if (activeRaw) {
-                    const active = JSON.parse(activeRaw);
-                    if (active.schoolEmail && active.schoolEmail.toLowerCase() === email.toLowerCase()) {
-                        localStorage.removeItem('nepal_school_registered_info');
-                    }
                 }
             } catch(e) {}
 
@@ -1565,13 +1498,9 @@ ${loginUrl}
             }
         }
 
-        // CSV Export Feature
-        function exportDataCSV() {
-            let schoolsList = [];
-            try {
-                const raw = localStorage.getItem('nepal_registered_schools');
-                if (raw) schoolsList = JSON.parse(raw);
-            } catch(e) {}
+        // CSV Export Feature — uses in-memory cache
+        async function exportDataCSV() {
+            const schoolsList = _cachedSchoolsList.length > 0 ? _cachedSchoolsList : await fetchSchoolsFromSupabase();
             
             if (schoolsList.length === 0) {
                 showSuperToast('No data to export.', 'info');
@@ -1607,8 +1536,8 @@ ${loginUrl}
             document.getElementById('cmd-tab-' + tab).style.display = 'flex';
         }
 
-        // Global Broadcast Logic
-        function sendBroadcast() {
+        // Global Broadcast Logic — saves to Supabase
+        async function sendBroadcast() {
             const msg = document.getElementById('broadcast-msg').value.trim();
             const type = document.getElementById('broadcast-type').value;
             if (!msg) {
@@ -1616,28 +1545,19 @@ ${loginUrl}
                 return;
             }
             
-            const broadcast = {
-                id: 'bc_' + Date.now(),
-                message: msg,
-                type: type,
-                date: new Date().toISOString()
-            };
-            
-            localStorage.setItem('nepal_global_broadcast', JSON.stringify(broadcast));
+            if (window.saveBroadcast) {
+                await window.saveBroadcast(msg, type);
+            }
             document.getElementById('broadcast-msg').value = '';
             showSuperToast('Global Broadcast sent to all schools!', 'success');
         }
 
-        // Render Chart.js Analytics
+        // Render Chart.js Analytics — uses in-memory data
         let regChartInstance = null;
         let statusChartInstance = null;
 
         function renderSuperCharts() {
-            let schoolsList = [];
-            try {
-                const raw = localStorage.getItem('nepal_registered_schools');
-                if (raw) schoolsList = JSON.parse(raw);
-            } catch(e) {}
+            const schoolsList = _cachedSchoolsList || [];
 
             // Process data for Status Donut Chart
             const pending = schoolsList.filter(s => s.status === 'Pending').length;

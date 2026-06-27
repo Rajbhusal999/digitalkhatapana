@@ -7,25 +7,24 @@ let activeTab = 'overview';
 let activeEditId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    updateSchoolHeader(); // Show school details (name, logo, background) instantly from localStorage on load/refresh
-    
-    // Initialize keys and populate UI instantly with local/cached data
-    initKeys();
-    initAdminPage();
-    
+    // Initialize database (resolves school from Supabase via session email)
     try {
         await initDatabase();
-        // Refresh UI elements after Supabase data syncs successfully
-        if (sessionStorage.getItem('admin_logged_in') === 'true') {
-            updateAdminMetrics();
-            handleTypeChange();
-            renderOverviewTable();
-            renderBudgetPlanner();
-            renderFeedbackInbox();
-            renderAdmTransactionsTable();
-        }
     } catch (e) {
-        console.error("Database initialization failed (Supabase connection issues?):", e);
+        console.error('Database initialization failed (Supabase connection issues?):', e);
+    }
+
+    updateSchoolHeader();
+    initAdminPage();
+    
+    // Refresh UI elements after Supabase data syncs
+    if (sessionStorage.getItem('admin_logged_in') === 'true') {
+        updateAdminMetrics();
+        handleTypeChange();
+        renderOverviewTable();
+        renderBudgetPlanner();
+        renderFeedbackInbox();
+        renderAdmTransactionsTable();
     }
 });
 
@@ -58,54 +57,31 @@ function initAdminPage() {
 }
 
 function updateSchoolHeader() {
-    // Priority: sessionStorage email (set by school-login.html) > nepal_school_registered_info
-    const sessionEmail = sessionStorage.getItem('school_user_email');
-    let schoolInfoStr = null;
+    // Use window._activeSchoolInfo resolved from Supabase by database.js
+    const schoolInfo = window._activeSchoolInfo;
+    if (!schoolInfo) return;
 
-    if (sessionEmail) {
-        try {
-            const listRaw = localStorage.getItem('nepal_registered_schools');
-            if (listRaw) {
-                const list = JSON.parse(listRaw);
-                const match = list.find(s => s.schoolEmail && s.schoolEmail.toLowerCase() === sessionEmail.toLowerCase());
-                if (match) {
-                    schoolInfoStr = JSON.stringify(match);
-                    localStorage.setItem('nepal_school_registered_info', schoolInfoStr);
-                }
-            }
-        } catch(e) {
-            console.error('Error resolving school from session in updateSchoolHeader:', e);
+    try {
+        const titleEl = document.getElementById('adm-school-name');
+        const subEl = document.getElementById('adm-school-sub');
+        const userEl = document.getElementById('adm-user-name');
+        if (titleEl && schoolInfo.schoolName) {
+            titleEl.innerText = schoolInfo.schoolName;
         }
-    }
-
-    if (!schoolInfoStr) {
-        schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
-    }
-    if (schoolInfoStr) {
-        try {
-            const schoolInfo = JSON.parse(schoolInfoStr);
-            const titleEl = document.getElementById('adm-school-name');
-            const subEl = document.getElementById('adm-school-sub');
-            const userEl = document.getElementById('adm-user-name');
-            if (titleEl && schoolInfo.schoolName) {
-                titleEl.innerText = schoolInfo.schoolName;
-            }
-            if (subEl && schoolInfo.address) {
-                subEl.innerText = `लेखा तथा बजेट प्रशासन केन्द्र (${schoolInfo.address})`;
-            }
-            if (userEl && schoolInfo.accountant) {
-                userEl.innerText = `प्रयोक्ता: ${schoolInfo.accountant} (लेखापाल) | प्र.अ.: ${schoolInfo.principal || '-'}`;
-            }
-
-            // Update School Logo if custom logo uploaded
-            const logoContainer = document.getElementById('adm-school-logo-container');
-            if (logoContainer && schoolInfo.logo) {
-                logoContainer.innerHTML = `<img src="${schoolInfo.logo}" alt="Logo" class="gov-logo" style="width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--secondary); box-shadow: 0 4px 6px rgba(0,0,0,0.15);">`;
-            }
-
-        } catch (e) {
-            console.error('Error loading school details in Admin Panel:', e);
+        if (subEl && schoolInfo.address) {
+            subEl.innerText = `लेखा तथा बजेट प्रशासन केन्द्र (${schoolInfo.address})`;
         }
+        if (userEl && (schoolInfo.accountantName || schoolInfo.principalName)) {
+            userEl.innerText = `प्रयोक्ता: ${schoolInfo.accountantName || '-'} (लेखापाल) | प्र.अ.: ${schoolInfo.principalName || '-'}`;
+        }
+
+        // Update School Logo if custom logo uploaded
+        const logoContainer = document.getElementById('adm-school-logo-container');
+        if (logoContainer && schoolInfo.logo) {
+            logoContainer.innerHTML = `<img src="${schoolInfo.logo}" alt="Logo" class="gov-logo" style="width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--secondary); box-shadow: 0 4px 6px rgba(0,0,0,0.15);">`;
+        }
+    } catch (e) {
+        console.error('Error loading school details in Admin Panel:', e);
     }
 }
 

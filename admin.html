@@ -11,28 +11,20 @@
     <!-- School login guard: redirect to school-login.html if not authenticated via OTP -->
     <script>
         (function() {
-            // If coming from subscription flow or portal-admin redirect, allow pass-through
-            const fromSub = document.referrer && (
-                document.referrer.includes('subscription.html') ||
-                document.referrer.includes('school-login.html')
-            );
+            // Auth guard: redirect to school-login.html if not authenticated via OTP/password
             const loggedIn = sessionStorage.getItem('school_user_logged_in') === 'true';
             const adminLoggedIn = sessionStorage.getItem('admin_logged_in') === 'true';
 
-            // Skip guard if user navigated directly from subscription (first-time setup)
-            // OR if admin session exists
-            if (!loggedIn && !adminLoggedIn && !fromSub) {
-                // Check if there are any approved schools - if yes, enforce login
-                try {
-                    const raw = localStorage.getItem('nepal_registered_schools');
-                    if (raw) {
-                        const list = JSON.parse(raw);
-                        const hasApproved = list.some(s => s.status === 'Approved' && s.otp);
-                        if (hasApproved) {
-                            window.location.href = 'school-login.html';
-                        }
-                    }
-                } catch(e) {}
+            // Allow through if either session exists
+            if (!loggedIn && !adminLoggedIn) {
+                // Only redirect if not coming directly from subscription or school-login flow
+                const fromAllowed = document.referrer && (
+                    document.referrer.includes('subscription.html') ||
+                    document.referrer.includes('school-login.html')
+                );
+                if (!fromAllowed) {
+                    window.location.href = 'school-login.html';
+                }
             }
         })();
     </script>
