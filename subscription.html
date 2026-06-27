@@ -1341,7 +1341,7 @@
         }
 
         // Save subscription details to localStorage
-        function saveSubscriptionInfo(planName, price, gateway, txnId) {
+        async function saveSubscriptionInfo(planName, price, gateway, txnId) {
             const schoolInfoStr = localStorage.getItem('nepal_school_registered_info');
             let schoolInfo = {};
             
