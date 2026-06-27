@@ -899,6 +899,8 @@
         });
         // Session validation
         document.addEventListener('DOMContentLoaded', () => {
+            const filterSelect = document.getElementById('filter-status-select');
+            if (filterSelect) filterSelect.value = 'all';
             checkSuperAuth();
         });
 
@@ -987,6 +989,17 @@
                     <div class="email-subject">✉️ ${notif.subject}</div>
                     <div class="email-body">${notif.body}</div>
                 `;
+                
+                // Add click event to filter for this school
+                bubble.style.cursor = 'pointer';
+                bubble.onclick = () => {
+                    document.getElementById('filter-status-select').value = 'all';
+                    // Extract school name if it exists in the subject or body, or simply clear search
+                    document.getElementById('search-school-input').value = ''; 
+                    renderSchoolsDatabase();
+                    showSuperToast('Filter reset to All Registrations. Please search for the school manually.', 'info');
+                };
+
                 listEl.appendChild(bubble);
             });
             
