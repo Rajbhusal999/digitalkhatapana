@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,7 +39,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
+            background-image:
                 linear-gradient(rgba(229, 169, 59, 0.02) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(229, 169, 59, 0.02) 1px, transparent 1px);
             background-size: 50px 50px;
@@ -63,8 +64,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .super-logo-badge {
@@ -184,20 +192,42 @@
             display: none;
         }
 
-        .super-kpi-card.total { border-left: 4px solid var(--accent); }
-        .super-kpi-card.pending { border-left: 4px solid var(--warning); }
-        .super-kpi-card.approved { border-left: 4px solid var(--success); }
-        .super-kpi-card.rejected { border-left: 4px solid var(--danger); }
+        .super-kpi-card.total {
+            border-left: 4px solid var(--accent);
+        }
+
+        .super-kpi-card.pending {
+            border-left: 4px solid var(--warning);
+        }
+
+        .super-kpi-card.approved {
+            border-left: 4px solid var(--success);
+        }
+
+        .super-kpi-card.rejected {
+            border-left: 4px solid var(--danger);
+        }
 
         .super-kpi-card .kpi-icon {
             background: rgba(255, 255, 255, 0.05);
             color: #ffffff;
         }
 
-        .super-kpi-card.total .kpi-icon { color: var(--accent); }
-        .super-kpi-card.pending .kpi-icon { color: var(--warning); }
-        .super-kpi-card.approved .kpi-icon { color: var(--success); }
-        .super-kpi-card.rejected .kpi-icon { color: var(--danger); }
+        .super-kpi-card.total .kpi-icon {
+            color: var(--accent);
+        }
+
+        .super-kpi-card.pending .kpi-icon {
+            color: var(--warning);
+        }
+
+        .super-kpi-card.approved .kpi-icon {
+            color: var(--success);
+        }
+
+        .super-kpi-card.rejected .kpi-icon {
+            color: var(--danger);
+        }
 
         .super-kpi-card .kpi-details h3 {
             color: #ffffff;
@@ -306,7 +336,7 @@
         .fab-item {
             background: #1e293b;
             color: white;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 10px 15px;
             border-radius: 20px;
             display: flex;
@@ -315,7 +345,7 @@
             cursor: pointer;
             font-size: 0.85rem;
             font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             transition: all 0.2s;
         }
 
@@ -445,7 +475,11 @@
             align-items: center;
             justify-content: center;
         }
-        .delete-modal-overlay.active { display: flex; }
+
+        .delete-modal-overlay.active {
+            display: flex;
+        }
+
         .delete-modal-box {
             background: #0f172a;
             border: 1px solid rgba(239, 68, 68, 0.4);
@@ -457,22 +491,26 @@
             animation: fadeIn 0.3s ease;
             box-shadow: 0 0 40px rgba(239, 68, 68, 0.2);
         }
+
         .delete-modal-box .del-icon {
             font-size: 3rem;
             margin-bottom: 15px;
         }
+
         .delete-modal-box h3 {
             color: #f87171;
             font-size: 1.3rem;
             font-weight: 800;
             margin-bottom: 8px;
         }
+
         .delete-modal-box p {
             color: #94a3b8;
             font-size: 0.88rem;
             line-height: 1.6;
             margin-bottom: 20px;
         }
+
         .delete-modal-box .school-name-highlight {
             color: #fca5a5;
             font-weight: 700;
@@ -484,6 +522,7 @@
             margin-bottom: 18px;
             border: 1px solid rgba(239, 68, 68, 0.2);
         }
+
         .delete-confirm-input {
             width: 100%;
             background: rgba(15, 23, 42, 0.8);
@@ -498,11 +537,20 @@
             transition: border-color 0.2s;
             box-sizing: border-box;
         }
-        .delete-confirm-input:focus { border-color: #ef4444; }
-        .delete-modal-actions { display: flex; gap: 12px; justify-content: center; }
+
+        .delete-confirm-input:focus {
+            border-color: #ef4444;
+        }
+
+        .delete-modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
         .delete-modal-actions .btn-cancel-del {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: #94a3b8;
             padding: 10px 22px;
             border-radius: 8px;
@@ -511,7 +559,12 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .delete-modal-actions .btn-cancel-del:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        .delete-modal-actions .btn-cancel-del:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
         .delete-modal-actions .btn-confirm-del {
             background: linear-gradient(135deg, #ef4444, #b91c1c);
             border: none;
@@ -524,10 +577,12 @@
             transition: var(--transition);
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
         }
+
         .delete-modal-actions .btn-confirm-del:disabled {
             opacity: 0.4;
             cursor: not-allowed;
         }
+
         .delete-modal-actions .btn-confirm-del:not(:disabled):hover {
             transform: translateY(-1px);
             box-shadow: 0 6px 18px rgba(239, 68, 68, 0.5);
@@ -595,11 +650,36 @@
             letter-spacing: 0.3px;
             white-space: nowrap;
         }
-        .sub-expiry-badge.active   { background: rgba(16,185,129,0.15);  color: #34d399; border: 1px solid rgba(16,185,129,0.3);  }
-        .sub-expiry-badge.warning  { background: rgba(245,158,11,0.15);  color: #fbbf24; border: 1px solid rgba(245,158,11,0.3);  }
-        .sub-expiry-badge.expired  { background: rgba(239,68,68,0.15);   color: #f87171; border: 1px solid rgba(239,68,68,0.3);   }
-        .sub-expiry-badge.lifetime { background: rgba(99,102,241,0.15);  color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);  }
-        .sub-expiry-badge.none     { background: rgba(148,163,184,0.1);  color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); }
+
+        .sub-expiry-badge.active {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .sub-expiry-badge.warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .sub-expiry-badge.expired {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .sub-expiry-badge.lifetime {
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .sub-expiry-badge.none {
+            background: rgba(148, 163, 184, 0.1);
+            color: #94a3b8;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
 
         .email-bubble {
             background: rgba(15, 23, 42, 0.6);
@@ -611,9 +691,11 @@
             border-right: 1px solid rgba(255, 255, 255, 0.05);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
+
         .email-bubble:hover {
             background: rgba(229, 169, 59, 0.05);
         }
+
         .email-header {
             display: flex;
             justify-content: space-between;
@@ -622,12 +704,14 @@
             margin-bottom: 8px;
             font-weight: 600;
         }
+
         .email-subject {
             color: #ffffff;
             font-weight: 700;
             font-size: 0.85rem;
             margin-bottom: 5px;
         }
+
         .email-body {
             font-size: 0.8rem;
             line-height: 1.4;
@@ -636,6 +720,7 @@
         }
     </style>
 </head>
+
 <body class="super-admin-body">
 
     <!-- Top Gov Bar -->
@@ -648,7 +733,8 @@
             नेपाल सरकार | शिक्षा, विज्ञान तथा प्रविधि मन्त्रालय (Ministry of Education, Science & Technology)
         </span>
         <span>
-            <a href="digitalkhatapana.html" style="color: white; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 4px;">
+            <a href="digitalkhatapana.html"
+                style="color: white; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 4px;">
                 मुख्य द्वारमा फर्कनुहोस् (Portal Gateway)
             </a>
         </span>
@@ -670,13 +756,17 @@
             <form onsubmit="event.preventDefault(); handleSuperLogin(event); return false;">
                 <div class="glass-input-group">
                     <label for="super-email">Super Admin Email (इमेल ठेगाना)</label>
-                    <input type="email" id="super-email" required class="glass-input-field" placeholder="admin@domain.com">
+                    <input type="email" id="super-email" required class="glass-input-field"
+                        placeholder="admin@domain.com">
                 </div>
                 <div class="glass-input-group">
                     <label for="super-password">Password (सुरक्षा साँचो)</label>
-                    <input type="password" id="super-password" required class="glass-input-field" placeholder="••••••••">
+                    <input type="password" id="super-password" required class="glass-input-field"
+                        placeholder="••••••••">
                 </div>
-                <button type="button" class="btn-portal" style="width: 100%; justify-content: center; margin-top: 25px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%); color: var(--secondary-dark);" onclick="handleSuperLogin(event)">
+                <button type="button" class="btn-portal"
+                    style="width: 100%; justify-content: center; margin-top: 25px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%); color: var(--secondary-dark);"
+                    onclick="handleSuperLogin(event)">
                     Portal Dashboard Access (प्रवेश गर्नुहोस्)
                 </button>
             </form>
@@ -685,7 +775,7 @@
 
     <!-- Dashboard Area (Hidden by default) -->
     <div id="super-dashboard-section" class="super-dashboard-container" style="display: none;">
-        
+
         <!-- Header -->
         <div class="super-dash-header">
             <div class="super-dash-title">
@@ -712,7 +802,8 @@
                     <span>Total Registrations</span>
                     <h3 id="kpi-val-total">0</h3>
                     <p>दर्ता भएका कुल विद्यालय</p>
-                    <div style="color: #10b981; font-size: 0.75rem; font-weight: 700; margin-top: 5px;">↑ 12% this week</div>
+                    <div style="color: #10b981; font-size: 0.75rem; font-weight: 700; margin-top: 5px;">↑ 12% this week
+                    </div>
                 </div>
             </div>
             <div class="kpi-card super-kpi-card pending">
@@ -721,7 +812,8 @@
                     <span>Pending Approval</span>
                     <h3 id="kpi-val-pending">0</h3>
                     <p>स्वीकृति पर्खिरहेका</p>
-                    <div style="color: #f59e0b; font-size: 0.75rem; font-weight: 700; margin-top: 5px;">- 2 awaiting action</div>
+                    <div style="color: #f59e0b; font-size: 0.75rem; font-weight: 700; margin-top: 5px;">- 2 awaiting
+                        action</div>
                 </div>
             </div>
             <div class="kpi-card super-kpi-card approved">
@@ -730,7 +822,8 @@
                     <span>Active Accounts</span>
                     <h3 id="kpi-val-approved">0</h3>
                     <p>स्वीकृत र सक्रिय</p>
-                    <div style="color: #10b981; font-size: 0.75rem; font-weight: 700; margin-top: 5px;">↑ 8% this week</div>
+                    <div style="color: #10b981; font-size: 0.75rem; font-weight: 700; margin-top: 5px;">↑ 8% this week
+                    </div>
                 </div>
             </div>
             <div class="kpi-card super-kpi-card rejected">
@@ -739,7 +832,8 @@
                     <span>Rejected Requests</span>
                     <h3 id="kpi-val-rejected">0</h3>
                     <p>अस्वीकृत आवेदनहरू</p>
-                    <div style="color: #64748b; font-size: 0.75rem; font-weight: 700; margin-top: 5px;">= No change</div>
+                    <div style="color: #64748b; font-size: 0.75rem; font-weight: 700; margin-top: 5px;">= No change
+                    </div>
                 </div>
             </div>
         </div>
@@ -747,17 +841,20 @@
         <!-- Interactive Analytics Charts (New) -->
         <div class="analytics-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-top: 30px;">
             <div class="super-data-card" style="padding: 20px;">
-                <h3 style="color: white; font-size: 1.1rem; margin-bottom: 15px; font-weight: 700;">Registration Trends (दर्ता प्रवृत्ति)</h3>
+                <h3 style="color: white; font-size: 1.1rem; margin-bottom: 15px; font-weight: 700;">Registration Trends
+                    (दर्ता प्रवृत्ति)</h3>
                 <canvas id="registrationChart" height="80"></canvas>
             </div>
             <div class="super-data-card" style="padding: 20px;">
-                <h3 style="color: white; font-size: 1.1rem; margin-bottom: 15px; font-weight: 700;">Account Status (खाता स्थिति)</h3>
+                <h3 style="color: white; font-size: 1.1rem; margin-bottom: 15px; font-weight: 700;">Account Status (खाता
+                    स्थिति)</h3>
                 <canvas id="statusChart" height="180"></canvas>
             </div>
         </div>
 
         <!-- Grid layout for stacked table & inbox notifications -->
-        <div class="super-dashboard-grid" style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-top: 30px; align-items: start;">
+        <div class="super-dashboard-grid"
+            style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-top: 30px; align-items: start;">
             <!-- Left Column: Schools Database Card -->
             <div class="super-data-card" style="margin-bottom: 0;">
                 <div class="card-title-row">
@@ -771,7 +868,9 @@
                 <div class="super-search-row">
                     <div class="super-search-group" style="flex: 2;">
                         <label for="search-school-input">Search Schools (खोज्नुहोस्)</label>
-                        <input type="text" id="search-school-input" class="super-search-field" placeholder="विद्यालयको नाम, इमेल वा इमिस कोडबाट खोज्नुहोस्..." oninput="renderSchoolsDatabase()">
+                        <input type="text" id="search-school-input" class="super-search-field"
+                            placeholder="विद्यालयको नाम, इमेल वा इमिस कोडबाट खोज्नुहोस्..."
+                            oninput="renderSchoolsDatabase()">
                     </div>
                     <div class="super-search-group">
                         <label for="filter-status-select">Filter by Status (दर्ता अवस्था)</label>
@@ -808,7 +907,8 @@
             </div>
 
             <!-- Right Column: Command Center -->
-            <div class="super-data-card" style="margin-bottom: 0; display: flex; flex-direction: column; min-height: 500px;">
+            <div class="super-data-card"
+                style="margin-bottom: 0; display: flex; flex-direction: column; min-height: 500px;">
                 <div class="card-title-row" style="margin-bottom: 10px;">
                     <div>
                         <h3>Command Center</h3>
@@ -817,33 +917,42 @@
                 </div>
 
                 <div class="cmd-tab-buttons">
-                    <button class="cmd-tab-btn active" onclick="switchCmdTab('inbox')" id="cmd-btn-inbox">📧 Inbox</button>
-                    <button class="cmd-tab-btn" onclick="switchCmdTab('broadcast')" id="cmd-btn-broadcast">📢 Broadcast</button>
+                    <button class="cmd-tab-btn active" onclick="switchCmdTab('inbox')" id="cmd-btn-inbox">📧
+                        Inbox</button>
+                    <button class="cmd-tab-btn" onclick="switchCmdTab('broadcast')" id="cmd-btn-broadcast">📢
+                        Broadcast</button>
                 </div>
-                
+
                 <!-- Inbox Tab -->
                 <div id="cmd-tab-inbox" style="flex: 1; display: flex; flex-direction: column;">
                     <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                         <span style="font-size: 0.8rem; color:#94a3b8;">System notifications</span>
-                        <button class="btn-portal" style="padding: 4px 8px; font-size: 0.7rem; background: #ef4444; color: white; border: none; box-shadow: none;" onclick="clearNotifications()">
+                        <button class="btn-portal"
+                            style="padding: 4px 8px; font-size: 0.7rem; background: #ef4444; color: white; border: none; box-shadow: none;"
+                            onclick="clearNotifications()">
                             Clear All
                         </button>
                     </div>
-                    <div id="email-inbox-list" style="flex: 1; overflow-y: auto; max-height: 380px; display: flex; flex-direction: column; gap: 15px; padding-right: 5px;">
+                    <div id="email-inbox-list"
+                        style="flex: 1; overflow-y: auto; max-height: 380px; display: flex; flex-direction: column; gap: 15px; padding-right: 5px;">
                         <!-- Dynamically loaded emails -->
                     </div>
                 </div>
 
                 <!-- Broadcast Tab -->
                 <div id="cmd-tab-broadcast" style="flex: 1; display: none; flex-direction: column;">
-                    <p style="font-size:0.8rem; color:#cbd5e1; margin-bottom:10px;">Send a global notification to all registered schools.</p>
-                    <textarea id="broadcast-msg" class="broadcast-textarea" placeholder="Type your broadcast message here..."></textarea>
+                    <p style="font-size:0.8rem; color:#cbd5e1; margin-bottom:10px;">Send a global notification to all
+                        registered schools.</p>
+                    <textarea id="broadcast-msg" class="broadcast-textarea"
+                        placeholder="Type your broadcast message here..."></textarea>
                     <select id="broadcast-type" class="super-search-field" style="margin-bottom: 10px;">
                         <option value="info">Information (Blue)</option>
                         <option value="warning">Warning (Yellow)</option>
                         <option value="success">Success (Green)</option>
                     </select>
-                    <button class="btn-portal" style="width: 100%; justify-content: center; background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%); color: var(--secondary-dark);" onclick="sendBroadcast()">
+                    <button class="btn-portal"
+                        style="width: 100%; justify-content: center; background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%); color: var(--secondary-dark);"
+                        onclick="sendBroadcast()">
                         Send Global Broadcast 🚀
                     </button>
                 </div>
@@ -858,13 +967,18 @@
         <div class="delete-modal-box">
             <div class="del-icon">🗑️</div>
             <h3>विद्यालय स्थायी रूपमा मेटाउनुहोस्</h3>
-            <p>This action is <strong style="color:#f87171;">PERMANENT and IRREVERSIBLE</strong>.<br>All transactions, budgets, feedbacks and registration data for this school will be wiped from both local storage and the database.</p>
+            <p>This action is <strong style="color:#f87171;">PERMANENT and IRREVERSIBLE</strong>.<br>All transactions,
+                budgets, feedbacks and registration data for this school will be wiped from both local storage and the
+                database.</p>
             <div class="school-name-highlight" id="del-school-name-label">School Name</div>
-            <p style="font-size:0.82rem; margin-bottom: 10px;">Type <strong style="color:#fca5a5;">DELETE</strong> below to confirm:</p>
-            <input type="text" class="delete-confirm-input" id="del-confirm-input" placeholder="Type DELETE here..." oninput="checkDeleteConfirm()">
+            <p style="font-size:0.82rem; margin-bottom: 10px;">Type <strong style="color:#fca5a5;">DELETE</strong> below
+                to confirm:</p>
+            <input type="text" class="delete-confirm-input" id="del-confirm-input" placeholder="Type DELETE here..."
+                oninput="checkDeleteConfirm()">
             <div class="delete-modal-actions">
                 <button class="btn-cancel-del" onclick="closeDeleteModal()">Cancel (रद्द गर्नुहोस्)</button>
-                <button class="btn-confirm-del" id="del-confirm-btn" disabled onclick="confirmDeleteSchool()">🗑️ Delete Forever</button>
+                <button class="btn-confirm-del" id="del-confirm-btn" disabled onclick="confirmDeleteSchool()">🗑️ Delete
+                    Forever</button>
             </div>
         </div>
     </div>
@@ -905,7 +1019,7 @@
                 try {
                     superAdminSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                     console.log('[SuperAdmin] Own Supabase client created successfully.');
-                } catch(e) {
+                } catch (e) {
                     console.error('[SuperAdmin] Failed to create Supabase client:', e);
                 }
             }
@@ -942,9 +1056,9 @@
                     otp: item.otp,
                     otpUsed: item.otp_used,
                     permanentPassword: item.permanent_password,
-                    subscription: (function(){
+                    subscription: (function () {
                         try { return typeof item.subscription === 'string' ? JSON.parse(item.subscription) : item.subscription; }
-                        catch(e) { return item.subscription; }
+                        catch (e) { return item.subscription; }
                     })(),
                     paymentMethod: item.payment_method,
                     transactionCode: item.transaction_code,
@@ -954,7 +1068,7 @@
                 _cachedSchoolsList = schools;
                 console.log(`[SuperAdmin] Loaded ${schools.length} schools from Supabase.`);
                 return schools;
-            } catch(e) {
+            } catch (e) {
                 console.error('[SuperAdmin] Supabase fetch failed:', e);
                 return _cachedSchoolsList || [];
             }
@@ -976,25 +1090,25 @@
         async function renderNotifications() {
             const listEl = document.getElementById('email-inbox-list');
             if (!listEl) return;
-            
+
             listEl.innerHTML = '<div style="text-align:center; color:#94a3b8; padding:20px;">Loading notifications...</div>';
-            
+
             let notifications = [];
             if (window.fetchNotifications) {
                 notifications = await window.fetchNotifications();
             }
-            
+
             listEl.innerHTML = '';
-            
+
             // Sort by timestamp descending
             notifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            
+
             notifications.forEach(notif => {
                 const bubble = document.createElement('div');
                 bubble.className = 'email-bubble';
-                
+
                 const timeStr = new Date(notif.timestamp).toLocaleString();
-                
+
                 bubble.innerHTML = `
                     <div class="email-header">
                         <span>To: ${notif.to}</span>
@@ -1003,7 +1117,7 @@
                     <div class="email-subject">✉️ ${notif.subject}</div>
                     <div class="email-body">${notif.body}</div>
                 `;
-                
+
                 bubble.style.cursor = 'pointer';
                 bubble.title = 'Click to find this school in the table below';
                 bubble.onclick = () => {
@@ -1020,7 +1134,7 @@
 
                 listEl.appendChild(bubble);
             });
-            
+
             if (notifications.length === 0) {
                 listEl.innerHTML = `
                     <div style="text-align: center; color: #94a3b8; padding: 40px 10px; font-size: 0.85rem; border: 1px dashed rgba(255, 255, 255, 0.1); border-radius: var(--radius-sm); margin-top: 20px;">
@@ -1029,7 +1143,7 @@
                 `;
             }
         }
-        
+
         async function clearNotifications() {
             if (confirm('Are you sure you want to clear all system email notifications?')) {
                 if (window.clearNotifications) {
@@ -1061,10 +1175,10 @@
                 const password = document.getElementById('super-password').value.trim();
                 if (email === 'khatapana2083@gmail.com' && password === 'Khatapana@2083') {
                     sessionStorage.setItem('super_admin_logged_in', 'true');
-                    try { showSuperToast('Access Granted! Redirecting to dashboard...', 'success'); } catch(e) {}
+                    try { showSuperToast('Access Granted! Redirecting to dashboard...', 'success'); } catch (e) { }
                     setTimeout(() => { checkSuperAuth(); }, 1000);
                 } else {
-                    try { showSuperToast('Invalid Credentials! Access Denied.', 'error'); } catch(e) { alert('Invalid Credentials! Access Denied.'); }
+                    try { showSuperToast('Invalid Credentials! Access Denied.', 'error'); } catch (e) { alert('Invalid Credentials! Access Denied.'); }
                 }
             } catch (err) {
                 alert("Login Error: " + err.message + "\nPlease make sure you are not in Incognito Mode and cookies/storage are allowed.");
@@ -1251,9 +1365,9 @@
             let otp = '';
             for (let i = 0; i < 8; i++) otp += otpChars[Math.floor(Math.random() * otpChars.length)];
 
-            schoolsList[idx].status    = 'Approved';
-            schoolsList[idx].otp       = otp;
-            schoolsList[idx].otpUsed   = false;
+            schoolsList[idx].status = 'Approved';
+            schoolsList[idx].otp = otp;
+            schoolsList[idx].otpUsed = false;
             schoolsList[idx].approvedAt = new Date().toISOString();
             if (schoolsList[idx].subscription) schoolsList[idx].subscription.status = 'Active';
 
@@ -1263,7 +1377,7 @@
             }
 
             const schoolName = schoolsList[idx].schoolName || email;
-            const loginUrl   = window.location.origin + (window.location.pathname.replace('portal-admin.html','')) + 'school-login.html';
+            const loginUrl = window.location.origin + (window.location.pathname.replace('portal-admin.html', '')) + 'school-login.html';
 
             // Save notification to Supabase
             if (window.saveNotification) {
@@ -1307,12 +1421,12 @@ ${loginUrl}
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({
                     _subject: `✅ Khata Pana Login OTP - ${schoolName}`,
-                    message:  emailBody
+                    message: emailBody
                 })
             })
-            .then(r => r.json())
-            .then(() => console.log(`OTP email sent to ${email}`))
-            .catch(err => console.warn('OTP email failed (FormSubmit):', err));
+                .then(r => r.json())
+                .then(() => console.log(`OTP email sent to ${email}`))
+                .catch(err => console.warn('OTP email failed (FormSubmit):', err));
 
             showSuperToast(`✅ "${schoolName}" approved! OTP: ${otp} — sent to ${email}`, 'success');
             initSuperDashboard();
@@ -1328,14 +1442,14 @@ ${loginUrl}
             let otp = '';
             for (let i = 0; i < 8; i++) otp += otpChars[Math.floor(Math.random() * otpChars.length)];
 
-            schoolsList[idx].otp     = otp;
+            schoolsList[idx].otp = otp;
             schoolsList[idx].otpUsed = false;
             if (window.upsertRegisteredSchool) {
                 await window.upsertRegisteredSchool(schoolsList[idx]);
             }
 
             const schoolName = schoolsList[idx].schoolName || email;
-            const loginUrl   = window.location.origin + (window.location.pathname.replace('portal-admin.html','')) + 'school-login.html';
+            const loginUrl = window.location.origin + (window.location.pathname.replace('portal-admin.html', '')) + 'school-login.html';
 
             const emailBody = `
 नयाँ OTP पठाइएको छ! (New One-Time Password)
@@ -1363,9 +1477,9 @@ ${loginUrl}
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({ _subject: `🔁 Khata Pana New OTP - ${schoolName}`, message: emailBody })
             })
-            .then(r => r.json())
-            .then(() => console.log(`Resend OTP email sent to ${email}`))
-            .catch(err => console.warn('Resend OTP email failed:', err));
+                .then(r => r.json())
+                .then(() => console.log(`Resend OTP email sent to ${email}`))
+                .catch(err => console.warn('Resend OTP email failed:', err));
 
             showSuperToast(`🔁 New OTP: ${otp} — resent to ${email}`, 'success');
         }
@@ -1392,11 +1506,11 @@ ${loginUrl}
            DELETE SCHOOL — Full Data Wipe
         ───────────────────────────────────────────────── */
         let _pendingDeleteEmail = null;
-        let _pendingDeleteName  = null;
+        let _pendingDeleteName = null;
 
         function openDeleteModal(email, schoolName) {
             _pendingDeleteEmail = email;
-            _pendingDeleteName  = schoolName;
+            _pendingDeleteName = schoolName;
             document.getElementById('del-school-name-label').innerText = schoolName || email;
             document.getElementById('del-confirm-input').value = '';
             document.getElementById('del-confirm-btn').disabled = true;
@@ -1406,7 +1520,7 @@ ${loginUrl}
         function closeDeleteModal() {
             document.getElementById('delete-school-modal').classList.remove('active');
             _pendingDeleteEmail = null;
-            _pendingDeleteName  = null;
+            _pendingDeleteName = null;
         }
 
         function checkDeleteConfirm() {
@@ -1420,54 +1534,53 @@ ${loginUrl}
             const schoolName = _pendingDeleteName || email;
 
             // 1. Delete from Supabase registered_schools
-            if (window.deleteRegisteredSchool) {
-                await window.deleteRegisteredSchool(email);
-            }
-
-                }
-            } catch(e) {}
-
-            // 3. Wipe all school-specific localStorage keys
-            const keysToDelete = [
-                'nepal_school_finances'       + suffix,
-                'nepal_school_budgets'        + suffix,
-                'nepal_school_feedbacks'      + suffix,
-                'nepal_school_ledger_headings'+ suffix,
-                'nepal_school_income_categories'  + suffix,
-                'nepal_school_expense_categories' + suffix
-            ];
-            keysToDelete.forEach(k => localStorage.removeItem(k));
-
-            // 4. Wipe Supabase records for this school's email (school_id)
             try {
-                const hasConfig = typeof SUPABASE_URL !== 'undefined' &&
-                                  typeof SUPABASE_ANON_KEY !== 'undefined' &&
-                                  SUPABASE_URL && SUPABASE_ANON_KEY &&
-                                  !SUPABASE_URL.includes('YOUR_SUPABASE') &&
-                                  !SUPABASE_ANON_KEY.includes('YOUR_SUPABASE');
-
-                if (hasConfig && window.supabase) {
-                    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                    const schoolId = email.replace(/[^a-zA-Z0-9@.]/g, '');
-
-                    // Delete transactions by school_id
-                    await client.from('transactions').delete().eq('school_id', schoolId);
-                    // Delete budgets by school_id
-                    await client.from('budgets').delete().eq('school_id', schoolId);
-                    // Delete feedbacks by school_id
-                    await client.from('feedbacks').delete().eq('school_id', schoolId);
-                    // Delete ledger headings by school_id
-                    await client.from('ledger_headings').delete().eq('school_id', schoolId);
-
-                    console.log(`Supabase records for ${schoolId} deleted.`);
+                if (window.deleteRegisteredSchool) {
+                    await window.deleteRegisteredSchool(email);
                 }
-            } catch(err) {
-                console.warn('Supabase cleanup partial or not applicable:', err);
-            }
+            } catch (e) { console.error('Failed to delete registered school:', e); }
 
-            closeDeleteModal();
-            showSuperToast(`🗑️ School "${schoolName}" and all its data have been permanently deleted.`, 'error');
-            initSuperDashboard();
+        // 3. Wipe all school-specific localStorage keys
+        const keysToDelete = [
+            'nepal_school_finances' + suffix,
+            'nepal_school_budgets' + suffix,
+            'nepal_school_feedbacks' + suffix,
+            'nepal_school_ledger_headings' + suffix,
+            'nepal_school_income_categories' + suffix,
+            'nepal_school_expense_categories' + suffix
+        ];
+        keysToDelete.forEach(k => localStorage.removeItem(k));
+
+        // 4. Wipe Supabase records for this school's email (school_id)
+        try {
+            const hasConfig = typeof SUPABASE_URL !== 'undefined' &&
+                typeof SUPABASE_ANON_KEY !== 'undefined' &&
+                SUPABASE_URL && SUPABASE_ANON_KEY &&
+                !SUPABASE_URL.includes('YOUR_SUPABASE') &&
+                !SUPABASE_ANON_KEY.includes('YOUR_SUPABASE');
+
+            if (hasConfig && window.supabase) {
+                const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                const schoolId = email.replace(/[^a-zA-Z0-9@.]/g, '');
+
+                // Delete transactions by school_id
+                await client.from('transactions').delete().eq('school_id', schoolId);
+                // Delete budgets by school_id
+                await client.from('budgets').delete().eq('school_id', schoolId);
+                // Delete feedbacks by school_id
+                await client.from('feedbacks').delete().eq('school_id', schoolId);
+                // Delete ledger headings by school_id
+                await client.from('ledger_headings').delete().eq('school_id', schoolId);
+
+                console.log(`Supabase records for ${schoolId} deleted.`);
+            }
+        } catch (err) {
+            console.warn('Supabase cleanup partial or not applicable:', err);
+        }
+
+        closeDeleteModal();
+        showSuperToast(`🗑️ School "${schoolName}" and all its data have been permanently deleted.`, 'error');
+        initSuperDashboard();
         }
 
         // Beautiful toast helper
@@ -1505,7 +1618,7 @@ ${loginUrl}
         // CSV Export Feature — uses in-memory cache
         async function exportDataCSV() {
             const schoolsList = _cachedSchoolsList.length > 0 ? _cachedSchoolsList : await fetchSchoolsFromSupabase();
-            
+
             if (schoolsList.length === 0) {
                 showSuperToast('No data to export.', 'info');
                 return;
@@ -1524,7 +1637,7 @@ ${loginUrl}
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
+
             showSuperToast('Data exported to CSV.', 'success');
             toggleFab();
         }
@@ -1548,7 +1661,7 @@ ${loginUrl}
                 showSuperToast('Please enter a broadcast message.', 'error');
                 return;
             }
-            
+
             if (window.saveBroadcast) {
                 await window.saveBroadcast(msg, type);
             }
@@ -1570,7 +1683,7 @@ ${loginUrl}
 
             const statusCtx = document.getElementById('statusChart').getContext('2d');
             if (statusChartInstance) statusChartInstance.destroy();
-            
+
             statusChartInstance = new Chart(statusCtx, {
                 type: 'doughnut',
                 data: {
@@ -1592,7 +1705,7 @@ ${loginUrl}
             // Process data for Registration Line Chart (Mocked historical data combined with actual)
             const regCtx = document.getElementById('registrationChart').getContext('2d');
             if (regChartInstance) regChartInstance.destroy();
-            
+
             // Mock monthly data up to now for visual effect
             const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
             const data = [5, 12, 19, 30, 45, 60, total = schoolsList.length > 60 ? schoolsList.length : 72];
@@ -1622,4 +1735,5 @@ ${loginUrl}
         }
     </script>
 </body>
+
 </html>
