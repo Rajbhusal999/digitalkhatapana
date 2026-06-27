@@ -667,7 +667,7 @@
             <h2>खातापाना केन्द्रिय प्रणाली</h2>
             <p>Super Administrative Portal Gateway</p>
 
-            <form onsubmit="handleSuperLogin(event)">
+            <form onsubmit="event.preventDefault(); handleSuperLogin(event); return false;">
                 <div class="glass-input-group">
                     <label for="super-email">Super Admin Email (इमेल ठेगाना)</label>
                     <input type="email" id="super-email" required class="glass-input-field" placeholder="admin@domain.com">
@@ -676,7 +676,7 @@
                     <label for="super-password">Password (सुरक्षा साँचो)</label>
                     <input type="password" id="super-password" required class="glass-input-field" placeholder="••••••••">
                 </div>
-                <button type="submit" class="btn-portal" style="width: 100%; justify-content: center; margin-top: 25px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%); color: var(--secondary-dark);">
+                <button type="button" class="btn-portal" style="width: 100%; justify-content: center; margin-top: 25px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%); color: var(--secondary-dark);" onclick="handleSuperLogin(event)">
                     Portal Dashboard Access (प्रवेश गर्नुहोस्)
                 </button>
             </form>
@@ -1055,15 +1055,19 @@
         }
 
         function handleSuperLogin(event) {
-            event.preventDefault();
-            const email = document.getElementById('super-email').value.trim().toLowerCase();
-            const password = document.getElementById('super-password').value.trim();
-            if (email === 'khatapana2083@gmail.com' && password === 'Khatapana@2083') {
-                sessionStorage.setItem('super_admin_logged_in', 'true');
-                showSuperToast('Access Granted! Redirecting to dashboard...', 'success');
-                setTimeout(() => { checkSuperAuth(); }, 1000);
-            } else {
-                showSuperToast('Invalid Credentials! Access Denied.', 'error');
+            if (event) event.preventDefault();
+            try {
+                const email = document.getElementById('super-email').value.trim().toLowerCase();
+                const password = document.getElementById('super-password').value.trim();
+                if (email === 'khatapana2083@gmail.com' && password === 'Khatapana@2083') {
+                    sessionStorage.setItem('super_admin_logged_in', 'true');
+                    try { showSuperToast('Access Granted! Redirecting to dashboard...', 'success'); } catch(e) {}
+                    setTimeout(() => { checkSuperAuth(); }, 1000);
+                } else {
+                    try { showSuperToast('Invalid Credentials! Access Denied.', 'error'); } catch(e) { alert('Invalid Credentials! Access Denied.'); }
+                }
+            } catch (err) {
+                alert("Login Error: " + err.message + "\nPlease make sure you are not in Incognito Mode and cookies/storage are allowed.");
             }
         }
 
