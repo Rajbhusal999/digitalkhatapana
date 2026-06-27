@@ -1381,14 +1381,18 @@
             schoolsList.push(schoolInfo);
             localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
             if (window.upsertRegisteredSchool) {
-                window.upsertRegisteredSchool(schoolInfo).catch(console.error);
+                try {
+                    await window.upsertRegisteredSchool(schoolInfo);
+                } catch(e) {
+                    console.error('Supabase save failed:', e);
+                }
             }
             
             // Dispatch email notification to rajbhusal235@gmail.com
             sendAdminNotification(schoolInfo.schoolName, schoolInfo.schoolEmail, 'Approved');
         }
 
-        function submitTransactionCode(event, gateway) {
+        async function submitTransactionCode(event, gateway) {
             event.preventDefault();
             
             // Find the correct code input
@@ -1447,12 +1451,17 @@
             schoolsList = schoolsList.filter(s => s.schoolEmail.toLowerCase() !== schoolInfo.schoolEmail.toLowerCase());
             schoolsList.push(schoolInfo);
             localStorage.setItem('nepal_registered_schools', JSON.stringify(schoolsList));
-            if (window.upsertRegisteredSchool) {
-                window.upsertRegisteredSchool(schoolInfo).catch(console.error);
-            }
-
+            
             // Dispatch email notification to rajbhusal235@gmail.com
             sendAdminNotification(schoolInfo.schoolName, schoolInfo.schoolEmail, 'Pending');
+
+            if (window.upsertRegisteredSchool) {
+                try {
+                    await window.upsertRegisteredSchool(schoolInfo);
+                } catch(e) {
+                    console.error('Supabase save failed:', e);
+                }
+            }
 
             // Show success alert in checkout modal
             // Transition to Step 3 success screen
