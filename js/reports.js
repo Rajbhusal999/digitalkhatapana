@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentReport = reportParam;
     }
 
-    updateSchoolHeader();
     updateSidebarActiveState();
 
     // Initialize Nepali Date Picker
@@ -59,6 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     await window.initDatabase();
+    updateSchoolHeader();
     allTransactions = window.getTransactions();
     generateReport();
 });

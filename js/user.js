@@ -105,6 +105,7 @@ const TRANSLATIONS = {
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
+    await initDatabase();
     // Use window._activeSchoolInfo resolved from Supabase by database.js
     const schoolInfo = window._activeSchoolInfo;
 
@@ -154,7 +155,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     applyLanguage();
     populateCategoryDropdowns();
-    await initDatabase();
     updateDashboardMetrics();
     renderBudgetBars();
     renderCharts();
