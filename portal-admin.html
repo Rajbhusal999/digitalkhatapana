@@ -1173,7 +1173,7 @@
             try {
                 const email = document.getElementById('super-email').value.trim().toLowerCase();
                 const password = document.getElementById('super-password').value.trim();
-                if (email === 'khatapana2083@gmail.com' && password === 'Khatapana@2083') {
+                if (email === 'khatapanadigital2083@gmail.com' && password === 'Khatapana2083@\\') {
                     sessionStorage.setItem('super_admin_logged_in', 'true');
                     try { showSuperToast('Access Granted! Redirecting to dashboard...', 'success'); } catch (e) { }
                     setTimeout(() => { checkSuperAuth(); }, 1000);
@@ -1540,47 +1540,47 @@ ${loginUrl}
                 }
             } catch (e) { console.error('Failed to delete registered school:', e); }
 
-        // 3. Wipe all school-specific localStorage keys
-        const keysToDelete = [
-            'nepal_school_finances' + suffix,
-            'nepal_school_budgets' + suffix,
-            'nepal_school_feedbacks' + suffix,
-            'nepal_school_ledger_headings' + suffix,
-            'nepal_school_income_categories' + suffix,
-            'nepal_school_expense_categories' + suffix
-        ];
-        keysToDelete.forEach(k => localStorage.removeItem(k));
+            // 3. Wipe all school-specific localStorage keys
+            const keysToDelete = [
+                'nepal_school_finances' + suffix,
+                'nepal_school_budgets' + suffix,
+                'nepal_school_feedbacks' + suffix,
+                'nepal_school_ledger_headings' + suffix,
+                'nepal_school_income_categories' + suffix,
+                'nepal_school_expense_categories' + suffix
+            ];
+            keysToDelete.forEach(k => localStorage.removeItem(k));
 
-        // 4. Wipe Supabase records for this school's email (school_id)
-        try {
-            const hasConfig = typeof SUPABASE_URL !== 'undefined' &&
-                typeof SUPABASE_ANON_KEY !== 'undefined' &&
-                SUPABASE_URL && SUPABASE_ANON_KEY &&
-                !SUPABASE_URL.includes('YOUR_SUPABASE') &&
-                !SUPABASE_ANON_KEY.includes('YOUR_SUPABASE');
+            // 4. Wipe Supabase records for this school's email (school_id)
+            try {
+                const hasConfig = typeof SUPABASE_URL !== 'undefined' &&
+                    typeof SUPABASE_ANON_KEY !== 'undefined' &&
+                    SUPABASE_URL && SUPABASE_ANON_KEY &&
+                    !SUPABASE_URL.includes('YOUR_SUPABASE') &&
+                    !SUPABASE_ANON_KEY.includes('YOUR_SUPABASE');
 
-            if (hasConfig && window.supabase) {
-                const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                const schoolId = email.replace(/[^a-zA-Z0-9@.]/g, '');
+                if (hasConfig && window.supabase) {
+                    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    const schoolId = email.replace(/[^a-zA-Z0-9@.]/g, '');
 
-                // Delete transactions by school_id
-                await client.from('transactions').delete().eq('school_id', schoolId);
-                // Delete budgets by school_id
-                await client.from('budgets').delete().eq('school_id', schoolId);
-                // Delete feedbacks by school_id
-                await client.from('feedbacks').delete().eq('school_id', schoolId);
-                // Delete ledger headings by school_id
-                await client.from('ledger_headings').delete().eq('school_id', schoolId);
+                    // Delete transactions by school_id
+                    await client.from('transactions').delete().eq('school_id', schoolId);
+                    // Delete budgets by school_id
+                    await client.from('budgets').delete().eq('school_id', schoolId);
+                    // Delete feedbacks by school_id
+                    await client.from('feedbacks').delete().eq('school_id', schoolId);
+                    // Delete ledger headings by school_id
+                    await client.from('ledger_headings').delete().eq('school_id', schoolId);
 
-                console.log(`Supabase records for ${schoolId} deleted.`);
+                    console.log(`Supabase records for ${schoolId} deleted.`);
+                }
+            } catch (err) {
+                console.warn('Supabase cleanup partial or not applicable:', err);
             }
-        } catch (err) {
-            console.warn('Supabase cleanup partial or not applicable:', err);
-        }
 
-        closeDeleteModal();
-        showSuperToast(`🗑️ School "${schoolName}" and all its data have been permanently deleted.`, 'error');
-        initSuperDashboard();
+            closeDeleteModal();
+            showSuperToast(`🗑️ School "${schoolName}" and all its data have been permanently deleted.`, 'error');
+            initSuperDashboard();
         }
 
         // Beautiful toast helper
