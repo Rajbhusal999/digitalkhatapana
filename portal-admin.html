@@ -1010,6 +1010,9 @@
         let superAdminSupabase = null;
 
         document.addEventListener('DOMContentLoaded', async () => {
+            if (window.initDatabase) {
+                await window.initDatabase();
+            }
             // Reset filter
             const filterSelect = document.getElementById('filter-status-select');
             if (filterSelect) filterSelect.value = 'all';
