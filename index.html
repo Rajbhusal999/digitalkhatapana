@@ -166,7 +166,7 @@
             flex: 1;
             position: relative;
             display: flex;
-            align-items: flex-end;
+            align-items: center; /* Centered vertically */
             justify-content: center;
             background-color: var(--bg-cream);
         }
@@ -175,8 +175,8 @@
         .hero-right::before {
             content: '';
             position: absolute;
-            width: 500px;
-            height: 500px;
+            width: 450px;
+            height: 450px;
             background-color: var(--accent-gold);
             border-radius: 50%;
             top: 50%;
@@ -187,13 +187,15 @@
         }
 
         .hero-right img {
-            max-width: 85%;
-            height: auto;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
             position: relative;
             z-index: 2;
-            object-fit: contain;
-            object-position: bottom;
-            max-height: 80vh;
+            object-fit: cover;
+            object-position: top; /* Focus on the face */
+            border: 8px solid var(--bg-cream);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
 
         /* --- Projects Section --- */
