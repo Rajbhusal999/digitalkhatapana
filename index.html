@@ -3,265 +3,671 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raj Bhusal - Personal Portfolio</title>
+    <title>Raj Bhusal - Digital Architect & Developer</title>
     <meta name="description" content="Personal Portfolio of Raj Bhusal">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --accent: #10b981;
-            --bg-color: #0f172a;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --glass-bg: rgba(30, 41, 59, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --bg-cream: #f4f0ea;
+            --bg-teal: #305856;
+            --bg-dark: #2a2e33;
+            --bg-darker: #1e2124;
+            --accent-gold: #c29f6d;
+            --text-dark: #1a1a1a;
+            --text-light: #f4f0ea;
+            --text-muted: #8b959b;
+            --font-sans: 'Inter', sans-serif;
+            --font-serif: 'Playfair Display', serif;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            min-height: 100vh;
+            font-family: var(--font-sans);
+            color: var(--text-dark);
+            background-color: var(--bg-cream);
+            line-height: 1.6;
             overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.15) 0%, transparent 50%);
-            background-attachment: fixed;
         }
 
-        /* --- Animations --- */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
-        }
-
-        /* --- Navbar --- */
-        nav {
-            padding: 2rem 5%;
+        /* --- Header --- */
+        .header {
+            background-color: var(--bg-cream);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1.5rem 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            animation: fadeIn 0.8s ease-out;
+            border-top: 10px solid var(--bg-darker); /* Dark bar at very top like mockup */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         .logo {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            letter-spacing: -1px;
+            text-decoration: none;
         }
 
-        /* --- Main Hero Section --- */
-        .hero {
-            flex: 1;
+        .nav {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem 5%;
-            z-index: 10;
+            gap: 2.5rem;
         }
 
-        .hero-badge {
-            background: rgba(99, 102, 241, 0.1);
-            color: #818cf8;
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            font-size: 0.875rem;
+        .nav a {
+            text-decoration: none;
+            color: var(--text-dark);
             font-weight: 600;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            margin-bottom: 1.5rem;
-            animation: fadeIn 0.8s ease-out 0.2s both;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
         }
 
-        .hero h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: clamp(3rem, 8vw, 5rem);
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            animation: fadeIn 0.8s ease-out 0.4s both;
+        .nav a:hover {
+            color: var(--accent-gold);
         }
 
-        .hero h1 span {
-            background: linear-gradient(135deg, var(--primary) 0%, #a855f7 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            font-size: 1.125rem;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin-bottom: 3rem;
-            line-height: 1.6;
-            animation: fadeIn 0.8s ease-out 0.6s both;
-        }
-
-        /* --- Featured Projects Glass Card --- */
-        .featured-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            width: 100%;
-            max-width: 600px;
-            text-align: left;
-            animation: fadeIn 0.8s ease-out 0.8s both;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        /* --- Hero Section --- */
+        .hero {
+            display: flex;
+            min-height: 80vh;
             position: relative;
+            background-color: var(--bg-cream);
             overflow: hidden;
         }
 
-        .featured-card::before {
+        .hero-left {
+            flex: 1;
+            background-color: #dce5e4; /* Light teal-grey from mockup */
+            display: flex;
+            align-items: center;
+            padding: 4rem 5% 4rem 10%;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Mockup has a strong teal shape on the left */
+        .hero-left::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-teal);
+            clip-path: polygon(0 0, 100% 0, 80% 100%, 0% 100%);
+            z-index: -1;
         }
 
-        .featured-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        .hero-content {
+            max-width: 600px;
+            animation: slideUp 1s ease-out forwards;
         }
 
-        .card-label {
-            font-size: 0.75rem;
+        .hero-content h1 {
+            font-family: var(--font-sans);
+            font-size: clamp(2.5rem, 4vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--bg-darker);
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-            display: block;
         }
 
-        .card-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.75rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card-desc {
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        /* --- The Main Button --- */
-        .btn-khatapana {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-            color: white;
-            text-decoration: none;
-            padding: 1rem 2rem;
-            border-radius: 1rem;
-            font-weight: 600;
+        .hero-content p {
             font-size: 1.1rem;
-            transition: all 0.3s ease;
-            animation: pulseGlow 2s infinite;
-            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--bg-darker);
+            margin-bottom: 2.5rem;
+            max-width: 450px;
+            font-weight: 400;
         }
 
-        .btn-khatapana:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
-            animation: none;
+        .btn-gold {
+            display: inline-block;
+            background-color: var(--accent-gold);
+            color: white;
+            padding: 1rem 2.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
         }
 
-        .btn-khatapana svg {
-            width: 20px;
-            height: 20px;
+        .btn-gold:hover {
+            background-color: #b08a54;
+            transform: translateY(-2px);
+        }
+
+        .hero-right {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background-color: var(--bg-cream);
+        }
+
+        /* Gold circle accent behind the portrait */
+        .hero-right::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background-color: var(--accent-gold);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        .hero-right img {
+            max-width: 85%;
+            height: auto;
+            position: relative;
+            z-index: 2;
+            object-fit: contain;
+            object-position: bottom;
+            max-height: 80vh;
+        }
+
+        /* --- Projects Section --- */
+        .projects {
+            padding: 6rem 5%;
+            background-color: var(--bg-cream);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .project-card {
+            display: flex;
+            flex-direction: column;
             transition: transform 0.3s ease;
         }
 
-        .btn-khatapana:hover svg {
-            transform: translateX(4px);
+        .project-card:hover {
+            transform: translateY(-5px);
         }
 
-        /* --- Footer --- */
-        footer {
+        .project-image-wrapper {
+            background-color: var(--bg-teal);
+            padding: 1rem;
+            aspect-ratio: 4/3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .project-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.5s ease;
+        }
+
+        .project-card:hover .project-image-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .project-title {
+            font-family: var(--font-sans);
+            font-weight: 800;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .project-subtitle {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            margin-bottom: 0.8rem;
+        }
+
+        .project-desc {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .project-link {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--bg-teal);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .project-link:hover {
+            color: var(--accent-gold);
+        }
+
+        /* --- About & Skills Section --- */
+        .about-skills {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 5% 6rem;
+            gap: 4rem;
+        }
+
+        .about-col, .skills-col {
+            flex: 1;
+        }
+
+        .section-title {
+            font-family: var(--font-sans);
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .about-col p {
+            font-size: 1rem;
+            color: #444;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .btn-gold-outline {
+            display: inline-block;
+            border: 2px solid var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gold-outline:hover {
+            background-color: var(--accent-gold);
+            color: white;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
             text-align: center;
-            padding: 2rem;
+        }
+
+        .skill-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .skill-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--bg-darker);
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .skill-item:hover .skill-icon {
+            transform: translateY(-5px);
+        }
+
+        .skill-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* --- Services Section --- */
+        .services {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding: 6rem 5%;
+            text-align: center;
+        }
+
+        .services .section-title {
+            color: var(--text-light);
+            margin-bottom: 4rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .service-card h3 {
+            font-family: var(--font-sans);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .service-card p {
+            font-size: 0.9rem;
             color: var(--text-muted);
-            font-size: 0.875rem;
-            border-top: 1px solid var(--glass-border);
-            margin-top: auto;
+            line-height: 1.6;
+        }
+
+        /* --- Footer Section --- */
+        .footer {
+            background-color: var(--bg-darker);
+            color: var(--text-light);
+            padding: 5rem 5% 2rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            max-width: 1400px;
+            margin: 0 auto 4rem;
+            flex-wrap: wrap;
+            gap: 3rem;
+        }
+
+        .footer-left h2 {
+            font-family: var(--font-sans);
+            font-size: 2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-left p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 4rem;
+        }
+
+        .footer-col h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-col ul a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-col ul a:hover {
+            color: var(--accent-gold);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Responsive */
+        @media (max-width: 900px) {
+            .hero { flex-direction: column; }
+            .hero-left { padding: 4rem 5%; clip-path: none; background-color: var(--bg-teal); }
+            .hero-content h1, .hero-content p { color: var(--text-light); }
+            .about-skills { flex-direction: column; }
+            .footer-content { flex-direction: column; }
+        }
         @media (max-width: 600px) {
-            .featured-card {
-                padding: 1.5rem;
-            }
+            .nav { display: none; } /* Add hamburger later if needed */
+            .skills-grid { grid-template-columns: repeat(2, 1fr); }
+            .services-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="logo">RB.</div>
-        <!-- You can add social links here later -->
-        <div>
-            <a href="mailto:hello@rajbhusal.com.np" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">Contact</a>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="#" class="logo">RB</a>
+            <nav class="nav">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#projects">Projects</a>
+                <a href="#services">Services</a>
+                <a href="#contact">Contact</a>
+            </nav>
         </div>
-    </nav>
+    </header>
 
-    <main class="hero">
-        <div class="hero-badge">Welcome to my digital space</div>
-        <h1>Hi, I'm <span>Raj Bhusal</span></h1>
-        <p>A passionate professional building impactful digital solutions. Explore my latest work and initiatives below.</p>
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-left">
+            <div class="hero-content">
+                <h1>CRAFTING DIGITAL<br>EXPERIENCES THAT<br>INSPIRE.</h1>
+                <p>I'm Raj Bhusal, a passionate developer focused on creating intuitive, beautiful, and impactful digital solutions.</p>
+                <a href="#projects" class="btn-gold">VIEW PORTFOLIO</a>
+            </div>
+        </div>
+        <div class="hero-right">
+            <!-- Portrait Image Placeholder -->
+            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800" alt="Raj Bhusal" />
+        </div>
+    </section>
 
-        <!-- Digital Khatapana Featured Section -->
-        <div class="featured-card">
-            <span class="card-label">Featured Project</span>
-            <h2 class="card-title">
-                Digital खातापाना
-            </h2>
-            <p class="card-desc">
-                A comprehensive Income & Expenditure Transparency Board and Administration System designed for the Nepal Government School System. Promoting financial governance and public transparency.
-            </p>
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="projects-grid">
             
-            <a href="digitalkhatapana.html" class="btn-khatapana">
-                Open Digital खातापाना 
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-            </a>
-        </div>
-    </main>
+            <!-- Project 1: Digital Khatapana -->
+            <div class="project-card">
+                <div class="project-image-wrapper">
+                    <!-- Placeholder UI image for Khatapana -->
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800" alt="Digital Khatapana Interface">
+                </div>
+                <h3 class="project-title">DIGITAL खातापाना</h3>
+                <div class="project-subtitle">System Architecture & UI/UX</div>
+                <p class="project-desc">A comprehensive Income & Expenditure Transparency Board designed for the Nepal Government School System.</p>
+                <a href="digitalkhatapana.html" class="project-link">Open Project <span style="font-size:1.2rem;">›</span></a>
+            </div>
 
-    <footer>
-        &copy; <script>document.write(new Date().getFullYear())</script> Raj Bhusal. All rights reserved.
+            <!-- Project 2: Placeholder -->
+            <div class="project-card">
+                <div class="project-image-wrapper" style="background-color: #2a2e33;">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800" alt="Data Dashboard">
+                </div>
+                <h3 class="project-title">NEPAL GOV DASHBOARD</h3>
+                <div class="project-subtitle">Data Visualization</div>
+                <p class="project-desc">Centralized data portal providing real-time analytics and reporting for local municipalities.</p>
+                <a href="#" class="project-link">View Case Study <span style="font-size:1.2rem;">›</span></a>
+            </div>
+
+            <!-- Project 3: Placeholder -->
+            <div class="project-card">
+                <div class="project-image-wrapper" style="background-color: #c29f6d;">
+                    <img src="https://images.unsplash.com/photo-1512428559087-560fa5ceab42?auto=format&fit=crop&q=80&w=800" alt="Mobile App">
+                </div>
+                <h3 class="project-title">EDUTECH MOBILE</h3>
+                <div class="project-subtitle">Mobile App Development</div>
+                <p class="project-desc">An interactive learning platform connecting rural students with expert educators across the country.</p>
+                <a href="#" class="project-link">View Case Study <span style="font-size:1.2rem;">›</span></a>
+            </div>
+
+            <!-- Project 4: Placeholder -->
+            <div class="project-card">
+                <div class="project-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1555421689-491a97ff2040?auto=format&fit=crop&q=80&w=800" alt="Web Portal">
+                </div>
+                <h3 class="project-title">CITIZEN PORTAL</h3>
+                <div class="project-subtitle">Full-stack Web App</div>
+                <p class="project-desc">Streamlining public service requests and grievance handling with an intuitive citizen-first interface.</p>
+                <a href="#" class="project-link">View Case Study <span style="font-size:1.2rem;">›</span></a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- About & Skills Section -->
+    <section id="about" class="about-skills">
+        <div class="about-col">
+            <h2 class="section-title">ABOUT ME</h2>
+            <p>I am a passionate professional dedicated to bridging the gap between complex governmental processes and accessible digital solutions. With a strong foundation in system design, web development, and user experience, I build platforms that promote transparency and efficiency.</p>
+            <p>My recent work, including the Digital Khata Pana system, reflects my commitment to creating impactful software that serves the public good while maintaining the highest standards of security and reliability.</p>
+            <a href="#" class="btn-gold-outline">Download Resume</a>
+        </div>
+        <div class="skills-col">
+            <h2 class="section-title">SKILLS</h2>
+            <div class="skills-grid">
+                <div class="skill-item">
+                    <div class="skill-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <span class="skill-name">System Architecture</span>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                    </div>
+                    <span class="skill-name">UI/UX Design</span>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    </div>
+                    <span class="skill-name">Web Development</span>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                    </div>
+                    <span class="skill-name">Database Mgmt</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <h2 class="section-title">MY SERVICES</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <h3>System Development</h3>
+                <p>Architecting and developing robust web applications tailored for specific organizational needs, ensuring scalability and security.</p>
+            </div>
+            <div class="service-card">
+                <h3>UI/UX Design</h3>
+                <p>Crafting intuitive and accessible user interfaces that simplify complex workflows and enhance overall user satisfaction.</p>
+            </div>
+            <div class="service-card">
+                <h3>Digital Transformation</h3>
+                <p>Guiding institutions in transitioning from manual, paper-based processes to efficient, transparent digital ecosystems.</p>
+            </div>
+            <div class="service-card">
+                <h3>Data Transparency</h3>
+                <p>Creating public-facing dashboards and reporting tools that make complex financial or administrative data easy to understand.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <h2>LET'S COLLABORATE</h2>
+                <p style="margin-top: 10px;">hello@rajbhusal.com.np</p>
+            </div>
+            
+            <div class="footer-right">
+                <div class="footer-col">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About Me</a></li>
+                        <li><a href="#projects">Projects</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Social</h4>
+                    <ul>
+                        <li><a href="#">LinkedIn</a></li>
+                        <li><a href="#">GitHub</a></li>
+                        <li><a href="#">Twitter</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div>Copyright &copy; <script>document.write(new Date().getFullYear())</script> Raj Bhusal</div>
+            <div>All rights reserved.</div>
+        </div>
     </footer>
 
 </body>
