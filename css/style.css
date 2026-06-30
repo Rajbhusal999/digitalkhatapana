@@ -1732,8 +1732,220 @@ footer {
     background: #061024 !important;
 }
 [data-theme="dark"] .report-nav-btn {
+    padding: 5px 7px;
+    font-size: 0.73rem;
+    white-space: nowrap;
+    text-align: center;
+}
+.khata-table td {
+    border: 1px solid #c8d5e8;
+    padding: 4px 6px;
+    font-size: 0.8rem;
+    font-family: var(--font-nepali);
+}
+.khata-total-row td {
+    background: #ffff00 !important;
+    color: #000 !important;
+    font-weight: 800 !important;
+    border: 2px solid #555 !important;
+    font-family: var(--font-nepali);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+.num-cell { text-align: right; }
+
+/* Bank Cash Book */
+.bank-cash-book-table th {
+    font-size: 0.75rem;
+    padding: 7px 10px;
+    white-space: nowrap;
+    background: #0e3272;
+    color: inherit;
+    border: 1px solid rgba(255,255,255,0.15);
+    text-align: center;
+}
+.bank-cash-book-table td {
+    font-size: 0.82rem;
+    border: 1px solid #dde4f0;
+    padding: 7px 10px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════════════════════════════ */
+.btn-primary {
+    background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition);
+    text-decoration: none;
+}
+.btn-primary:hover {
+    background: var(--secondary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(11,43,97,0.25);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FORM CONTROL GLOBAL
+══════════════════════════════════════════════════════════════ */
+.form-control {
+    width: 100%;
+    padding: 9px 13px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.88rem;
+    font-family: var(--font-primary);
+    outline: none;
+    background: white;
+    transition: var(--transition);
+}
+.form-control:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(11,43,97,0.1);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOAST (Consolidated)
+══════════════════════════════════════════════════════════════ */
+#toast-container, #adm-toast-container, #report-toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   A3 PRINT MEDIA
+══════════════════════════════════════════════════════════════ */
+@media print {
+    @page { margin: 8mm 10mm; }
+    .no-print,
+    .reports-sidebar,
+    .reports-content-header,
+    .reports-filters-bar,
+    #inline-entry-form-container,
+    #heading-manager-panel,
+    #btn-toggle-entry,
+    #btn-heading-manager,
+    .top-gov-bar,
+    header { display: none !important; }
+    .reports-layout { display: block !important; }
+    .reports-content-pane { width: 100% !important; box-shadow: none !important; border: none !important; }
+    #report-printable-area { overflow: visible !important; }
+    .data-table, .khata-table, .bank-cash-book-table { font-size: 7pt !important; }
+    .data-table th, .data-table td,
+    .khata-table th, .khata-table td,
+    .bank-cash-book-table th, .bank-cash-book-table td { padding: 2px 3px !important; }
+    .khata-total-row td {
+        background: #ffff00 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DARK MODE OVERRIDES
+══════════════════════════════════════════════════════════════ */
+[data-theme="dark"] {
+    --bg-main: #0B1329;
+    --bg-card: #1E293B;
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
+    --border: rgba(255, 255, 255, 0.1);
+    --border-accent: rgba(255, 255, 255, 0.15);
+}
+[data-theme="dark"] body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+[data-theme="dark"] header {
+    background: rgba(11, 19, 41, 0.85) !important;
+}
+[data-theme="dark"] .brand-titles h1,
+[data-theme="dark"] .brand-titles h2,
+[data-theme="dark"] .section-title h2,
+[data-theme="dark"] .form-group label,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4 {
+    color: var(--text-light) !important;
+}
+[data-theme="dark"] .white-card,
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .glass-panel,
+[data-theme="dark"] .contact-info-panel,
+[data-theme="dark"] .reports-sidebar,
+[data-theme="dark"] .reports-content-pane,
+[data-theme="dark"] .reports-filters-bar,
+[data-theme="dark"] .report-summary-card,
+[data-theme="dark"] .reports-tab-bar,
+[data-theme="dark"] .table-container {
+    background: var(--bg-card) !important;
+    border-color: var(--border) !important;
+    color: var(--text-main);
+}
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea,
+[data-theme="dark"] .form-control {
+    background-color: #0F172A !important;
+    color: white !important;
+    border-color: var(--border) !important;
+}
+[data-theme="dark"] .data-table th,
+[data-theme="dark"] .khata-table th,
+[data-theme="dark"] .bank-cash-book-table th {
+    background: #0f1c3f !important;
+    color: #e2e8f0 !important;
+    border-color: var(--border) !important;
+}
+[data-theme="dark"] .data-table td,
+[data-theme="dark"] .khata-table td,
+[data-theme="dark"] .bank-cash-book-table td {
+    background: #1e293b !important;
+    border-color: var(--border) !important;
+    color: #e2e8f0 !important;
+}
+[data-theme="dark"] .data-table tbody tr:hover td {
+    background: #334155 !important;
+}
+[data-theme="dark"] .data-table tbody tr:nth-child(even) td {
+    background: #0F172A !important;
+}
+[data-theme="dark"] .top-gov-bar {
+    background: #061024 !important;
+}
+[data-theme="dark"] .report-nav-btn {
     color: var(--text-main);
 }
 [data-theme="dark"] .report-nav-btn:hover {
     background: rgba(255,255,255,0.05);
+}
+/* Global Mobile Responsiveness */
+@media (max-width: 768px) {
+    .top-gov-bar { flex-direction: column; gap: 10px; text-align: center; }
+    .top-gov-bar span { font-size: 0.7rem; justify-content: center; text-align: center; line-height: 1.4; }
+    header { flex-direction: column; gap: 15px; padding: 15px; }
+    .brand-section { flex-direction: column; text-align: center; }
+    .brand-titles h1 { font-size: 1.3rem; }
+    .brand-titles h2 { font-size: 0.85rem; }
+    .brand-titles p { display: none; }
+    nav.nav-links { flex-wrap: wrap; justify-content: center; gap: 12px; font-size: 0.9rem; }
+    .hero-section { flex-direction: column; text-align: center; }
+    .filters-row, .export-actions { justify-content: center; width: 100%; flex-direction: column; }
+    main { padding: 15px 5%; }
+    .login-modal { padding: 25px 20px; width: 95%; }
+    .dashboard-middle { grid-template-columns: 1fr; }
+    .feedback-grid { grid-template-columns: 1fr; }
 }
