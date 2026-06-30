@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edutech Mobile - Case Study | Raj Bhusal</title>
+    <meta name="description" content="Case Study: Edutech Mobile">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #f4f0ea;
+            --bg-teal: #305856;
+            --bg-dark: #2a2e33;
+            --bg-darker: #1e2124;
+            --accent-gold: #c29f6d;
+            --text-dark: #1a1a1a;
+            --text-light: #f4f0ea;
+            --text-muted: #8b959b;
+            --font-sans: 'Inter', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body { font-family: var(--font-sans); color: var(--text-dark); background-color: var(--bg-cream); line-height: 1.6; overflow-x: hidden; }
+
+        /* --- Header --- */
+        .header { background-color: var(--bg-cream); position: sticky; top: 0; z-index: 100; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; border-top: 10px solid var(--bg-darker); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1400px; margin: 0 auto; }
+        .logo { font-family: var(--font-serif); font-size: 2.2rem; font-weight: 700; color: var(--text-dark); letter-spacing: -1px; text-decoration: none; }
+        .nav { display: flex; gap: 2.5rem; align-items: center; }
+        .nav a { text-decoration: none; color: var(--text-dark); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s ease; }
+        .nav a:hover { color: var(--accent-gold); }
+        .btn-gold-sm { background-color: var(--accent-gold); color: white !important; padding: 0.6rem 1.5rem; border-radius: 4px; transition: background-color 0.3s ease; }
+        .btn-gold-sm:hover { background-color: #b08a54; }
+
+        /* --- Case Study Hero --- */
+        .cs-hero { background-color: var(--bg-dark); color: var(--text-light); padding: 8rem 5% 4rem; text-align: center; position: relative; }
+        .cs-hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%; background: linear-gradient(135deg, rgba(48,88,86,0.9) 0%, rgba(30,33,36,0.9) 100%); z-index: 1; }
+        .cs-hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.3; z-index: 0; }
+        .cs-hero-content { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; }
+        .cs-tag { display: inline-block; background-color: var(--accent-gold); color: white; padding: 0.3rem 1rem; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem; }
+        .cs-title { font-family: var(--font-sans); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -1px; text-transform: uppercase; }
+        .cs-subtitle { font-family: var(--font-serif); font-size: 1.5rem; color: #dce5e4; font-weight: 400; max-width: 700px; margin: 0 auto; }
+
+        /* --- Main Content --- */
+        .cs-main { max-width: 1000px; margin: 0 auto; padding: 5rem 5%; background-color: var(--bg-cream); }
+        .cs-section { margin-bottom: 5rem; }
+        .cs-section-title { font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--bg-darker); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; text-transform: uppercase; }
+        .cs-section-title::after { content: ''; flex-grow: 1; height: 2px; background-color: var(--accent-gold); opacity: 0.3; }
+        .cs-text { font-size: 1.15rem; color: #444; line-height: 1.8; margin-bottom: 1.5rem; font-family: var(--font-serif); }
+        
+        .cs-image-full { width: 100%; max-height: 600px; object-fit: cover; margin: 3rem 0; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 10px solid white; }
+        
+        /* Tech Stack */
+        .tech-stack { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem; }
+        .tech-item { background-color: white; border: 1px solid #ddd; padding: 0.5rem 1.5rem; font-weight: 600; font-size: 0.9rem; color: var(--bg-teal); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+
+        /* --- Footer --- */
+        .footer { background-color: var(--bg-darker); color: var(--text-light); padding: 5rem 5% 2rem; }
+        .footer-content { display: flex; justify-content: space-between; align-items: flex-start; max-width: 1400px; margin: 0 auto 4rem; flex-wrap: wrap; gap: 3rem; }
+        .footer-left h2 { font-family: var(--font-sans); font-size: 2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+        .footer-left p { color: var(--text-muted); font-size: 0.9rem; }
+        .footer-bottom { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; color: var(--text-muted); }
+
+        @media (max-width: 768px) {
+            .nav { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">RB</a>
+            <nav class="nav">
+                <a href="index.html">Back to Home</a>
+                <a href="index.html#projects" class="btn-gold-sm">View Portfolio</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Case Study Hero -->
+    <section class="cs-hero">
+        <!-- Placeholder hero background -->
+        <img src="https://images.unsplash.com/photo-1512428559087-560fa5ceab42?auto=format&fit=crop&q=80&w=1600" alt="Edutech Background" class="cs-hero-bg">
+        <div class="cs-hero-content">
+            <span class="cs-tag">Mobile App Development</span>
+            <h1 class="cs-title">Edutech Mobile</h1>
+            <p class="cs-subtitle">An interactive learning platform connecting rural students with expert educators across the country.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="cs-main">
+        
+        <section class="cs-section">
+            <h2 class="cs-section-title">The Challenge</h2>
+            <p class="cs-text">Access to quality education remains a significant challenge for students in remote rural areas. A lack of expert teachers and educational resources severely limits academic potential. Existing solutions were often desktop-focused, requiring reliable broadband internet which is scarce in these regions.</p>
+            <p class="cs-text">We needed to build a mobile-first platform that could operate efficiently on low-bandwidth networks, delivering interactive video lessons and real-time assessments directly to smartphones.</p>
+        </section>
+
+        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=1200" alt="Students using app" class="cs-image-full">
+
+        <section class="cs-section">
+            <h2 class="cs-section-title">The Solution</h2>
+            <p class="cs-text">We engineered a cross-platform mobile application optimized for low latency. The app features offline-sync capabilities, allowing students to download video lectures and interactive quizzes when connected, and complete them entirely offline.</p>
+            <p class="cs-text">The interface was designed to be highly engaging, utilizing gamification elements like progress tracking, achievement badges, and peer-to-peer discussion boards to foster a sense of community among remote learners.</p>
+            
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem; font-family: var(--font-sans);">Technologies Used:</h3>
+            <div class="tech-stack">
+                <span class="tech-item">Flutter</span>
+                <span class="tech-item">Dart</span>
+                <span class="tech-item">Firebase Authentication</span>
+                <span class="tech-item">GraphQL</span>
+                <span class="tech-item">AWS S3 (Video Hosting)</span>
+            </div>
+        </section>
+
+        <section class="cs-section">
+            <h2 class="cs-section-title">The Impact</h2>
+            <p class="cs-text">Since launch, Edutech Mobile has successfully onboarded over 50,000 active students from rural districts. Average test scores among users have seen a 25% improvement, and the platform has democratized access to expert instruction that was previously out of reach.</p>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer id="contact" class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <h2>LET'S COLLABORATE</h2>
+                <p style="margin-top: 10px;">hello@rajbhusal.com.np</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>Copyright &copy; <script>document.write(new Date().getFullYear())</script> Raj Bhusal</div>
+            <div>All rights reserved.</div>
+        </div>
+    </footer>
+
+</body>
+</html>
