@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raj Bhusal - Resume</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #f4f0ea;
+            --bg-teal: #305856;
+            --accent-gold: #c29f6d;
+            --text-dark: #1a1a1a;
+            --font-sans: 'Inter', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-dark);
+            background-color: white;
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .resume-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            border: 1px solid #eee;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--accent-gold);
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            font-family: var(--font-serif);
+            font-size: 3rem;
+            color: var(--bg-teal);
+            margin: 0 0 10px 0;
+        }
+
+        .header h2 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #666;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .contact-info {
+            margin-top: 15px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        h3 {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            color: var(--bg-teal);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .project {
+            margin-bottom: 25px;
+        }
+
+        .project h4 {
+            font-size: 1.1rem;
+            margin: 0 0 5px 0;
+            color: #222;
+        }
+
+        .project .role {
+            font-style: italic;
+            color: var(--accent-gold);
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* Print optimization */
+        @media print {
+            body { padding: 0; background-color: white; }
+            .resume-container { box-shadow: none; border: none; padding: 0; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        <div class="header">
+            <h1>Raj Bhusal</h1>
+            <h2>Digital Architect & Developer</h2>
+            <div class="contact-info">
+                hello@rajbhusal.com.np | rajbhusal.com.np
+            </div>
+        </div>
+
+        <h3>Professional Summary</h3>
+        <p>I am a passionate professional dedicated to bridging the gap between complex governmental processes and accessible digital solutions. With a strong foundation in system design, web development, and user experience, I build platforms that promote transparency and efficiency. My work reflects a commitment to creating impactful software that serves the public good while maintaining the highest standards of security and reliability.</p>
+
+        <h3>Core Competencies</h3>
+        <ul>
+            <li><strong>System Architecture:</strong> Designing scalable, secure backends for complex data workflows.</li>
+            <li><strong>UI/UX Design:</strong> Crafting intuitive interfaces for diverse user bases, including citizen-facing portals.</li>
+            <li><strong>Full-Stack Development:</strong> End-to-end web and mobile application creation.</li>
+            <li><strong>Data Visualization:</strong> Turning complex governmental and financial data into accessible analytics.</li>
+            <li><strong>Digital Transformation:</strong> Digitizing legacy manual systems into streamlined digital ecosystems.</li>
+        </ul>
+
+        <h3>Key Projects</h3>
+        
+        <div class="project">
+            <h4>Digital Khata Pana (डिजिटल खातापाना)</h4>
+            <div class="role">System Architecture & UI/UX Design</div>
+            <p>Spearheaded the development of a comprehensive Income & Expenditure Transparency Board for the Nepal Government School System. Digitized financial ledgers to ensure 100% transparency for conditional grants, mid-day meal funds, and community donations.</p>
+        </div>
+
+        <div class="project">
+            <h4>Nepal Gov Dashboard</h4>
+            <div class="role">Data Visualization & Analytics</div>
+            <p>Developed a centralized data portal providing real-time analytics and reporting for local municipalities across Nepal. Improved administrative reporting efficiency by over 40% and fostered public trust through accessible data widgets.</p>
+        </div>
+
+        <div class="project">
+            <h4>Citizen Portal</h4>
+            <div class="role">Full-stack Web App Development</div>
+            <p>Built an intuitive, citizen-first interface to streamline public service requests and grievance handling. Reduced average resolution time from 21 days to 4 days, successfully processing over 10,000 public requests within six months.</p>
+        </div>
+
+        <div class="project">
+            <h4>Edutech Mobile</h4>
+            <div class="role">Mobile App Development</div>
+            <p>Engineered an interactive learning platform connecting rural students with expert educators. Implemented offline-sync capabilities for low-bandwidth regions, successfully onboarding over 50,000 active students and boosting average test scores by 25%.</p>
+        </div>
+
+        <h3>Technical Skills</h3>
+        <div class="skills-grid">
+            <div>
+                <strong>Frontend:</strong> React.js, Vue.js, HTML5, CSS3, JavaScript<br><br>
+                <strong>Backend:</strong> Node.js, Laravel (PHP), GraphQL, RESTful APIs
+            </div>
+            <div>
+                <strong>Database:</strong> PostgreSQL, MySQL, Redis<br><br>
+                <strong>Mobile & Cloud:</strong> Flutter, Dart, AWS, Firebase
+            </div>
+        </div>
+    </div>
+</body>
+</html>
