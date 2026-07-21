@@ -761,8 +761,12 @@
                 </div>
                 <div class="glass-input-group">
                     <label for="super-password">Password (सुरक्षा साँचो)</label>
-                    <input type="password" id="super-password" required class="glass-input-field"
-                        placeholder="••••••••">
+                    <div style="position: relative;">
+                        <input type="password" id="super-password" required class="glass-input-field"
+                            placeholder="••••••••" style="padding-right: 40px !important;">
+                        <span id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #cbd5e1; padding: 5px; user-select: none; font-size: 1.1rem;" 
+                              onclick="const pwd = document.getElementById('super-password'); if (pwd.type === 'password') { pwd.type = 'text'; this.innerText = '🙈'; } else { pwd.type = 'password'; this.innerText = '👁️'; }">👁️</span>
+                    </div>
                 </div>
                 <button type="button" class="btn-portal"
                     style="width: 100%; justify-content: center; margin-top: 25px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%); color: var(--secondary-dark);"
