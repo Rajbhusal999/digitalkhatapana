@@ -531,25 +531,6 @@ ${loginUrl}
                 await window.deleteRegisteredSchool(email);
             }
 
-        }
-            } catch (e) { }
-
-        // 3. Wipe all school-specific localStorage keys
-        const keysToDelete = [
-            'nepal_school_finances' + suffix,
-            'nepal_school_budgets' + suffix,
-            'nepal_school_feedbacks' + suffix,
-            'nepal_school_ledger_headings' + suffix,
-            'nepal_school_income_categories' + suffix,
-            'nepal_school_expense_categories' + suffix
-        ];
-        keysToDelete.forEach(k => localStorage.removeItem(k));
-
-        // 4. Wipe Supabase records for this school's email (school_id)
-        try {
-            const hasConfig = typeof SUPABASE_URL !== 'undefined' &&
-                typeof SUPABASE_ANON_KEY !== 'undefined' &&
-                SUPABASE_URL && SUPABASE_ANON_KEY &&
                 !SUPABASE_URL.includes('YOUR_SUPABASE') &&
                 !SUPABASE_ANON_KEY.includes('YOUR_SUPABASE');
 
