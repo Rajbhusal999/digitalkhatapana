@@ -702,7 +702,11 @@
                     
                     <div class="form-group" style="display:flex; flex-direction:column; gap:5px; margin-top:10px;">
                         <label for="widget-login-password">Password / OTP (पासवर्ड वा OTP)</label>
-                        <input type="password" id="widget-login-password" placeholder="Enter your password or OTP" required>
+                        <div style="position: relative;">
+                            <input type="password" id="widget-login-password" placeholder="Enter your password or OTP" required style="width: 100%; box-sizing: border-box; padding-right: 40px !important;">
+                            <span id="togglePasswordWidget" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #cbd5e1; padding: 5px; user-select: none; font-size: 1.1rem;"
+                                  onclick="const pwd = document.getElementById('widget-login-password'); if (pwd.type === 'password') { pwd.type = 'text'; this.innerText = '🙈'; } else { pwd.type = 'password'; this.innerText = '👁️'; }">👁️</span>
+                        </div>
                     </div>
 
                     <button type="submit" class="auth-submit-btn">Login to Citizen Hub</button>

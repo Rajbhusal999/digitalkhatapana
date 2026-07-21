@@ -276,7 +276,11 @@
                 </div>
                 <div class="inp-group">
                     <label for="login-otp">एक पटक पासवर्ड (One-Time Password) *</label>
-                    <input type="password" id="login-otp" placeholder="OTP इमेलबाट टाइप गर्नुहोस्" autocomplete="off">
+                    <div style="position: relative;">
+                        <input type="password" id="login-otp" placeholder="OTP इमेलबाट टाइप गर्नुहोस्" autocomplete="off" style="padding-right: 40px !important;">
+                        <span id="togglePasswordOtp" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #cbd5e1; padding: 5px; user-select: none; font-size: 1.1rem;"
+                              onclick="const pwd = document.getElementById('login-otp'); if (pwd.type === 'password') { pwd.type = 'text'; this.innerText = '🙈'; } else { pwd.type = 'password'; this.innerText = '👁️'; }">👁️</span>
+                    </div>
                 </div>
                 <button class="submit-btn" id="btn-step1" onclick="handleOTPLogin()">
                     <span id="btn1-text">प्रवेश गर्नुहोस् (Login with OTP)</span>
@@ -294,13 +298,21 @@
                 <div class="err-box" id="step2-err"></div>
                 <div class="inp-group">
                     <label for="new-password">नयाँ पासवर्ड (New Password) *</label>
-                    <input type="password" id="new-password" placeholder="कम्तिमा ८ अक्षर" oninput="checkStrength(this.value)">
+                    <div style="position: relative;">
+                        <input type="password" id="new-password" placeholder="कम्तिमा ८ अक्षर" oninput="checkStrength(this.value)" style="padding-right: 40px !important;">
+                        <span id="togglePasswordNew" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #cbd5e1; padding: 5px; user-select: none; font-size: 1.1rem;"
+                              onclick="const pwd = document.getElementById('new-password'); if (pwd.type === 'password') { pwd.type = 'text'; this.innerText = '🙈'; } else { pwd.type = 'password'; this.innerText = '👁️'; }">👁️</span>
+                    </div>
                     <div class="pw-strength-bar"><div class="pw-strength-fill" id="pw-fill"></div></div>
                     <div class="pw-strength-label" id="pw-label"></div>
                 </div>
                 <div class="inp-group">
                     <label for="confirm-password">पासवर्ड पुष्टि गर्नुहोस् (Confirm Password) *</label>
-                    <input type="password" id="confirm-password" placeholder="माथिको पासवर्ड दोहोर्‍याउनुहोस्">
+                    <div style="position: relative;">
+                        <input type="password" id="confirm-password" placeholder="माथिको पासवर्ड दोहोर्‍याउनुहोस्" style="padding-right: 40px !important;">
+                        <span id="togglePasswordConfirm" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #cbd5e1; padding: 5px; user-select: none; font-size: 1.1rem;"
+                              onclick="const pwd = document.getElementById('confirm-password'); if (pwd.type === 'password') { pwd.type = 'text'; this.innerText = '🙈'; } else { pwd.type = 'password'; this.innerText = '👁️'; }">👁️</span>
+                    </div>
                 </div>
                 <button class="submit-btn" id="btn-step2" onclick="handleSetPassword()">
                     <span id="btn2-text">पासवर्ड सुरक्षित गर्नुहोस् (Save Password)</span>
