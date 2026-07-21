@@ -166,7 +166,7 @@
             try {
                 const email = document.getElementById('super-email').value.trim().toLowerCase();
                 const password = document.getElementById('super-password').value.trim();
-                if (email === 'khatapana2083@gmail.com' && password === 'Khatapana@2083') {
+                if (email === 'khatapanadigital2083@gmail.com' && password === 'Khatapana@2083/') {
                     sessionStorage.setItem('super_admin_logged_in', 'true');
                     try { showSuperToast('Access Granted! Redirecting to dashboard...', 'success'); } catch (e) { }
                     setTimeout(() => { checkSuperAuth(); }, 1000);
