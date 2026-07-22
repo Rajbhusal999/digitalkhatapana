@@ -61,6 +61,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateSchoolHeader();
     allTransactions = window.getTransactions();
     generateReport();
+
+    if (urlParams.get('action') === 'manage_headings') {
+        setTimeout(() => {
+            if (typeof toggleHeadingManager === 'function') toggleHeadingManager();
+        }, 300);
+    }
 });
 
 // ─────────────────────────────────────────────────────────────────
