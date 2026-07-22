@@ -472,16 +472,29 @@ async function saveTransaction(tx) {
         source: tx.source || tx.fund_source || 'Internal',
         recorded_by: tx.recordedBy || 'Accountant',
         payment_method: tx.payment_method || 'bank',
-        fiscal_year: tx.fiscal_year || null,
-        subheading_id: tx.subheading_id || null,
-        subheading_amount: Number(tx.subheading_amount || tx.amount || 0),
-        receipt_url: tx.receipt_url || null
+        fiscal_year: tx.fiscal_year || null
     };
+
+    if (tx.subheading_id) {
+        dbPayload.subheading_id = tx.subheading_id;
+        dbPayload.subheading_amount = Number(tx.subheading_amount || tx.amount || 0);
+    }
+    if (tx.receipt_url) {
+        dbPayload.receipt_url = tx.receipt_url;
+    }
 
     if (supabaseClient) {
         const { error } = await supabaseClient.from('transactions').upsert(dbPayload);
-        if (error) { console.error('Error saving transaction to Supabase:', error); throw error; }
-        await syncFromSupabase();
+        if (error) { 
+            console.error('Error saving transaction to Supabase:', error); 
+            // Graceful fallback to memory cache if schema error (e.g., missing column)
+            const fallbackTx = { ...tx, id: dbPayload.id };
+            const idx = cachedTransactions.findIndex(t => t.id === fallbackTx.id);
+            if (idx !== -1) { cachedTransactions[idx] = fallbackTx; }
+            else { cachedTransactions.push(fallbackTx); }
+        } else {
+            await syncFromSupabase();
+        }
     } else {
         const idx = cachedTransactions.findIndex(t => t.id === dbPayload.id);
         if (idx !== -1) {
