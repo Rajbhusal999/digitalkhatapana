@@ -7,10 +7,7 @@
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
     <script>
-        // Initialize Theme from LocalStorage immediately to prevent flash
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        // Theme logic moved to rely entirely on defaults since localStorage was removed.
     </script>
     <!-- Inline CSS for Portal Homepage -->
     <style>
@@ -979,7 +976,6 @@
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
             
             document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
             document.getElementById('theme-text').textContent = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';

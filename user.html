@@ -9,10 +9,7 @@
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Initialize Theme from LocalStorage immediately to prevent flash
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        // Theme logic moved to rely entirely on defaults since localStorage was removed.
     </script>
 </head>
 <body>

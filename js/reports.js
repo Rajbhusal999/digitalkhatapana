@@ -1076,7 +1076,8 @@ async function handleHmFormSubmit(e) {
         generateReport(); // Refresh khata columns
         showReportToast('शीर्षक सफलतापूर्वक सुरक्षित गरियो!', 'success');
     } catch(err) {
-        alert('शीर्षक सुरक्षित गर्न असफल भयो।');
+        console.error(err);
+        alert('शीर्षक सुरक्षित गर्न असफल भयो।\nError: ' + (err.message || err));
     } finally {
         saveBtn.disabled = false;
         saveBtn.textContent = 'सुरक्षित गर्नुहोस्';

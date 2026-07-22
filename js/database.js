@@ -590,8 +590,15 @@ async function saveLedgerHeading(heading) {
             sort_order: heading.sort_order
         };
         const { error } = await supabaseClient.from('ledger_headings').upsert(payload);
-        if (error) { console.error('Error saving heading:', error); throw error; }
-        await syncFromSupabase();
+        if (error) { 
+            console.error('Error saving heading:', error); 
+            // Fallback to memory
+            const idx = cachedHeadings.findIndex(h => h.id === heading.id);
+            if (idx !== -1) { cachedHeadings[idx] = heading; }
+            else { cachedHeadings.push(heading); }
+        } else {
+            await syncFromSupabase();
+        }
     } else {
         const idx = cachedHeadings.findIndex(h => h.id === heading.id);
         if (idx !== -1) { cachedHeadings[idx] = heading; }
@@ -602,10 +609,14 @@ async function saveLedgerHeading(heading) {
 
 async function deleteLedgerHeading(id) {
     if (supabaseClient) {
-        await supabaseClient.from('ledger_headings').delete().eq('parent_id', id);
-        const { error } = await supabaseClient.from('ledger_headings').delete().eq('id', id);
-        if (error) { console.error('Error deleting heading:', error); throw error; }
-        await syncFromSupabase();
+        const { error: err1 } = await supabaseClient.from('ledger_headings').delete().eq('parent_id', id);
+        const { error: err2 } = await supabaseClient.from('ledger_headings').delete().eq('id', id);
+        if (err1 || err2) { 
+            console.error('Error deleting heading:', err1 || err2); 
+            cachedHeadings = cachedHeadings.filter(h => h.id !== id && h.parent_id !== id);
+        } else {
+            await syncFromSupabase();
+        }
     } else {
         cachedHeadings = cachedHeadings.filter(h => h.id !== id && h.parent_id !== id);
     }
@@ -926,14 +937,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ──────────────────────────────────────────────────────────────
-// Global Theme Toggle (localStorage is intentionally kept for
-// UI preference only — not business data)
+// Global Theme Toggle
 // ──────────────────────────────────────────────────────────────
 function toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
 
     const themeIcon = document.getElementById('theme-icon');
     const themeText = document.getElementById('theme-text');
