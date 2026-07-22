@@ -836,11 +836,32 @@ function renderAdminHeadingList(type, containerId) {
     });
 }
 
+function populateAdminParentDropdown(type, selectedParentId, excludeId) {
+    const parentSelect = document.getElementById('admin-hm-parent');
+    if (!parentSelect) return;
+
+    parentSelect.innerHTML = '<option value="">-- यो आफैंमा मुख्य शीर्षक हो (None - Main Heading) --</option>';
+
+    if (window.getLedgerHeadings) {
+        const headings = window.getLedgerHeadings(type);
+        // Only get main headings that are not the current heading being edited
+        const parents = headings.filter(h => !h.parent_id && h.id !== excludeId).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+
+        parents.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.innerText = `${p.name_ne} ${p.name_en ? '(' + p.name_en + ')' : ''}`;
+            if (p.id === selectedParentId) opt.selected = true;
+            parentSelect.appendChild(opt);
+        });
+    }
+}
+
 function openAdminAddHeading(type) {
-    document.getElementById('admin-hm-modal-title').innerText = 'नयाँ मुख्य शीर्षक थप्नुहोस्';
+    populateAdminParentDropdown(type, '', '');
+    document.getElementById('admin-hm-modal-title').innerText = 'नयाँ शीर्षक थप्नुहोस् (Add Heading)';
     document.getElementById('admin-hm-id').value = '';
     document.getElementById('admin-hm-type').value = type;
-    document.getElementById('admin-hm-parent').value = '';
     document.getElementById('admin-hm-name-ne').value = '';
     document.getElementById('admin-hm-name-en').value = '';
     document.getElementById('admin-hm-order').value = 99;
@@ -848,10 +869,10 @@ function openAdminAddHeading(type) {
 }
 
 function openAdminAddSubHeading(parentId, type) {
-    document.getElementById('admin-hm-modal-title').innerText = 'नयाँ उप-शीर्षक थप्नुहोस्';
+    populateAdminParentDropdown(type, parentId, '');
+    document.getElementById('admin-hm-modal-title').innerText = 'नयाँ उप-शीर्षक थप्नुहोस् (Add Subheading)';
     document.getElementById('admin-hm-id').value = '';
     document.getElementById('admin-hm-type').value = type;
-    document.getElementById('admin-hm-parent').value = parentId;
     document.getElementById('admin-hm-name-ne').value = '';
     document.getElementById('admin-hm-name-en').value = '';
     document.getElementById('admin-hm-order').value = 99;
@@ -862,10 +883,10 @@ function openAdminEditHeading(id) {
     if (!window.getLedgerHeadingById) return;
     const h = window.getLedgerHeadingById(id);
     if (!h) return;
-    document.getElementById('admin-hm-modal-title').innerText = 'शीर्षक सम्पादन गर्नुहोस्';
+    populateAdminParentDropdown(h.type, h.parent_id || '', h.id);
+    document.getElementById('admin-hm-modal-title').innerText = 'शीर्षक सम्पादन गर्नुहोस् (Edit Heading)';
     document.getElementById('admin-hm-id').value = h.id;
     document.getElementById('admin-hm-type').value = h.type;
-    document.getElementById('admin-hm-parent').value = h.parent_id || '';
     document.getElementById('admin-hm-name-ne').value = h.name_ne;
     document.getElementById('admin-hm-name-en').value = h.name_en || '';
     document.getElementById('admin-hm-order').value = h.sort_order || 99;
