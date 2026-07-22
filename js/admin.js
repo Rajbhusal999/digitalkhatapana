@@ -836,11 +836,16 @@ function renderAdminHeadingList(type, containerId) {
     });
 }
 
-function populateAdminParentDropdown(type, selectedParentId, excludeId) {
+function populateAdminParentDropdown(type, selectedParentId, excludeId, isSubheading) {
     const parentSelect = document.getElementById('admin-hm-parent');
     if (!parentSelect) return;
 
-    parentSelect.innerHTML = '<option value="">-- यो आफैंमा मुख्य शीर्षक हो (None - Main Heading) --</option>';
+    parentSelect.innerHTML = '';
+    if (!isSubheading) {
+        parentSelect.innerHTML = '<option value="">-- यो आफैंमा मुख्य शीर्षक हो (None - Main Heading) --</option>';
+    } else {
+        parentSelect.innerHTML = '<option value="">-- मुख्य शीर्षक छान्नुहोस् (Select Parent Heading) --</option>';
+    }
 
     if (window.getLedgerHeadings) {
         const headings = window.getLedgerHeadings(type);
@@ -857,11 +862,23 @@ function populateAdminParentDropdown(type, selectedParentId, excludeId) {
     }
 }
 
-function openAdminAddHeading(type) {
-    populateAdminParentDropdown(type, '', '');
-    document.getElementById('admin-hm-modal-title').innerText = 'नयाँ शीर्षक थप्नुहोस् (Add Heading)';
+function openAdminAddHeading(type, isSubheading) {
+    populateAdminParentDropdown(type, '', '', isSubheading);
+    document.getElementById('admin-hm-modal-title').innerText = isSubheading ? 'नयाँ उप-शीर्षक थप्नुहोस् (Add Subheading)' : 'नयाँ मुख्य शीर्षक थप्नुहोस् (Add Main Heading)';
     document.getElementById('admin-hm-id').value = '';
     document.getElementById('admin-hm-type').value = type;
+
+    const parentGroup = document.getElementById('admin-hm-parent-group');
+    const parentSelect = document.getElementById('admin-hm-parent');
+    if (isSubheading) {
+        parentGroup.style.display = 'block';
+        parentSelect.required = true;
+    } else {
+        parentGroup.style.display = 'none';
+        parentSelect.required = false;
+        parentSelect.value = '';
+    }
+
     document.getElementById('admin-hm-name-ne').value = '';
     document.getElementById('admin-hm-name-en').value = '';
     document.getElementById('admin-hm-order').value = 99;
@@ -869,10 +886,16 @@ function openAdminAddHeading(type) {
 }
 
 function openAdminAddSubHeading(parentId, type) {
-    populateAdminParentDropdown(type, parentId, '');
+    populateAdminParentDropdown(type, parentId, '', true);
     document.getElementById('admin-hm-modal-title').innerText = 'नयाँ उप-शीर्षक थप्नुहोस् (Add Subheading)';
     document.getElementById('admin-hm-id').value = '';
     document.getElementById('admin-hm-type').value = type;
+    
+    const parentGroup = document.getElementById('admin-hm-parent-group');
+    const parentSelect = document.getElementById('admin-hm-parent');
+    parentGroup.style.display = 'block';
+    parentSelect.required = true;
+
     document.getElementById('admin-hm-name-ne').value = '';
     document.getElementById('admin-hm-name-en').value = '';
     document.getElementById('admin-hm-order').value = 99;
@@ -883,10 +906,25 @@ function openAdminEditHeading(id) {
     if (!window.getLedgerHeadingById) return;
     const h = window.getLedgerHeadingById(id);
     if (!h) return;
-    populateAdminParentDropdown(h.type, h.parent_id || '', h.id);
+    
+    const isSubheading = !!h.parent_id;
+    populateAdminParentDropdown(h.type, h.parent_id || '', h.id, isSubheading);
+    
     document.getElementById('admin-hm-modal-title').innerText = 'शीर्षक सम्पादन गर्नुहोस् (Edit Heading)';
     document.getElementById('admin-hm-id').value = h.id;
     document.getElementById('admin-hm-type').value = h.type;
+    
+    const parentGroup = document.getElementById('admin-hm-parent-group');
+    const parentSelect = document.getElementById('admin-hm-parent');
+    if (isSubheading) {
+        parentGroup.style.display = 'block';
+        parentSelect.required = true;
+    } else {
+        parentGroup.style.display = 'none';
+        parentSelect.required = false;
+        parentSelect.value = '';
+    }
+
     document.getElementById('admin-hm-name-ne').value = h.name_ne;
     document.getElementById('admin-hm-name-en').value = h.name_en || '';
     document.getElementById('admin-hm-order').value = h.sort_order || 99;

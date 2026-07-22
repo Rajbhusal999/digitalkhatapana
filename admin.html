@@ -461,9 +461,14 @@
                             <h3>आम्दानी शीर्षक (Income Headings)</h3>
                             <p class="card-subtitle">Manage categories for incoming funds</p>
                         </div>
-                        <button class="btn-portal" style="padding:6px 14px;font-size:0.82rem;" onclick="openAdminAddHeading('income')">
-                            + नयाँ शीर्षक थप्नुहोस् (Add Heading/Subheading)
-                        </button>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn-portal" style="padding:6px 14px;font-size:0.82rem;" onclick="openAdminAddHeading('income', false)">
+                                + मुख्य शीर्षक (Main Heading)
+                            </button>
+                            <button class="btn-secondary" style="padding:6px 14px;font-size:0.82rem; border: 1px solid var(--primary); color: var(--primary);" onclick="openAdminAddHeading('income', true)">
+                                + उप-शीर्षक (Subheading)
+                            </button>
+                        </div>
                     </div>
                     <div id="admin-income-headings-list" style="margin-top: 15px; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; background: #fff;">
                         <!-- Populated dynamically -->
@@ -477,9 +482,14 @@
                             <h3>खर्च शीर्षक (Expense Headings)</h3>
                             <p class="card-subtitle">Manage categories for expenditures</p>
                         </div>
-                        <button class="btn-portal" style="padding:6px 14px;font-size:0.82rem;" onclick="openAdminAddHeading('expense')">
-                            + नयाँ शीर्षक थप्नुहोस् (Add Heading/Subheading)
-                        </button>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn-portal" style="padding:6px 14px;font-size:0.82rem;" onclick="openAdminAddHeading('expense', false)">
+                                + मुख्य शीर्षक (Main Heading)
+                            </button>
+                            <button class="btn-secondary" style="padding:6px 14px;font-size:0.82rem; border: 1px solid var(--primary); color: var(--primary);" onclick="openAdminAddHeading('expense', true)">
+                                + उप-शीर्षक (Subheading)
+                            </button>
+                        </div>
                     </div>
                     <div id="admin-expense-headings-list" style="margin-top: 15px; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; background: #fff;">
                         <!-- Populated dynamically -->
@@ -529,10 +539,10 @@
                 <input type="hidden" id="admin-hm-id">
                 <input type="hidden" id="admin-hm-type">
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label>मुख्य शीर्षक (Parent Heading)</label>
+                    <div class="form-group" id="admin-hm-parent-group">
+                        <label>मुख्य शीर्षक (Parent Heading) *</label>
                         <select id="admin-hm-parent" class="form-control">
-                            <option value="">-- यो आफैंमा मुख्य शीर्षक हो (None - Main Heading) --</option>
+                            <!-- Populated dynamically -->
                         </select>
                     </div>
                     <div class="form-group">
