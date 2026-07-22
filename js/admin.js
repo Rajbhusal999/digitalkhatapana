@@ -54,6 +54,7 @@ function initAdminPage() {
     renderFeedbackInbox();
     renderAdmTransactionsTable();
     renderAssetsTable();
+    renderAdminHeadings();
 }
 
 function updateSchoolHeader() {
@@ -121,6 +122,8 @@ function switchTab(tabId) {
         renderFeedbackInbox();
     } else if (tabId === 'assets') {
         renderAssetsTable();
+    } else if (tabId === 'headings') {
+        renderAdminHeadings();
     }
 }
 
@@ -775,5 +778,144 @@ async function handleDeleteAsset(id) {
 function resetAssetForm() {
     document.getElementById('asset-entry-form').reset();
     document.getElementById('asset-id-input').value = '';
+}
+
+/**
+ * ══════════════════════════════════════════════
+ * HEADING MANAGEMENT (Admin)
+ * ══════════════════════════════════════════════
+ */
+function renderAdminHeadings() {
+    renderAdminHeadingList('income', 'admin-income-headings-list');
+    renderAdminHeadingList('expense', 'admin-expense-headings-list');
+}
+
+function renderAdminHeadingList(type, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const headings = window.getLedgerHeadings ? window.getLedgerHeadings(type) : [];
+    const parents = headings.filter(h => !h.parent_id).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+
+    container.innerHTML = '';
+    if (parents.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">कुनै शीर्षक छैन।</p>';
+        return;
+    }
+
+    parents.forEach(parent => {
+        const children = headings.filter(h => h.parent_id === parent.id).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+        const childrenHTML = children.map(child => `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; margin-left: 20px; border-bottom: 1px dashed #eee;">
+                <span>
+                    <span style="background: var(--secondary); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-right: 6px;">उप</span>
+                    ${child.name_ne} <small style="color:#888;">${child.name_en||''}</small>
+                </span>
+                <div class="btn-action-group" style="justify-content: flex-end; gap: 4px;">
+                    <button class="btn-icon edit" onclick="openAdminEditHeading('${child.id}')" title="Edit">✏️</button>
+                    <button class="btn-icon delete" onclick="confirmAdminDeleteHeading('${child.id}')" title="Delete">🗑️</button>
+                </div>
+            </div>
+        `).join('');
+
+        container.innerHTML += `
+            <div style="margin-bottom: 10px; background: #fafafa; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                    <span>
+                        <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-right: 6px;">मु</span>
+                        <strong>${parent.name_ne}</strong> <small style="color:#888;">${parent.name_en||''}</small>
+                    </span>
+                    <div class="btn-action-group" style="justify-content: flex-end; gap: 4px;">
+                        <button class="btn-icon" style="background: var(--primary-light); color: var(--primary);" onclick="openAdminAddSubHeading('${parent.id}','${type}')" title="Add Subheading">+ उप</button>
+                        <button class="btn-icon edit" onclick="openAdminEditHeading('${parent.id}')" title="Edit">✏️</button>
+                        <button class="btn-icon delete" onclick="confirmAdminDeleteHeading('${parent.id}')" title="Delete">🗑️</button>
+                    </div>
+                </div>
+                ${childrenHTML}
+            </div>`;
+    });
+}
+
+function openAdminAddHeading(type) {
+    document.getElementById('admin-hm-modal-title').innerText = 'नयाँ मुख्य शीर्षक थप्नुहोस्';
+    document.getElementById('admin-hm-id').value = '';
+    document.getElementById('admin-hm-type').value = type;
+    document.getElementById('admin-hm-parent').value = '';
+    document.getElementById('admin-hm-name-ne').value = '';
+    document.getElementById('admin-hm-name-en').value = '';
+    document.getElementById('admin-hm-order').value = 99;
+    document.getElementById('admin-hm-modal').classList.add('active');
+}
+
+function openAdminAddSubHeading(parentId, type) {
+    document.getElementById('admin-hm-modal-title').innerText = 'नयाँ उप-शीर्षक थप्नुहोस्';
+    document.getElementById('admin-hm-id').value = '';
+    document.getElementById('admin-hm-type').value = type;
+    document.getElementById('admin-hm-parent').value = parentId;
+    document.getElementById('admin-hm-name-ne').value = '';
+    document.getElementById('admin-hm-name-en').value = '';
+    document.getElementById('admin-hm-order').value = 99;
+    document.getElementById('admin-hm-modal').classList.add('active');
+}
+
+function openAdminEditHeading(id) {
+    if (!window.getLedgerHeadingById) return;
+    const h = window.getLedgerHeadingById(id);
+    if (!h) return;
+    document.getElementById('admin-hm-modal-title').innerText = 'शीर्षक सम्पादन गर्नुहोस्';
+    document.getElementById('admin-hm-id').value = h.id;
+    document.getElementById('admin-hm-type').value = h.type;
+    document.getElementById('admin-hm-parent').value = h.parent_id || '';
+    document.getElementById('admin-hm-name-ne').value = h.name_ne;
+    document.getElementById('admin-hm-name-en').value = h.name_en || '';
+    document.getElementById('admin-hm-order').value = h.sort_order || 99;
+    document.getElementById('admin-hm-modal').classList.add('active');
+}
+
+function closeAdminHmModal() {
+    document.getElementById('admin-hm-modal').classList.remove('active');
+}
+
+async function handleAdminHmSubmit(event) {
+    event.preventDefault();
+    if (!window.saveLedgerHeading) return;
+
+    const id = document.getElementById('admin-hm-id').value;
+    const type = document.getElementById('admin-hm-type').value;
+    const parent_id = document.getElementById('admin-hm-parent').value;
+    const name_ne = document.getElementById('admin-hm-name-ne').value.trim();
+    const name_en = document.getElementById('admin-hm-name-en').value.trim();
+    const sort_order = parseInt(document.getElementById('admin-hm-order').value) || 99;
+
+    const heading = {
+        id: id || 'hd-' + Date.now(),
+        type: type,
+        parent_id: parent_id || null,
+        name_ne: name_ne,
+        name_en: name_en,
+        sort_order: sort_order
+    };
+
+    try {
+        await window.saveLedgerHeading(heading);
+        showAdmToast('शीर्षक सफलतापूर्वक सुरक्षित गरियो!', 'success');
+        closeAdminHmModal();
+        renderAdminHeadings();
+    } catch (err) {
+        showAdmToast('शीर्षक सुरक्षित गर्न समस्या भयो।', 'error');
+    }
+}
+
+async function confirmAdminDeleteHeading(id) {
+    if (!window.deleteLedgerHeading) return;
+    if (confirm('के तपाईं यो शीर्षक हटाउन निश्चित हुनुहुन्छ? (Are you sure you want to delete this heading?)')) {
+        try {
+            await window.deleteLedgerHeading(id);
+            showAdmToast('शीर्षक मेटिएको छ।', 'info');
+            renderAdminHeadings();
+        } catch(err) {
+            showAdmToast('शीर्षक हटाउन समस्या भयो।', 'error');
+        }
+    }
 }
 

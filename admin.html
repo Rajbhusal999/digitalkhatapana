@@ -99,6 +99,9 @@
                 नागरिक सुझाव (Grievances)
                 <span id="feedback-badge-count" class="warning-badge" style="display:none; margin-left:5px;">0</span>
             </button>
+            <button class="admin-nav-item" id="nav-btn-headings" onclick="switchTab('headings')">
+                शीर्षक व्यवस्थापन (Headings)
+            </button>
         </nav>
 
         <!-- TAB 1: OVERVIEW -->
@@ -198,7 +201,7 @@
                             <p>Trial Balance</p>
                         </div>
                     </a>
-                    <a href="reports.html?report=aamdani_khata&action=manage_headings" class="report-card">
+                    <a href="#" onclick="switchTab('headings'); return false;" class="report-card">
                         <div class="report-card-icon">⚙️</div>
                         <div>
                             <h4>खाता शीर्षक व्यवस्थापन</h4>
@@ -447,6 +450,43 @@
                 </div>
             </div>
         </section>
+
+        <!-- TAB 6: HEADING MANAGEMENT -->
+        <section id="tab-headings" class="admin-tab-content hidden">
+            <div class="feedback-grid">
+                <!-- Income Headings -->
+                <div class="feedback-card">
+                    <div class="card-title-row">
+                        <div>
+                            <h3>आम्दानी शीर्षक (Income Headings)</h3>
+                            <p class="card-subtitle">Manage categories for incoming funds</p>
+                        </div>
+                        <button class="btn-portal" style="padding:6px 14px;font-size:0.82rem;" onclick="openAdminAddHeading('income')">
+                            + मुख्य शीर्षक थप्नुहोस्
+                        </button>
+                    </div>
+                    <div id="admin-income-headings-list" style="margin-top: 15px; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; background: #fff;">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Expense Headings -->
+                <div class="feedback-card">
+                    <div class="card-title-row">
+                        <div>
+                            <h3>खर्च शीर्षक (Expense Headings)</h3>
+                            <p class="card-subtitle">Manage categories for expenditures</p>
+                        </div>
+                        <button class="btn-portal" style="padding:6px 14px;font-size:0.82rem;" onclick="openAdminAddHeading('expense')">
+                            + मुख्य शीर्षक थप्नुहोस्
+                        </button>
+                    </div>
+                    <div id="admin-expense-headings-list" style="margin-top: 15px; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; background: #fff;">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
 
@@ -473,6 +513,39 @@
                 <div class="modal-footer">
                     <button type="button" class="btn-secondary" onclick="closeReplyModal()">Cancel</button>
                     <button type="submit" class="form-submit-btn" style="width:auto;">Send Response (जवाफ पठाउनुहोस्)</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Heading Manager in Admin -->
+    <div class="modal-overlay" id="admin-hm-modal">
+        <div class="modal" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3 id="admin-hm-modal-title">शीर्षक थप्नुहोस्</h3>
+                <button class="close-btn" type="button" onclick="closeAdminHmModal()">&times;</button>
+            </div>
+            <form id="admin-hm-form" onsubmit="handleAdminHmSubmit(event)">
+                <input type="hidden" id="admin-hm-id">
+                <input type="hidden" id="admin-hm-type">
+                <input type="hidden" id="admin-hm-parent">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>नेपाली नाम (Nepali Name) *</label>
+                        <input type="text" id="admin-hm-name-ne" placeholder="जस्तै: सरकारी अनुदान" required class="form-control" style="font-family:var(--font-nepali);">
+                    </div>
+                    <div class="form-group">
+                        <label>अंग्रेजी नाम (English Name)</label>
+                        <input type="text" id="admin-hm-name-en" placeholder="e.g. Govt Grant" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>क्रम संख्या (Sort Order)</label>
+                        <input type="number" id="admin-hm-order" value="99" min="0" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeAdminHmModal()">Cancel</button>
+                    <button type="submit" class="form-submit-btn" style="width:auto;">Save (सुरक्षित गर्नुहोस्)</button>
                 </div>
             </form>
         </div>
