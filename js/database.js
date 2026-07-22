@@ -459,7 +459,7 @@ function getLedgerHeadingById(id) {
 // Transactions CRUD
 // ──────────────────────────────────────────────────────────────
 async function saveTransaction(tx) {
-    const dbPayload = {
+    const basePayload = {
         id: tx.id || 'tx-' + Date.now(),
         school_id: getSchoolId(),
         date: tx.date,
@@ -471,24 +471,29 @@ async function saveTransaction(tx) {
         voucher_no: tx.voucherNo || tx.voucher_no,
         source: tx.source || tx.fund_source || 'Internal',
         recorded_by: tx.recordedBy || 'Accountant',
-        payment_method: tx.payment_method || 'bank',
-        fiscal_year: tx.fiscal_year || null
+        payment_method: tx.payment_method || 'bank'
     };
 
+    let fullPayload = { ...basePayload };
+    if (tx.fiscal_year) fullPayload.fiscal_year = tx.fiscal_year;
     if (tx.subheading_id) {
-        dbPayload.subheading_id = tx.subheading_id;
-        dbPayload.subheading_amount = Number(tx.subheading_amount || tx.amount || 0);
+        fullPayload.subheading_id = tx.subheading_id;
+        fullPayload.subheading_amount = Number(tx.subheading_amount || tx.amount || 0);
     }
-    if (tx.receipt_url) {
-        dbPayload.receipt_url = tx.receipt_url;
-    }
+    if (tx.receipt_url) fullPayload.receipt_url = tx.receipt_url;
 
     if (supabaseClient) {
-        const { error } = await supabaseClient.from('transactions').upsert(dbPayload);
+        let { error } = await supabaseClient.from('transactions').upsert(fullPayload);
+        
+        if (error && error.message && error.message.includes('Could not find')) {
+            console.warn('Schema column missing. Retrying with base payload...', error.message);
+            const retry = await supabaseClient.from('transactions').upsert(basePayload);
+            error = retry.error;
+        }
         if (error) { 
             console.error('Error saving transaction to Supabase:', error); 
             // Graceful fallback to memory cache if schema error (e.g., missing column)
-            const fallbackTx = { ...tx, id: dbPayload.id };
+            const fallbackTx = { ...tx, id: basePayload.id };
             const idx = cachedTransactions.findIndex(t => t.id === fallbackTx.id);
             if (idx !== -1) { cachedTransactions[idx] = fallbackTx; }
             else { cachedTransactions.push(fallbackTx); }
@@ -496,12 +501,11 @@ async function saveTransaction(tx) {
             await syncFromSupabase();
         }
     } else {
-        const idx = cachedTransactions.findIndex(t => t.id === dbPayload.id);
+        const idx = cachedTransactions.findIndex(t => t.id === basePayload.id);
         if (idx !== -1) {
-            cachedTransactions[idx] = { ...cachedTransactions[idx], ...tx, id: dbPayload.id };
+            cachedTransactions[idx] = { ...cachedTransactions[idx], ...tx, id: basePayload.id };
         } else {
-            tx.id = dbPayload.id;
-            cachedTransactions.push(tx);
+            cachedTransactions.push({ ...tx, id: basePayload.id });
         }
     }
     return tx;
