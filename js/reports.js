@@ -388,7 +388,8 @@ function renderBankNagadi(data) {
 // ─────────────────────────────────────────────────────────────────
 function renderKhata(data, type) {
     const headings = window.getLedgerHeadings(type);
-    const parents = headings.filter(h => !h.parent_id).sort((a,b) => (a.sort_order||0)-(b.sort_order||0));
+    const isParent = h => !h.parent_id || h.parent_id === 'null' || h.parent_id === '';
+    const parents = headings.filter(isParent).sort((a,b) => (a.sort_order||0)-(b.sort_order||0));
     const schoolName = getSchoolDisplayName();
     const schoolAddress = getSchoolAddress();
     const fyEl = document.getElementById('filter-fiscal-year');
@@ -714,7 +715,8 @@ function renderIncomeExpenditure(data) {
 
     function getLeafHeadings(type) {
         const headings = window.getLedgerHeadings(type);
-        const parents = headings.filter(h => !h.parent_id).sort((a,b) => (a.sort_order||0)-(b.sort_order||0));
+        const isParent = h => !h.parent_id || h.parent_id === 'null' || h.parent_id === '';
+        const parents = headings.filter(isParent).sort((a,b) => (a.sort_order||0)-(b.sort_order||0));
         const allLeafCols = [];
         parents.forEach(parent => {
             const children = headings.filter(h => h.parent_id === parent.id).sort((a,b) => (a.sort_order||0)-(b.sort_order||0));
@@ -979,7 +981,8 @@ function toggleHeadingManager() {
 function renderHeadingManager() {
     const type = currentReport === 'aamdani_khata' ? 'income' : 'expense';
     const headings = window.getLedgerHeadings(type);
-    const parents = headings.filter(h => !h.parent_id).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+    const isParent = h => !h.parent_id || h.parent_id === 'null' || h.parent_id === '';
+    const parents = headings.filter(isParent).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
 
     const container = document.getElementById('heading-manager-list');
     if (!container) return;
@@ -1127,7 +1130,8 @@ function populateSubheadingDropdown() {
 
     const type = typeSelect.value;
     const headings = window.getLedgerHeadings(type);
-    const parents = headings.filter(h => !h.parent_id).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+    const isParent = h => !h.parent_id || h.parent_id === 'null' || h.parent_id === '';
+    const parents = headings.filter(isParent).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
 
     subSelect.innerHTML = '<option value="">-- उप-शीर्षक छान्नुहोस् --</option>';
     parents.forEach(parent => {

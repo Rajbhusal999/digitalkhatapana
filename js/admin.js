@@ -795,7 +795,8 @@ function renderAdminHeadingList(type, containerId) {
     if (!container) return;
 
     const headings = window.getLedgerHeadings ? window.getLedgerHeadings(type) : [];
-    const parents = headings.filter(h => !h.parent_id).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+    const isParent = h => !h.parent_id || h.parent_id === 'null' || h.parent_id === '';
+    const parents = headings.filter(isParent).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
 
     container.innerHTML = '';
     if (parents.length === 0) {
@@ -850,7 +851,8 @@ function populateAdminParentDropdown(type, selectedParentId, excludeId, isSubhea
     if (window.getLedgerHeadings) {
         const headings = window.getLedgerHeadings(type);
         // Only get main headings that are not the current heading being edited
-        const parents = headings.filter(h => !h.parent_id && h.id !== excludeId).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+        const isParent = h => !h.parent_id || h.parent_id === 'null' || h.parent_id === '';
+        const parents = headings.filter(h => isParent(h) && h.id !== excludeId).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
 
         parents.forEach(p => {
             const opt = document.createElement('option');

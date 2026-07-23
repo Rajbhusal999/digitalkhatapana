@@ -233,7 +233,10 @@ async function syncFromSupabase() {
         // Fetch ledger headings
         const hdRes = await supabaseClient.from('ledger_headings').select('*').eq('school_id', schoolId).order('sort_order');
         if (!hdRes.error && hdRes.data && hdRes.data.length > 0) {
-            cachedHeadings = hdRes.data;
+            cachedHeadings = hdRes.data.map(h => {
+                if (h.parent_id === 'null' || h.parent_id === '') h.parent_id = null;
+                return h;
+            });
         } else {
             cachedHeadings = [...DEFAULT_INCOME_HEADINGS, ...DEFAULT_EXPENSE_HEADINGS];
         }
@@ -601,7 +604,7 @@ async function saveLedgerHeading(heading) {
             id: heading.id,
             school_id: heading.school_id,
             type: heading.type,
-            parent_id: heading.parent_id || null,
+            parent_id: (!heading.parent_id || heading.parent_id === 'null' || heading.parent_id === '') ? null : heading.parent_id,
             name_ne: heading.name_ne,
             name_en: heading.name_en || heading.name_ne,
             sort_order: heading.sort_order
