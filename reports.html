@@ -433,13 +433,28 @@
                                 <label>रकम (Amount) *</label>
                                 <input type="number" id="entry-amount" required class="form-control" placeholder="0.00" min="0.01" step="0.01">
                             </div>
-                            <!-- Payment Method -->
-                            <div class="form-group">
-                                <label>भुक्तानी माध्यम</label>
-                                <select id="entry-payment-method" class="form-control">
-                                    <option value="bank">बैंक (Bank)</option>
-                                    <option value="cash">नगद (Cash)</option>
-                                </select>
+                            <!-- Advanced Splits -->
+                            <div class="form-group" style="grid-column: 1 / -1; background: #f4f6fc; padding: 12px; border-radius: 6px; border: 1px solid #dbeafe;">
+                                <label style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                    <span>नगदी किताब रकम विभाजन (Bank Cash Book Columns)</span>
+                                    <button type="button" class="btn-portal" style="padding:4px 8px;font-size:0.75rem;" onclick="addSplitRow()">+ थप रकम (Add More)</button>
+                                </label>
+                                <div id="split-entries-container">
+                                    <div class="split-row" style="display:flex; gap:10px; margin-bottom:8px;">
+                                        <select class="form-control split-col" style="flex:1;">
+                                            <option value="bank_dr">बैंक डेबिट (Bank Dr)</option>
+                                            <option value="bank_cr">बैंक क्रेडिट (Bank Cr)</option>
+                                            <option value="cash_dr">नगद डेबिट (Cash Dr)</option>
+                                            <option value="cash_cr">नगद क्रेडिट (Cash Cr)</option>
+                                            <option value="budget_exp">खर्च (Budget Exp)</option>
+                                            <option value="misc_dr">विविध डेबिट (Misc Dr)</option>
+                                            <option value="misc_cr">विविध क्रेडिट (Misc Cr)</option>
+                                        </select>
+                                        <input type="number" class="form-control split-amt" placeholder="Amount" min="0" step="0.01" style="width:140px;">
+                                        <button type="button" class="btn-secondary" style="padding:4px 8px; color:red;" onclick="removeSplitRow(this)">✕</button>
+                                    </div>
+                                </div>
+                                <small style="color:#666; font-size:0.75rem;">(यदि खाली छोड्नुभयो भने, प्रणालीले स्वत: डेबिट/क्रेडिट हिसाब गर्नेछ।)</small>
                             </div>
                         </div>
                         <!-- Particulars -->

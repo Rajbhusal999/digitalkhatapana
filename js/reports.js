@@ -527,13 +527,30 @@ function renderCashBank(data) {
             let amount = Number(t.amount);
             let pm = t.payment_method || 'bank';
             let r = {};
-            if (t.type === 'income') {
-                if (pm === 'cash') r.cash_dr = amount; else r.bank_dr = amount;
-                r.misc_dr = amount;
-            } else {
-                if (pm === 'cash') r.cash_cr = amount; else r.bank_cr = amount;
-                if (t.category && t.category.toLowerCase().includes('misc')) r.misc_cr = amount;
-                else r.budget_exp = amount;
+            
+            // Check if payment method is a JSON array from the advanced split UI
+            if (pm.startsWith('[')) {
+                try {
+                    const parsedSplits = JSON.parse(pm);
+                    if (Array.isArray(parsedSplits)) {
+                        // Collapse all splits for this transaction into a single row object
+                        parsedSplits.forEach(split => {
+                            Object.assign(r, split);
+                        });
+                    }
+                } catch(e) {}
+            }
+            
+            if (Object.keys(r).length === 0) {
+                // Fallback to default logic if no advanced splits
+                if (t.type === 'income') {
+                    if (pm === 'cash') r.cash_dr = amount; else r.bank_dr = amount;
+                    r.misc_dr = amount;
+                } else {
+                    if (pm === 'cash') r.cash_cr = amount; else r.bank_cr = amount;
+                    if (t.category && t.category.toLowerCase().includes('misc')) r.misc_cr = amount;
+                    else r.budget_exp = amount;
+                }
             }
             rows = [r];
         }
@@ -1162,6 +1179,40 @@ function populateSubheadingDropdown() {
     });
 }
 
+function addSplitRow() {
+    const container = document.getElementById('split-entries-container');
+    if (!container) return;
+    
+    const row = document.createElement('div');
+    row.className = 'split-row';
+    row.style.cssText = 'display:flex; gap:10px; margin-bottom:8px;';
+    
+    row.innerHTML = `
+        <select class="form-control split-col" style="flex:1;">
+            <option value="bank_dr">बैंक डेबिट (Bank Dr)</option>
+            <option value="bank_cr">बैंक क्रेडिट (Bank Cr)</option>
+            <option value="cash_dr">नगद डेबिट (Cash Dr)</option>
+            <option value="cash_cr">नगद क्रेडिट (Cash Cr)</option>
+            <option value="budget_exp">खर्च (Budget Exp)</option>
+            <option value="misc_dr">विविध डेबिट (Misc Dr)</option>
+            <option value="misc_cr">विविध क्रेडिट (Misc Cr)</option>
+        </select>
+        <input type="number" class="form-control split-amt" placeholder="Amount" min="0" step="0.01" style="width:140px;">
+        <button type="button" class="btn-secondary" style="padding:4px 8px; color:red;" onclick="removeSplitRow(this)">✕</button>
+    `;
+    container.appendChild(row);
+}
+
+function removeSplitRow(btn) {
+    const row = btn.parentElement;
+    const container = document.getElementById('split-entries-container');
+    if (container && container.children.length > 1) {
+        row.remove();
+    } else {
+        alert('कम्तिमा एउटा रकम विभाजन हुनुपर्छ।');
+    }
+}
+
 async function handleInlineSubmit(e) {
     e.preventDefault();
 
@@ -1180,6 +1231,23 @@ async function handleInlineSubmit(e) {
     const saveBtn = document.querySelector('#inline-entry-form button[type="submit"]');
     if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
 
+    // Build custom splits JSON
+    let splitsArray = [];
+    const splitRows = document.querySelectorAll('.split-row');
+    splitRows.forEach(row => {
+        const col = row.querySelector('.split-col').value;
+        const amtStr = row.querySelector('.split-amt').value;
+        const amtVal = Number(amtStr);
+        if (amtVal > 0) {
+            let splitObj = {};
+            splitObj[col] = amtVal;
+            splitsArray.push(splitObj);
+        }
+    });
+    
+    // If user provided valid splits, stringify them. Otherwise, default to "bank"
+    let finalPaymentMethod = splitsArray.length > 0 ? JSON.stringify(splitsArray) : 'bank';
+
     const formData = {
         type: type,
         category: type === 'income' ? 'gov_conditional' : 'salary', // default category
@@ -1191,7 +1259,7 @@ async function handleInlineSubmit(e) {
         amount: amount,
         subheading_id: subheadingId || null,
         subheading_amount: amount,
-        payment_method: document.getElementById('entry-payment-method')?.value || 'bank',
+        payment_method: finalPaymentMethod,
         fiscal_year: document.getElementById('filter-fiscal-year').value || '2082/83',
         fund_source: 'Internal'
     };
