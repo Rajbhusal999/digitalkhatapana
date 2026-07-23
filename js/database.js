@@ -187,8 +187,10 @@ async function syncFromSupabase() {
 
         // Fetch transactions
         const txRes = await supabaseClient.from('transactions').select('*').eq('school_id', schoolId);
-        if (txRes.error) throw txRes.error;
-        cachedTransactions = txRes.data.map(item => ({
+        if (txRes.error) {
+            console.error('Error fetching transactions:', txRes.error);
+        } else {
+            cachedTransactions = txRes.data.map(item => ({
             id: item.id,
             date: item.date,
             type: item.type,
@@ -206,19 +208,25 @@ async function syncFromSupabase() {
             description: item.description || item.particulars || '',
             receipt_url: item.receipt_url || null
         }));
+        }
 
         // Fetch budgets
         const bgRes = await supabaseClient.from('budgets').select('*').eq('school_id', schoolId);
-        if (bgRes.error) throw bgRes.error;
-        cachedBudgets = {};
-        bgRes.data.forEach(item => {
-            cachedBudgets[item.category] = Number(item.amount);
-        });
+        if (bgRes.error) {
+            console.error('Error fetching budgets:', bgRes.error);
+        } else {
+            cachedBudgets = {};
+            bgRes.data.forEach(item => {
+                cachedBudgets[item.category] = Number(item.amount);
+            });
+        }
 
         // Fetch feedbacks
         const fbRes = await supabaseClient.from('feedbacks').select('*').eq('school_id', schoolId);
-        if (fbRes.error) throw fbRes.error;
-        cachedFeedbacks = fbRes.data.map(item => ({
+        if (fbRes.error) {
+            console.error('Error fetching feedbacks:', fbRes.error);
+        } else {
+            cachedFeedbacks = fbRes.data.map(item => ({
             id: item.id,
             name: item.name,
             role: item.role,
@@ -229,6 +237,7 @@ async function syncFromSupabase() {
             replyText: item.reply_text,
             date: item.date
         }));
+        }
 
         // Fetch ledger headings
         const hdRes = await supabaseClient.from('ledger_headings').select('*').eq('school_id', schoolId).order('sort_order');
