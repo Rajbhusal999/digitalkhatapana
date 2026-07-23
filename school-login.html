@@ -351,7 +351,7 @@
         // ─── Check if already logged in ───
         document.addEventListener('DOMContentLoaded', () => {
             if (sessionStorage.getItem('school_user_logged_in') === 'true') {
-                window.location.href = 'admin.html';
+                window.location.href = 'landing.html';
             }
         });
 
@@ -479,7 +479,7 @@
             goToStep(3);
 
             setTimeout(() => {
-                window.location.href = 'admin.html';
+                window.location.href = 'landing.html';
             }, 2200);
         }
 

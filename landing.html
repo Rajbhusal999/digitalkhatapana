@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="np">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ड्यासबोर्ड (Dashboard) - Digital Khata Pana</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: var(--font-primary);
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* ── Header Styling ── */
+        .landing-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .landing-header::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background-image: radial-gradient(circle at right top, rgba(229,169,59,0.15) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .school-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .school-logo {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 2px solid rgba(229,169,59,0.5);
+            box-shadow: 0 0 15px rgba(229,169,59,0.2);
+        }
+
+        .school-text h1 {
+            font-family: var(--font-nepali);
+            font-size: 1.8rem;
+            margin: 0 0 5px 0;
+            color: #f8fafc;
+        }
+
+        .school-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fff;
+        }
+
+        /* ── Main Content ── */
+        .landing-main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .welcome-card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .welcome-card h2 {
+            font-size: 2rem;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .welcome-card p {
+            color: #64748b;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+
+        .dev-badge {
+            display: inline-block;
+            background: #e5a93b;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="landing-header">
+        <div class="header-content">
+            <div class="school-info">
+                <div class="school-logo">🏫</div>
+                <div class="school-text">
+                    <h1 id="header-school-name">लोड हुँदैछ...</h1>
+                    <p>📍 <span id="header-school-address">ठेगाना खोजिँदै...</span></p>
+                </div>
+            </div>
+            <div>
+                <button class="logout-btn" onclick="handleLogout()">लगआउट (Logout)</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="landing-main">
+        <div class="welcome-card">
+            <div class="dev-badge">NEW PROJECT SPACE</div>
+            <h2>नयाँ वेबसाइटमा स्वागत छ!</h2>
+            <p>Welcome to the new platform. We have successfully reset the workspace and are ready to build the new website features according to your requirements.</p>
+        </div>
+    </main>
+
+    <!-- Supabase & App Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Ensure logged in
+            if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
+                window.location.href = 'school-login.html';
+                return;
+            }
+
+            if (window.initDatabase) {
+                await window.initDatabase();
+            }
+
+            // Display school details
+            if (window._activeSchoolInfo) {
+                document.getElementById('header-school-name').innerText = window._activeSchoolInfo.schoolName || 'विद्यालयको नाम उपलब्ध छैन';
+                document.getElementById('header-school-address').innerText = window._activeSchoolInfo.address || 'ठेगाना उपलब्ध छैन';
+            } else {
+                document.getElementById('header-school-name').innerText = 'अज्ञात विद्यालय';
+                document.getElementById('header-school-address').innerText = 'N/A';
+            }
+        });
+
+        function handleLogout() {
+            sessionStorage.removeItem('school_user_logged_in');
+            sessionStorage.removeItem('school_user_email');
+            sessionStorage.removeItem('admin_logged_in');
+            window.location.href = 'school-login.html';
+        }
+    </script>
+</body>
+</html>
