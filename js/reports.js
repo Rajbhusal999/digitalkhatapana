@@ -528,7 +528,15 @@ function renderCashBank(data) {
             let pm = t.payment_method || 'bank';
             let r = {};
             
-            // Extract splits from description if they exist (safe from FK constraints)
+            // Check the dedicated JSONB splits column first
+            if (t.splits) {
+                try {
+                    const parsedSplits = typeof t.splits === 'string' ? JSON.parse(t.splits) : t.splits;
+                    Object.assign(r, parsedSplits);
+                } catch(e) {}
+            }
+            
+            // Fallback: Extract splits from description if they exist (safe from FK constraints)
             let desc = t.description || t.particulars || '';
             if (desc.includes('|||SPLITS:')) {
                 try {
@@ -539,7 +547,7 @@ function renderCashBank(data) {
                 } catch(e) {}
             }
             
-            // Also check category for backwards compatibility
+            // Fallback: Also check category for backwards compatibility
             if (t.category && typeof t.category === 'string' && t.category.startsWith('{')) {
                 try {
                     const parsedSplits = JSON.parse(t.category);
@@ -1252,12 +1260,8 @@ async function handleInlineSubmit(e) {
     const saveBtn = document.querySelector('#inline-entry-form button[type="submit"]');
     if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
     
-    // Save splits safely in description (avoids FK constraints on category)
+    // We can now safely store advanced splits directly in the dedicated 'splits' column
     let advancedSplitsJson = Object.keys(splitsObj).length > 0 ? JSON.stringify(splitsObj) : null;
-    let finalDescription = particulars;
-    if (advancedSplitsJson) {
-        finalDescription += '|||SPLITS:' + advancedSplitsJson;
-    }
 
     const formData = {
         type: type,
@@ -1266,11 +1270,12 @@ async function handleInlineSubmit(e) {
         voucher_no: voucherNo,
         voucherNo: voucherNo,
         particulars: particulars,
-        description: finalDescription,
+        description: particulars,
         amount: amount,
         subheading_id: subheadingId || null,
         subheading_amount: amount,
         payment_method: 'bank',
+        splits: advancedSplitsJson ? JSON.parse(advancedSplitsJson) : null,
         fiscal_year: document.getElementById('filter-fiscal-year').value || '2082/83',
         fund_source: 'Internal'
     };

@@ -206,6 +206,7 @@ async function syncFromSupabase() {
             subheading_amount: Number(item.subheading_amount || 0),
             fiscal_year: item.fiscal_year || null,
             description: item.description || item.particulars || '',
+            splits: item.splits || null,
             receipt_url: item.receipt_url || null
         }));
         }
@@ -483,7 +484,8 @@ async function saveTransaction(tx) {
         voucher_no: tx.voucherNo || tx.voucher_no,
         source: tx.source || tx.fund_source || 'Internal',
         recorded_by: tx.recordedBy || 'Accountant',
-        payment_method: tx.payment_method || 'bank'
+        payment_method: tx.payment_method || 'bank',
+        splits: tx.splits || null
     };
 
     let fullPayload = { ...basePayload };

@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS public.transactions (
     subheading_id TEXT,
     subheading_amount NUMERIC DEFAULT 0,
     receipt_url TEXT,
+    splits JSONB,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
