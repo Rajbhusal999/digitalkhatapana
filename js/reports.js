@@ -528,16 +528,11 @@ function renderCashBank(data) {
             let pm = t.payment_method || 'bank';
             let r = {};
             
-            // Check if payment method is a JSON array from the advanced split UI
-            if (pm.startsWith('[')) {
+            // Check if category has the JSON object from the advanced split UI
+            if (t.category && t.category.startsWith('{')) {
                 try {
-                    const parsedSplits = JSON.parse(pm);
-                    if (Array.isArray(parsedSplits)) {
-                        // Collapse all splits for this transaction into a single row object
-                        parsedSplits.forEach(split => {
-                            Object.assign(r, split);
-                        });
-                    }
+                    const parsedSplits = JSON.parse(t.category);
+                    Object.assign(r, parsedSplits);
                 } catch(e) {}
             }
             
@@ -548,7 +543,7 @@ function renderCashBank(data) {
                     r.misc_dr = amount;
                 } else {
                     if (pm === 'cash') r.cash_cr = amount; else r.bank_cr = amount;
-                    if (t.category && t.category.toLowerCase().includes('misc')) r.misc_cr = amount;
+                    if (t.category && !t.category.startsWith('{') && t.category.toLowerCase().includes('misc')) r.misc_cr = amount;
                     else r.budget_exp = amount;
                 }
             }
@@ -1221,36 +1216,37 @@ async function handleInlineSubmit(e) {
     const date = document.getElementById('tx-date').value;
     const voucherNo = document.getElementById('tx-voucher').value.trim();
     const particulars = document.getElementById('tx-particulars').value.trim();
-    const amount = Number(document.getElementById('entry-amount').value);
-
-    if (!date || !voucherNo || !particulars || !amount || amount <= 0) {
-        alert('कृपया सबै आवश्यक फिल्डहरू भर्नुहोस्।\nPlease fill all required fields.');
-        return;
-    }
-
-    const saveBtn = document.querySelector('#inline-entry-form button[type="submit"]');
-    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
-
-    // Build custom splits JSON
-    let splitsArray = [];
+    // Build custom splits JSON as an Object to save space
+    let splitsObj = {};
     const splitRows = document.querySelectorAll('.split-row');
     splitRows.forEach(row => {
         const col = row.querySelector('.split-col').value;
         const amtStr = row.querySelector('.split-amt').value;
         const amtVal = Number(amtStr);
         if (amtVal > 0) {
-            let splitObj = {};
-            splitObj[col] = amtVal;
-            splitsArray.push(splitObj);
+            splitsObj[col] = (splitsObj[col] || 0) + amtVal;
         }
     });
     
-    // If user provided valid splits, stringify them. Otherwise, default to "bank"
-    let finalPaymentMethod = splitsArray.length > 0 ? JSON.stringify(splitsArray) : 'bank';
+    // Auto-calculate total amount based on Debits vs Credits
+    let totalDr = (splitsObj.bank_dr || 0) + (splitsObj.cash_dr || 0) + (splitsObj.misc_dr || 0) + (splitsObj.budget_exp || 0);
+    let totalCr = (splitsObj.bank_cr || 0) + (splitsObj.cash_cr || 0) + (splitsObj.misc_cr || 0);
+    let amount = Math.max(totalDr, totalCr);
+    
+    if (!date || !voucherNo || !particulars || amount <= 0) {
+        alert('कृपया सबै आवश्यक फिल्डहरू र कम्तिमा एउटा रकम भर्नुहोस्।');
+        return;
+    }
+
+    const saveBtn = document.querySelector('#inline-entry-form button[type="submit"]');
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
+    
+    // Save splits in category field since it supports text.
+    let advancedSplitsJson = Object.keys(splitsObj).length > 0 ? JSON.stringify(splitsObj) : null;
 
     const formData = {
         type: type,
-        category: type === 'income' ? 'gov_conditional' : 'salary', // default category
+        category: advancedSplitsJson || (type === 'income' ? 'gov_conditional' : 'salary'),
         date: date,
         voucher_no: voucherNo,
         voucherNo: voucherNo,
@@ -1259,7 +1255,7 @@ async function handleInlineSubmit(e) {
         amount: amount,
         subheading_id: subheadingId || null,
         subheading_amount: amount,
-        payment_method: finalPaymentMethod,
+        payment_method: 'bank',
         fiscal_year: document.getElementById('filter-fiscal-year').value || '2082/83',
         fund_source: 'Internal'
     };
