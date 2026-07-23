@@ -1068,7 +1068,7 @@
                 sessionStorage.setItem('admin_logged_in', 'true');
                 showGatewayToast(`Access Granted! Welcome to ${matchedSchool.schoolName} admin panel.`, 'success');
                 setTimeout(() => {
-                    window.location.href = 'admin.html';
+                    window.location.href = 'landing.html';
                 }, 1500);
             } else {
                 showGatewayToast(`Citizen login successful! Welcome, ${email}. Please select a school...`, 'success');
