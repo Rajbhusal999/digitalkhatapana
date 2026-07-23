@@ -528,8 +528,19 @@ function renderCashBank(data) {
             let pm = t.payment_method || 'bank';
             let r = {};
             
-            // Check if category has the JSON object from the advanced split UI
-            if (t.category && t.category.startsWith('{')) {
+            // Extract splits from description if they exist (safe from FK constraints)
+            let desc = t.description || t.particulars || '';
+            if (desc.includes('|||SPLITS:')) {
+                try {
+                    const parts = desc.split('|||SPLITS:');
+                    const parsedSplits = JSON.parse(parts[1]);
+                    Object.assign(r, parsedSplits);
+                    t.particulars = parts[0]; // Clean up display
+                } catch(e) {}
+            }
+            
+            // Also check category for backwards compatibility
+            if (t.category && typeof t.category === 'string' && t.category.startsWith('{')) {
                 try {
                     const parsedSplits = JSON.parse(t.category);
                     Object.assign(r, parsedSplits);
@@ -1241,17 +1252,21 @@ async function handleInlineSubmit(e) {
     const saveBtn = document.querySelector('#inline-entry-form button[type="submit"]');
     if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
     
-    // Save splits in category field since it supports text.
+    // Save splits safely in description (avoids FK constraints on category)
     let advancedSplitsJson = Object.keys(splitsObj).length > 0 ? JSON.stringify(splitsObj) : null;
+    let finalDescription = particulars;
+    if (advancedSplitsJson) {
+        finalDescription += '|||SPLITS:' + advancedSplitsJson;
+    }
 
     const formData = {
         type: type,
-        category: advancedSplitsJson || (type === 'income' ? 'gov_conditional' : 'salary'),
+        category: type === 'income' ? 'gov_conditional' : 'salary', // MUST be a valid school_category
         date: date,
         voucher_no: voucherNo,
         voucherNo: voucherNo,
         particulars: particulars,
-        description: particulars,
+        description: finalDescription,
         amount: amount,
         subheading_id: subheadingId || null,
         subheading_amount: amount,
