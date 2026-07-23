@@ -1,10 +1,8 @@
--- Supabase Database Schema for Digital Khata Pana
--- Run this script in the Supabase SQL Editor to create the necessary tables.
+-- Supabase Schema (Trimmed)
 
--- 1. Registered Schools Table
-CREATE TABLE IF NOT EXISTS public.registered_schools (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    school_name TEXT,
+CREATE TABLE IF NOT EXISTS registered_schools (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    school_name TEXT NOT NULL,
     address TEXT,
     school_email TEXT UNIQUE NOT NULL,
     emis TEXT,
@@ -13,111 +11,12 @@ CREATE TABLE IF NOT EXISTS public.registered_schools (
     accountant_name TEXT,
     accountant_phone TEXT,
     logo TEXT,
-    status TEXT DEFAULT 'Pending',
+    status TEXT DEFAULT 'pending',
     otp TEXT,
     otp_used BOOLEAN DEFAULT false,
     permanent_password TEXT,
-    subscription TEXT,
+    subscription JSONB DEFAULT '{"plan": "free", "status": "active", "expires_at": null}'::jsonb,
     payment_method TEXT,
     transaction_code TEXT,
     registered_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
-
--- 2. Transactions Table
-CREATE TABLE IF NOT EXISTS public.transactions (
-    id TEXT PRIMARY KEY,
-    school_id TEXT NOT NULL,
-    date TEXT NOT NULL,
-    type TEXT NOT NULL,
-    category TEXT NOT NULL,
-    particulars TEXT,
-    description TEXT,
-    amount NUMERIC DEFAULT 0,
-    voucher_no TEXT,
-    source TEXT,
-    recorded_by TEXT,
-    payment_method TEXT DEFAULT 'bank',
-    fiscal_year TEXT,
-    subheading_id TEXT,
-    subheading_amount NUMERIC DEFAULT 0,
-    receipt_url TEXT,
-    splits JSONB,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
-);
-
--- 3. Budgets Table
-CREATE TABLE IF NOT EXISTS public.budgets (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    school_id TEXT NOT NULL,
-    category TEXT NOT NULL,
-    amount NUMERIC DEFAULT 0,
-    UNIQUE(school_id, category)
-);
-
--- 4. Feedbacks Table
-CREATE TABLE IF NOT EXISTS public.feedbacks (
-    id TEXT PRIMARY KEY,
-    school_id TEXT NOT NULL,
-    name TEXT NOT NULL,
-    role TEXT,
-    phone TEXT,
-    email TEXT,
-    message TEXT NOT NULL,
-    replied BOOLEAN DEFAULT false,
-    reply_text TEXT,
-    date TEXT
-);
-
--- 5. Ledger Headings Table
-CREATE TABLE IF NOT EXISTS public.ledger_headings (
-    id TEXT PRIMARY KEY,
-    school_id TEXT NOT NULL,
-    type TEXT NOT NULL,
-    parent_id TEXT,
-    name_ne TEXT NOT NULL,
-    name_en TEXT,
-    sort_order INTEGER DEFAULT 0
-);
-
--- Set Row Level Security (RLS) to allow all operations for easy setup
--- (Note: For a real production app, you should restrict these policies to authenticated users only)
-ALTER TABLE public.registered_schools ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.budgets ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.feedbacks ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.ledger_headings ENABLE ROW LEVEL SECURITY;
-
--- 6. Fixed Assets Table
-CREATE TABLE IF NOT EXISTS public.assets (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    school_id TEXT NOT NULL,
-    asset_name TEXT NOT NULL,
-    category TEXT,
-    purchase_date TEXT,
-    value NUMERIC DEFAULT 0,
-    condition TEXT DEFAULT 'Good',
-    location TEXT,
-    recorded_by TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
-);
-ALTER TABLE public.assets ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow anonymous read/write on assets" ON public.assets FOR ALL USING (true) WITH CHECK (true);
-
--- 7. Audit Logs Table
-CREATE TABLE IF NOT EXISTS public.audit_logs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    school_id TEXT NOT NULL,
-    action TEXT NOT NULL,
-    table_name TEXT NOT NULL,
-    record_id TEXT NOT NULL,
-    changed_by TEXT,
-    timestamp TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
-);
-ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow anonymous read/write on audit_logs" ON public.audit_logs FOR ALL USING (true) WITH CHECK (true);
-
-CREATE POLICY "Allow anonymous read/write on registered_schools" ON public.registered_schools FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow anonymous read/write on transactions" ON public.transactions FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow anonymous read/write on budgets" ON public.budgets FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow anonymous read/write on feedbacks" ON public.feedbacks FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow anonymous read/write on ledger_headings" ON public.ledger_headings FOR ALL USING (true) WITH CHECK (true);
