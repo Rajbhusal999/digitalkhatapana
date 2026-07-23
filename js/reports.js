@@ -1139,6 +1139,13 @@ function populateSubheadingDropdown() {
         if (children.length > 0) {
             const optGroup = document.createElement('optgroup');
             optGroup.label = parent.name_ne;
+            
+            // Allow selecting the parent itself
+            const parentOpt = document.createElement('option');
+            parentOpt.value = parent.id;
+            parentOpt.textContent = `${parent.name_ne} (मुख्य शीर्षक)`;
+            optGroup.appendChild(parentOpt);
+
             children.forEach(child => {
                 const opt = document.createElement('option');
                 opt.value = child.id;
