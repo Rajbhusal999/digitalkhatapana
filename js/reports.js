@@ -239,13 +239,42 @@ function renderBankNagadi(data) {
             let amount = Number(t.amount);
             let pm = t.payment_method || 'bank';
             let r = {};
-            if (t.type === 'income') {
-                if (pm === 'cash') r.cash_dr = amount; else r.bank_dr = amount;
-                r.misc_dr = amount;
-            } else {
-                if (pm === 'cash') r.cash_cr = amount; else r.bank_cr = amount;
-                if (t.category && t.category.toLowerCase().includes('misc')) r.misc_cr = amount;
-                else r.budget_exp = amount;
+            // Check the dedicated JSONB splits column first
+            if (t.splits) {
+                try {
+                    const parsedSplits = typeof t.splits === 'string' ? JSON.parse(t.splits) : t.splits;
+                    Object.assign(r, parsedSplits);
+                } catch(e) {}
+            }
+            
+            // Fallback: Extract splits from description if they exist (safe from FK constraints)
+            let desc = t.description || t.particulars || '';
+            if (desc.includes('|||SPLITS:')) {
+                try {
+                    const parts = desc.split('|||SPLITS:');
+                    const parsedSplits = JSON.parse(parts[1]);
+                    Object.assign(r, parsedSplits);
+                    t.particulars = parts[0]; // Clean up display
+                } catch(e) {}
+            }
+            
+            // Fallback: Also check category for backwards compatibility
+            if (t.category && typeof t.category === 'string' && t.category.startsWith('{')) {
+                try {
+                    const parsedSplits = JSON.parse(t.category);
+                    Object.assign(r, parsedSplits);
+                } catch(e) {}
+            }
+
+            if (Object.keys(r).length === 0) {
+                if (t.type === 'income') {
+                    if (pm === 'cash') r.cash_dr = amount; else r.bank_dr = amount;
+                    r.misc_dr = amount;
+                } else {
+                    if (pm === 'cash') r.cash_cr = amount; else r.bank_cr = amount;
+                    if (t.category && !t.category.startsWith('{') && t.category.toLowerCase().includes('misc')) r.misc_cr = amount;
+                    else r.budget_exp = amount;
+                }
             }
             rows = [r];
         }
