@@ -262,7 +262,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Page No (पाना नं)</label>
-                        <input type="text" id="page_no" oninput="loadStats()" required>
+                        <input type="text" id="page_no" onchange="loadStats()" required>
                     </div>
                     <div class="form-group">
                         <label>Fiscal Year (आर्थिक वर्ष)</label>
@@ -411,6 +411,7 @@
         let allHeadings = [];
         let allSubheadings = [];
         let rowCount = 0;
+        let cachedMaxVoucher = null;
 
         document.addEventListener('DOMContentLoaded', async () => {
             if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
@@ -428,50 +429,65 @@
         });
 
         async function loadStats() {
-            if (!window._activeSchoolInfo || !supabaseClient) return;
-            const schoolId = window._activeSchoolInfo.id;
-            const pageNo = document.getElementById('page_no').value.trim();
+            try {
+                if (!window._activeSchoolInfo || !supabaseClient) return;
+                const schoolId = window._activeSchoolInfo.id;
+                const pageNo = document.getElementById('page_no').value.trim();
 
-            const { data: vData } = await supabaseClient
-                .from('bnk_vouchers')
-                .select('voucher_no')
-                .eq('school_id', schoolId);
-            
-            let maxVoucher = 0;
-            if (vData) {
-                vData.forEach(v => {
-                    const num = parseInt(v.voucher_no);
-                    if (!isNaN(num) && num > maxVoucher) {
-                        maxVoucher = num;
-                    }
-                });
-            }
-
-            let pageEntries = 0;
-            if (pageNo) {
-                const { data: pData } = await supabaseClient
-                    .from('bnk_vouchers')
-                    .select('id')
-                    .eq('school_id', schoolId)
-                    .eq('page_no', pageNo);
-                if (pData) {
-                    pageEntries = pData.length;
+                const banner = document.getElementById('statsBanner');
+                if (banner && banner.innerHTML.includes('Loading statistics')) {
+                    // keep it
+                } else if (banner) {
+                    banner.innerHTML = '<div>Loading statistics...</div>';
                 }
-            }
 
-            const nextVoucher = maxVoucher + 1;
-            
-            const statsHtml = `
-                <div><strong>Current Page No:</strong> ${pageNo || '-'} &nbsp;|&nbsp; <strong>Total Vouchers on Page:</strong> ${pageEntries}</div>
-                <div><strong>Previous Voucher No:</strong> ${maxVoucher > 0 ? maxVoucher : 'None'} &nbsp;|&nbsp; <strong>Next Voucher No:</strong> ${nextVoucher}</div>
-            `;
-            const banner = document.getElementById('statsBanner');
-            if(banner) banner.innerHTML = statsHtml;
-            
-            // Optionally auto-suggest next voucher if empty
-            const voucherInput = document.getElementById('voucher_no');
-            if (voucherInput && !voucherInput.value) {
-                voucherInput.value = nextVoucher;
+                // 1. Get max voucher (cached)
+                if (cachedMaxVoucher === null) {
+                    const { data: vData } = await supabaseClient
+                        .from('bnk_vouchers')
+                        .select('voucher_no')
+                        .eq('school_id', schoolId);
+                    
+                    let maxV = 0;
+                    if (vData) {
+                        vData.forEach(v => {
+                            const num = parseInt(v.voucher_no);
+                            if (!isNaN(num) && num > maxV) maxV = num;
+                        });
+                    }
+                    cachedMaxVoucher = maxV;
+                }
+
+                // 2. Get count for current page
+                let pageEntries = 0;
+                if (pageNo) {
+                    const { count, error } = await supabaseClient
+                        .from('bnk_vouchers')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('school_id', schoolId)
+                        .eq('page_no', pageNo);
+                    
+                    if (!error && count !== null) {
+                        pageEntries = count;
+                    }
+                }
+
+                const nextVoucher = cachedMaxVoucher + 1;
+                
+                const statsHtml = `
+                    <div><strong>Current Page No:</strong> ${pageNo || '-'} &nbsp;|&nbsp; <strong>Total Vouchers on Page:</strong> ${pageEntries}</div>
+                    <div><strong>Previous Voucher No:</strong> ${cachedMaxVoucher > 0 ? cachedMaxVoucher : 'None'} &nbsp;|&nbsp; <strong>Next Voucher No:</strong> ${nextVoucher}</div>
+                `;
+                if (banner) banner.innerHTML = statsHtml;
+                
+                const voucherInput = document.getElementById('voucher_no');
+                if (voucherInput && !voucherInput.value) {
+                    voucherInput.value = nextVoucher;
+                }
+            } catch (err) {
+                console.error(err);
+                const banner = document.getElementById('statsBanner');
+                if (banner) banner.innerHTML = `<div style="color:red;">Error loading statistics.</div>`;
             }
         }
 
@@ -638,6 +654,7 @@
                 rowCount = 0;
                 addEntryRow(); // reset to 1 row
                 loadRecentEntries();
+                cachedMaxVoucher = null; // force refresh
                 loadStats();
             }
         }
