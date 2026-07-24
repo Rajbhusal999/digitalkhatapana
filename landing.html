@@ -373,6 +373,13 @@
             if (window._activeSchoolInfo) {
                 document.getElementById('header-school-name').innerText = window._activeSchoolInfo.schoolName || 'विद्यालयको नाम उपलब्ध छैन';
                 document.getElementById('header-school-address').innerText = window._activeSchoolInfo.address || 'ठेगाना उपलब्ध छैन';
+                
+                if (window._activeSchoolInfo.logo) {
+                    const logoContainer = document.querySelector('.school-logo');
+                    if (logoContainer) {
+                        logoContainer.innerHTML = `<img src="${window._activeSchoolInfo.logo}" alt="School Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                    }
+                }
             } else {
                 document.getElementById('header-school-name').innerText = 'अज्ञात विद्यालय';
                 document.getElementById('header-school-address').innerText = 'N/A';
