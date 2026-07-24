@@ -410,8 +410,10 @@
             // Bank balance acts as balancing figure so Income Total == Expense Total perfectly
             const bankBalance = totalIncomeSum - totalExpenseSum - cashBalance;
 
-            rightColumn.push({ name: 'नगद', amount: cashBalance });
-            rightColumn.push({ name: 'रा.वा. बैंक', amount: bankBalance });
+            window._baseExpenseSum = totalExpenseSum;
+
+            rightColumn.push({ name: 'नगद', amount: cashBalance, isEditable: true, id: 'editable-cash' });
+            rightColumn.push({ name: 'रा.वा. बैंक', amount: bankBalance, isEditable: true, id: 'editable-bank' });
             
             totalExpenseSum += cashBalance + bankBalance;
 
@@ -425,12 +427,19 @@
 
                 const formatAmt = (val) => val === '' ? '' : (Number(val) === 0 ? '0.00' : Number(val).toFixed(2));
 
+                let expAmtHtml = formatAmt(exp.amount);
+                if (exp.isEditable) {
+                    expAmtHtml = `<input type="number" id="${exp.id}" value="${formatAmt(exp.amount)}" 
+                        oninput="this.setAttribute('value', this.value); updateExpenseTotal();"
+                        style="text-align: right; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px; width: 120px; outline: none;">`;
+                }
+
                 tbodyHtml += `
                     <tr>
                         <td style="text-align: right;">${inc.name}</td>
                         <td style="text-align: right;">${formatAmt(inc.amount)}</td>
                         <td style="text-align: right;">${exp.name}</td>
-                        <td style="text-align: right;">${formatAmt(exp.amount)}</td>
+                        <td style="text-align: right;">${expAmtHtml}</td>
                     </tr>
                 `;
             }
@@ -441,11 +450,18 @@
                     <td style="text-align: center; font-weight: bold;">जम्मा</td>
                     <td style="text-align: right; font-weight: bold;">${totalIncomeSum.toFixed(2)}</td>
                     <td style="text-align: center; font-weight: bold;">जम्मा</td>
-                    <td style="text-align: right; font-weight: bold;">${totalExpenseSum.toFixed(2)}</td>
+                    <td style="text-align: right; font-weight: bold;" id="expense-grand-total">${totalExpenseSum.toFixed(2)}</td>
                 </tr>
             `;
 
             tbody.innerHTML = tbodyHtml;
+        }
+
+        function updateExpenseTotal() {
+            const cash = Number(document.getElementById('editable-cash').value) || 0;
+            const bank = Number(document.getElementById('editable-bank').value) || 0;
+            const newTotal = window._baseExpenseSum + cash + bank;
+            document.getElementById('expense-grand-total').innerText = newTotal.toFixed(2);
         }
 
         function exportToExcel() {
