@@ -137,7 +137,7 @@
 
     <main class="main-container">
         <div class="form-card">
-            <h2>Enter Opening Balances</h2>
+            <h2>Enter Opening Balances (गत वर्षको अल्या)</h2>
             <form id="openingBalanceForm">
                 
                 <div class="top-fields">
@@ -149,24 +149,14 @@
                         <label>Voucher No. (भौचर नं.)</label>
                         <input type="text" id="voucher_no" required>
                     </div>
+                    <div class="form-group">
+                        <label>Total Amount (जम्मा रकम)</label>
+                        <input type="number" step="0.01" min="0" id="total_amount" required>
+                    </div>
                 </div>
 
-                <table class="dynamic-table" id="entriesTable">
-                    <thead>
-                        <tr>
-                            <th style="width: 35%">Heading (शीर्षक)</th>
-                            <th style="width: 35%">Subheading (उपशीर्षक)</th>
-                            <th style="width: 20%">Amount (रकम)</th>
-                            <th style="width: 10%">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="entriesBody">
-                        <!-- Dynamic rows will be inserted here -->
-                    </tbody>
-                </table>
-
                 <div class="actions">
-                    <button type="button" class="btn-add" onclick="addRow()">+ Add Row</button>
+                    <div style="flex-grow: 1;"></div>
                     <button type="submit" class="btn-submit" id="submitBtn">Save Balances (सुरक्षित गर्नुहोस्)</button>
                 </div>
             </form>
@@ -177,9 +167,6 @@
     <script src="js/config.js"></script>
     <script src="js/database.js"></script>
     <script>
-        let incomeHeadings = [];
-        let incomeSubheadings = [];
-
         document.addEventListener('DOMContentLoaded', async () => {
             if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
                 window.location.href = 'school-login.html';
@@ -192,79 +179,7 @@
 
             // Set today's date by default
             document.getElementById('transaction_date').valueAsDate = new Date();
-
-            await loadIncomeHeadings();
-            addRow(); // Add first empty row
         });
-
-        async function loadIncomeHeadings() {
-            if (!window._activeSchoolInfo) return;
-            const schoolId = window._activeSchoolInfo.id;
-
-            // Fetch Headings
-            const { data: hData } = await supabaseClient
-                .from('ledger_headings')
-                .select('*')
-                .eq('school_id', schoolId)
-                .eq('type', 'income');
-            
-            if (hData) incomeHeadings = hData;
-
-            // Fetch Subheadings
-            if (incomeHeadings.length > 0) {
-                const headingIds = incomeHeadings.map(h => h.id);
-                const { data: sData } = await supabaseClient
-                    .from('ledger_subheadings')
-                    .select('*')
-                    .in('heading_id', headingIds);
-                if (sData) incomeSubheadings = sData;
-            }
-        }
-
-        function addRow() {
-            const tbody = document.getElementById('entriesBody');
-            const rowCount = tbody.children.length;
-            const tr = document.createElement('tr');
-            
-            let headingOptions = `<option value="">Select Heading...</option>`;
-            incomeHeadings.forEach(h => {
-                headingOptions += `<option value="${h.id}">${h.name}</option>`;
-            });
-
-            tr.innerHTML = `
-                <td>
-                    <select class="heading-select" onchange="updateSubheadings(this)" required>
-                        ${headingOptions}
-                    </select>
-                </td>
-                <td>
-                    <select class="subheading-select" required>
-                        <option value="">Select Subheading...</option>
-                    </select>
-                </td>
-                <td>
-                    <input type="number" step="0.01" class="amount-input" min="0" required>
-                </td>
-                <td style="text-align:center;">
-                    ${rowCount > 0 ? `<button type="button" class="btn-remove" onclick="this.closest('tr').remove()">X</button>` : ''}
-                </td>
-            `;
-            tbody.appendChild(tr);
-        }
-
-        function updateSubheadings(headingSelect) {
-            const headingId = headingSelect.value;
-            const tr = headingSelect.closest('tr');
-            const subheadingSelect = tr.querySelector('.subheading-select');
-            
-            subheadingSelect.innerHTML = `<option value="">Select Subheading...</option>`;
-            if (!headingId) return;
-
-            const filteredSubs = incomeSubheadings.filter(s => s.heading_id === headingId);
-            filteredSubs.forEach(s => {
-                subheadingSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
-            });
-        }
 
         document.getElementById('openingBalanceForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -275,52 +190,39 @@
             const schoolId = window._activeSchoolInfo.id;
             const date = document.getElementById('transaction_date').value;
             const voucherNo = document.getElementById('voucher_no').value;
+            const amount = document.getElementById('total_amount').value;
 
-            const tbody = document.getElementById('entriesBody');
-            const rows = tbody.querySelectorAll('tr');
-            const records = [];
-
-            for (let row of rows) {
-                const subId = row.querySelector('.subheading-select').value;
-                const amt = row.querySelector('.amount-input').value;
-                if (subId && amt) {
-                    records.push({
-                        school_id: schoolId,
-                        transaction_date: date,
-                        voucher_no: voucherNo,
-                        subheading_id: subId,
-                        amount: Number(amt),
-                        fiscal_year: '2083/84' // default
-                    });
-                }
-            }
-
-            if (records.length === 0) {
-                alert("Please add at least one valid amount.");
+            if (!amount || Number(amount) <= 0) {
+                alert("Please enter a valid amount.");
                 btn.innerText = "Save Balances (सुरक्षित गर्नुहोस्)";
                 btn.disabled = false;
                 return;
             }
 
+            const record = {
+                school_id: schoolId,
+                transaction_date: date,
+                voucher_no: voucherNo,
+                amount: Number(amount),
+                fiscal_year: '2083/84' // default
+            };
+
             // Insert into Supabase
             const { error } = await supabaseClient
                 .from('opening_balances')
-                .insert(records);
+                .insert([record]);
 
             if (error) {
                 console.error(error);
                 alert("Error saving opening balances: " + error.message);
-                btn.innerText = "Save Balances (सुरक्षित गर्नुहोस्)";
-                btn.disabled = false;
             } else {
                 alert("Opening Balances saved successfully!");
-                // Optionally reset form
                 document.getElementById('openingBalanceForm').reset();
-                document.getElementById('entriesBody').innerHTML = '';
-                addRow();
-                btn.innerText = "Save Balances (सुरक्षित गर्नुहोस्)";
-                btn.disabled = false;
+                document.getElementById('transaction_date').valueAsDate = new Date();
             }
+            
+            btn.innerText = "Save Balances (सुरक्षित गर्नुहोस्)";
+            btn.disabled = false;
         });
     </script>
 </body>

@@ -323,12 +323,17 @@
             });
 
             // Also process opening balances for columns
-            const openingBalance = { date: '-', voucher_no: '-', amounts: {} };
+            const openingBalance = { date: '-', voucher_no: '-', amounts: {}, grandTotal: 0 };
             if (obData) {
                 obData.forEach(ob => {
-                    if (!ob.ledger_subheadings || !ob.ledger_subheadings.ledger_headings) return;
                     openingBalance.date = ob.transaction_date || openingBalance.date;
                     openingBalance.voucher_no = ob.voucher_no || openingBalance.voucher_no;
+
+                    if (!ob.ledger_subheadings || !ob.ledger_subheadings.ledger_headings) {
+                        // Global opening balance without specific heading
+                        openingBalance.grandTotal += Number(ob.amount) || 0;
+                        return;
+                    }
 
                     const hId = ob.ledger_subheadings.ledger_headings.id;
                     const hName = ob.ledger_subheadings.ledger_headings.name;
@@ -415,16 +420,16 @@
                 <td style="text-align:left;">गत वर्षको अल्या (Last Year Balance)</td>
                 <td>${openingBalance.voucher_no}</td>`;
             
-            let obRowTotal = 0;
+            let obRowTotal = openingBalance.grandTotal;
             subheadingsList.forEach((sId) => {
                 const amt = openingBalance.amounts[sId] || 0;
                 obRowTotal += amt;
                 columnTotals[sId] += amt;
-                tbodyHtml += `<td>${amt > 0 ? amt.toFixed(2) : '0.00'}</td>`;
+                tbodyHtml += `<td>${amt > 0 ? amt.toFixed(2) : ''}</td>`;
             });
             grandTotal += obRowTotal;
             
-            tbodyHtml += `<td style="font-weight:bold;">${obRowTotal.toFixed(2)}</td><td>-</td></tr>`;
+            tbodyHtml += `<td style="font-weight:bold;">${obRowTotal > 0 ? obRowTotal.toFixed(2) : '0.00'}</td><td>-</td></tr>`;
 
             sortedVouchers.forEach(v => {
                 tbodyHtml += `<tr>
