@@ -38,18 +38,24 @@ CREATE TABLE IF NOT EXISTS ledger_subheadings (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- Bank Nagadi Kitaab (Bank Cash Book)
-CREATE TABLE IF NOT EXISTS bank_nagadi_kitaab (
+-- Bank Nagadi Kitaab (Master-Detail Structure)
+CREATE TABLE IF NOT EXISTS bnk_vouchers (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     school_id UUID REFERENCES registered_schools(id) ON DELETE CASCADE,
     page_no TEXT,
     fiscal_year TEXT DEFAULT '2083/84',
-    entry_type TEXT CHECK (entry_type IN ('income', 'expense')),
-    heading_id UUID REFERENCES ledger_headings(id) ON DELETE SET NULL,
-    subheading_id UUID REFERENCES ledger_subheadings(id) ON DELETE SET NULL,
     transaction_date DATE NOT NULL,
     voucher_no TEXT,
     particulars TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+CREATE TABLE IF NOT EXISTS bnk_entries (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    voucher_id UUID REFERENCES bnk_vouchers(id) ON DELETE CASCADE,
+    entry_type TEXT CHECK (entry_type IN ('income', 'expense')),
+    heading_id UUID REFERENCES ledger_headings(id) ON DELETE SET NULL,
+    subheading_id UUID REFERENCES ledger_subheadings(id) ON DELETE SET NULL,
     cash_debit NUMERIC DEFAULT 0,
     cash_credit NUMERIC DEFAULT 0,
     bank_debit NUMERIC DEFAULT 0,

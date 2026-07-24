@@ -143,11 +143,52 @@
             padding-bottom: 5px;
         }
 
+        /* Dynamic Rows Styling */
+        .entry-row {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .entry-row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 10px;
+        }
+        .entry-row-header h4 {
+            margin: 0;
+            color: #334155;
+        }
+        .btn-remove-row {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .btn-add-row {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
         .btn-submit {
             background: #10b981;
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 15px 30px;
             border-radius: 8px;
             font-weight: 700;
             font-size: 1.1rem;
@@ -171,8 +212,9 @@
 
         .entries-table th, .entries-table td {
             border: 1px solid #e2e8f0;
-            padding: 10px;
-            text-align: left;
+            padding: 8px;
+            text-align: center;
+            vertical-align: top;
         }
 
         .entries-table th {
@@ -181,6 +223,9 @@
             color: #334155;
         }
         
+        .entries-table tbody tr.voucher-row {
+            border-top: 2px solid #94a3b8;
+        }
         .entries-table tbody tr:nth-child(even) {
             background-color: #f1f5f9;
         }
@@ -206,9 +251,10 @@
     <main class="main-container">
         
         <div class="card">
-            <h3>नयाँ विवरण थप्नुहोस् (Add New Entry)</h3>
+            <h3>नयाँ भौचर थप्नुहोस् (Add New Voucher)</h3>
             <form id="entryForm" onsubmit="submitEntry(event)">
                 
+                <!-- Master Data -->
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Page No (पाना नं)</label>
@@ -216,7 +262,7 @@
                     </div>
                     <div class="form-group">
                         <label>Fiscal Year (आर्थिक वर्ष)</label>
-                        <input type="text" id="fiscal_year" value="2083" required>
+                        <input type="text" id="fiscal_year" value="2083/84" required>
                     </div>
                     <div class="form-group">
                         <label>Transaction Date (मिति)</label>
@@ -229,94 +275,26 @@
                 </div>
 
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label>Type (प्रकार)</label>
-                        <select id="entry_type" required onchange="onTypeChange()">
-                            <option value="">छान्नुहोस् (Select...)</option>
-                            <option value="income">आम्दानी (Income)</option>
-                            <option value="expense">खर्च (Expense)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Heading (मुख्य शीर्षक)</label>
-                        <select id="heading_id" required onchange="onHeadingChange()">
-                            <option value="">पहिले प्रकार छान्नुहोस्</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Sub Heading (उप-शीर्षक)</label>
-                        <select id="subheading_id" required>
-                            <option value="">पहिले मुख्य शीर्षक छान्नुहोस्</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-grid">
                     <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Particulars (विवरण)</label>
+                        <label>Particulars (विवरण - भौचरको मुख्य विवरण)</label>
                         <input type="text" id="particulars" placeholder="विवरण लेख्नुहोस्..." required>
                     </div>
                 </div>
 
-                <!-- Amounts -->
-                <div class="form-grid">
-                    <div class="section-title">नगद (Cash)</div>
-                    <div class="form-group">
-                        <label>Debit (डेबिट)</label>
-                        <input type="number" id="cash_debit" value="0" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label>Credit (क्रेडिट)</label>
-                        <input type="number" id="cash_credit" value="0" step="0.01">
-                    </div>
-
-                    <div class="section-title">बैंक (Bank)</div>
-                    <div class="form-group">
-                        <label>Debit (डेबिट)</label>
-                        <input type="number" id="bank_debit" value="0" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label>Credit (क्रेडिट)</label>
-                        <input type="number" id="bank_credit" value="0" step="0.01">
-                    </div>
-
-                    <div class="section-title">बजेट खर्च (Budget Expense)</div>
-                    <div class="form-group">
-                        <label>Amount (रकम)</label>
-                        <input type="number" id="budget_kharcha" value="0" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <!-- empty for grid alignment -->
-                    </div>
-
-                    <div class="section-title">पेस्की (Advance)</div>
-                    <div class="form-group">
-                        <label>दिएको (Given)</label>
-                        <input type="number" id="peski_dieko" value="0" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label>फर्छ्यौट (Cleared)</label>
-                        <input type="number" id="peski_farchiyeko" value="0" step="0.01">
-                    </div>
-
-                    <div class="section-title">विविध (Miscellaneous)</div>
-                    <div class="form-group">
-                        <label>Debit (डेबिट)</label>
-                        <input type="number" id="bibidh_debit" value="0" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label>Credit (क्रेडिट)</label>
-                        <input type="number" id="bibidh_credit" value="0" step="0.01">
-                    </div>
+                <!-- Detail Data Container -->
+                <div id="entries-container">
+                    <!-- Dynamic Entry Rows will be injected here -->
                 </div>
 
-                <button type="submit" class="btn-submit">Submit Entry (सेभ गर्नुहोस्)</button>
+                <button type="button" class="btn-add-row" onclick="addEntryRow()">+ Add Another Amount (अर्को रकम थप्नुहोस्)</button>
+                <hr style="border: 1px dashed #cbd5e1; margin-bottom: 20px;">
+                <button type="submit" class="btn-submit">Submit Voucher (भौचर सेभ गर्नुहोस्)</button>
             </form>
         </div>
 
         <div class="card" style="overflow-x: auto;">
-            <h3>Recent Entries (पछिल्ला विवरणहरू)</h3>
-            <table class="entries-table" style="min-width: 1000px; text-align: center;">
+            <h3>Recent Vouchers (पछिल्ला भौचरहरू)</h3>
+            <table class="entries-table" style="min-width: 1100px;">
                 <thead>
                     <tr>
                         <th rowspan="2">मिति<br>(Date)</th>
@@ -357,12 +335,78 @@
 
     </main>
 
+    <!-- Template for an Entry Row -->
+    <template id="entry-row-template">
+        <div class="entry-row" data-index="{index}">
+            <div class="entry-row-header">
+                <h4>रकम विवरण (Amount Details) - #{index}</h4>
+                <button type="button" class="btn-remove-row" onclick="removeEntryRow(this)">Remove (हटाउनुहोस्)</button>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Type (प्रकार)</label>
+                    <select class="entry_type" required onchange="onTypeChange(this)">
+                        <option value="">छान्नुहोस् (Select...)</option>
+                        <option value="income">आम्दानी (Income)</option>
+                        <option value="expense">खर्च (Expense)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Heading (मुख्य शीर्षक)</label>
+                    <select class="heading_id" onchange="onHeadingChange(this)">
+                        <option value="">पहिले प्रकार छान्नुहोस्</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Sub Heading (उप-शीर्षक)</label>
+                    <select class="subheading_id">
+                        <option value="">पहिले मुख्य शीर्षक छान्नुहोस्</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Amounts -->
+            <div class="form-grid" style="margin-top: 15px;">
+                <div class="form-group">
+                    <label>Cash Dr (नगद डेबिट)</label>
+                    <input type="number" class="cash_debit" value="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Cash Cr (नगद क्रेडिट)</label>
+                    <input type="number" class="cash_credit" value="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Bank Dr (बैंक डेबिट)</label>
+                    <input type="number" class="bank_debit" value="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Bank Cr (बैंक क्रेडिट)</label>
+                    <input type="number" class="bank_credit" value="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Budget (बजेट खर्च)</label>
+                    <input type="number" class="budget_kharcha" value="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Misc Dr (विविध डेबिट)</label>
+                    <input type="number" class="bibidh_debit" value="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Misc Cr (विविध क्रेडिट)</label>
+                    <input type="number" class="bibidh_credit" value="0" step="0.01">
+                </div>
+            </div>
+        </div>
+    </template>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
     <script src="js/database.js"></script>
     <script>
         let allHeadings = [];
         let allSubheadings = [];
+        let rowCount = 0;
 
         document.addEventListener('DOMContentLoaded', async () => {
             if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
@@ -373,6 +417,7 @@
                 await window.initDatabase();
             }
             await loadDropdownData();
+            addEntryRow(); // Add first row by default
             await loadRecentEntries();
         });
 
@@ -395,10 +440,28 @@
             if (!sErr && sData) allSubheadings = sData;
         }
 
-        function onTypeChange() {
-            const type = document.getElementById('entry_type').value;
-            const headingSelect = document.getElementById('heading_id');
-            const subheadingSelect = document.getElementById('subheading_id');
+        function addEntryRow() {
+            rowCount++;
+            const template = document.getElementById('entry-row-template').innerHTML;
+            const html = template.replace(/{index}/g, rowCount);
+            const container = document.getElementById('entries-container');
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        function removeEntryRow(button) {
+            const row = button.closest('.entry-row');
+            if (document.querySelectorAll('.entry-row').length > 1) {
+                row.remove();
+            } else {
+                alert("You must have at least one amount entry.");
+            }
+        }
+
+        function onTypeChange(selectElem) {
+            const row = selectElem.closest('.entry-row');
+            const type = selectElem.value;
+            const headingSelect = row.querySelector('.heading_id');
+            const subheadingSelect = row.querySelector('.subheading_id');
             
             headingSelect.innerHTML = '<option value="">छान्नुहोस् (Select...)</option>';
             subheadingSelect.innerHTML = '<option value="">पहिले मुख्य शीर्षक छान्नुहोस्</option>';
@@ -411,9 +474,10 @@
             });
         }
 
-        function onHeadingChange() {
-            const headingId = document.getElementById('heading_id').value;
-            const subheadingSelect = document.getElementById('subheading_id');
+        function onHeadingChange(selectElem) {
+            const row = selectElem.closest('.entry-row');
+            const headingId = selectElem.value;
+            const subheadingSelect = row.querySelector('.subheading_id');
             
             subheadingSelect.innerHTML = '<option value="">छान्नुहोस् (Select...)</option>';
 
@@ -429,45 +493,73 @@
             e.preventDefault();
             if (!window._activeSchoolInfo) return alert("Session missing.");
 
-            const payload = {
+            const submitBtn = document.querySelector('.btn-submit');
+            submitBtn.innerText = "Saving Voucher...";
+            submitBtn.disabled = true;
+
+            // 1. Create Master Voucher
+            const voucherPayload = {
                 school_id: window._activeSchoolInfo.id,
                 page_no: document.getElementById('page_no').value,
                 fiscal_year: document.getElementById('fiscal_year').value,
-                entry_type: document.getElementById('entry_type').value,
-                heading_id: document.getElementById('heading_id').value,
-                subheading_id: document.getElementById('subheading_id').value,
                 transaction_date: document.getElementById('transaction_date').value,
                 voucher_no: document.getElementById('voucher_no').value,
-                particulars: document.getElementById('particulars').value,
-                cash_debit: document.getElementById('cash_debit').value || 0,
-                cash_credit: document.getElementById('cash_credit').value || 0,
-                bank_debit: document.getElementById('bank_debit').value || 0,
-                bank_credit: document.getElementById('bank_credit').value || 0,
-                budget_kharcha: document.getElementById('budget_kharcha').value || 0,
-                peski_dieko: document.getElementById('peski_dieko').value || 0,
-                peski_farchiyeko: document.getElementById('peski_farchiyeko').value || 0,
-                bibidh_debit: document.getElementById('bibidh_debit').value || 0,
-                bibidh_credit: document.getElementById('bibidh_credit').value || 0
+                particulars: document.getElementById('particulars').value
             };
 
-            const submitBtn = document.querySelector('.btn-submit');
-            submitBtn.innerText = "Saving...";
-            submitBtn.disabled = true;
+            const { data: voucherData, error: voucherError } = await supabaseClient
+                .from('bnk_vouchers')
+                .insert([voucherPayload])
+                .select();
 
-            const { data, error } = await supabaseClient
-                .from('bank_nagadi_kitaab')
-                .insert([payload]);
+            if (voucherError || !voucherData || voucherData.length === 0) {
+                alert("Error saving voucher: " + (voucherError?.message || 'Unknown'));
+                submitBtn.innerText = "Submit Voucher (भौचर सेभ गर्नुहोस्)";
+                submitBtn.disabled = false;
+                return;
+            }
 
-            submitBtn.innerText = "Submit Entry (सेभ गर्नुहोस्)";
+            const voucherId = voucherData[0].id;
+
+            // 2. Create Detail Entries
+            const rows = document.querySelectorAll('.entry-row');
+            const entriesPayload = [];
+
+            rows.forEach(row => {
+                const headingId = row.querySelector('.heading_id').value;
+                const subheadingId = row.querySelector('.subheading_id').value;
+
+                entriesPayload.push({
+                    voucher_id: voucherId,
+                    entry_type: row.querySelector('.entry_type').value || null,
+                    heading_id: headingId ? headingId : null,
+                    subheading_id: subheadingId ? subheadingId : null,
+                    cash_debit: row.querySelector('.cash_debit').value || 0,
+                    cash_credit: row.querySelector('.cash_credit').value || 0,
+                    bank_debit: row.querySelector('.bank_debit').value || 0,
+                    bank_credit: row.querySelector('.bank_credit').value || 0,
+                    budget_kharcha: row.querySelector('.budget_kharcha').value || 0,
+                    bibidh_debit: row.querySelector('.bibidh_debit').value || 0,
+                    bibidh_credit: row.querySelector('.bibidh_credit').value || 0
+                });
+            });
+
+            const { error: entriesError } = await supabaseClient
+                .from('bnk_entries')
+                .insert(entriesPayload);
+
+            submitBtn.innerText = "Submit Voucher (भौचर सेभ गर्नुहोस्)";
             submitBtn.disabled = false;
 
-            if (error) {
-                alert("Error saving entry: " + error.message);
+            if (entriesError) {
+                alert("Error saving amounts: " + entriesError.message);
             } else {
-                alert("Entry saved successfully!");
+                alert("Voucher saved successfully!");
                 document.getElementById('entryForm').reset();
-                document.getElementById('fiscal_year').value = "2083";
-                onTypeChange(); // reset dropdowns
+                document.getElementById('fiscal_year').value = "2083/84";
+                document.getElementById('entries-container').innerHTML = "";
+                rowCount = 0;
+                addEntryRow(); // reset to 1 row
                 loadRecentEntries();
             }
         }
@@ -476,10 +568,15 @@
             if (!window._activeSchoolInfo || !supabaseClient) return;
             const schoolId = window._activeSchoolInfo.id;
 
+            // Fetch vouchers and their entries using inner join/foreign key
             const { data, error } = await supabaseClient
-                .from('bank_nagadi_kitaab')
-                .select('*')
+                .from('bnk_vouchers')
+                .select(`
+                    *,
+                    bnk_entries (*)
+                `)
                 .eq('school_id', schoolId)
+                .order('transaction_date', { ascending: false })
                 .order('created_at', { ascending: false })
                 .limit(10);
 
@@ -498,29 +595,57 @@
             let html = '';
             let totals = { cdr:0, ccr:0, bdr:0, bcr:0, bud:0, mdr:0, mcr:0 };
 
-            data.forEach(row => {
-                html += `
-                    <tr>
-                        <td>${row.transaction_date}</td>
-                        <td>${row.voucher_no || '-'}</td>
-                        <td style="text-align: left;">${row.particulars}</td>
-                        <td>${row.cash_debit || ''}</td>
-                        <td>${row.cash_credit || ''}</td>
-                        <td>${row.bank_debit || ''}</td>
-                        <td>${row.bank_credit || ''}</td>
-                        <td>${row.budget_kharcha || ''}</td>
-                        <td>${row.bibidh_debit || ''}</td>
-                        <td>${row.bibidh_credit || ''}</td>
-                    </tr>
-                `;
-                totals.cdr += Number(row.cash_debit) || 0;
-                totals.ccr += Number(row.cash_credit) || 0;
-                totals.bdr += Number(row.bank_debit) || 0;
-                totals.bcr += Number(row.bank_credit) || 0;
-                totals.bud += Number(row.budget_kharcha) || 0;
-                totals.mdr += Number(row.bibidh_debit) || 0;
-                totals.mcr += Number(row.bibidh_credit) || 0;
+            data.forEach(voucher => {
+                let isFirstRow = true;
+                const entries = voucher.bnk_entries || [];
+
+                if (entries.length === 0) {
+                    // Just in case a voucher has no entries
+                    html += `
+                        <tr class="voucher-row">
+                            <td>${voucher.transaction_date}</td>
+                            <td>${voucher.voucher_no || '-'}</td>
+                            <td style="text-align: left;">${voucher.particulars}</td>
+                            <td colspan="7">-</td>
+                        </tr>
+                    `;
+                }
+
+                entries.forEach((entry) => {
+                    const cdr = Number(entry.cash_debit) || 0;
+                    const ccr = Number(entry.cash_credit) || 0;
+                    const bdr = Number(entry.bank_debit) || 0;
+                    const bcr = Number(entry.bank_credit) || 0;
+                    const bud = Number(entry.budget_kharcha) || 0;
+                    const mdr = Number(entry.bibidh_debit) || 0;
+                    const mcr = Number(entry.bibidh_credit) || 0;
+
+                    html += `
+                        <tr class="${isFirstRow ? 'voucher-row' : ''}">
+                            <td>${isFirstRow ? voucher.transaction_date : ''}</td>
+                            <td>${isFirstRow ? (voucher.voucher_no || '-') : ''}</td>
+                            <td style="text-align: left;">${isFirstRow ? voucher.particulars : ''}</td>
+                            <td>${cdr || ''}</td>
+                            <td>${ccr || ''}</td>
+                            <td>${bdr || ''}</td>
+                            <td>${bcr || ''}</td>
+                            <td>${bud || ''}</td>
+                            <td>${mdr || ''}</td>
+                            <td>${mcr || ''}</td>
+                        </tr>
+                    `;
+                    
+                    isFirstRow = false;
+                    totals.cdr += cdr;
+                    totals.ccr += ccr;
+                    totals.bdr += bdr;
+                    totals.bcr += bcr;
+                    totals.bud += bud;
+                    totals.mdr += mdr;
+                    totals.mcr += mcr;
+                });
             });
+            
             tbody.innerHTML = html;
 
             document.getElementById('tot_cash_dr').innerText = totals.cdr.toFixed(2);
