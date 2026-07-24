@@ -418,12 +418,13 @@
                 window.location.href = 'school-login.html';
                 return;
             }
+
+            // Render UI immediately before ANY await so it doesn't feel slow
+            addEntryRow(); // start with one row
+
             if (window.initDatabase) {
                 await window.initDatabase();
             }
-
-            // Render UI immediately so it doesn't feel slow
-            addEntryRow(); // start with one row
             
             // Fetch data concurrently without blocking
             loadIncomeHeadings();
