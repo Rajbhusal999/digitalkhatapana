@@ -341,6 +341,7 @@
                         <th colspan="2">नगद मौज्दात (Cash)</th>
                         <th colspan="2">बैंक मौज्दात (Bank)</th>
                         <th>बजेट खर्च (Budget)</th>
+                        <th colspan="2">पेस्की (Advance)</th>
                         <th colspan="2">विविध (Misc)</th>
                     </tr>
                     <tr>
@@ -349,12 +350,14 @@
                         <th>डेबिट (Dr)</th>
                         <th>क्रेडिट (Cr)</th>
                         <th>रकम (Amt)</th>
+                        <th>दिएको (Given)</th>
+                        <th>फर्छ्यौट (Cleared)</th>
                         <th>डेबिट (Dr)</th>
                         <th>क्रेडिट (Cr)</th>
                     </tr>
                 </thead>
                 <tbody id="entries-tbody">
-                    <tr><td colspan="10" style="text-align: center; color: #94a3b8;">लोड हुँदैछ...</td></tr>
+                    <tr><td colspan="12" style="text-align: center; color: #94a3b8;">लोड हुँदैछ...</td></tr>
                 </tbody>
                 <tfoot id="entries-tfoot">
                     <tr style="background-color: #fef08a; font-weight: bold;">
@@ -364,6 +367,8 @@
                         <td id="tot_bank_dr">0.00</td>
                         <td id="tot_bank_cr">0.00</td>
                         <td id="tot_budget">0.00</td>
+                        <td id="tot_peski_given">0.00</td>
+                        <td id="tot_peski_cleared">0.00</td>
                         <td id="tot_misc_dr">0.00</td>
                         <td id="tot_misc_cr">0.00</td>
                     </tr>
@@ -425,6 +430,14 @@
                 <div class="form-group">
                     <label>Budget (बजेट खर्च)</label>
                     <input type="number" class="budget_kharcha" value="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Advance Given (पेस्की दिएको)</label>
+                    <input type="number" class="peski_dieko" value="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Advance Cleared (पेस्की फर्छ्यौट)</label>
+                    <input type="number" class="peski_farchiyeko" value="0" step="0.01">
                 </div>
                 <div class="form-group">
                     <label>Misc Dr (विविध डेबिट)</label>
@@ -614,10 +627,12 @@
                 totalDebit += Number(row.querySelector('.cash_debit').value || 0);
                 totalDebit += Number(row.querySelector('.bank_debit').value || 0);
                 totalDebit += Number(row.querySelector('.budget_kharcha').value || 0); // Budget expense is debit
+                totalDebit += Number(row.querySelector('.peski_dieko').value || 0);
                 totalDebit += Number(row.querySelector('.bibidh_debit').value || 0);
 
                 totalCredit += Number(row.querySelector('.cash_credit').value || 0);
                 totalCredit += Number(row.querySelector('.bank_credit').value || 0);
+                totalCredit += Number(row.querySelector('.peski_farchiyeko').value || 0);
                 totalCredit += Number(row.querySelector('.bibidh_credit').value || 0);
             });
 
@@ -669,6 +684,8 @@
                     bank_debit: row.querySelector('.bank_debit').value || 0,
                     bank_credit: row.querySelector('.bank_credit').value || 0,
                     budget_kharcha: row.querySelector('.budget_kharcha').value || 0,
+                    peski_dieko: row.querySelector('.peski_dieko').value || 0,
+                    peski_farchiyeko: row.querySelector('.peski_farchiyeko').value || 0,
                     bibidh_debit: row.querySelector('.bibidh_debit').value || 0,
                     bibidh_credit: row.querySelector('.bibidh_credit').value || 0
                 });
@@ -725,7 +742,7 @@
             }
 
             let html = '';
-            let totals = { cdr:0, ccr:0, bdr:0, bcr:0, bud:0, mdr:0, mcr:0 };
+            let totals = { cdr:0, ccr:0, bdr:0, bcr:0, bud:0, pg:0, pc:0, mdr:0, mcr:0 };
 
             data.forEach(voucher => {
                 let isFirstRow = true;
@@ -738,7 +755,7 @@
                             <td>${voucher.transaction_date}</td>
                             <td>${voucher.voucher_no || '-'}</td>
                             <td style="text-align: left;">${voucher.particulars}</td>
-                            <td colspan="7">-</td>
+                            <td colspan="9">-</td>
                         </tr>
                     `;
                 }
@@ -749,6 +766,8 @@
                     const bdr = Number(entry.bank_debit) || 0;
                     const bcr = Number(entry.bank_credit) || 0;
                     const bud = Number(entry.budget_kharcha) || 0;
+                    const pg = Number(entry.peski_dieko) || 0;
+                    const pc = Number(entry.peski_farchiyeko) || 0;
                     const mdr = Number(entry.bibidh_debit) || 0;
                     const mcr = Number(entry.bibidh_credit) || 0;
 
@@ -762,6 +781,8 @@
                             <td>${bdr || ''}</td>
                             <td>${bcr || ''}</td>
                             <td>${bud || ''}</td>
+                            <td>${pg || ''}</td>
+                            <td>${pc || ''}</td>
                             <td>${mdr || ''}</td>
                             <td>${mcr || ''}</td>
                         </tr>
@@ -773,6 +794,8 @@
                     totals.bdr += bdr;
                     totals.bcr += bcr;
                     totals.bud += bud;
+                    totals.pg += pg;
+                    totals.pc += pc;
                     totals.mdr += mdr;
                     totals.mcr += mcr;
                 });
@@ -785,6 +808,8 @@
             document.getElementById('tot_bank_dr').innerText = totals.bdr.toFixed(2);
             document.getElementById('tot_bank_cr').innerText = totals.bcr.toFixed(2);
             document.getElementById('tot_budget').innerText = totals.bud.toFixed(2);
+            document.getElementById('tot_peski_given').innerText = totals.pg.toFixed(2);
+            document.getElementById('tot_peski_cleared').innerText = totals.pc.toFixed(2);
             document.getElementById('tot_misc_dr').innerText = totals.mdr.toFixed(2);
             document.getElementById('tot_misc_cr').innerText = totals.mcr.toFixed(2);
         }
