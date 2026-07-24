@@ -302,6 +302,8 @@
                     <!-- Totals will be injected here -->
                 </tfoot>
             </table>
+
+            <div id="drcr-box" style="margin-top: 20px; width: 300px; display: none;"></div>
         </div>
 
     </main>
@@ -335,9 +337,11 @@
             
             const tbody = document.getElementById('dynamic-tbody');
             const tfoot = document.getElementById('dynamic-tfoot');
+            const drCrBox = document.getElementById('drcr-box');
 
             tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 20px;">डाटा तानिँदैछ... (Loading...)</td></tr>`;
             tfoot.innerHTML = '';
+            drCrBox.style.display = 'none';
 
             // Fetch all vouchers and entries for the selected fiscal year
             const { data: vouchers, error } = await supabaseClient
@@ -476,8 +480,20 @@
 
             tfoot.innerHTML = tfootHtml;
             
-            // Optional: Print debit/credit totals at the very bottom outside the table if wanted, 
-            // but the table itself fulfills the screenshot exactly.
+            // Display debit/credit totals below the table
+            drCrBox.style.display = 'block';
+            drCrBox.innerHTML = `
+                <table class="entries-table" style="width: 100%; min-width: auto; border: 2px solid #000;">
+                    <tr>
+                        <td style="font-weight: bold; background-color: #e2e8f0; text-align: left; padding-left: 15px; border: 1px solid #000; width: 50%;">Debit Amount</td>
+                        <td style="font-weight: bold; background-color: #e2e8f0; text-align: right; padding-right: 15px; border: 1px solid #000;">${totalDr.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; background-color: #e2e8f0; text-align: left; padding-left: 15px; border: 1px solid #000;">Credit Amount</td>
+                        <td style="font-weight: bold; background-color: #e2e8f0; text-align: right; padding-right: 15px; border: 1px solid #000;">${totalCr.toFixed(2)}</td>
+                    </tr>
+                </table>
+            `;
         }
 
         function exportToExcel() {
