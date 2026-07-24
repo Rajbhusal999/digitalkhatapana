@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ड्यासबोर्ड (Dashboard) - Digital Khata Pana</title>
+    <title>रिपोर्टहरू (Reports) - Digital Khata Pana</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
         body {
@@ -18,7 +18,7 @@
 
         /* ── Header Styling ── */
         .landing-header {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
             color: white;
             padding: 30px 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -33,7 +33,7 @@
             right: 0;
             bottom: 0;
             left: 0;
-            background-image: radial-gradient(circle at right top, rgba(229, 169, 59, 0.15) 0%, transparent 40%);
+            background-image: radial-gradient(circle at right top, rgba(255, 255, 255, 0.15) 0%, transparent 40%);
             pointer-events: none;
         }
 
@@ -62,8 +62,8 @@
             align-items: center;
             justify-content: center;
             font-size: 2rem;
-            border: 2px solid rgba(229, 169, 59, 0.5);
-            box-shadow: 0 0 15px rgba(229, 169, 59, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
         }
 
         .school-text h1 {
@@ -76,26 +76,26 @@
         .school-text p {
             margin: 0;
             font-size: 0.9rem;
-            color: #94a3b8;
+            color: #bfdbfe;
             display: flex;
             align-items: center;
             gap: 5px;
         }
 
-        .logout-btn {
-            background: rgba(239, 68, 68, 0.1);
-            color: #fca5a5;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
             padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+            text-decoration: none;
             transition: all 0.3s;
         }
 
-        .logout-btn:hover {
-            background: rgba(239, 68, 68, 0.2);
-            color: #fff;
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         /* ── Main Content ── */
@@ -106,14 +106,14 @@
         }
 
         .welcome-banner {
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
             border-radius: 24px;
             padding: 40px 50px;
             color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 20px 40px rgba(4, 120, 87, 0.2);
             position: relative;
             overflow: hidden;
             margin-bottom: 50px;
@@ -148,7 +148,7 @@
         .banner-content p {
             font-size: 1.15rem;
             line-height: 1.7;
-            color: #bfdbfe;
+            color: #a7f3d0;
             margin: 0;
             font-family: var(--font-nepali);
         }
@@ -209,7 +209,7 @@
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(229,169,59,0.05) 0%, transparent 100%);
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.05) 0%, transparent 100%);
             z-index: -1;
             opacity: 0;
             transition: opacity 0.4s ease;
@@ -218,7 +218,7 @@
         .topic-card:hover {
             transform: translateY(-10px) scale(1.02);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
-            border-color: #e5a93b;
+            border-color: #10b981;
         }
 
         .topic-card:hover::after {
@@ -228,22 +228,22 @@
         .topic-icon {
             width: 75px;
             height: 75px;
-            background: #fffbeb;
+            background: #ecfdf5;
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.2rem;
             margin-bottom: 25px;
-            color: #d97706;
+            color: #059669;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 20px rgba(217, 119, 6, 0.1);
+            box-shadow: 0 10px 20px rgba(5, 150, 105, 0.1);
         }
 
         .topic-card:hover .topic-icon {
             transform: scale(1.15) rotate(-5deg);
-            background: #fef3c7;
-            box-shadow: 0 15px 30px rgba(217, 119, 6, 0.2);
+            background: #d1fae5;
+            box-shadow: 0 15px 30px rgba(5, 150, 105, 0.2);
         }
 
         .topic-card h3 {
@@ -268,14 +268,14 @@
     <header class="landing-header">
         <div class="header-content">
             <div class="school-info">
-                <div class="school-logo">🏫</div>
+                <div class="school-logo">🖨️</div>
                 <div class="school-text">
                     <h1 id="header-school-name">लोड हुँदैछ...</h1>
                     <p>📍 <span id="header-school-address">ठेगाना खोजिँदै...</span></p>
                 </div>
             </div>
             <div>
-                <button class="logout-btn" onclick="handleLogout()">लगआउट (Logout)</button>
+                <a href="landing.html" class="btn-back">← पछाडि जानुहोस् (Dashboard)</a>
             </div>
         </div>
     </header>
@@ -284,17 +284,17 @@
     <main class="landing-main">
         <div class="welcome-banner">
             <div class="banner-content">
-                <div class="dev-badge">DIGITAL KHATA PANA</div>
-                <h2>डिजिटल खातापानामा स्वागत छ!</h2>
-                <p>आफ्नो विद्यालयको सम्पूर्ण आर्थिक गतिविधिहरू (आम्दानी, खर्च, बैंक खाता) लाई सजिलै व्यवस्थापन गर्नुहोस् र पारदर्शी रूपमा रेकर्ड सुरक्षित राख्नुहोस्।</p>
+                <div class="dev-badge">REPORTING SYSTEM</div>
+                <h2>रिपोर्टहरू (Reports)</h2>
+                <p>यहाँबाट तपाईंले आफ्नो विद्यालयको विभिन्न खाताहरूको रिपोर्ट हेर्न, एक्सेल (Excel) मा डाउनलोड गर्न र प्रिन्ट (Print) गर्न सक्नुहुन्छ।</p>
             </div>
             <div class="banner-illustration">
-                📊
+                🖨️
             </div>
         </div>
 
         <div class="topics-grid">
-            <a href="bank-nagadi-kitaab.html" class="topic-card">
+            <a href="report-bank-nagadi.html" class="topic-card">
                 <div class="topic-icon">🏦</div>
                 <h3>Bank Cash Book</h3>
                 <p>बैंक नगदी किताब</p>
@@ -324,16 +324,6 @@
                 <h3>Trial Balance</h3>
                 <p>सन्तुलन परीक्षण</p>
             </a>
-            <a href="manage-headings.html" class="topic-card">
-                <div class="topic-icon">⚙️</div>
-                <h3>Manage Heading</h3>
-                <p>शीर्षक व्यवस्थापन</p>
-            </a>
-            <a href="reports.html" class="topic-card" style="border-color: #3b82f6; background-color: #eff6ff;">
-                <div class="topic-icon" style="color: #2563eb; background: #dbeafe;">🖨️</div>
-                <h3 style="color: #1e3a8a;">Reports</h3>
-                <p style="color: #3b82f6;">रिपोर्टहरू</p>
-            </a>
         </div>
     </main>
 
@@ -343,7 +333,6 @@
     <script src="js/database.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            // Ensure logged in
             if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
                 window.location.href = 'school-login.html';
                 return;
@@ -362,13 +351,6 @@
                 document.getElementById('header-school-address').innerText = 'N/A';
             }
         });
-
-        function handleLogout() {
-            sessionStorage.removeItem('school_user_logged_in');
-            sessionStorage.removeItem('school_user_email');
-            sessionStorage.removeItem('admin_logged_in');
-            window.location.href = 'school-login.html';
-        }
     </script>
 </body>
 

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="np">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Nagadi Kitaab Report - Digital Khata Pana</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: var(--font-primary);
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* ── Header Styling (Hidden in Print) ── */
+        .landing-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .school-info h1 {
+            font-family: var(--font-nepali);
+            font-size: 1.5rem;
+            margin: 0;
+            color: #f8fafc;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ── Main Content ── */
+        .main-container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        /* Filter Section (Hidden in Print) */
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .form-group input {
+            padding: 10px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            width: 200px;
+        }
+
+        .form-group input:focus {
+            border-color: #3b82f6;
+        }
+
+        .btn-action {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action:hover {
+            background: #2563eb;
+        }
+        
+        .btn-success {
+            background: #10b981;
+        }
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-secondary {
+            background: #64748b;
+        }
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        /* Table Report Section */
+        .report-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 20px;
+            display: none; /* Only show in print */
+        }
+        .report-header h2 {
+            margin: 0 0 5px 0;
+            font-size: 1.5rem;
+        }
+        .report-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: normal;
+        }
+
+        .entries-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 1100px;
+        }
+
+        .entries-table th, .entries-table td {
+            border: 1px solid #94a3b8;
+            padding: 6px;
+            text-align: center;
+            vertical-align: top;
+            color: #0f172a;
+        }
+
+        .entries-table th {
+            background-color: #f8fafc;
+            font-weight: bold;
+        }
+        
+        .entries-table tbody tr.voucher-row {
+            border-top: 1.5px solid #64748b;
+        }
+
+        .tfoot-total {
+            background-color: #fef08a;
+            font-weight: bold;
+        }
+
+        /* ── Print Styles ── */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 10mm;
+            }
+
+            body {
+                background: white;
+                color: black;
+                font-size: 11pt;
+            }
+
+            /* Hide UI Elements */
+            .landing-header, .filter-section, .btn-action {
+                display: none !important;
+            }
+
+            .main-container {
+                margin: 0;
+                padding: 0;
+                max-width: 100%;
+            }
+
+            .report-card {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+
+            .report-header {
+                display: block; /* Show header in print */
+            }
+
+            .entries-table {
+                width: 100%;
+                min-width: 100%;
+                page-break-inside: auto;
+            }
+
+            .entries-table tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            .entries-table thead {
+                display: table-header-group;
+            }
+
+            .entries-table tfoot {
+                display: table-footer-group;
+            }
+
+            .entries-table th, .entries-table td {
+                border: 1px solid #000;
+                color: #000;
+                padding: 4px;
+            }
+
+            .entries-table th {
+                background-color: #e2e8f0 !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+
+            .tfoot-total {
+                background-color: #fef08a !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="landing-header">
+        <div class="header-content">
+            <div class="school-info">
+                <h1>रिपोर्ट: बैंक नगदी किताब (Report: Bank Cash Book)</h1>
+            </div>
+            <div>
+                <a href="reports.html" class="btn-back">← पछाडि जानुहोस् (Back)</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        
+        <div class="filter-section">
+            <div class="form-group">
+                <label>Page No (पाना नं) खोज्नुहोस्</label>
+                <input type="text" id="search_page_no" placeholder="e.g. 1" onkeydown="if(event.key === 'Enter') loadReport()">
+            </div>
+            <button class="btn-action" onclick="loadReport()">
+                🔍 Load Report
+            </button>
+            <div style="flex-grow: 1;"></div>
+            <button class="btn-action btn-success" onclick="exportToExcel()">
+                📊 Export Excel
+            </button>
+            <button class="btn-action btn-secondary" onclick="window.print()">
+                🖨️ Print
+            </button>
+        </div>
+
+        <div class="report-card">
+            
+            <!-- This header is only visible during print -->
+            <div class="report-header">
+                <h2 id="print_school_name">श्री विद्यालयको नाम</h2>
+                <h3 id="print_school_address">ठेगाना</h3>
+                <h3 style="margin-top: 10px; font-weight: bold;">नगद/बैंक खाता (पाना नं: <span id="print_page_no">-</span>)</h3>
+            </div>
+
+            <table class="entries-table" id="reportTable">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width: 80px;">मिति<br>(Date)</th>
+                        <th rowspan="2" style="width: 80px;">भौचर नं<br>(Voucher)</th>
+                        <th rowspan="2" style="width: 250px;">विवरण<br>(Particulars)</th>
+                        <th colspan="2">नगद मौज्दात (Cash)</th>
+                        <th colspan="2">बैंक मौज्दात (Bank)</th>
+                        <th>बजेट खर्च (Budget)</th>
+                        <th colspan="2">विविध (Misc)</th>
+                    </tr>
+                    <tr>
+                        <th>डेबिट (Dr)</th>
+                        <th>क्रेडिट (Cr)</th>
+                        <th>डेबिट (Dr)</th>
+                        <th>क्रेडिट (Cr)</th>
+                        <th>रकम (Amt)</th>
+                        <th>डेबिट (Dr)</th>
+                        <th>क्रेडिट (Cr)</th>
+                    </tr>
+                </thead>
+                <tbody id="entries-tbody">
+                    <tr><td colspan="10" style="text-align: center; color: #94a3b8; padding: 30px;">कुनै पनि डाटा लोड गरिएको छैन। Page No प्रविष्ट गरी Load Report मा क्लिक गर्नुहोस्।</td></tr>
+                </tbody>
+                <tfoot id="entries-tfoot">
+                    <tr class="tfoot-total">
+                        <td colspan="3" style="text-align: right;">जम्मा (Total)</td>
+                        <td id="tot_cash_dr">0.00</td>
+                        <td id="tot_cash_cr">0.00</td>
+                        <td id="tot_bank_dr">0.00</td>
+                        <td id="tot_bank_cr">0.00</td>
+                        <td id="tot_budget">0.00</td>
+                        <td id="tot_misc_dr">0.00</td>
+                        <td id="tot_misc_cr">0.00</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
+                window.location.href = 'school-login.html';
+                return;
+            }
+
+            if (window.initDatabase) {
+                await window.initDatabase();
+            }
+
+            // Set Print Headers
+            if (window._activeSchoolInfo) {
+                document.getElementById('print_school_name').innerText = window._activeSchoolInfo.schoolName || '';
+                document.getElementById('print_school_address').innerText = window._activeSchoolInfo.address || '';
+            }
+        });
+
+        async function loadReport() {
+            if (!window._activeSchoolInfo || !supabaseClient) return;
+            const schoolId = window._activeSchoolInfo.id;
+            const pageNo = document.getElementById('search_page_no').value.trim();
+
+            if (!pageNo) {
+                alert("Please enter a Page No.");
+                return;
+            }
+
+            // Update print header
+            document.getElementById('print_page_no').innerText = pageNo;
+
+            const tbody = document.getElementById('entries-tbody');
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 20px;">लोड हुँदैछ...</td></tr>`;
+
+            // Fetch vouchers by page_no
+            const { data, error } = await supabaseClient
+                .from('bnk_vouchers')
+                .select(`
+                    *,
+                    bnk_entries (*)
+                `)
+                .eq('school_id', schoolId)
+                .eq('page_no', pageNo)
+                .order('transaction_date', { ascending: true })
+                .order('created_at', { ascending: true });
+            
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="10" style="color:red; text-align: center;">Error loading report.</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #94a3b8; padding: 20px;">No entries found for this Page No.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            let totals = { cdr:0, ccr:0, bdr:0, bcr:0, bud:0, mdr:0, mcr:0 };
+
+            data.forEach(voucher => {
+                let isFirstRow = true;
+                const entries = voucher.bnk_entries || [];
+
+                if (entries.length === 0) {
+                    html += `
+                        <tr class="voucher-row">
+                            <td>${voucher.transaction_date}</td>
+                            <td>${voucher.voucher_no || '-'}</td>
+                            <td style="text-align: left;">${voucher.particulars}</td>
+                            <td colspan="7"></td>
+                        </tr>
+                    `;
+                }
+
+                entries.forEach((entry) => {
+                    const cdr = Number(entry.cash_debit) || 0;
+                    const ccr = Number(entry.cash_credit) || 0;
+                    const bdr = Number(entry.bank_debit) || 0;
+                    const bcr = Number(entry.bank_credit) || 0;
+                    const bud = Number(entry.budget_kharcha) || 0;
+                    const mdr = Number(entry.bibidh_debit) || 0;
+                    const mcr = Number(entry.bibidh_credit) || 0;
+
+                    html += `
+                        <tr class="${isFirstRow ? 'voucher-row' : ''}">
+                            <td>${isFirstRow ? voucher.transaction_date : ''}</td>
+                            <td>${isFirstRow ? (voucher.voucher_no || '-') : ''}</td>
+                            <td style="text-align: left;">${isFirstRow ? voucher.particulars : ''}</td>
+                            <td>${cdr || ''}</td>
+                            <td>${ccr || ''}</td>
+                            <td>${bdr || ''}</td>
+                            <td>${bcr || ''}</td>
+                            <td>${bud || ''}</td>
+                            <td>${mdr || ''}</td>
+                            <td>${mcr || ''}</td>
+                        </tr>
+                    `;
+                    
+                    isFirstRow = false;
+                    totals.cdr += cdr;
+                    totals.ccr += ccr;
+                    totals.bdr += bdr;
+                    totals.bcr += bcr;
+                    totals.bud += bud;
+                    totals.mdr += mdr;
+                    totals.mcr += mcr;
+                });
+            });
+            
+            tbody.innerHTML = html;
+
+            document.getElementById('tot_cash_dr').innerText = totals.cdr.toFixed(2);
+            document.getElementById('tot_cash_cr').innerText = totals.ccr.toFixed(2);
+            document.getElementById('tot_bank_dr').innerText = totals.bdr.toFixed(2);
+            document.getElementById('tot_bank_cr').innerText = totals.bcr.toFixed(2);
+            document.getElementById('tot_budget').innerText = totals.bud.toFixed(2);
+            document.getElementById('tot_misc_dr').innerText = totals.mdr.toFixed(2);
+            document.getElementById('tot_misc_cr').innerText = totals.mcr.toFixed(2);
+        }
+
+        function exportToExcel() {
+            const table = document.getElementById("reportTable");
+            const pageNo = document.getElementById('search_page_no').value.trim() || 'All';
+            const wb = XLSX.utils.table_to_book(table, {sheet: "Bank Nagadi Kitaab"});
+            XLSX.writeFile(wb, `Bank_Nagadi_Kitaab_Page_${pageNo}.xlsx`);
+        }
+    </script>
+</body>
+</html>
