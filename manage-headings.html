@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="np">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Headings - Digital Khata Pana</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: var(--font-primary);
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* ── Header Styling ── */
+        .landing-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .school-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .school-logo {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 2px solid rgba(229,169,59,0.5);
+        }
+
+        .school-text h1 {
+            font-family: var(--font-nepali);
+            font-size: 1.8rem;
+            margin: 0 0 5px 0;
+            color: #f8fafc;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ── Main Content ── */
+        .main-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #e5a93b;
+            color: white;
+        }
+
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #334155;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: flex-end;
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .form-group input {
+            padding: 10px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #e5a93b;
+            box-shadow: 0 0 0 3px rgba(229,169,59,0.1);
+        }
+
+        .btn-add {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 11px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            height: fit-content;
+        }
+
+        .btn-add:hover {
+            background: #059669;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .heading-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .heading-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            background: #f8fafc;
+        }
+
+        .heading-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+
+        .subheading-list {
+            margin-left: 20px;
+            padding-left: 20px;
+            border-left: 2px solid #cbd5e1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .subheading-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .add-subheading-form {
+            display: flex;
+            gap: 10px;
+            margin-left: 20px;
+        }
+
+        .add-subheading-form input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+
+        .btn-sub-add {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="landing-header">
+        <div class="header-content">
+            <div class="school-info">
+                <div class="school-logo">⚙️</div>
+                <div class="school-text">
+                    <h1>शीर्षक व्यवस्थापन (Manage Headings)</h1>
+                </div>
+            </div>
+            <div>
+                <a href="landing.html" class="btn-back">← पछाडि जानुहोस् (Back)</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('income')">आम्दानी शीर्षक (Income Headings)</button>
+            <button class="tab-btn" onclick="switchTab('expense')">खर्च शीर्षक (Expense Headings)</button>
+        </div>
+
+        <!-- Income Panel -->
+        <div id="panel-income" class="panel active">
+            <div class="card">
+                <h3>नयाँ आम्दानी शीर्षक थप्नुहोस् (Add New Income Heading)</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>शीर्षकको नाम (Heading Name)</label>
+                        <input type="text" id="new-income-heading" placeholder="e.g. Donation, Fee">
+                    </div>
+                    <button class="btn-add" onclick="addHeading('income')">+ Add Heading</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>तपाईंका आम्दानी शीर्षकहरू (Your Income Headings)</h3>
+                <div class="heading-list" id="income-headings-list">
+                    <!-- Loaded dynamically -->
+                    <p style="color:#94a3b8; font-style:italic;">लोड हुँदैछ...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expense Panel -->
+        <div id="panel-expense" class="panel">
+            <div class="card">
+                <h3>नयाँ खर्च शीर्षक थप्नुहोस् (Add New Expense Heading)</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>शीर्षकको नाम (Heading Name)</label>
+                        <input type="text" id="new-expense-heading" placeholder="e.g. Salary, Maintenance">
+                    </div>
+                    <button class="btn-add" onclick="addHeading('expense')">+ Add Heading</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>तपाईंका खर्च शीर्षकहरू (Your Expense Headings)</h3>
+                <div class="heading-list" id="expense-headings-list">
+                    <!-- Loaded dynamically -->
+                    <p style="color:#94a3b8; font-style:italic;">लोड हुँदैछ...</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
+    <script>
+        let headings = [];
+        let subheadings = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
+                window.location.href = 'school-login.html';
+                return;
+            }
+
+            if (window.initDatabase) {
+                await window.initDatabase();
+            }
+
+            await loadData();
+        });
+
+        function switchTab(type) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`panel-${type}`).classList.add('active');
+        }
+
+        async function loadData() {
+            if (!window._activeSchoolInfo || !supabaseClient) return;
+            const schoolId = window._activeSchoolInfo.id;
+
+            // Load Headings
+            const { data: hData, error: hErr } = await supabaseClient
+                .from('ledger_headings')
+                .select('*')
+                .eq('school_id', schoolId)
+                .order('created_at', { ascending: true });
+                
+            if (hErr) console.error(hErr);
+            else headings = hData || [];
+
+            // Load Subheadings (for all headings)
+            const { data: sData, error: sErr } = await supabaseClient
+                .from('ledger_subheadings')
+                .select('*')
+                .order('created_at', { ascending: true });
+                
+            if (sErr) console.error(sErr);
+            else subheadings = sData || [];
+
+            renderList('income');
+            renderList('expense');
+        }
+
+        async function addHeading(type) {
+            const input = document.getElementById(`new-${type}-heading`);
+            const name = input.value.trim();
+            if (!name) return alert('Please enter a heading name.');
+            if (!window._activeSchoolInfo) return alert('School session error.');
+
+            const { data, error } = await supabaseClient.from('ledger_headings').insert([{
+                school_id: window._activeSchoolInfo.id,
+                type: type,
+                name: name
+            }]).select();
+
+            if (error) {
+                alert('Error adding heading: ' + error.message);
+            } else {
+                input.value = '';
+                headings.push(data[0]);
+                renderList(type);
+            }
+        }
+
+        async function deleteHeading(id, type) {
+            if (!confirm('Are you sure you want to delete this heading and all its subheadings?')) return;
+            
+            const { error } = await supabaseClient.from('ledger_headings').delete().eq('id', id);
+            if (error) {
+                alert('Error deleting heading: ' + error.message);
+            } else {
+                headings = headings.filter(h => h.id !== id);
+                subheadings = subheadings.filter(s => s.heading_id !== id);
+                renderList(type);
+            }
+        }
+
+        async function addSubheading(headingId, type) {
+            const input = document.getElementById(`new-sub-${headingId}`);
+            const name = input.value.trim();
+            if (!name) return alert('Please enter a subheading name.');
+
+            const { data, error } = await supabaseClient.from('ledger_subheadings').insert([{
+                heading_id: headingId,
+                name: name
+            }]).select();
+
+            if (error) {
+                alert('Error adding subheading: ' + error.message);
+            } else {
+                subheadings.push(data[0]);
+                renderList(type);
+            }
+        }
+
+        async function deleteSubheading(id, type) {
+            if (!confirm('Are you sure you want to delete this subheading?')) return;
+
+            const { error } = await supabaseClient.from('ledger_subheadings').delete().eq('id', id);
+            if (error) {
+                alert('Error deleting subheading: ' + error.message);
+            } else {
+                subheadings = subheadings.filter(s => s.id !== id);
+                renderList(type);
+            }
+        }
+
+        function renderList(type) {
+            const container = document.getElementById(`${type}-headings-list`);
+            const filteredHeadings = headings.filter(h => h.type === type);
+
+            if (filteredHeadings.length === 0) {
+                container.innerHTML = `<p style="color:#94a3b8; font-style:italic;">No ${type} headings found.</p>`;
+                return;
+            }
+
+            let html = '';
+            filteredHeadings.forEach(h => {
+                const subs = subheadings.filter(s => s.heading_id === h.id);
+                
+                let subsHtml = '';
+                subs.forEach(s => {
+                    subsHtml += `
+                        <div class="subheading-item">
+                            <span>${s.name}</span>
+                            <button class="btn-delete" onclick="deleteSubheading('${s.id}', '${type}')">Delete</button>
+                        </div>
+                    `;
+                });
+
+                html += `
+                    <div class="heading-item">
+                        <div class="heading-header">
+                            <span>${h.name}</span>
+                            <button class="btn-delete" onclick="deleteHeading('${h.id}', '${type}')">Delete Heading</button>
+                        </div>
+                        <div class="subheading-list">
+                            ${subsHtml}
+                        </div>
+                        <div class="add-subheading-form">
+                            <input type="text" id="new-sub-${h.id}" placeholder="Add Subheading...">
+                            <button class="btn-sub-add" onclick="addSubheading('${h.id}', '${type}')">Add</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+    </script>
+</body>
+</html>
