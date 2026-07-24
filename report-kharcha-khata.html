@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ne">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kharcha Khata Report - Digital Khata Pana</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: var(--font-primary);
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* ── Header Styling (Hidden in Print) ── */
+        .landing-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .school-info h1 {
+            font-family: var(--font-nepali);
+            font-size: 1.5rem;
+            margin: 0;
+            color: #f8fafc;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ── Main Content ── */
+        .main-container {
+            max-width: 100%;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        /* Toolbar Section (Hidden in Print) */
+        .toolbar-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-action {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action:hover {
+            background: #2563eb;
+        }
+        
+        .btn-success { background: #10b981; }
+        .btn-success:hover { background: #059669; }
+        .btn-secondary { background: #64748b; }
+        .btn-secondary:hover { background: #475569; }
+
+        /* Table Report Section */
+        .report-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 20px;
+            display: none; /* Only show in print */
+        }
+        .report-header h2 { margin: 0 0 5px 0; font-size: 1.5rem; }
+        .report-header h3 { margin: 0; font-size: 1.2rem; font-weight: normal; }
+
+        .entries-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 1200px;
+        }
+
+        .entries-table th, .entries-table td {
+            border: 1px solid #94a3b8;
+            padding: 6px;
+            text-align: center;
+            vertical-align: middle;
+            color: #0f172a;
+        }
+
+        .entries-table th {
+            background-color: #f8fafc;
+            font-weight: bold;
+        }
+
+        .entries-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
+
+        .tfoot-total {
+            background-color: #fef08a;
+            font-weight: bold;
+        }
+
+        .tfoot-total td {
+            color: #b45309; /* Deep yellow/orange text for totals */
+        }
+
+        /* ── Print Styles ── */
+        @media print {
+            @page {
+                size: A3 landscape;
+                margin: 10mm;
+            }
+
+            body {
+                background: white;
+                color: black;
+                font-size: 10pt;
+            }
+
+            .landing-header, .toolbar-section, .btn-action {
+                display: none !important;
+            }
+
+            .main-container { margin: 0; padding: 0; max-width: 100%; }
+            .report-card { box-shadow: none; border: none; padding: 0; }
+            .report-header { display: block; }
+
+            .entries-table {
+                width: 100%; min-width: 100%; page-break-inside: auto;
+            }
+            .entries-table tr { page-break-inside: avoid; page-break-after: auto; }
+            .entries-table thead { display: table-header-group; }
+            .entries-table tfoot { display: table-footer-group; }
+            
+            .entries-table th, .entries-table td {
+                border: 1px solid #000;
+                color: #000;
+                padding: 4px;
+            }
+            .entries-table th { background-color: #e2e8f0 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            .tfoot-total, .tfoot-total td { background-color: #fef08a !important; color: black !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="landing-header">
+        <div class="header-content">
+            <div class="school-info">
+                <h1>रिपोर्ट: खर्च खाता (Report: Expense Ledger)</h1>
+            </div>
+            <div>
+                <a href="reports.html" class="btn-back">← पछाडि जानुहोस् (Back)</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        
+        <div class="toolbar-section">
+            <button class="btn-action" onclick="loadReport()">
+                🔍 Load Report
+            </button>
+            <div style="flex-grow: 1;"></div>
+            <button class="btn-action btn-success" onclick="exportToExcel()">
+                📊 Export Excel
+            </button>
+            <button class="btn-action btn-secondary" onclick="window.print()">
+                🖨️ Print (A3 Landscape)
+            </button>
+        </div>
+
+        <div class="report-card">
+            
+            <div class="report-header">
+                <h2 id="print_school_name">श्री विद्यालयको नाम</h2>
+                <h3 id="print_school_address">ठेगाना</h3>
+                <h3 style="margin-top: 10px; font-weight: bold; text-decoration: underline;">खर्च खाता (Expense Ledger)</h3>
+            </div>
+
+            <table class="entries-table" id="reportTable">
+                <thead id="dynamic-thead">
+                    <tr><th style="padding:20px;">लोड हुँदैछ... (Loading...)</th></tr>
+                </thead>
+                <tbody id="dynamic-tbody">
+                    <!-- Dynamic Data Rows -->
+                </tbody>
+                <tfoot id="dynamic-tfoot">
+                    <!-- Dynamic Footer -->
+                </tfoot>
+            </table>
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
+                window.location.href = 'school-login.html';
+                return;
+            }
+
+            if (window.initDatabase) {
+                await window.initDatabase();
+            }
+
+            if (window._activeSchoolInfo) {
+                document.getElementById('print_school_name').innerText = window._activeSchoolInfo.schoolName || '';
+                document.getElementById('print_school_address').innerText = window._activeSchoolInfo.address || '';
+            }
+
+            // Load the report automatically
+            loadReport();
+        });
+
+        async function loadReport() {
+            if (!window._activeSchoolInfo || !supabaseClient) return;
+            const schoolId = window._activeSchoolInfo.id;
+            
+            const thead = document.getElementById('dynamic-thead');
+            const tbody = document.getElementById('dynamic-tbody');
+            const tfoot = document.getElementById('dynamic-tfoot');
+
+            tbody.innerHTML = `<tr><td style="text-align: center; padding: 20px;">डाटा तानिँदैछ...</td></tr>`;
+
+            // Fetch expense entries along with voucher, heading, and subheading info
+            const [ { data: entries, error }, { data: obData, error: obError } ] = await Promise.all([
+                supabaseClient
+                    .from('bnk_entries')
+                    .select(`
+                        id,
+                        cash_credit, bank_credit, bibidh_credit,
+                        bnk_vouchers!inner (id, transaction_date, voucher_no, particulars),
+                        ledger_headings (id, name),
+                        ledger_subheadings (id, name)
+                    `)
+                    .eq('entry_type', 'expense')
+                    .eq('bnk_vouchers.school_id', schoolId)
+                    .order('id', { ascending: true }),
+                supabaseClient
+                    .from('opening_balances')
+                    .select(`
+                        id, transaction_date, voucher_no, amount,
+                        ledger_subheadings (
+                            id, name,
+                            ledger_headings (id, name)
+                        )
+                    `)
+                    .eq('school_id', schoolId)
+            ]);
+
+            if (error) {
+                tbody.innerHTML = `<tr><td style="color:red; padding: 20px;">त्रुटि (Error): ${error.message}</td></tr>`;
+                return;
+            }
+
+            // 1. Structure the Column Definitions (Headings -> Subheadings)
+            const headingsMap = new Map(); // heading_id -> { name, subheadings: Map(subheading_id -> name) }
+            const subheadingsList = []; // ordered list of subheading IDs to track columns
+
+            entries.forEach(entry => {
+                if (!entry.ledger_headings || !entry.ledger_subheadings) return; // ignore invalid rows
+                
+                const hId = entry.ledger_headings.id;
+                const hName = entry.ledger_headings.name;
+                const sId = entry.ledger_subheadings.id;
+                const sName = entry.ledger_subheadings.name;
+
+                if (!headingsMap.has(hId)) headingsMap.set(hId, { name: hName, subheadings: new Map() });
+                const hObj = headingsMap.get(hId);
+                if (!hObj.subheadings.has(sId)) { hObj.subheadings.set(sId, sName); subheadingsList.push(sId); }
+            });
+
+            // Also process opening balances for columns
+            const openingBalance = { date: '-', voucher_no: '-', amounts: {}, grandTotal: 0 };
+            if (obData) {
+                obData.forEach(ob => {
+                    openingBalance.date = ob.transaction_date || openingBalance.date;
+                    openingBalance.voucher_no = ob.voucher_no || openingBalance.voucher_no;
+
+                    if (!ob.ledger_subheadings || !ob.ledger_subheadings.ledger_headings) {
+                        // Global opening balance without specific heading
+                        openingBalance.grandTotal += Number(ob.amount) || 0;
+                        return;
+                    }
+
+                    const hId = ob.ledger_subheadings.ledger_headings.id;
+                    const hName = ob.ledger_subheadings.ledger_headings.name;
+                    const sId = ob.ledger_subheadings.id;
+                    const sName = ob.ledger_subheadings.name;
+
+                    if (!headingsMap.has(hId)) headingsMap.set(hId, { name: hName, subheadings: new Map() });
+                    const hObj = headingsMap.get(hId);
+                    if (!hObj.subheadings.has(sId)) { hObj.subheadings.set(sId, sName); subheadingsList.push(sId); }
+
+                    if (!openingBalance.amounts[sId]) openingBalance.amounts[sId] = 0;
+                    openingBalance.amounts[sId] += Number(ob.amount) || 0;
+                });
+            }
+
+            // 2. Build the Header HTML
+            let theadHtml = '<tr>';
+            theadHtml += `<th rowspan="2" style="width:100px;">मिति<br>(Date)</th>`;
+            theadHtml += `<th rowspan="2" style="width:250px;">विवरण<br>(Particulars)</th>`;
+            theadHtml += `<th rowspan="2" style="width:80px;">भौचर नं.<br>(Voucher)</th>`;
+
+            headingsMap.forEach((hObj) => {
+                theadHtml += `<th colspan="${hObj.subheadings.size}">${hObj.name}</th>`;
+            });
+            theadHtml += `<th rowspan="2" style="width:120px;">जम्मा<br>(Total Amount)</th>`;
+            theadHtml += `<th rowspan="2" style="width:150px;">कैफियत<br>(Remarks)</th>`;
+            theadHtml += '</tr><tr>';
+
+            headingsMap.forEach((hObj) => {
+                hObj.subheadings.forEach((sName) => {
+                    theadHtml += `<th>${sName}</th>`;
+                });
+            });
+            theadHtml += '</tr>';
+
+            thead.innerHTML = theadHtml;
+
+            // 3. Group Data by Voucher
+            const vouchersMap = new Map(); // voucher_id -> { date, particulars, voucher_no, amounts: { subheading_id -> amount } }
+            
+            entries.forEach(entry => {
+                if (!entry.bnk_vouchers || !entry.ledger_subheadings) return;
+                
+                const v = entry.bnk_vouchers;
+                const vId = v.id;
+                
+                if (!vouchersMap.has(vId)) {
+                    vouchersMap.set(vId, {
+                        date: v.transaction_date,
+                        particulars: v.particulars,
+                        voucher_no: v.voucher_no || '-',
+                        amounts: {}
+                    });
+                }
+                
+                const sId = entry.ledger_subheadings.id;
+                const amt = (Number(entry.cash_credit) || 0) + (Number(entry.bank_credit) || 0) + (Number(entry.bibidh_credit) || 0);
+                
+                if (!vouchersMap.get(vId).amounts[sId]) {
+                    vouchersMap.get(vId).amounts[sId] = 0;
+                }
+                vouchersMap.get(vId).amounts[sId] += amt;
+            });
+
+            // Sort vouchers by voucher_no numerically, then by date
+            const sortedVouchers = Array.from(vouchersMap.values()).sort((a, b) => {
+                const vA = parseInt(a.voucher_no) || 0;
+                const vB = parseInt(b.voucher_no) || 0;
+                if (vA !== vB) return vA - vB;
+                return new Date(a.date) - new Date(b.date);
+            });
+
+            // 4. Build the Body HTML
+            let tbodyHtml = '';
+            
+            // Data Rows & Totals tracking
+            const columnTotals = {};
+            subheadingsList.forEach(sId => columnTotals[sId] = 0);
+            let grandTotal = 0;
+
+            // First Row: Gata Barsha Ko Alya
+            tbodyHtml += `<tr>
+                <td>${openingBalance.date}</td>
+                <td style="text-align:left;">गत वर्षको अल्या (Last Year Balance)</td>
+                <td>${openingBalance.voucher_no}</td>`;
+            
+            let obRowTotal = openingBalance.grandTotal;
+            subheadingsList.forEach((sId) => {
+                const amt = openingBalance.amounts[sId] || 0;
+                obRowTotal += amt;
+                columnTotals[sId] += amt;
+                tbodyHtml += `<td>${amt > 0 ? amt.toFixed(2) : ''}</td>`;
+            });
+            grandTotal += obRowTotal;
+            
+            tbodyHtml += `<td style="font-weight:bold;">${obRowTotal > 0 ? obRowTotal.toFixed(2) : '0.00'}</td><td>-</td></tr>`;
+
+            sortedVouchers.forEach(v => {
+                tbodyHtml += `<tr>
+                    <td>${v.date}</td>
+                    <td style="text-align:left;">${v.particulars}</td>
+                    <td>${v.voucher_no}</td>`;
+                
+                let rowTotal = 0;
+                
+                subheadingsList.forEach(sId => {
+                    const amt = v.amounts[sId] || 0;
+                    rowTotal += amt;
+                    columnTotals[sId] += amt;
+                    
+                    // Print amount, blank if zero for cleaner look
+                    tbodyHtml += `<td>${amt > 0 ? amt.toFixed(2) : ''}</td>`;
+                });
+
+                grandTotal += rowTotal;
+
+                tbodyHtml += `<td style="font-weight:bold;">${rowTotal.toFixed(2)}</td>
+                    <td></td>
+                </tr>`;
+            });
+
+            if (sortedVouchers.length === 0 && subheadingsList.length === 0) {
+                tbodyHtml = `<tr><td colspan="10" style="padding:30px;">कुनै पनि खर्च डाटा भेटिएन (No expense entries found).</td></tr>`;
+            }
+
+            tbody.innerHTML = tbodyHtml;
+
+            // 5. Build the Footer HTML
+            if (subheadingsList.length > 0) {
+                let tfootHtml = `<tr class="tfoot-total">
+                    <td colspan="3" style="text-align: right; font-size:1.1em;">जम्मा (Total)</td>`;
+                
+                subheadingsList.forEach(sId => {
+                    tfootHtml += `<td>${columnTotals[sId].toFixed(2)}</td>`;
+                });
+                
+                tfootHtml += `<td style="font-size:1.1em;">${grandTotal.toFixed(2)}</td>
+                    <td></td>
+                </tr>`;
+                
+                tfoot.innerHTML = tfootHtml;
+            } else {
+                tfoot.innerHTML = '';
+            }
+        }
+
+        function exportToExcel() {
+            const table = document.getElementById("reportTable");
+            const wb = XLSX.utils.table_to_book(table, {sheet: "Kharcha Khata"});
+            XLSX.writeFile(wb, `Kharcha_Khata_Report.xlsx`);
+        }
+    </script>
+</body>
+</html>
