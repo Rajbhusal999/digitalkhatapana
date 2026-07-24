@@ -215,6 +215,9 @@
 
         /* ── Print Styles ── */
         @media print {
+            #print_school_logo[src]:not([src=""]) {
+                display: block !important;
+            }
             @page {
                 size: A4 landscape;
                 margin: 10mm;
@@ -322,10 +325,13 @@
         <div class="report-card">
             
             <!-- This header is only visible during print -->
-            <div class="report-header">
+            <div class="report-header" style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+                <img id="print_school_logo" src="" alt="School Logo" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; display: none;">
+                <div>
                 <h2 id="print_school_name">श्री विद्यालयको नाम</h2>
                 <h3 id="print_school_address">ठेगाना</h3>
                 <h3 style="margin-top: 10px; font-weight: bold;">नगद/बैंक खाता (पाना नं: <span id="print_page_no">-</span>)</h3>
+            </div>
             </div>
 
             <table class="entries-table" id="reportTable">
@@ -387,6 +393,12 @@
             if (window._activeSchoolInfo) {
                 document.getElementById('print_school_name').innerText = window._activeSchoolInfo.schoolName || '';
                 document.getElementById('print_school_address').innerText = window._activeSchoolInfo.address || '';
+                if (window._activeSchoolInfo.logo) {
+                    const logoImg = document.getElementById('print_school_logo');
+                    if (logoImg) {
+                        logoImg.src = window._activeSchoolInfo.logo;
+                    }
+                }
             }
         });
 
