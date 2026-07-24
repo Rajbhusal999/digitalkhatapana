@@ -551,6 +551,29 @@
             submitBtn.innerText = "Saving Voucher...";
             submitBtn.disabled = true;
 
+            // 0. Validate Double Entry (Total Debit == Total Credit)
+            let totalDebit = 0;
+            let totalCredit = 0;
+            const rows = document.querySelectorAll('.entry-row');
+            
+            rows.forEach(row => {
+                totalDebit += Number(row.querySelector('.cash_debit').value || 0);
+                totalDebit += Number(row.querySelector('.bank_debit').value || 0);
+                totalDebit += Number(row.querySelector('.budget_kharcha').value || 0); // Budget expense is debit
+                totalDebit += Number(row.querySelector('.bibidh_debit').value || 0);
+
+                totalCredit += Number(row.querySelector('.cash_credit').value || 0);
+                totalCredit += Number(row.querySelector('.bank_credit').value || 0);
+                totalCredit += Number(row.querySelector('.bibidh_credit').value || 0);
+            });
+
+            if (Math.abs(totalDebit - totalCredit) > 0.01) {
+                alert(`त्रुटि (Error): कुल डेबिट (Total Debit: ${totalDebit.toFixed(2)}) र कुल क्रेडिट (Total Credit: ${totalCredit.toFixed(2)}) बराबर भएन! (Do not match)`);
+                submitBtn.innerText = "Submit Voucher (भौचर सेभ गर्नुहोस्)";
+                submitBtn.disabled = false;
+                return;
+            }
+
             // 1. Create Master Voucher
             const voucherPayload = {
                 school_id: window._activeSchoolInfo.id,
