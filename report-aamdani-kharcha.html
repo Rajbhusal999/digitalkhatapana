@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ne">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aamdani Kharcha Summary - Digital Khata Pana</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: var(--font-primary);
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* ── Header Styling (Hidden in Print) ── */
+        .landing-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .landing-header::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+            animation: rotateBg 25s linear infinite;
+        }
+
+        @keyframes rotateBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header-content {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .school-info h1 {
+            font-family: var(--font-nepali);
+            font-size: 1.5rem;
+            margin: 0;
+            color: #f8fafc;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ── Main Content ── */
+        .main-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        /* Toolbar Section (Hidden in Print) */
+        .toolbar-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 0.9rem;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .filter-group select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-size: 1rem;
+            min-width: 150px;
+        }
+
+        .btn-action {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 42px; /* align with select box */
+            margin-top: 24px;
+        }
+
+        .btn-action:hover {
+            background: #2563eb;
+        }
+        
+        .btn-success { background: #10b981; }
+        .btn-success:hover { background: #059669; }
+        .btn-secondary { background: #64748b; }
+        .btn-secondary:hover { background: #475569; }
+
+        /* Table Report Section */
+        .report-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 20px;
+            display: none; /* Only show in print */
+        }
+        .report-header h2 { margin: 0 0 5px 0; font-size: 1.5rem; }
+        .report-header h3 { margin: 0; font-size: 1.2rem; font-weight: normal; }
+        .report-title-underline { font-size: 1.3rem; font-weight: bold; text-decoration: underline; margin-top: 10px; }
+
+        .entries-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .entries-table th, .entries-table td {
+            border: 1px solid #94a3b8;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+            color: #0f172a;
+        }
+
+        .entries-table th {
+            background-color: #f8fafc;
+            font-weight: bold;
+        }
+
+        .entries-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
+
+        .tfoot-total {
+            font-weight: bold;
+        }
+
+        /* ── Print Styles ── */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 5mm; /* Narrow margin */
+            }
+
+            body {
+                background: white;
+                color: black;
+                font-size: 10pt;
+            }
+
+            .landing-header, .toolbar-section, .btn-action {
+                display: none !important;
+            }
+
+            .main-container { margin: 0; padding: 0; max-width: 100%; }
+            .report-card { box-shadow: none; border: none; padding: 0; }
+            .report-header { display: block; }
+
+            .entries-table {
+                width: 100%; min-width: 100%; page-break-inside: auto;
+            }
+            .entries-table tr { page-break-inside: avoid; page-break-after: auto; }
+            .entries-table thead { display: table-header-group; }
+            .entries-table tfoot { display: table-footer-group; }
+            
+            .entries-table th, .entries-table td {
+                border: 1px solid #000;
+                color: #000;
+                padding: 5px;
+            }
+            .entries-table th { background-color: white !important; color: black; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="landing-header">
+        <div class="header-content">
+            <div class="school-info">
+                <h1>रिपोर्ट: आम्दानी खर्च (नगद बैङ्क खाता)</h1>
+            </div>
+            <div>
+                <a href="reports.html" class="btn-back">← पछाडि जानुहोस् (Back)</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        
+        <div class="toolbar-section">
+            <div class="filter-group">
+                <label>Fiscal Year (आर्थिक वर्ष)</label>
+                <select id="fiscal_year">
+                    <option value="2083/84">2083/84</option>
+                    <option value="2082/83">2082/83</option>
+                    <option value="2081/82">2081/82</option>
+                    <option value="2080/81">2080/81</option>
+                </select>
+            </div>
+            <button class="btn-action" onclick="loadReport()">
+                🔍 Load Report
+            </button>
+            <div style="flex-grow: 1;"></div>
+            <button class="btn-action btn-success" onclick="exportToExcel()">
+                📊 Export Excel
+            </button>
+            <button class="btn-action btn-secondary" onclick="window.print()">
+                🖨️ Print (A4 Landscape)
+            </button>
+        </div>
+
+        <div class="report-card">
+            
+            <div class="report-header">
+                <h2 id="print_school_name">श्री विद्यालयको नाम</h2>
+                <h3 id="print_school_address">ठेगाना</h3>
+                <div class="report-title-underline">नगद बैङ्क खाता (<span id="print_fy"></span>)</div>
+            </div>
+
+            <table class="entries-table" id="reportTable">
+                <thead>
+                    <tr>
+                        <th rowspan="2">पाना<br>नं.</th>
+                        <th colspan="2">नगद</th>
+                        <th colspan="2">बैङ्क</th>
+                        <th rowspan="2">खर्च</th>
+                        <th colspan="2">पेश्की</th>
+                        <th colspan="2">विविध</th>
+                    </tr>
+                    <tr>
+                        <th>डेबिट</th>
+                        <th>क्रेडिट</th>
+                        <th>डेबिट</th>
+                        <th>क्रेडिट</th>
+                        <th>पाएको</th>
+                        <th>फर्छिएको</th>
+                        <th>डेबिट</th>
+                        <th>क्रेडिट</th>
+                    </tr>
+                </thead>
+                <tbody id="dynamic-tbody">
+                    <tr><td colspan="10" style="padding: 30px; color: #64748b;">कृपया आर्थिक वर्ष छानेर Load Report मा क्लिक गर्नुहोस्।</td></tr>
+                </tbody>
+                <tfoot id="dynamic-tfoot">
+                    <!-- Totals will be injected here -->
+                </tfoot>
+            </table>
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
+                window.location.href = 'school-login.html';
+                return;
+            }
+
+            if (window.initDatabase) {
+                await window.initDatabase();
+            }
+
+            if (window._activeSchoolInfo) {
+                document.getElementById('print_school_name').innerText = window._activeSchoolInfo.schoolName || '';
+                document.getElementById('print_school_address').innerText = window._activeSchoolInfo.address || '';
+            }
+        });
+
+        async function loadReport() {
+            if (!window._activeSchoolInfo || !supabaseClient) return;
+            const schoolId = window._activeSchoolInfo.id;
+            const fiscalYear = document.getElementById('fiscal_year').value;
+            
+            document.getElementById('print_fy').innerText = fiscalYear;
+            
+            const tbody = document.getElementById('dynamic-tbody');
+            const tfoot = document.getElementById('dynamic-tfoot');
+
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 20px;">डाटा तानिँदैछ... (Loading...)</td></tr>`;
+            tfoot.innerHTML = '';
+
+            // Fetch all vouchers and entries for the selected fiscal year
+            const { data: vouchers, error } = await supabaseClient
+                .from('bnk_vouchers')
+                .select(`
+                    id, page_no,
+                    bnk_entries (
+                        cash_debit, cash_credit,
+                        bank_debit, bank_credit,
+                        budget_kharcha,
+                        peski_dieko, peski_farchiyeko,
+                        bibidh_debit, bibidh_credit
+                    )
+                `)
+                .eq('school_id', schoolId)
+                .eq('fiscal_year', fiscalYear);
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="10" style="color:red; padding: 20px;">त्रुटि (Error): ${error.message}</td></tr>`;
+                return;
+            }
+
+            if (!vouchers || vouchers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" style="padding:30px;">यस आर्थिक वर्षको कुनै पनि डाटा भेटिएन (No data found).</td></tr>`;
+                return;
+            }
+
+            // Aggregate data by page_no
+            const pageMap = new Map();
+
+            vouchers.forEach(v => {
+                const pageNo = v.page_no ? v.page_no.trim() : 'Unknown';
+                
+                if (!pageMap.has(pageNo)) {
+                    pageMap.set(pageNo, {
+                        cdr: 0, ccr: 0,
+                        bdr: 0, bcr: 0,
+                        exp: 0,
+                        pg: 0, pc: 0,
+                        mdr: 0, mcr: 0
+                    });
+                }
+                
+                const totals = pageMap.get(pageNo);
+                const entries = v.bnk_entries || [];
+                
+                entries.forEach(e => {
+                    totals.cdr += Number(e.cash_debit) || 0;
+                    totals.ccr += Number(e.cash_credit) || 0;
+                    totals.bdr += Number(e.bank_debit) || 0;
+                    totals.bcr += Number(e.bank_credit) || 0;
+                    totals.exp += Number(e.budget_kharcha) || 0;
+                    totals.pg += Number(e.peski_dieko) || 0;
+                    totals.pc += Number(e.peski_farchiyeko) || 0;
+                    totals.mdr += Number(e.bibidh_debit) || 0;
+                    totals.mcr += Number(e.bibidh_credit) || 0;
+                });
+            });
+
+            // Sort pages numerically
+            const sortedPages = Array.from(pageMap.keys()).sort((a, b) => {
+                const numA = parseInt(a);
+                const numB = parseInt(b);
+                if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+                return a.localeCompare(b);
+            });
+
+            let tbodyHtml = '';
+            let grandTotals = { cdr: 0, ccr: 0, bdr: 0, bcr: 0, exp: 0, pg: 0, pc: 0, mdr: 0, mcr: 0 };
+
+            sortedPages.forEach(pageNo => {
+                const t = pageMap.get(pageNo);
+                
+                grandTotals.cdr += t.cdr;
+                grandTotals.ccr += t.ccr;
+                grandTotals.bdr += t.bdr;
+                grandTotals.bcr += t.bcr;
+                grandTotals.exp += t.exp;
+                grandTotals.pg += t.pg;
+                grandTotals.pc += t.pc;
+                grandTotals.mdr += t.mdr;
+                grandTotals.mcr += t.mcr;
+
+                // Only show numbers if they are > 0, else blank (or 0.00 if preferred, but blank is cleaner as per standard accounting)
+                const formatAmt = (val) => val > 0 ? val.toFixed(2) : '0.00';
+
+                tbodyHtml += `
+                    <tr>
+                        <td>${pageNo}</td>
+                        <td>${formatAmt(t.cdr)}</td>
+                        <td>${formatAmt(t.ccr)}</td>
+                        <td>${formatAmt(t.bdr)}</td>
+                        <td>${formatAmt(t.bcr)}</td>
+                        <td>${formatAmt(t.exp)}</td>
+                        <td>${formatAmt(t.pg)}</td>
+                        <td>${formatAmt(t.pc)}</td>
+                        <td>${formatAmt(t.mdr)}</td>
+                        <td>${formatAmt(t.mcr)}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = tbodyHtml;
+
+            const formatAmt = (val) => val > 0 ? val.toFixed(2) : '0.00';
+            
+            // Calculate Bank balance
+            const bankBalance = grandTotals.bdr - grandTotals.bcr;
+            
+            // Total Debit Amount and Credit Amount Check
+            // Dr = Cash Dr + Bank Dr + Exp + Advance Given(pg) + Misc Dr
+            const totalDr = grandTotals.cdr + grandTotals.bdr + grandTotals.exp + grandTotals.pg + grandTotals.mdr;
+            // Cr = Cash Cr + Bank Cr + Advance Cleared(pc) + Misc Cr
+            const totalCr = grandTotals.ccr + grandTotals.bcr + grandTotals.pc + grandTotals.mcr;
+
+            let tfootHtml = `
+                <tr class="tfoot-total">
+                    <td>जम्मा</td>
+                    <td>${formatAmt(grandTotals.cdr)}</td>
+                    <td>${formatAmt(grandTotals.ccr)}</td>
+                    <td>${formatAmt(grandTotals.bdr)}</td>
+                    <td>${formatAmt(grandTotals.bcr)}</td>
+                    <td>${formatAmt(grandTotals.exp)}</td>
+                    <td>${formatAmt(grandTotals.pg)}</td>
+                    <td>${formatAmt(grandTotals.pc)}</td>
+                    <td>${formatAmt(grandTotals.mdr)}</td>
+                    <td>${formatAmt(grandTotals.mcr)}</td>
+                </tr>
+                <tr>
+                    <td colspan="3"></td>
+                    <td style="text-align: right; font-weight: bold;">Bank b/d</td>
+                    <td style="font-weight: bold;">${bankBalance.toFixed(2)}</td>
+                    <td colspan="5"></td>
+                </tr>
+            `;
+
+            tfoot.innerHTML = tfootHtml;
+            
+            // Optional: Print debit/credit totals at the very bottom outside the table if wanted, 
+            // but the table itself fulfills the screenshot exactly.
+        }
+
+        function exportToExcel() {
+            const table = document.getElementById("reportTable");
+            const wb = XLSX.utils.table_to_book(table, {sheet: "Aamdani Kharcha"});
+            XLSX.writeFile(wb, `Aamdani_Kharcha_Summary.xlsx`);
+        }
+    </script>
+</body>
+</html>
