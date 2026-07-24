@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="np">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opening Balance - Digital Khata Pana</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: var(--font-primary);
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .landing-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .school-info h1 {
+            font-family: var(--font-nepali);
+            font-size: 1.5rem;
+            margin: 0;
+            color: #f8fafc;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover { background: rgba(255, 255, 255, 0.2); }
+
+        .main-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-card h2 {
+            margin-top: 0;
+            color: #0f172a;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .top-fields {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-weight: 600; font-size: 0.95rem; color: #475569; }
+        .form-group input, .form-group select {
+            padding: 10px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: #3b82f6; }
+
+        .dynamic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .dynamic-table th, .dynamic-table td {
+            border: 1px solid #cbd5e1;
+            padding: 10px;
+            text-align: left;
+        }
+        .dynamic-table th { background: #f8fafc; font-weight: 600; }
+        .dynamic-table input, .dynamic-table select {
+            width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;
+        }
+        .btn-remove {
+            background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight: bold;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .btn-add { background: #e2e8f0; color: #475569; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .btn-add:hover { background: #cbd5e1; }
+
+        .btn-submit { background: #3b82f6; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
+        .btn-submit:hover { background: #2563eb; }
+
+    </style>
+</head>
+<body>
+
+    <header class="landing-header">
+        <div class="header-content">
+            <div class="school-info">
+                <h1>Opening Balance (गत वर्षको अल्या)</h1>
+            </div>
+            <a href="landing.html" class="btn-back">← पछाडि जानुहोस् (Dashboard)</a>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="form-card">
+            <h2>Enter Opening Balances</h2>
+            <form id="openingBalanceForm">
+                
+                <div class="top-fields">
+                    <div class="form-group">
+                        <label>Date (मिति)</label>
+                        <input type="date" id="transaction_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Voucher No. (भौचर नं.)</label>
+                        <input type="text" id="voucher_no" required>
+                    </div>
+                </div>
+
+                <table class="dynamic-table" id="entriesTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 35%">Heading (शीर्षक)</th>
+                            <th style="width: 35%">Subheading (उपशीर्षक)</th>
+                            <th style="width: 20%">Amount (रकम)</th>
+                            <th style="width: 10%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="entriesBody">
+                        <!-- Dynamic rows will be inserted here -->
+                    </tbody>
+                </table>
+
+                <div class="actions">
+                    <button type="button" class="btn-add" onclick="addRow()">+ Add Row</button>
+                    <button type="submit" class="btn-submit" id="submitBtn">Save Balances (सुरक्षित गर्नुहोस्)</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
+    <script>
+        let incomeHeadings = [];
+        let incomeSubheadings = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
+                window.location.href = 'school-login.html';
+                return;
+            }
+
+            if (window.initDatabase) {
+                await window.initDatabase();
+            }
+
+            // Set today's date by default
+            document.getElementById('transaction_date').valueAsDate = new Date();
+
+            await loadIncomeHeadings();
+            addRow(); // Add first empty row
+        });
+
+        async function loadIncomeHeadings() {
+            if (!window._activeSchoolInfo) return;
+            const schoolId = window._activeSchoolInfo.id;
+
+            // Fetch Headings
+            const { data: hData } = await supabaseClient
+                .from('ledger_headings')
+                .select('*')
+                .eq('school_id', schoolId)
+                .eq('type', 'income');
+            
+            if (hData) incomeHeadings = hData;
+
+            // Fetch Subheadings
+            if (incomeHeadings.length > 0) {
+                const headingIds = incomeHeadings.map(h => h.id);
+                const { data: sData } = await supabaseClient
+                    .from('ledger_subheadings')
+                    .select('*')
+                    .in('heading_id', headingIds);
+                if (sData) incomeSubheadings = sData;
+            }
+        }
+
+        function addRow() {
+            const tbody = document.getElementById('entriesBody');
+            const rowCount = tbody.children.length;
+            const tr = document.createElement('tr');
+            
+            let headingOptions = `<option value="">Select Heading...</option>`;
+            incomeHeadings.forEach(h => {
+                headingOptions += `<option value="${h.id}">${h.name}</option>`;
+            });
+
+            tr.innerHTML = `
+                <td>
+                    <select class="heading-select" onchange="updateSubheadings(this)" required>
+                        ${headingOptions}
+                    </select>
+                </td>
+                <td>
+                    <select class="subheading-select" required>
+                        <option value="">Select Subheading...</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" step="0.01" class="amount-input" min="0" required>
+                </td>
+                <td style="text-align:center;">
+                    ${rowCount > 0 ? `<button type="button" class="btn-remove" onclick="this.closest('tr').remove()">X</button>` : ''}
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function updateSubheadings(headingSelect) {
+            const headingId = headingSelect.value;
+            const tr = headingSelect.closest('tr');
+            const subheadingSelect = tr.querySelector('.subheading-select');
+            
+            subheadingSelect.innerHTML = `<option value="">Select Subheading...</option>`;
+            if (!headingId) return;
+
+            const filteredSubs = incomeSubheadings.filter(s => s.heading_id === headingId);
+            filteredSubs.forEach(s => {
+                subheadingSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+            });
+        }
+
+        document.getElementById('openingBalanceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "Saving...";
+            btn.disabled = true;
+
+            const schoolId = window._activeSchoolInfo.id;
+            const date = document.getElementById('transaction_date').value;
+            const voucherNo = document.getElementById('voucher_no').value;
+
+            const tbody = document.getElementById('entriesBody');
+            const rows = tbody.querySelectorAll('tr');
+            const records = [];
+
+            for (let row of rows) {
+                const subId = row.querySelector('.subheading-select').value;
+                const amt = row.querySelector('.amount-input').value;
+                if (subId && amt) {
+                    records.push({
+                        school_id: schoolId,
+                        transaction_date: date,
+                        voucher_no: voucherNo,
+                        subheading_id: subId,
+                        amount: Number(amt),
+                        fiscal_year: '2083/84' // default
+                    });
+                }
+            }
+
+            if (records.length === 0) {
+                alert("Please add at least one valid amount.");
+                btn.innerText = "Save Balances (सुरक्षित गर्नुहोस्)";
+                btn.disabled = false;
+                return;
+            }
+
+            // Insert into Supabase
+            const { error } = await supabaseClient
+                .from('opening_balances')
+                .insert(records);
+
+            if (error) {
+                console.error(error);
+                alert("Error saving opening balances: " + error.message);
+                btn.innerText = "Save Balances (सुरक्षित गर्नुहोस्)";
+                btn.disabled = false;
+            } else {
+                alert("Opening Balances saved successfully!");
+                // Optionally reset form
+                document.getElementById('openingBalanceForm').reset();
+                document.getElementById('entriesBody').innerHTML = '';
+                addRow();
+                btn.innerText = "Save Balances (सुरक्षित गर्नुहोस्)";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

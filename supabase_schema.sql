@@ -89,3 +89,15 @@ CREATE TABLE IF NOT EXISTS kharcha_khata (
     amount NUMERIC NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
+
+-- Opening Balances (Gata Barsha Ko Alya)
+CREATE TABLE IF NOT EXISTS opening_balances (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    school_id UUID REFERENCES registered_schools(id) ON DELETE CASCADE,
+    fiscal_year TEXT DEFAULT '2083/84',
+    transaction_date DATE NOT NULL,
+    voucher_no TEXT,
+    subheading_id UUID REFERENCES ledger_subheadings(id) ON DELETE CASCADE,
+    amount NUMERIC DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
