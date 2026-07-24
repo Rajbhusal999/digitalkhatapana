@@ -365,8 +365,13 @@
                 vouchersMap.get(vId).amounts[sId] += amt;
             });
 
-            // Sort vouchers by date
-            const sortedVouchers = Array.from(vouchersMap.values()).sort((a, b) => new Date(a.date) - new Date(b.date));
+            // Sort vouchers by voucher_no numerically, then by date
+            const sortedVouchers = Array.from(vouchersMap.values()).sort((a, b) => {
+                const vA = parseInt(a.voucher_no) || 0;
+                const vB = parseInt(b.voucher_no) || 0;
+                if (vA !== vB) return vA - vB;
+                return new Date(a.date) - new Date(b.date);
+            });
 
             // 4. Build the Body HTML
             let tbodyHtml = '';

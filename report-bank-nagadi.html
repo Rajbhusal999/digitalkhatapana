@@ -405,6 +405,14 @@
                 return;
             }
 
+            // Sort data numerically by voucher_no
+            data.sort((a, b) => {
+                const vA = parseInt(a.voucher_no) || 0;
+                const vB = parseInt(b.voucher_no) || 0;
+                if (vA !== vB) return vA - vB;
+                return new Date(a.transaction_date) - new Date(b.transaction_date);
+            });
+
             let html = '';
             let totals = { cdr:0, ccr:0, bdr:0, bcr:0, bud:0, mdr:0, mcr:0 };
 
