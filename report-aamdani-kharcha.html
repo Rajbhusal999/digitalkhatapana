@@ -452,10 +452,10 @@
             const bankBalance = grandTotals.bdr - grandTotals.bcr;
             
             // Total Debit Amount and Credit Amount Check
-            // Dr = Cash Dr + Bank Dr + Exp + Advance Given(pg) + Misc Dr
-            const totalDr = grandTotals.cdr + grandTotals.bdr + grandTotals.exp + grandTotals.pg + grandTotals.mdr;
-            // Cr = Cash Cr + Bank Cr + Advance Cleared(pc) + Misc Cr
-            const totalCr = grandTotals.ccr + grandTotals.bcr + grandTotals.pc + grandTotals.mcr;
+            // Dr = Cash Dr + Bank Dr + Exp + Misc Dr (excluding advance)
+            const totalDr = grandTotals.cdr + grandTotals.bdr + grandTotals.exp + grandTotals.mdr;
+            // Cr = Cash Cr + Bank Cr + Misc Cr (excluding advance)
+            const totalCr = grandTotals.ccr + grandTotals.bcr + grandTotals.mcr;
 
             let tfootHtml = `
                 <tr class="tfoot-total">
