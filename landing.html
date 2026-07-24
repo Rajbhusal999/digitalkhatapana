@@ -136,6 +136,84 @@
             margin-bottom: 20px;
         }
 
+        /* ── Topics Grid ── */
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .topic-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .topic-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, #e5a93b, #d97706);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: left;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            border-color: #cbd5e1;
+        }
+
+        .topic-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .topic-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(229,169,59,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #d97706;
+            transition: transform 0.3s ease;
+        }
+
+        .topic-card:hover .topic-icon {
+            transform: scale(1.1);
+            background: rgba(229,169,59,0.2);
+        }
+
+        .topic-card h3 {
+            font-size: 1.3rem;
+            margin: 0 0 8px 0;
+            font-weight: 700;
+        }
+
+        .topic-card p {
+            font-family: var(--font-nepali);
+            color: #64748b;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
     </style>
 </head>
 <body>
@@ -162,6 +240,39 @@
             <div class="dev-badge">NEW PROJECT SPACE</div>
             <h2>नयाँ वेबसाइटमा स्वागत छ!</h2>
             <p>Welcome to the new platform. We have successfully reset the workspace and are ready to build the new website features according to your requirements.</p>
+        </div>
+
+        <div class="topics-grid">
+            <a href="#" class="topic-card">
+                <div class="topic-icon">🏦</div>
+                <h3>Bank Nagadi Kitaab</h3>
+                <p>बैंक नगदी किताब</p>
+            </a>
+            <a href="#" class="topic-card">
+                <div class="topic-icon">📈</div>
+                <h3>Aamdani Khata</h3>
+                <p>आम्दानी खाता</p>
+            </a>
+            <a href="#" class="topic-card">
+                <div class="topic-icon">📉</div>
+                <h3>Kharcha Khata</h3>
+                <p>खर्च खाता</p>
+            </a>
+            <a href="#" class="topic-card">
+                <div class="topic-icon">📊</div>
+                <h3>Aamdani Kharcha</h3>
+                <p>आम्दानी खर्च</p>
+            </a>
+            <a href="#" class="topic-card">
+                <div class="topic-icon">💸</div>
+                <h3>Aaya Vyaya</h3>
+                <p>आय व्यय</p>
+            </a>
+            <a href="#" class="topic-card">
+                <div class="topic-icon">⚖️</div>
+                <h3>Trial Balance</h3>
+                <p>सन्तुलन परीक्षण</p>
+            </a>
         </div>
     </main>
 
