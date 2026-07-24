@@ -1045,13 +1045,42 @@
                 }
 
                 if (rpcData && rpcData.valid) {
-                    // OTP is valid! Redirect to password setup
-                    sessionStorage.setItem('temp_setup_email', email);
-                    sessionStorage.setItem('temp_setup_otp', password);
-                    showGatewayToast('OTP Verified! Redirecting to setup your permanent password...', 'success');
-                    setTimeout(() => {
-                        window.location.href = 'school-login.html';
-                    }, 1500);
+                    if (rpcData.legacy) {
+                        // Automatically migrate the legacy user to Supabase Auth
+                        const { data: legacyAuth, error: legacyErr } = await window.supabaseClient.auth.signUp({ email: email, password: password });
+                        if (legacyAuth && legacyAuth.session) {
+                            showGatewayToast('Login successful! Redirecting...', 'success');
+                            sessionStorage.setItem('school_user_logged_in', 'true');
+                            sessionStorage.setItem('school_user_email', email);
+                            sessionStorage.setItem('admin_logged_in', 'true');
+                            setTimeout(() => {
+                                window.location.href = 'landing.html';
+                            }, 1500);
+                            return;
+                        } else {
+                            // If signup failed (e.g. user already exists but password was wrong?), try signing in just in case
+                            const { data: signInRetry, error: signInRetryErr } = await window.supabaseClient.auth.signInWithPassword({ email: email, password: password });
+                            if (signInRetry && signInRetry.session) {
+                                showGatewayToast('Login successful! Redirecting...', 'success');
+                                sessionStorage.setItem('school_user_logged_in', 'true');
+                                sessionStorage.setItem('school_user_email', email);
+                                sessionStorage.setItem('admin_logged_in', 'true');
+                                setTimeout(() => {
+                                    window.location.href = 'landing.html';
+                                }, 1500);
+                                return;
+                            }
+                            showGatewayToast('Migration failed. Please contact admin.', 'error');
+                        }
+                    } else {
+                        // OTP is valid! Redirect to password setup
+                        sessionStorage.setItem('temp_setup_email', email);
+                        sessionStorage.setItem('temp_setup_otp', password);
+                        showGatewayToast('OTP Verified! Redirecting to setup your permanent password...', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'school-login.html';
+                        }, 1500);
+                    }
                 } else if (rpcData && rpcData.error) {
                     showGatewayToast(rpcData.error, 'error');
                 } else {
