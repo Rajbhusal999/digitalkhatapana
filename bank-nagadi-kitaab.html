@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="np">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Nagadi Kitaab - Digital Khata Pana</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: var(--font-primary);
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* ── Header Styling ── */
+        .landing-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .school-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .school-logo {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 2px solid rgba(229,169,59,0.5);
+        }
+
+        .school-text h1 {
+            font-family: var(--font-nepali);
+            font-size: 1.8rem;
+            margin: 0 0 5px 0;
+            color: #f8fafc;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ── Main Content ── */
+        .main-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #334155;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .form-group input, .form-group select {
+            padding: 10px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            background: white;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: #e5a93b;
+            box-shadow: 0 0 0 3px rgba(229,169,59,0.1);
+        }
+
+        .section-title {
+            grid-column: 1 / -1;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 15px;
+            border-bottom: 1px dashed #cbd5e1;
+            padding-bottom: 5px;
+        }
+
+        .btn-submit {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: #059669;
+        }
+
+        /* Table Styles */
+        .entries-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+
+        .entries-table th, .entries-table td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .entries-table th {
+            background-color: #f8fafc;
+            font-weight: 700;
+            color: #334155;
+        }
+        
+        .entries-table tbody tr:nth-child(even) {
+            background-color: #f1f5f9;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="landing-header">
+        <div class="header-content">
+            <div class="school-info">
+                <div class="school-logo">🏦</div>
+                <div class="school-text">
+                    <h1>बैंक नगदी किताब (Bank Nagadi Kitaab)</h1>
+                </div>
+            </div>
+            <div>
+                <a href="landing.html" class="btn-back">← पछाडि जानुहोस् (Back)</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        
+        <div class="card">
+            <h3>नयाँ विवरण थप्नुहोस् (Add New Entry)</h3>
+            <form id="entryForm" onsubmit="submitEntry(event)">
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Page No (पाना नं)</label>
+                        <input type="text" id="page_no" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Fiscal Year (आर्थिक वर्ष)</label>
+                        <input type="text" id="fiscal_year" value="2083" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Transaction Date (मिति)</label>
+                        <input type="date" id="transaction_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Voucher No (भौचर नं)</label>
+                        <input type="text" id="voucher_no">
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Type (प्रकार)</label>
+                        <select id="entry_type" required onchange="onTypeChange()">
+                            <option value="">छान्नुहोस् (Select...)</option>
+                            <option value="income">आम्दानी (Income)</option>
+                            <option value="expense">खर्च (Expense)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Heading (मुख्य शीर्षक)</label>
+                        <select id="heading_id" required onchange="onHeadingChange()">
+                            <option value="">पहिले प्रकार छान्नुहोस्</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Sub Heading (उप-शीर्षक)</label>
+                        <select id="subheading_id" required>
+                            <option value="">पहिले मुख्य शीर्षक छान्नुहोस्</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Particulars (विवरण)</label>
+                        <input type="text" id="particulars" placeholder="विवरण लेख्नुहोस्..." required>
+                    </div>
+                </div>
+
+                <!-- Amounts -->
+                <div class="form-grid">
+                    <div class="section-title">नगद (Cash)</div>
+                    <div class="form-group">
+                        <label>Debit (डेबिट)</label>
+                        <input type="number" id="cash_debit" value="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Credit (क्रेडिट)</label>
+                        <input type="number" id="cash_credit" value="0" step="0.01">
+                    </div>
+
+                    <div class="section-title">बैंक (Bank)</div>
+                    <div class="form-group">
+                        <label>Debit (डेबिट)</label>
+                        <input type="number" id="bank_debit" value="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Credit (क्रेडिट)</label>
+                        <input type="number" id="bank_credit" value="0" step="0.01">
+                    </div>
+
+                    <div class="section-title">बजेट खर्च (Budget Expense)</div>
+                    <div class="form-group">
+                        <label>Amount (रकम)</label>
+                        <input type="number" id="budget_kharcha" value="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <!-- empty for grid alignment -->
+                    </div>
+
+                    <div class="section-title">पेस्की (Advance)</div>
+                    <div class="form-group">
+                        <label>दिएको (Given)</label>
+                        <input type="number" id="peski_dieko" value="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>फर्छ्यौट (Cleared)</label>
+                        <input type="number" id="peski_farchiyeko" value="0" step="0.01">
+                    </div>
+
+                    <div class="section-title">विविध (Miscellaneous)</div>
+                    <div class="form-group">
+                        <label>Debit (डेबिट)</label>
+                        <input type="number" id="bibidh_debit" value="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Credit (क्रेडिट)</label>
+                        <input type="number" id="bibidh_credit" value="0" step="0.01">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Submit Entry (सेभ गर्नुहोस्)</button>
+            </form>
+        </div>
+
+        <div class="card" style="overflow-x: auto;">
+            <h3>Recent Entries (पछिल्ला विवरणहरू)</h3>
+            <table class="entries-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Voucher</th>
+                        <th>Particulars</th>
+                        <th>Cash Dr</th>
+                        <th>Cash Cr</th>
+                        <th>Bank Dr</th>
+                        <th>Bank Cr</th>
+                    </tr>
+                </thead>
+                <tbody id="entries-tbody">
+                    <tr><td colspan="7" style="text-align: center; color: #94a3b8;">लोड हुँदैछ...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
+    <script>
+        let allHeadings = [];
+        let allSubheadings = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
+                window.location.href = 'school-login.html';
+                return;
+            }
+            if (window.initDatabase) {
+                await window.initDatabase();
+            }
+            await loadDropdownData();
+            await loadRecentEntries();
+        });
+
+        async function loadDropdownData() {
+            if (!window._activeSchoolInfo || !supabaseClient) return;
+            const schoolId = window._activeSchoolInfo.id;
+
+            // Load Headings
+            const { data: hData, error: hErr } = await supabaseClient
+                .from('ledger_headings')
+                .select('*')
+                .eq('school_id', schoolId);
+            if (!hErr && hData) allHeadings = hData;
+
+            // Load Subheadings
+            const { data: sData, error: sErr } = await supabaseClient
+                .from('ledger_subheadings')
+                .select('*, ledger_headings!inner(school_id)')
+                .eq('ledger_headings.school_id', schoolId);
+            if (!sErr && sData) allSubheadings = sData;
+        }
+
+        function onTypeChange() {
+            const type = document.getElementById('entry_type').value;
+            const headingSelect = document.getElementById('heading_id');
+            const subheadingSelect = document.getElementById('subheading_id');
+            
+            headingSelect.innerHTML = '<option value="">छान्नुहोस् (Select...)</option>';
+            subheadingSelect.innerHTML = '<option value="">पहिले मुख्य शीर्षक छान्नुहोस्</option>';
+
+            if (!type) return;
+
+            const filtered = allHeadings.filter(h => h.type === type);
+            filtered.forEach(h => {
+                headingSelect.innerHTML += `<option value="${h.id}">${h.name}</option>`;
+            });
+        }
+
+        function onHeadingChange() {
+            const headingId = document.getElementById('heading_id').value;
+            const subheadingSelect = document.getElementById('subheading_id');
+            
+            subheadingSelect.innerHTML = '<option value="">छान्नुहोस् (Select...)</option>';
+
+            if (!headingId) return;
+
+            const filtered = allSubheadings.filter(s => s.heading_id === headingId);
+            filtered.forEach(s => {
+                subheadingSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+            });
+        }
+
+        async function submitEntry(e) {
+            e.preventDefault();
+            if (!window._activeSchoolInfo) return alert("Session missing.");
+
+            const payload = {
+                school_id: window._activeSchoolInfo.id,
+                page_no: document.getElementById('page_no').value,
+                fiscal_year: document.getElementById('fiscal_year').value,
+                entry_type: document.getElementById('entry_type').value,
+                heading_id: document.getElementById('heading_id').value,
+                subheading_id: document.getElementById('subheading_id').value,
+                transaction_date: document.getElementById('transaction_date').value,
+                voucher_no: document.getElementById('voucher_no').value,
+                particulars: document.getElementById('particulars').value,
+                cash_debit: document.getElementById('cash_debit').value || 0,
+                cash_credit: document.getElementById('cash_credit').value || 0,
+                bank_debit: document.getElementById('bank_debit').value || 0,
+                bank_credit: document.getElementById('bank_credit').value || 0,
+                budget_kharcha: document.getElementById('budget_kharcha').value || 0,
+                peski_dieko: document.getElementById('peski_dieko').value || 0,
+                peski_farchiyeko: document.getElementById('peski_farchiyeko').value || 0,
+                bibidh_debit: document.getElementById('bibidh_debit').value || 0,
+                bibidh_credit: document.getElementById('bibidh_credit').value || 0
+            };
+
+            const submitBtn = document.querySelector('.btn-submit');
+            submitBtn.innerText = "Saving...";
+            submitBtn.disabled = true;
+
+            const { data, error } = await supabaseClient
+                .from('bank_nagadi_kitaab')
+                .insert([payload]);
+
+            submitBtn.innerText = "Submit Entry (सेभ गर्नुहोस्)";
+            submitBtn.disabled = false;
+
+            if (error) {
+                alert("Error saving entry: " + error.message);
+            } else {
+                alert("Entry saved successfully!");
+                document.getElementById('entryForm').reset();
+                document.getElementById('fiscal_year').value = "2083";
+                onTypeChange(); // reset dropdowns
+                loadRecentEntries();
+            }
+        }
+
+        async function loadRecentEntries() {
+            if (!window._activeSchoolInfo || !supabaseClient) return;
+            const schoolId = window._activeSchoolInfo.id;
+
+            const { data, error } = await supabaseClient
+                .from('bank_nagadi_kitaab')
+                .select('*')
+                .eq('school_id', schoolId)
+                .order('created_at', { ascending: false })
+                .limit(10);
+
+            const tbody = document.getElementById('entries-tbody');
+            
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="7" style="color:red;">Error loading entries.</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94a3b8;">No entries found.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            data.forEach(row => {
+                html += `
+                    <tr>
+                        <td>${row.transaction_date}</td>
+                        <td>${row.voucher_no || '-'}</td>
+                        <td>${row.particulars}</td>
+                        <td>${row.cash_debit}</td>
+                        <td>${row.cash_credit}</td>
+                        <td>${row.bank_debit}</td>
+                        <td>${row.bank_credit}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+    </script>
+</body>
+</html>
