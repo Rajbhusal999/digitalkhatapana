@@ -316,21 +316,42 @@
 
         <div class="card" style="overflow-x: auto;">
             <h3>Recent Entries (पछिल्ला विवरणहरू)</h3>
-            <table class="entries-table">
+            <table class="entries-table" style="min-width: 1000px; text-align: center;">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Voucher</th>
-                        <th>Particulars</th>
-                        <th>Cash Dr</th>
-                        <th>Cash Cr</th>
-                        <th>Bank Dr</th>
-                        <th>Bank Cr</th>
+                        <th rowspan="2">मिति<br>(Date)</th>
+                        <th rowspan="2">भौचर नं<br>(Voucher)</th>
+                        <th rowspan="2" style="width: 250px;">विवरण<br>(Particulars)</th>
+                        <th colspan="2">नगद मौज्दात (Cash)</th>
+                        <th colspan="2">बैंक मौज्दात (Bank)</th>
+                        <th>बजेट खर्च (Budget)</th>
+                        <th colspan="2">विविध (Misc)</th>
+                    </tr>
+                    <tr>
+                        <th>डेबिट (Dr)</th>
+                        <th>क्रेडिट (Cr)</th>
+                        <th>डेबिट (Dr)</th>
+                        <th>क्रेडिट (Cr)</th>
+                        <th>रकम (Amt)</th>
+                        <th>डेबिट (Dr)</th>
+                        <th>क्रेडिट (Cr)</th>
                     </tr>
                 </thead>
                 <tbody id="entries-tbody">
-                    <tr><td colspan="7" style="text-align: center; color: #94a3b8;">लोड हुँदैछ...</td></tr>
+                    <tr><td colspan="10" style="text-align: center; color: #94a3b8;">लोड हुँदैछ...</td></tr>
                 </tbody>
+                <tfoot id="entries-tfoot">
+                    <tr style="background-color: #fef08a; font-weight: bold;">
+                        <td colspan="3" style="text-align: right;">जम्मा (Total)</td>
+                        <td id="tot_cash_dr">0.00</td>
+                        <td id="tot_cash_cr">0.00</td>
+                        <td id="tot_bank_dr">0.00</td>
+                        <td id="tot_bank_cr">0.00</td>
+                        <td id="tot_budget">0.00</td>
+                        <td id="tot_misc_dr">0.00</td>
+                        <td id="tot_misc_cr">0.00</td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
 
@@ -465,30 +486,50 @@
             const tbody = document.getElementById('entries-tbody');
             
             if (error) {
-                tbody.innerHTML = `<tr><td colspan="7" style="color:red;">Error loading entries.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" style="color:red;">Error loading entries.</td></tr>`;
                 return;
             }
 
             if (!data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94a3b8;">No entries found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #94a3b8;">No entries found.</td></tr>`;
                 return;
             }
 
             let html = '';
+            let totals = { cdr:0, ccr:0, bdr:0, bcr:0, bud:0, mdr:0, mcr:0 };
+
             data.forEach(row => {
                 html += `
                     <tr>
                         <td>${row.transaction_date}</td>
                         <td>${row.voucher_no || '-'}</td>
-                        <td>${row.particulars}</td>
-                        <td>${row.cash_debit}</td>
-                        <td>${row.cash_credit}</td>
-                        <td>${row.bank_debit}</td>
-                        <td>${row.bank_credit}</td>
+                        <td style="text-align: left;">${row.particulars}</td>
+                        <td>${row.cash_debit || ''}</td>
+                        <td>${row.cash_credit || ''}</td>
+                        <td>${row.bank_debit || ''}</td>
+                        <td>${row.bank_credit || ''}</td>
+                        <td>${row.budget_kharcha || ''}</td>
+                        <td>${row.bibidh_debit || ''}</td>
+                        <td>${row.bibidh_credit || ''}</td>
                     </tr>
                 `;
+                totals.cdr += Number(row.cash_debit) || 0;
+                totals.ccr += Number(row.cash_credit) || 0;
+                totals.bdr += Number(row.bank_debit) || 0;
+                totals.bcr += Number(row.bank_credit) || 0;
+                totals.bud += Number(row.budget_kharcha) || 0;
+                totals.mdr += Number(row.bibidh_debit) || 0;
+                totals.mcr += Number(row.bibidh_credit) || 0;
             });
             tbody.innerHTML = html;
+
+            document.getElementById('tot_cash_dr').innerText = totals.cdr.toFixed(2);
+            document.getElementById('tot_cash_cr').innerText = totals.ccr.toFixed(2);
+            document.getElementById('tot_bank_dr').innerText = totals.bdr.toFixed(2);
+            document.getElementById('tot_bank_cr').innerText = totals.bcr.toFixed(2);
+            document.getElementById('tot_budget').innerText = totals.bud.toFixed(2);
+            document.getElementById('tot_misc_dr').innerText = totals.mdr.toFixed(2);
+            document.getElementById('tot_misc_cr').innerText = totals.mcr.toFixed(2);
         }
 
     </script>
