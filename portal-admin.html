@@ -1175,25 +1175,41 @@
             }
         }
 
-        function handleSuperLogin(event) {
+        async function handleSuperLogin(event) {
             if (event) event.preventDefault();
             try {
                 const email = document.getElementById('super-email').value.trim().toLowerCase();
                 const password = document.getElementById('super-password').value.trim();
-                if (email === 'khatapanadigital2083@gmail.com' && password === 'Khatapana2083@/') {
+                
+                // Sign in with Supabase Auth
+                const { data, error } = await superAdminSupabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    try { showSuperToast('Invalid Credentials! Access Denied.', 'error'); } catch (e) { alert('Invalid Credentials! Access Denied.'); }
+                    return;
+                }
+
+                if (email === 'admin@digitalkhatapana.com' || email === 'khatapanadigital2083@gmail.com') {
                     sessionStorage.setItem('super_admin_logged_in', 'true');
                     try { showSuperToast('Access Granted! Redirecting to dashboard...', 'success'); } catch (e) { }
                     setTimeout(() => { checkSuperAuth(); }, 1000);
                 } else {
-                    try { showSuperToast('Invalid Credentials! Access Denied.', 'error'); } catch (e) { alert('Invalid Credentials! Access Denied.'); }
+                    await superAdminSupabase.auth.signOut();
+                    try { showSuperToast('You are not authorized to view the admin portal.', 'error'); } catch (e) { alert('You are not authorized.'); }
                 }
             } catch (err) {
                 alert("Login Error: " + err.message + "\nPlease make sure you are not in Incognito Mode and cookies/storage are allowed.");
             }
         }
 
-        function handleSuperLogout() {
+        async function handleSuperLogout() {
             sessionStorage.removeItem('super_admin_logged_in');
+            if (superAdminSupabase) {
+                await superAdminSupabase.auth.signOut();
+            }
             showSuperToast('Logged out successfully.', 'info');
             setTimeout(() => { checkSuperAuth(); }, 500);
         }

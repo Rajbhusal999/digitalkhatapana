@@ -344,17 +344,25 @@
     <script src="js/config.js"></script>
     <script src="js/database.js"></script>
     <script>
+        let _verifiedEmail = null;
+
         document.addEventListener('DOMContentLoaded', async () => {
             if (window.initDatabase) {
                 await window.initDatabase();
             }
-        });
-        let _verifiedEmail = null;
-
-        // ─── Check if already logged in ───
-        document.addEventListener('DOMContentLoaded', () => {
             if (sessionStorage.getItem('school_user_logged_in') === 'true') {
-                window.location.href = 'landing.html';
+                window.location.replace('landing.html');
+                return;
+            }
+
+            // Check if redirected from digitalkhatapana.html
+            const tempEmail = sessionStorage.getItem('temp_setup_email');
+            const tempOtp = sessionStorage.getItem('temp_setup_otp');
+            if (tempEmail && tempOtp) {
+                _verifiedEmail = tempEmail;
+                sessionStorage.removeItem('temp_setup_email');
+                sessionStorage.removeItem('temp_setup_otp');
+                goToStep(2);
             }
         });
 
@@ -372,57 +380,24 @@
 
             setLoading('spin1', 'btn1-text', 'btn-step1', true);
 
-            let schoolsList = [];
-            if (window.fetchRegisteredSchools) {
-                schoolsList = await window.fetchRegisteredSchools();
-            }
-
+            const { data: rpcData, error: rpcError } = await window.supabaseClient.rpc('verify_school_otp', {
+                p_email: email,
+                p_otp: otp
+            });
             setLoading('spin1', 'btn1-text', 'btn-step1', false);
-
-            const school = schoolsList.find(s =>
-                s.schoolEmail && s.schoolEmail.toLowerCase() === email
-            );
-
-            if (!school) {
-                showErr(errBox, 'यो इमेलमा कुनै दर्ता भएको विद्यालय फेला परेन।');
+            if (rpcError) {
+                showErr(errBox, 'प्रमाणीकरण असफल भयो (Authentication failed).');
                 return;
             }
 
-            if (school.status !== 'Approved') {
-                showErr(errBox, 'तपाईंको विद्यालय अझै अनुमोदित भएको छैन। Super Admin को अनुमोदन पर्खनुहोस्।');
-                return;
-            }
-
-            // Verify OTP
-            const storedOTP = school.otp;
-            const otpUsed   = school.otpUsed;
-
-            if (!storedOTP) {
-                showErr(errBox, 'यो खातामा कुनै OTP उपलब्ध छैन। Admin लाई सम्पर्क गर्नुहोस्।');
-                return;
-            }
-
-            if (otpUsed) {
-                // OTP already used — check if user has set a permanent password
-                const permanentPw = school.permanentPassword;
-                if (permanentPw && otp === permanentPw) {
-                    // Normal login with permanent password
-                    loginSuccess(school);
-                    return;
-                } else {
-                    showErr(errBox, 'यो OTP पहिले नै प्रयोग गरिसकिएको छ। आफ्नो स्थायी पासवर्ड प्रयोग गर्नुहोस् वा Admin लाई सम्पर्क गर्नुहोस्।');
-                    return;
-                }
-            }
-
-            if (otp !== storedOTP) {
+            if (rpcData && rpcData.valid) {
+                _verifiedEmail = email;
+                goToStep(2);
+            } else if (rpcData && rpcData.error) {
+                showErr(errBox, rpcData.error);
+            } else {
                 showErr(errBox, 'OTP गलत छ। इमेलमा प्राप्त OTP ध्यानपूर्वक टाइप गर्नुहोस्।');
-                return;
             }
-
-            // OTP is correct — move to set password
-            _verifiedEmail = email;
-            goToStep(2);
         }
 
         // ─── STEP 2: Set Permanent Password ───
@@ -441,33 +416,57 @@
                 return;
             }
 
-
             setLoading('spin2', 'btn2-text', 'btn-step2', true);
 
-            // Fetch fresh list from Supabase
-            let schoolsList = [];
-            if (window.fetchRegisteredSchools) {
-                schoolsList = await window.fetchRegisteredSchools();
+            try {
+                // Register the user with Supabase Auth
+                const { data: authData, error: authError } = await window.supabaseClient.auth.signUp({
+                    email: _verifiedEmail,
+                    password: pw1
+                });
+
+                if (authError) {
+                    // It's possible they already signed up but somehow ended up here. Let's try to sign in.
+                    const { data: signInData, error: signInError } = await window.supabaseClient.auth.signInWithPassword({
+                        email: _verifiedEmail,
+                        password: pw1
+                    });
+                    
+                    if (signInError) {
+                        showErr(errBox, 'Password setup failed: ' + (authError.message || signInError.message));
+                        setLoading('spin2', 'btn2-text', 'btn-step2', false);
+                        return;
+                    }
+                }
+
+                // Since RLS is active, we are now authenticated and can update our own registration record
+                // to mark OTP as used!
+                const { error: updateError } = await window.supabaseClient.from('registered_schools')
+                    .update({ otp_used: true })
+                    .eq('school_email', _verifiedEmail);
+
+                if (updateError) {
+                     console.error('Failed to update OTP status:', updateError);
+                }
+
+                // Fetch our school info
+                const { data: schoolData, error: schoolError } = await window.supabaseClient.from('registered_schools')
+                    .select('*')
+                    .eq('school_email', _verifiedEmail)
+                    .single();
+
+                setLoading('spin2', 'btn2-text', 'btn-step2', false);
+
+                if (schoolData) {
+                    loginSuccess(schoolData);
+                } else {
+                    showErr(errBox, 'Error retrieving school data.');
+                }
+            } catch (e) {
+                console.error(e);
+                showErr(errBox, 'An error occurred during password setup.');
+                setLoading('spin2', 'btn2-text', 'btn-step2', false);
             }
-
-            setLoading('spin2', 'btn2-text', 'btn-step2', false);
-
-            const idx = schoolsList.findIndex(s =>
-                s.schoolEmail && s.schoolEmail.toLowerCase() === _verifiedEmail
-            );
-            if (idx === -1) {
-                showErr(document.getElementById('step2-err'), 'School data not found. Please contact admin.');
-                return;
-            }
-
-            schoolsList[idx].permanentPassword = pw1;
-            schoolsList[idx].otpUsed = true;
-
-            if (window.upsertRegisteredSchool) {
-                await window.upsertRegisteredSchool(schoolsList[idx]);
-            }
-
-            loginSuccess(schoolsList[idx]);
         }
 
 
@@ -475,14 +474,14 @@
             // Store active school in memory — Supabase is source of truth
             window._activeSchoolInfo = school;
             sessionStorage.setItem('school_user_logged_in', 'true');
-            sessionStorage.setItem('school_user_email', school.schoolEmail);
+            sessionStorage.setItem('school_user_email', school.school_email || school.schoolEmail);
             sessionStorage.setItem('admin_logged_in', 'true'); // also unlock admin panel
 
-            document.getElementById('success-school-name').innerText = school.schoolName || school.schoolEmail;
+            document.getElementById('success-school-name').innerText = school.school_name || school.schoolName || school.school_email;
             goToStep(3);
 
             setTimeout(() => {
-                window.location.href = 'landing.html';
+                window.location.replace('landing.html');
             }, 2200);
         }
 

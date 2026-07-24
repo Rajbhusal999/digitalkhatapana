@@ -386,10 +386,13 @@
             }
         });
 
-        function handleLogout() {
+        async function handleLogout() {
             sessionStorage.removeItem('school_user_logged_in');
             sessionStorage.removeItem('school_user_email');
             sessionStorage.removeItem('admin_logged_in');
+            if (window.supabaseClient) {
+                await window.supabaseClient.auth.signOut();
+            }
             window.location.replace('digitalkhatapana.html');
         }
     </script>

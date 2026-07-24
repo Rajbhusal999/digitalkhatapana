@@ -992,67 +992,75 @@
             const email = document.getElementById('widget-login-email').value.trim();
             const password = document.getElementById('widget-login-password').value.trim();
 
-            // Fetch fresh school list from Supabase
-            let matchedSchool = null;
-            if (window.fetchRegisteredSchools) {
-                const schools = await window.fetchRegisteredSchools();
-                matchedSchool = schools.find(s => s.schoolEmail && s.schoolEmail.toLowerCase() === email.toLowerCase());
+            if (!email || !password) {
+                showGatewayToast('कृपया इमेल र पासवर्ड/OTP हाल्नुहोस्। (Please enter Email and Password/OTP)', 'error');
+                return;
             }
 
-            if (matchedSchool) {
-
-                // Verify approval status
-                if (matchedSchool.status === 'Pending') {
-                    showGatewayToast('श्वीकृति हुन बाँकी छ । School registration is pending admin approval! (दर्ता स्वीकृति हुन बाँकी छ)', 'error');
-                    return;
-                }
-
-                if (matchedSchool.status === 'Rejected') {
-                    showGatewayToast('School registration has been rejected! (दर्ता अस्वीकृत गरिएको छ)', 'error');
-                    return;
-                }
-
-                if (!password) {
-                    showGatewayToast('Please enter your Password or OTP to log in to your school! (कृपया पासवर्ड वा OTP हाल्नुहोस्)', 'error');
-                    return;
-                }
-
-                // Verify Password / OTP
-                let isValid = false;
-                if (matchedSchool.permanentPassword && matchedSchool.permanentPassword === password) {
-                    isValid = true;
-                } else if (matchedSchool.otp === password) {
-                    if (!matchedSchool.otpUsed) {
-                        sessionStorage.removeItem('school_user_logged_in');
-                        sessionStorage.removeItem('school_user_email');
-                        sessionStorage.removeItem('admin_logged_in');
-                        showGatewayToast('OTP Verified! Redirecting to setup your permanent password...', 'success');
-                        setTimeout(() => {
-                            window.location.href = 'school-login.html';
-                        }, 1500);
+            try {
+                // 1. Try to sign in as Admin
+                if (email.toLowerCase() === 'admin@digitalkhatapana.com') {
+                    const { error } = await window.supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+                    if (error) {
+                        showGatewayToast('Admin Login Failed: ' + error.message, 'error');
                         return;
-                    } else if (matchedSchool.otpUsed && !matchedSchool.permanentPassword) {
-                         isValid = true;
                     }
-                }
-                if (!isValid) {
-                    showGatewayToast('Invalid Password or OTP! (पासवर्ड वा OTP मिलेन)', 'error');
+                    sessionStorage.setItem('super_admin_auth', 'true');
+                    sessionStorage.setItem('admin_logged_in', 'true');
+                    window.location.href = 'portal-admin.html';
                     return;
                 }
-                // Store active school info in memory (Supabase is source of truth)
-                window._activeSchoolInfo = matchedSchool;
-                sessionStorage.setItem('school_user_logged_in', 'true');
-                sessionStorage.setItem('school_user_email', matchedSchool.schoolEmail);
-                sessionStorage.setItem('admin_logged_in', 'true');
-                showGatewayToast(`Access Granted! Welcome to ${matchedSchool.schoolName} admin panel.`, 'success');
-                setTimeout(() => {
-                    window.location.href = 'landing.html';
-                }, 1500);
-            } else {
-                showGatewayToast(`Citizen login successful! Welcome, ${email}. Please select a school...`, 'success');
-                setTimeout(() => {
-                    window.location.href = 'select-school.html';
-                }, 1500);
+
+                // 2. Try normal Supabase Auth login
+                const { data: authData, error: authError } = await window.supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (!authError && authData.session) {
+                    showGatewayToast('Login successful! Redirecting...', 'success');
+                    // sessionStorage will be synced in initDatabase on landing.html, but let's set it here just in case
+                    sessionStorage.setItem('school_user_logged_in', 'true');
+                    sessionStorage.setItem('school_user_email', email);
+                    sessionStorage.setItem('admin_logged_in', 'true');
+                    setTimeout(() => {
+                        window.location.href = 'landing.html';
+                    }, 1500);
+                    return;
+                }
+
+                // 3. If normal login failed, maybe they are using an OTP?
+                const { data: rpcData, error: rpcError } = await window.supabaseClient.rpc('verify_school_otp', {
+                    p_email: email,
+                    p_otp: password
+                });
+
+                if (rpcError) {
+                    console.error('RPC Error:', rpcError);
+                    showGatewayToast('Authentication failed. (प्रमाणीकरण असफल भयो)', 'error');
+                    return;
+                }
+
+                if (rpcData && rpcData.valid) {
+                    // OTP is valid! Redirect to password setup
+                    sessionStorage.setItem('temp_setup_email', email);
+                    sessionStorage.setItem('temp_setup_otp', password);
+                    showGatewayToast('OTP Verified! Redirecting to setup your permanent password...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'school-login.html';
+                    }, 1500);
+                } else if (rpcData && rpcData.error) {
+                    showGatewayToast(rpcData.error, 'error');
+                } else {
+                    showGatewayToast('Invalid Email or Password/OTP! (इमेल वा पासवर्ड/OTP मिलेन)', 'error');
+                }
+
+            } catch (e) {
+                console.error(e);
+                showGatewayToast('An error occurred during login.', 'error');
             }
         }
 

@@ -19,10 +19,25 @@ async function initDatabase() {
     if (!hasConfig || !window.supabase) return;
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
-    const sessionEmail = sessionStorage.getItem('school_user_email');
-    if (sessionEmail) {
-        await _resolveActiveSchoolInfo(sessionEmail);
+    // Check Supabase Auth session
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    
+    if (session) {
+        sessionStorage.setItem('school_user_logged_in', 'true');
+        sessionStorage.setItem('school_user_email', session.user.email);
+        await _resolveActiveSchoolInfo(session.user.email);
+    } else {
+        // If there's no supabase session but sessionStorage says logged in, it's faked/expired!
+        if (sessionStorage.getItem('school_user_logged_in') === 'true') {
+             sessionStorage.removeItem('school_user_logged_in');
+             sessionStorage.removeItem('school_user_email');
+             // Optionally redirect to login immediately if we are on a protected page
+             if (window.location.pathname.includes('landing.html') || window.location.pathname.includes('reports.html')) {
+                 window.location.replace('digitalkhatapana.html');
+             }
+        }
     }
+    
     await fetchRegisteredSchools();
 }
 
