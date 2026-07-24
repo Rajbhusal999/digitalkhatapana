@@ -421,9 +421,12 @@
             if (window.initDatabase) {
                 await window.initDatabase();
             }
-            await loadIncomeHeadings();
+
+            // Render UI immediately so it doesn't feel slow
             addEntryRow(); // start with one row
             
+            // Fetch data concurrently without blocking
+            loadIncomeHeadings();
             loadRecentEntries();
             loadStats();
         });
