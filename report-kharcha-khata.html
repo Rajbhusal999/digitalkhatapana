@@ -298,8 +298,7 @@
             tbody.innerHTML = `<tr><td style="text-align: center; padding: 20px;">डाटा तानिँदैछ...</td></tr>`;
 
             // Fetch expense entries along with voucher, heading, and subheading info
-            const [ { data: entries, error }, { data: obData, error: obError } ] = await Promise.all([
-                supabaseClient
+            const { data: entries, error } = await supabaseClient
                     .from('bnk_entries')
                     .select(`
                         id,
@@ -310,18 +309,7 @@
                     `)
                     .eq('entry_type', 'expense')
                     .eq('bnk_vouchers.school_id', schoolId)
-                    .order('id', { ascending: true }),
-                supabaseClient
-                    .from('opening_balances')
-                    .select(`
-                        id, transaction_date, voucher_no, amount,
-                        ledger_subheadings (
-                            id, name,
-                            ledger_headings (id, name)
-                        )
-                    `)
-                    .eq('school_id', schoolId)
-            ]);
+                    .order('id', { ascending: true });
 
             if (error) {
                 tbody.innerHTML = `<tr><td style="color:red; padding: 20px;">त्रुटि (Error): ${error.message}</td></tr>`;
@@ -345,32 +333,7 @@
                 if (!hObj.subheadings.has(sId)) { hObj.subheadings.set(sId, sName); subheadingsList.push(sId); }
             });
 
-            // Also process opening balances for columns
-            const openingBalance = { date: '-', voucher_no: '-', amounts: {}, grandTotal: 0 };
-            if (obData) {
-                obData.forEach(ob => {
-                    openingBalance.date = ob.transaction_date || openingBalance.date;
-                    openingBalance.voucher_no = ob.voucher_no || openingBalance.voucher_no;
-
-                    if (!ob.ledger_subheadings || !ob.ledger_subheadings.ledger_headings) {
-                        // Global opening balance without specific heading
-                        openingBalance.grandTotal += Number(ob.amount) || 0;
-                        return;
-                    }
-
-                    const hId = ob.ledger_subheadings.ledger_headings.id;
-                    const hName = ob.ledger_subheadings.ledger_headings.name;
-                    const sId = ob.ledger_subheadings.id;
-                    const sName = ob.ledger_subheadings.name;
-
-                    if (!headingsMap.has(hId)) headingsMap.set(hId, { name: hName, subheadings: new Map() });
-                    const hObj = headingsMap.get(hId);
-                    if (!hObj.subheadings.has(sId)) { hObj.subheadings.set(sId, sName); subheadingsList.push(sId); }
-
-                    if (!openingBalance.amounts[sId]) openingBalance.amounts[sId] = 0;
-                    openingBalance.amounts[sId] += Number(ob.amount) || 0;
-                });
-            }
+            // (Removed opening balances parsing for expense ledger)
 
             // 2. Build the Header HTML
             let theadHtml = '<tr>';
@@ -436,23 +399,6 @@
             const columnTotals = {};
             subheadingsList.forEach(sId => columnTotals[sId] = 0);
             let grandTotal = 0;
-
-            // First Row: Gata Barsha Ko Alya
-            tbodyHtml += `<tr>
-                <td>${openingBalance.date}</td>
-                <td style="text-align:left;">गत वर्षको अल्या (Last Year Balance)</td>
-                <td>${openingBalance.voucher_no}</td>`;
-            
-            let obRowTotal = openingBalance.grandTotal;
-            subheadingsList.forEach((sId) => {
-                const amt = openingBalance.amounts[sId] || 0;
-                obRowTotal += amt;
-                columnTotals[sId] += amt;
-                tbodyHtml += `<td>${amt > 0 ? amt.toFixed(2) : ''}</td>`;
-            });
-            grandTotal += obRowTotal;
-            
-            tbodyHtml += `<td style="font-weight:bold;">${obRowTotal > 0 ? obRowTotal.toFixed(2) : '0.00'}</td><td>-</td></tr>`;
 
             sortedVouchers.forEach(v => {
                 tbodyHtml += `<tr>
