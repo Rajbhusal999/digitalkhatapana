@@ -18,6 +18,7 @@ async function initDatabase() {
     const hasConfig = typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL && SUPABASE_ANON_KEY;
     if (!hasConfig || !window.supabase) return;
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    window.supabaseClient = supabaseClient; // Export for login forms
     
     // Check Supabase Auth session
     const { data: { session } } = await supabaseClient.auth.getSession();
