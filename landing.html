@@ -361,7 +361,7 @@
         document.addEventListener('DOMContentLoaded', async () => {
             // Ensure logged in
             if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
-                window.location.href = 'digitalkhatapana.html';
+                window.location.replace('digitalkhatapana.html');
                 return;
             }
 
@@ -390,7 +390,7 @@
             sessionStorage.removeItem('school_user_logged_in');
             sessionStorage.removeItem('school_user_email');
             sessionStorage.removeItem('admin_logged_in');
-            window.location.href = 'digitalkhatapana.html';
+            window.location.replace('digitalkhatapana.html');
         }
     </script>
 </body>

@@ -338,9 +338,17 @@
     <script src="js/config.js"></script>
     <script src="js/database.js"></script>
     <script>
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
+                    window.location.replace('digitalkhatapana.html');
+                }
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', async () => {
             if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
-                window.location.href = 'digitalkhatapana.html';
+                window.location.replace('digitalkhatapana.html');
                 return;
             }
 
