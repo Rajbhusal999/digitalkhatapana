@@ -152,15 +152,16 @@
             color: #475569;
         }
 
-        .form-group input {
+        .form-group input, .form-group select {
             padding: 10px 15px;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
             font-size: 1rem;
             outline: none;
+            background: white;
         }
 
-        .form-group input:focus {
+        .form-group input:focus, .form-group select:focus {
             border-color: #e5a93b;
             box-shadow: 0 0 0 3px rgba(229,169,59,0.1);
         }
@@ -222,7 +223,6 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            margin-bottom: 10px;
         }
 
         .subheading-item {
@@ -234,29 +234,6 @@
             border: 1px solid #e2e8f0;
             border-radius: 6px;
             font-size: 0.95rem;
-        }
-
-        .add-subheading-form {
-            display: flex;
-            gap: 10px;
-            margin-left: 20px;
-        }
-
-        .add-subheading-form input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-        }
-
-        .btn-sub-add {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
         }
 
     </style>
@@ -295,6 +272,23 @@
                     <button class="btn-add" onclick="addHeading('income')">+ Add Heading</button>
                 </div>
             </div>
+
+            <div class="card">
+                <h3>नयाँ आम्दानी उप-शीर्षक थप्नुहोस् (Add New Income Subheading)</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>मुख्य शीर्षक छान्नुहोस् (Select Heading)</label>
+                        <select id="select-income-heading">
+                            <option value="">छान्नुहोस् (Select...)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>उप-शीर्षकको नाम (Subheading Name)</label>
+                        <input type="text" id="new-income-subheading" placeholder="e.g. Tuition Fee, Exam Fee">
+                    </div>
+                    <button class="btn-add" onclick="addSubheadingGlobal('income')">+ Add Subheading</button>
+                </div>
+            </div>
             
             <div class="card">
                 <h3>तपाईंका आम्दानी शीर्षकहरू (Your Income Headings)</h3>
@@ -315,6 +309,23 @@
                         <input type="text" id="new-expense-heading" placeholder="e.g. Salary, Maintenance">
                     </div>
                     <button class="btn-add" onclick="addHeading('expense')">+ Add Heading</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>नयाँ खर्च उप-शीर्षक थप्नुहोस् (Add New Expense Subheading)</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>मुख्य शीर्षक छान्नुहोस् (Select Heading)</label>
+                        <select id="select-expense-heading">
+                            <option value="">छान्नुहोस् (Select...)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>उप-शीर्षकको नाम (Subheading Name)</label>
+                        <input type="text" id="new-expense-subheading" placeholder="e.g. Teacher Salary, Building Maintenance">
+                    </div>
+                    <button class="btn-add" onclick="addSubheadingGlobal('expense')">+ Add Subheading</button>
                 </div>
             </div>
             
@@ -380,8 +391,25 @@
             if (sErr) console.error(sErr);
             else subheadings = sData || [];
 
+            updateSelects();
             renderList('income');
             renderList('expense');
+        }
+
+        function updateSelects() {
+            const incomeSelect = document.getElementById('select-income-heading');
+            const expenseSelect = document.getElementById('select-expense-heading');
+            
+            let incomeOptions = '<option value="">छान्नुहोस् (Select...)</option>';
+            let expenseOptions = '<option value="">छान्नुहोस् (Select...)</option>';
+
+            headings.forEach(h => {
+                if(h.type === 'income') incomeOptions += `<option value="${h.id}">${h.name}</option>`;
+                if(h.type === 'expense') expenseOptions += `<option value="${h.id}">${h.name}</option>`;
+            });
+
+            incomeSelect.innerHTML = incomeOptions;
+            expenseSelect.innerHTML = expenseOptions;
         }
 
         async function addHeading(type) {
@@ -401,6 +429,29 @@
             } else {
                 input.value = '';
                 headings.push(data[0]);
+                updateSelects();
+                renderList(type);
+            }
+        }
+
+        async function addSubheadingGlobal(type) {
+            const headingId = document.getElementById(`select-${type}-heading`).value;
+            const input = document.getElementById(`new-${type}-subheading`);
+            const name = input.value.trim();
+
+            if (!headingId) return alert('Please select a main heading first.');
+            if (!name) return alert('Please enter a subheading name.');
+
+            const { data, error } = await supabaseClient.from('ledger_subheadings').insert([{
+                heading_id: headingId,
+                name: name
+            }]).select();
+
+            if (error) {
+                alert('Error adding subheading: ' + error.message);
+            } else {
+                input.value = '';
+                subheadings.push(data[0]);
                 renderList(type);
             }
         }
@@ -414,24 +465,7 @@
             } else {
                 headings = headings.filter(h => h.id !== id);
                 subheadings = subheadings.filter(s => s.heading_id !== id);
-                renderList(type);
-            }
-        }
-
-        async function addSubheading(headingId, type) {
-            const input = document.getElementById(`new-sub-${headingId}`);
-            const name = input.value.trim();
-            if (!name) return alert('Please enter a subheading name.');
-
-            const { data, error } = await supabaseClient.from('ledger_subheadings').insert([{
-                heading_id: headingId,
-                name: name
-            }]).select();
-
-            if (error) {
-                alert('Error adding subheading: ' + error.message);
-            } else {
-                subheadings.push(data[0]);
+                updateSelects();
                 renderList(type);
             }
         }
@@ -479,10 +513,6 @@
                         </div>
                         <div class="subheading-list">
                             ${subsHtml}
-                        </div>
-                        <div class="add-subheading-form">
-                            <input type="text" id="new-sub-${h.id}" placeholder="Add Subheading...">
-                            <button class="btn-sub-add" onclick="addSubheading('${h.id}', '${type}')">Add</button>
                         </div>
                     </div>
                 `;
