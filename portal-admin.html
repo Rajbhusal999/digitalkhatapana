@@ -1686,11 +1686,15 @@ ${loginUrl}
                 return;
             }
 
+            // Save broadcast to localStorage to display on rajbhusal.com.np (index.html)
+            const broadcastData = { msg, type, timestamp: Date.now() };
+            localStorage.setItem('rajbhusal_news_broadcast', JSON.stringify(broadcastData));
+
             if (window.saveBroadcast) {
                 await window.saveBroadcast(msg, type);
             }
             document.getElementById('broadcast-msg').value = '';
-            showSuperToast('Global Broadcast sent to all schools!', 'success');
+            showSuperToast('Global Broadcast sent and published to rajbhusal.com.np!', 'success');
         }
 
         // Render Chart.js Analytics — uses in-memory data

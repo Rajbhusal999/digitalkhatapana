@@ -500,6 +500,49 @@
             .skills-grid { grid-template-columns: 1fr; }
             .services-grid { grid-template-columns: 1fr; }
         }
+
+        /* News Ticker */
+        .news-ticker-container {
+            width: 100%;
+            background-color: var(--accent-gold);
+            color: #fff;
+            padding: 10px 5%;
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 101;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        .news-ticker-container.active {
+            display: flex;
+            animation: slideDown 0.5s ease-out forwards;
+        }
+        .news-ticker-container.info { background-color: #38bdf8; color: #000; }
+        .news-ticker-container.warning { background-color: #f59e0b; color: #000; }
+        .news-ticker-container.success { background-color: #10b981; color: #fff; }
+        
+        .ticker-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .ticker-close {
+            position: absolute;
+            right: 5%;
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.8;
+        }
+        .ticker-close:hover { opacity: 1; }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -517,6 +560,15 @@
             </nav>
         </div>
     </header>
+
+    <!-- News Ticker -->
+    <div id="global-news-ticker" class="news-ticker-container">
+        <div class="ticker-content">
+            <span id="news-ticker-icon">📢</span>
+            <span id="news-ticker-text">Loading latest news...</span>
+        </div>
+        <button class="ticker-close" onclick="closeNewsTicker()">×</button>
+    </div>
 
     <!-- Hero Section -->
     <section id="home" class="hero">
@@ -663,5 +715,34 @@
         </div>
     </footer>
 
+    <script>
+        // Load global broadcast news ticker
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const broadcastRaw = localStorage.getItem('rajbhusal_news_broadcast');
+                if (broadcastRaw) {
+                    const broadcast = JSON.parse(broadcastRaw);
+                    const ticker = document.getElementById('global-news-ticker');
+                    const text = document.getElementById('news-ticker-text');
+                    
+                    // Show if within 7 days
+                    const sevenDays = 7 * 24 * 60 * 60 * 1000;
+                    if (Date.now() - broadcast.timestamp < sevenDays) {
+                        text.innerText = broadcast.msg;
+                        ticker.classList.add('active');
+                        if (broadcast.type === 'info') ticker.classList.add('info');
+                        if (broadcast.type === 'warning') ticker.classList.add('warning');
+                        if (broadcast.type === 'success') ticker.classList.add('success');
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not load broadcast', e);
+            }
+        });
+
+        function closeNewsTicker() {
+            document.getElementById('global-news-ticker').classList.remove('active');
+        }
+    </script>
 </body>
 </html>
