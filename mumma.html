@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Should I come to Dharan?</title>
+    <link rel="stylesheet" href="mumma.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Floating Romance Background -->
+    <div class="floating-bg">
+        <div class="float-item" style="--d: 0s; --x: 5vw; --s: 1.2;">💖</div>
+        <div class="float-item" style="--d: 7s; --x: 20vw; --s: 0.8;">✨</div>
+        <div class="float-item" style="--d: 4s; --x: 40vw; --s: 1.5;">🌹</div>
+        <div class="float-item" style="--d: 11s; --x: 60vw; --s: 1.0;">💘</div>
+        <div class="float-item" style="--d: 3s; --x: 80vw; --s: 1.3;">💕</div>
+        <div class="float-item" style="--d: 9s; --x: 95vw; --s: 0.9;">✨</div>
+        <div class="float-item" style="--d: 2s; --x: 15vw; --s: 1.1;">💖</div>
+        <div class="float-item" style="--d: 8s; --x: 70vw; --s: 1.4;">🌹</div>
+        <div class="float-item" style="--d: 5s; --x: 50vw; --s: 0.7;">✨</div>
+        <div class="float-item" style="--d: 10s; --x: 30vw; --s: 1.2;">💕</div>
+        <div class="float-item" style="--d: 6s; --x: 85vw; --s: 0.9;">💘</div>
+    </div>
+
+    <!-- Radio Buttons for State Tracking (Pure CSS logic) -->
+    <input type="radio" id="state-start" name="state" checked>
+    <input type="radio" id="state-up" name="state">
+    <input type="radio" id="state-right" name="state">
+    <input type="radio" id="state-left" name="state">
+    <input type="radio" id="state-final" name="state">
+    <!-- New States -->
+    <input type="radio" id="state-ask" name="state">
+    <input type="radio" id="state-form" name="state">
+    <input type="radio" id="state-success" name="state">
+
+    <!-- Screen 1: Heart Mosaic -->
+    <div class="heart-screen">
+        <div class="big-heart">
+            <!-- 29 small hearts arranged to form a big heart -->
+            <div class="small-heart" style="left: 70px; top: 40px; --c: #ff3b3b; animation-delay: 0.1s;"></div>
+            <div class="small-heart" style="left: 100px; top: 30px; --c: #ff477e; animation-delay: 0.2s;"></div>
+            <div class="small-heart" style="left: 40px; top: 70px; --c: #ff5c8a; animation-delay: 0.3s;"></div>
+            <div class="small-heart" style="left: 130px; top: 40px; --c: #ff7096; animation-delay: 0.4s;"></div>
+            <div class="small-heart" style="left: 230px; top: 40px; --c: #ff85a1; animation-delay: 0.5s;"></div>
+            <div class="small-heart" style="left: 200px; top: 30px; --c: #ff99ac; animation-delay: 0.6s;"></div>
+            <div class="small-heart" style="left: 260px; top: 70px; --c: #f72585; animation-delay: 0.7s;"></div>
+            <div class="small-heart" style="left: 170px; top: 40px; --c: #b5179e; animation-delay: 0.8s;"></div>
+            <div class="small-heart" style="left: 20px; top: 110px; --c: #7209b7; animation-delay: 0.9s;"></div>
+            <div class="small-heart" style="left: 30px; top: 150px; --c: #560bad; animation-delay: 1.0s;"></div>
+            <div class="small-heart" style="left: 60px; top: 190px; --c: #ff3b3b; animation-delay: 1.1s;"></div>
+            <div class="small-heart" style="left: 100px; top: 230px; --c: #ff477e; animation-delay: 1.2s;"></div>
+            <div class="small-heart" style="left: 150px; top: 270px; --c: #ff5c8a; animation-delay: 1.3s;"></div>
+            <div class="small-heart" style="left: 280px; top: 110px; --c: #ff7096; animation-delay: 1.4s;"></div>
+            <div class="small-heart" style="left: 270px; top: 150px; --c: #ff85a1; animation-delay: 1.5s;"></div>
+            <div class="small-heart" style="left: 240px; top: 190px; --c: #ff99ac; animation-delay: 1.6s;"></div>
+            <div class="small-heart" style="left: 200px; top: 230px; --c: #f72585; animation-delay: 1.7s;"></div>
+            <div class="small-heart" style="left: 70px; top: 110px; --c: #b5179e; animation-delay: 1.8s;"></div>
+            <div class="small-heart" style="left: 110px; top: 80px; --c: #7209b7; animation-delay: 1.9s;"></div>
+            <div class="small-heart" style="left: 150px; top: 70px; --c: #560bad; animation-delay: 2.0s;"></div>
+            <div class="small-heart" style="left: 190px; top: 80px; --c: #ff3b3b; animation-delay: 2.1s;"></div>
+            <div class="small-heart" style="left: 230px; top: 110px; --c: #ff477e; animation-delay: 2.2s;"></div>
+            <div class="small-heart" style="left: 100px; top: 140px; --c: #ff5c8a; animation-delay: 2.3s;"></div>
+            <div class="small-heart" style="left: 150px; top: 120px; --c: #ff7096; animation-delay: 2.4s;"></div>
+            <div class="small-heart" style="left: 200px; top: 140px; --c: #ff85a1; animation-delay: 2.5s;"></div>
+            <div class="small-heart" style="left: 130px; top: 180px; --c: #ff99ac; animation-delay: 2.6s;"></div>
+            <div class="small-heart" style="left: 170px; top: 180px; --c: #f72585; animation-delay: 2.7s;"></div>
+            <div class="small-heart" style="left: 150px; top: 220px; --c: #b5179e; animation-delay: 2.8s;"></div>
+            <div class="small-heart" style="left: 150px; top: 170px; --c: #7209b7; animation-delay: 2.9s;"></div>
+        </div>
+    </div>
+
+    <!-- Screen 2: Question and Dodge Button -->
+    <div class="question-screen">
+        <h1 class="question-title">Should I come to Dharan to meet you or not?</h1>
+        
+        <div class="button-area">
+            <!-- Labels (Hitboxes) for clicking, positioned exactly where the button will be -->
+            <label for="state-up" class="hitbox start-hitbox"></label>
+            <label for="state-right" class="hitbox up-hitbox"></label>
+            <label for="state-left" class="hitbox right-hitbox"></label>
+            <label for="state-final" class="hitbox left-hitbox"></label>
+            <label for="state-ask" class="hitbox final-hitbox"></label>
+            
+            <!-- The visible button that visually animates around -->
+            <div class="fake-button">
+                <span class="text-no">No</span>
+                <span class="text-yes">Yes</span>
+            </div>
+
+            <!-- The celebration message -->
+            <div class="hurray-message">Hurray 🎉</div>
+        </div>
+    </div>
+
+    <!-- Screen 3: Ask Permission -->
+    <div class="ask-screen screen-panel">
+        <div class="romantic-subtitle">For my lovely Nanni...</div>
+        <h1 class="question-title">If you have 2 minutes, can I ask you something?</h1>
+        <label for="state-form" class="yes-btn">Yes, tell me... 💖</label>
+    </div>
+
+    <!-- Screen 4: The Form -->
+    <div class="form-screen screen-panel">
+        <div class="romantic-subtitle">Just between us...</div>
+        <h1 class="form-title">Answer honestly... 💖</h1>
+        
+        <div class="input-group">
+            <label>And what will you do as soon as you see me? ✨</label>
+            <textarea rows="3" placeholder="Tell me everything..."></textarea>
+        </div>
+        
+        <div class="input-group">
+            <label>And what treats/food will you buy me? 🍫</label>
+            <input type="text" placeholder="Your treat... ">
+        </div>
+        
+        <div class="input-group secret-group">
+            <label>Enter Secret Password for Private Question 🤫</label>
+            <input type="password" id="secret-pass" pattern="Aaku@1234" required placeholder="Password...">
+            
+            <div class="private-question">
+                <label>So, which position are you thinking of? 🙈🔥</label>
+                <input type="text" placeholder="Be honest... ">
+            </div>
+        </div>
+        
+        <label for="state-success" class="submit-btn">Submit to my Nanni Nanni 💘</label>
+    </div>
+
+    <!-- Screen 5: Final Success -->
+    <div class="success-screen screen-panel">
+        <div class="romantic-subtitle">Yayyyyy!</div>
+        <h1 class="success-title">Please be ready hai Aaku 🥰</h1>
+        <div class="heart-pulse">💖</div>
+        <div class="romantic-subtitle" style="margin-top: 25px; font-size: 2.5rem; text-align: center;">I can't wait to see you! 🌹</div>
+    </div>
+</body>
+</html>

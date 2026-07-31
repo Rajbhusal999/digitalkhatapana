@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -70,7 +71,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
+            background-image:
                 linear-gradient(rgba(193, 11, 48, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(11, 43, 97, 0.08) 1px, transparent 1px);
             background-size: 40px 40px;
@@ -81,21 +82,53 @@
         /* Glowing digital node animation elements */
         .glow-node {
             position: absolute;
-            background: radial-gradient(circle, var(--accent) 0%, rgba(229,169,59,0) 70%);
+            background: radial-gradient(circle, var(--accent) 0%, rgba(229, 169, 59, 0) 70%);
             border-radius: 50%;
             opacity: 0.15;
             filter: blur(40px);
             animation: pulse-node 10s infinite alternate ease-in-out;
         }
 
-        .glow-node:nth-child(1) { width: 500px; height: 500px; top: -10%; left: -5%; background: radial-gradient(circle, #3b82f6 0%, transparent 70%); }
-        .glow-node:nth-child(2) { width: 600px; height: 600px; bottom: -10%; right: -10%; background: radial-gradient(circle, #e11d48 0%, transparent 70%); animation-delay: 3s; }
-        .glow-node:nth-child(3) { width: 400px; height: 400px; top: 30%; left: 40%; background: radial-gradient(circle, #8b5cf6 0%, transparent 70%); animation-delay: 5s; }
+        .glow-node:nth-child(1) {
+            width: 500px;
+            height: 500px;
+            top: -10%;
+            left: -5%;
+            background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
+        }
+
+        .glow-node:nth-child(2) {
+            width: 600px;
+            height: 600px;
+            bottom: -10%;
+            right: -10%;
+            background: radial-gradient(circle, #e11d48 0%, transparent 70%);
+            animation-delay: 3s;
+        }
+
+        .glow-node:nth-child(3) {
+            width: 400px;
+            height: 400px;
+            top: 30%;
+            left: 40%;
+            background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
+            animation-delay: 5s;
+        }
 
         @keyframes pulse-node {
-            0% { transform: scale(0.8) translate(0, 0); opacity: 0.1; }
-            50% { opacity: 0.25; }
-            100% { transform: scale(1.2) translate(30px, -30px); opacity: 0.15; }
+            0% {
+                transform: scale(0.8) translate(0, 0);
+                opacity: 0.1;
+            }
+
+            50% {
+                opacity: 0.25;
+            }
+
+            100% {
+                transform: scale(1.2) translate(30px, -30px);
+                opacity: 0.15;
+            }
         }
 
         .hero-container {
@@ -139,7 +172,7 @@
             background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .hero-text p {
@@ -346,7 +379,7 @@
             width: 100%;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        
+
         .auth-widget-wrapper:hover {
             transform: translateY(-2px);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
@@ -395,7 +428,8 @@
             font-weight: 500;
         }
 
-        .auth-widget-form input, .auth-widget-form select {
+        .auth-widget-form input,
+        .auth-widget-form select {
             background: rgba(0, 0, 0, 0.2);
             border: 1px solid transparent;
             border-bottom: 2px solid rgba(255, 255, 255, 0.2);
@@ -407,10 +441,11 @@
             transition: all 0.3s ease;
         }
 
-        .auth-widget-form input:focus, .auth-widget-form select:focus {
+        .auth-widget-form input:focus,
+        .auth-widget-form select:focus {
             background: rgba(0, 0, 0, 0.4);
             border-bottom: 2px solid var(--accent);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
         .auth-widget-form input::placeholder {
@@ -446,14 +481,17 @@
         #form-widget-register::-webkit-scrollbar {
             width: 6px;
         }
+
         #form-widget-register::-webkit-scrollbar-track {
             background: rgba(0, 0, 0, 0.2);
             border-radius: var(--radius-sm);
         }
+
         #form-widget-register::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.2);
             border-radius: var(--radius-sm);
         }
+
         #form-widget-register::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.4);
         }
@@ -610,26 +648,65 @@
 
         /* Additional Mobile Responsiveness */
         @media (max-width: 768px) {
-            .hero-text h1 { font-size: 2.2rem; }
-            .hero-text h2 { font-size: 1.1rem; }
-            .digital-hero { padding: 60px 5% 40px; }
-            .auth-widget-wrapper { padding: 20px; }
-            .section-title h2 { font-size: 1.8rem; }
-            .gateway-board-card { padding: 30px 20px; }
-            .about-fact-grid { grid-template-columns: 1fr; }
-            .contact-detail-row { flex-direction: column; text-align: center; align-items: center; }
-            .glow-node:nth-child(1) { width: 300px; height: 300px; }
-            .glow-node:nth-child(2) { width: 400px; height: 400px; }
-            .glow-node:nth-child(3) { display: none; }
+            .hero-text h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero-text h2 {
+                font-size: 1.1rem;
+            }
+
+            .digital-hero {
+                padding: 60px 5% 40px;
+            }
+
+            .auth-widget-wrapper {
+                padding: 20px;
+            }
+
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+
+            .gateway-board-card {
+                padding: 30px 20px;
+            }
+
+            .about-fact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-detail-row {
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+            }
+
+            .glow-node:nth-child(1) {
+                width: 300px;
+                height: 300px;
+            }
+
+            .glow-node:nth-child(2) {
+                width: 400px;
+                height: 400px;
+            }
+
+            .glow-node:nth-child(3) {
+                display: none;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <!-- Top Gov Bar -->
     <div class="top-gov-bar">
         <span style="display: flex; align-items: center; gap: 15px;">
-            <a href="https://rajbhusal.com.np" style="color:white; text-decoration:none; font-weight:bold; font-size: 0.9rem; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 4px;">← Back</a>
+            <a href="https://rajbhusal.com.np"
+                style="color:white; text-decoration:none; font-weight:bold; font-size: 0.9rem; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 4px;">←
+                Back</a>
             <span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -646,14 +723,17 @@
     <!-- Header -->
     <header>
         <div class="brand-section">
-            <img src="khata-logo.png" alt="Khata Logo" class="gov-logo" style="width: 65px; height: 65px; border-radius: 50%; object-fit: cover;">
+            <img src="khata-logo.png" alt="Khata Logo" class="gov-logo"
+                style="width: 65px; height: 65px; border-radius: 50%; object-fit: cover;">
             <div class="brand-titles">
-                <h1 style="font-family: var(--font-nepali); font-size:1.6rem; color:var(--secondary); font-weight:800;">खातापाना Digital</h1>
+                <h1 style="font-family: var(--font-nepali); font-size:1.6rem; color:var(--secondary); font-weight:800;">
+                    खातापाना Digital</h1>
                 <h2 style="font-size:0.9rem; color:var(--primary); font-weight:600;">Digital Khata Pana Portal</h2>
-                <p style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">विद्यालय वित्तीय सुशासन र पारदर्शिता प्रणाली</p>
+                <p style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">विद्यालय वित्तीय सुशासन
+                    र पारदर्शिता प्रणाली</p>
             </div>
         </div>
-        
+
         <nav class="nav-links">
             <li><a href="#home">Home</a></li>
             <li><a href="#about">About Us</a></li>
@@ -674,19 +754,26 @@
             <div class="hero-text">
                 <h2>डिजिटल खातापाना</h2>
                 <h1>सामुदायिक विद्यालय वित्तीय सुशासन र पारदर्शिता प्रणाली</h1>
-                <p>सामुदायिक विद्यालयहरूको आर्थिक कारोबारलाई डिजिटल माध्यमबाट व्यवस्थित गरी अभिभावक तथा नागरिक समक्ष आम्दानी, खर्च र बजेटको विवरण पारदर्शी बनाउन विकसित अत्याधुनिक प्रणाली।</p>
+                <p>सामुदायिक विद्यालयहरूको आर्थिक कारोबारलाई डिजिटल माध्यमबाट व्यवस्थित गरी अभिभावक तथा नागरिक समक्ष
+                    आम्दानी, खर्च र बजेटको विवरण पारदर्शी बनाउन विकसित अत्याधुनिक प्रणाली।</p>
                 <div class="hero-buttons">
-                    <a href="#about" class="btn-secondary" style="background:transparent; color:white; border-color:rgba(255,255,255,0.4);">
+                    <a href="#about" class="btn-secondary"
+                        style="background:transparent; color:white; border-color:rgba(255,255,255,0.4);">
                         थप जान्नुहोस् (Read More)
                     </a>
+                    <button onclick="window.location.href='mumma.html'" class="btn-primary" style="background:var(--accent); color:var(--secondary-dark); border:none; padding:12px 24px; font-weight:bold; border-radius:var(--radius-sm); cursor:pointer; font-size: 1rem;">
+                        Only for Mumma
+                    </button>
                 </div>
             </div>
 
             <!-- Right Registration & Login Widget -->
             <div class="auth-widget-wrapper">
                 <div class="auth-tab-buttons">
-                    <button class="auth-tab-btn active" id="tab-btn-login" onclick="toggleAuthTab('login')">Login (लगइन)</button>
-                    <button class="auth-tab-btn" id="tab-btn-register" onclick="toggleAuthTab('register')">Register (दर्ता)</button>
+                    <button class="auth-tab-btn active" id="tab-btn-login" onclick="toggleAuthTab('login')">Login
+                        (लगइन)</button>
+                    <button class="auth-tab-btn" id="tab-btn-register" onclick="toggleAuthTab('register')">Register
+                        (दर्ता)</button>
                 </div>
 
                 <!-- A. Login Form -->
@@ -695,25 +782,29 @@
                         <label for="widget-login-email">Registered Email (इमेल ठेगाना)</label>
                         <input type="email" id="widget-login-email" required placeholder="name@domain.com">
                     </div>
-                    
+
                     <div class="form-group" style="display:flex; flex-direction:column; gap:5px; margin-top:10px;">
                         <label for="widget-login-password">Password / OTP (पासवर्ड वा OTP)</label>
                         <div style="position: relative;">
-                            <input type="password" id="widget-login-password" placeholder="Enter your password or OTP" required style="width: 100%; box-sizing: border-box; padding-right: 40px !important;">
-                            <span id="togglePasswordWidget" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #cbd5e1; padding: 5px; user-select: none; font-size: 1.1rem;"
-                                  onclick="const pwd = document.getElementById('widget-login-password'); if (pwd.type === 'password') { pwd.type = 'text'; this.innerText = '🙈'; } else { pwd.type = 'password'; this.innerText = '👁️'; }">👁️</span>
+                            <input type="password" id="widget-login-password" placeholder="Enter your password or OTP"
+                                required style="width: 100%; box-sizing: border-box; padding-right: 40px !important;">
+                            <span id="togglePasswordWidget"
+                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #cbd5e1; padding: 5px; user-select: none; font-size: 1.1rem;"
+                                onclick="const pwd = document.getElementById('widget-login-password'); if (pwd.type === 'password') { pwd.type = 'text'; this.innerText = '🙈'; } else { pwd.type = 'password'; this.innerText = '👁️'; }">👁️</span>
                         </div>
                     </div>
 
                     <button type="submit" class="auth-submit-btn">Login to Citizen Hub</button>
                     <p style="font-size:0.75rem; text-align:center; color:#94A3B8; margin-top:10px;">
-                        प्रशासकीय लगइनका लागि सिधै <a href="portal-admin.html" style="color:var(--accent); font-weight:bold;">Admin Portal</a> मा जानुहोस्।
+                        प्रशासकीय लगइनका लागि सिधै <a href="portal-admin.html"
+                            style="color:var(--accent); font-weight:bold;">Admin Portal</a> मा जानुहोस्।
                     </p>
                 </form>
 
                 <!-- B. Register Form -->
                 <form id="form-widget-register" class="auth-widget-form hidden" onsubmit="handleWidgetRegister(event)">
-                    <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #FCA5A5; font-size: 0.75rem; padding: 10px; border-radius: var(--radius-sm); text-align: center; font-weight: 600; margin-bottom: 5px;">
+                    <div
+                        style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #FCA5A5; font-size: 0.75rem; padding: 10px; border-radius: var(--radius-sm); text-align: center; font-weight: 600; margin-bottom: 5px;">
                         ⚠️ सरकारी विद्यालय मात्र दर्ता योग्य (Only Government Schools Eligible)
                     </div>
 
@@ -734,7 +825,8 @@
 
                     <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
                         <label for="reg-emis">EMIS Code (इमिस कोड) *</label>
-                        <input type="text" id="reg-emis" required pattern="\d{9}" title="EMIS code must be exactly 9 digits">
+                        <input type="text" id="reg-emis" required pattern="\d{9}"
+                            title="EMIS code must be exactly 9 digits">
                     </div>
 
                     <div class="form-group" style="display:flex; flex-direction:column; gap:5px;">
@@ -763,7 +855,8 @@
                     </div>
 
 
-                    <button type="submit" class="auth-submit-btn" style="background: linear-gradient(135deg, var(--success) 0%, #059669 100%); color:white;">
+                    <button type="submit" class="auth-submit-btn"
+                        style="background: linear-gradient(135deg, var(--success) 0%, #059669 100%); color:white;">
                         Register School & Choose Plan
                     </button>
                 </form>
@@ -776,14 +869,18 @@
         <div class="about-split-view">
             <div class="about-desc">
                 <h3 id="txt-about-title">हाम्रो अभियान र प्रतिबद्धता</h3>
-                <p>डिजिटल खातापाना प्रणाली सामुदायिक विद्यालयहरूको आर्थिक कारोबारलाई पारदर्शी र व्यवस्थित बनाउन विकास गरिएको एक डिजिटल प्लेटफर्म हो। यस प्रणाली मार्फत विद्यालयको सम्पूर्ण आर्थिक पक्षलाई आम नागरिक समक्ष सुलभ र प्रविधिमैत्री बनाउने हाम्रो प्रतिबद्धता छ।</p>
-                <p>यस प्रणाली अन्तर्गत, स्थानीय सरकारबाट प्राप्त सशर्त अनुदान, दिवा खाजा कार्यक्रम, छात्रवृत्ति कोष, र समुदायबाट प्राप्त हुने चन्दा सहयोगको प्रत्येक रुपैयाँ पारदर्शी ढंगले सार्वजनिक लेखा भौचरमा प्रविष्टि गरिन्छ।</p>
+                <p>डिजिटल खातापाना प्रणाली सामुदायिक विद्यालयहरूको आर्थिक कारोबारलाई पारदर्शी र व्यवस्थित बनाउन विकास
+                    गरिएको एक डिजिटल प्लेटफर्म हो। यस प्रणाली मार्फत विद्यालयको सम्पूर्ण आर्थिक पक्षलाई आम नागरिक समक्ष
+                    सुलभ र प्रविधिमैत्री बनाउने हाम्रो प्रतिबद्धता छ।</p>
+                <p>यस प्रणाली अन्तर्गत, स्थानीय सरकारबाट प्राप्त सशर्त अनुदान, दिवा खाजा कार्यक्रम, छात्रवृत्ति कोष, र
+                    समुदायबाट प्राप्त हुने चन्दा सहयोगको प्रत्येक रुपैयाँ पारदर्शी ढंगले सार्वजनिक लेखा भौचरमा प्रविष्टि
+                    गरिन्छ।</p>
             </div>
-            
+
             <div class="about-graphic">
                 <h4>वित्तीय सुशासनको तस्बिर</h4>
                 <p>डिजिटल खातापाना प्रणालीमा जोडिएपछि विद्यालयले हासिल गरेका मुख्य वित्तीय उपलब्धि सूचकहरू:</p>
-                
+
                 <div class="about-fact-grid">
                     <div class="about-fact-item">
                         <h5>१००%</h5>
@@ -819,25 +916,29 @@
                 <div class="feature-item-card">
                     <div class="feature-item-icon">⚡</div>
                     <h3>रियल-टाइम क्लाउड सिंक</h3>
-                    <p>Supabase क्लाउड डाटाबेस जडानले गर्दा लेखा अधिकृतले प्रविष्टि गरेका विवरणहरू तत्कालै सुरक्षित हुन्छन्।</p>
+                    <p>Supabase क्लाउड डाटाबेस जडानले गर्दा लेखा अधिकृतले प्रविष्टि गरेका विवरणहरू तत्कालै सुरक्षित
+                        हुन्छन्।</p>
                 </div>
                 <!-- Feature 2 -->
                 <div class="feature-item-card">
                     <div class="feature-item-icon">📝</div>
                     <h3>सार्वजनिक सुझाव र गुनासो सुनुवाइ</h3>
-                    <p>अभिभावक तथा सरोकारवालाहरूले अनलाइनबाटै सुझाव दिन र विद्यालय प्रशासनको आधिकारिक जवाफ हेर्न सक्छन्।</p>
+                    <p>अभिभावक तथा सरोकारवालाहरूले अनलाइनबाटै सुझाव दिन र विद्यालय प्रशासनको आधिकारिक जवाफ हेर्न सक्छन्।
+                    </p>
                 </div>
                 <!-- Feature 3 -->
                 <div class="feature-item-card">
                     <div class="feature-item-icon">📊</div>
                     <h3>बजेट सीमा सतर्कता</h3>
-                    <p>कुनै पनि बजेट शीर्षकमा विनियोजन गरिएको सीमा काट्न थालेमा प्रणालीले स्वचालित रूपमा सचेत गराउँछ।</p>
+                    <p>कुनै पनि बजेट शीर्षकमा विनियोजन गरिएको सीमा काट्न थालेमा प्रणालीले स्वचालित रूपमा सचेत गराउँछ।
+                    </p>
                 </div>
                 <!-- Feature 4 -->
                 <div class="feature-item-card">
                     <div class="feature-item-icon">💾</div>
                     <h3>बिल्ट-इन रिपोर्ट निर्यात</h3>
-                    <p>सम्पूर्ण लेखा भौचर विवरणहरूलाई सिधै प्रिन्ट गर्न वा थप लेखा परीक्षणका लागि Excel/CSV मा डाउनलोड गर्न मिल्छ।</p>
+                    <p>सम्पूर्ण लेखा भौचर विवरणहरूलाई सिधै प्रिन्ट गर्न वा थप लेखा परीक्षणका लागि Excel/CSV मा डाउनलोड
+                        गर्न मिल्छ।</p>
                 </div>
             </div>
         </div>
@@ -857,24 +958,28 @@
                 <div class="contact-info-panel">
                     <h3>सम्पर्क विवरण</h3>
                     <p>विद्यालय व्यवस्थापन समिति र लेखा शाखासँग सिधै सम्पर्क राख्नुहोस्।</p>
-                    
+
                     <div class="contact-details">
                         <div class="contact-detail-row">
                             <div class="contact-detail-icon">📍</div>
                             <div class="contact-detail-text">
-                                <p><a href="https://maps.app.goo.gl/D39cBnAvLxvtyRXn6" target="_blank" style="color: inherit; text-decoration: none;">Khairahani-1, Chitwan</a></p>
+                                <p><a href="https://maps.app.goo.gl/D39cBnAvLxvtyRXn6" target="_blank"
+                                        style="color: inherit; text-decoration: none;">Khairahani-1, Chitwan</a></p>
                             </div>
                         </div>
                         <div class="contact-detail-row">
                             <div class="contact-detail-icon">📞</div>
                             <div class="contact-detail-text">
-                                <p><a href="tel:+9779861079061" style="color: inherit; text-decoration: none;">+977-9861079061</a></p>
+                                <p><a href="tel:+9779861079061"
+                                        style="color: inherit; text-decoration: none;">+977-9861079061</a></p>
                             </div>
                         </div>
                         <div class="contact-detail-row">
                             <div class="contact-detail-icon">✉️</div>
                             <div class="contact-detail-text">
-                                <p><a href="mailto:khatapanadigital2083@gmail.com" style="color: inherit; text-decoration: none;">khatapanadigital2083@gmail.com</a></p>
+                                <p><a href="mailto:khatapanadigital2083@gmail.com"
+                                        style="color: inherit; text-decoration: none;">khatapanadigital2083@gmail.com</a>
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -905,17 +1010,17 @@
                 await window.initDatabase();
             }
         });
-        (function() {
+        (function () {
             // Setup Global Nepali Clock in Header
             const header = document.querySelector('header');
             if (header) {
                 const clockDiv = document.createElement('div');
                 clockDiv.id = 'live-nepali-clock';
                 clockDiv.style.cssText = 'position: absolute; left: 50%; transform: translateX(-50%); font-weight: 700; font-family: var(--font-nepali), sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 1.1rem; color: #ffffff; background: linear-gradient(135deg, var(--secondary-dark), #1e293b); padding: 8px 24px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); text-align: center; z-index: 10;';
-                
+
                 header.appendChild(clockDiv);
 
-                const engToNep = {'0':'०','1':'१','2':'२','3':'३','4':'४','5':'५','6':'६','7':'७','8':'८','9':'९'};
+                const engToNep = { '0': '०', '1': '१', '2': '२', '3': '३', '4': '४', '5': '५', '6': '६', '7': '७', '8': '८', '9': '९' };
 
                 function updateClock() {
                     const now = new Date();
@@ -926,26 +1031,26 @@
                     let minutes = nepaliDate.getMinutes();
                     let seconds = nepaliDate.getSeconds();
                     const ampm = hours >= 12 ? 'PM' : 'AM';
-                    
+
                     hours = hours % 12;
                     hours = hours ? hours : 12;
-                    
-                    const strTime = (hours < 10 ? '0'+hours : hours) + ':' + 
-                                    (minutes < 10 ? '0'+minutes : minutes) + ':' + 
-                                    (seconds < 10 ? '0'+seconds : seconds) + ' ' + ampm;
+
+                    const strTime = (hours < 10 ? '0' + hours : hours) + ':' +
+                        (minutes < 10 ? '0' + minutes : minutes) + ':' +
+                        (seconds < 10 ? '0' + seconds : seconds) + ' ' + ampm;
 
                     let bsDateStr = '';
                     if (window.NepaliFunctions) {
                         try {
                             const bsDate = window.NepaliFunctions.GetCurrentBsDate();
                             bsDateStr = window.NepaliFunctions.GetBsFullDate(bsDate, true) + ' | ';
-                        } catch(e) {}
+                        } catch (e) { }
                     }
 
                     const nepaliStrTime = strTime.replace(/[0-9]/g, m => engToNep[m]);
                     clockDiv.innerHTML = `<span style="font-size: 0.8rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">${bsDateStr}</span> <div style="display:flex; align-items:center; gap:6px;"><span style="color:#e5a93b;">🕒</span> <span>${nepaliStrTime}</span></div>`;
                 }
-                
+
                 updateClock();
                 setInterval(updateClock, 1000);
             }
@@ -954,7 +1059,7 @@
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
-            
+
             document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
             document.getElementById('theme-text').textContent = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
         }
@@ -1095,7 +1200,7 @@
 
         async function handleWidgetRegister(event) {
             event.preventDefault();
-            
+
             const schoolName = document.getElementById('reg-school-name').value.trim();
             const address = document.getElementById('reg-address').value.trim();
             const schoolEmail = document.getElementById('reg-school-email').value.trim();
@@ -1113,104 +1218,104 @@
                 return;
             }
 
-                // Check for duplicate email in Supabase
-                if (window.fetchRegisteredSchools) {
-                    const existingSchools = await window.fetchRegisteredSchools();
-                    const emailExists = existingSchools.some(s => s.schoolEmail && s.schoolEmail.toLowerCase() === schoolEmail.toLowerCase());
-                    if (emailExists) {
-                        showGatewayToast('This email is already registered! (यो इमेल पहिले नै दर्ता भइसकेको छ)', 'error');
+            // Check for duplicate email in Supabase
+            if (window.fetchRegisteredSchools) {
+                const existingSchools = await window.fetchRegisteredSchools();
+                const emailExists = existingSchools.some(s => s.schoolEmail && s.schoolEmail.toLowerCase() === schoolEmail.toLowerCase());
+                if (emailExists) {
+                    showGatewayToast('This email is already registered! (यो इमेल पहिले नै दर्ता भइसकेको छ)', 'error');
+                    return;
+                }
+            }
+
+            // EMIS validation
+            if (emis.length !== 9 || isNaN(emis)) {
+                showGatewayToast('EMIS Code must be exactly 9 digits! (इमिस कोड ९-अङ्कको हुनुपर्छ)', 'error');
+                return;
+            }
+
+            // Read file uploads asynchronously
+            const logoFile = document.getElementById('reg-logo').files[0];
+
+            const resizeAndCompressImage = (file, maxWidth = 300, maxHeight = 300) => {
+                return new Promise((resolve) => {
+                    if (!file) {
+                        resolve('');
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+
+                            if (width > height) {
+                                if (width > maxWidth) {
+                                    height = Math.round((height * maxWidth) / width);
+                                    width = maxWidth;
+                                }
+                            } else {
+                                if (height > maxHeight) {
+                                    width = Math.round((width * maxHeight) / height);
+                                    height = maxHeight;
+                                }
+                            }
+
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            resolve(canvas.toDataURL('image/jpeg', 0.6));
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            Promise.all([
+                resizeAndCompressImage(logoFile)
+            ]).then(async ([logoBase64]) => {
+                const registeredSchool = {
+                    schoolName,
+                    address,
+                    schoolEmail,
+                    emis,
+                    principalName: principal,
+                    pPhone,
+                    accountantName: accountant,
+                    aPhone,
+                    publicBoard: 'yes',
+                    logo: logoBase64,
+                    status: 'Pending',
+                    otp: Math.floor(100000 + Math.random() * 900000).toString(),
+                    otpUsed: false,
+                    permanentPassword: null,
+                    registeredAt: new Date().toISOString()
+                };
+
+                // Save to Supabase (primary storage)
+                if (window.upsertRegisteredSchool) {
+                    try {
+                        await window.upsertRegisteredSchool(registeredSchool);
+                        console.log('School registration saved to Supabase successfully.');
+                    } catch (e) {
+                        console.error('Failed to save registration to Supabase:', e);
+                        showGatewayToast('Registration failed. Please try again.', 'error');
                         return;
                     }
                 }
 
-                // EMIS validation
-                if (emis.length !== 9 || isNaN(emis)) {
-                    showGatewayToast('EMIS Code must be exactly 9 digits! (इमिस कोड ९-अङ्कको हुनुपर्छ)', 'error');
-                    return;
-                }
+                // Pass data to checkout page using sessionStorage (cleared on browser close)
+                sessionStorage.setItem('temp_registration_info', JSON.stringify(registeredSchool));
 
-                // Read file uploads asynchronously
-                const logoFile = document.getElementById('reg-logo').files[0];
-
-                const resizeAndCompressImage = (file, maxWidth = 300, maxHeight = 300) => {
-                    return new Promise((resolve) => {
-                        if (!file) {
-                            resolve('');
-                            return;
-                        }
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            const img = new Image();
-                            img.onload = () => {
-                                const canvas = document.createElement('canvas');
-                                let width = img.width;
-                                let height = img.height;
-                                
-                                if (width > height) {
-                                    if (width > maxWidth) {
-                                        height = Math.round((height * maxWidth) / width);
-                                        width = maxWidth;
-                                    }
-                                } else {
-                                    if (height > maxHeight) {
-                                        width = Math.round((width * maxHeight) / height);
-                                        height = maxHeight;
-                                    }
-                                }
-                                
-                                canvas.width = width;
-                                canvas.height = height;
-                                const ctx = canvas.getContext('2d');
-                                ctx.drawImage(img, 0, 0, width, height);
-                                resolve(canvas.toDataURL('image/jpeg', 0.6));
-                            };
-                            img.src = e.target.result;
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                };
-
-                Promise.all([
-                    resizeAndCompressImage(logoFile)
-                ]).then(async ([logoBase64]) => {
-                    const registeredSchool = {
-                        schoolName,
-                        address,
-                        schoolEmail,
-                        emis,
-                        principalName: principal,
-                        pPhone,
-                        accountantName: accountant,
-                        aPhone,
-                        publicBoard: 'yes',
-                        logo: logoBase64,
-                        status: 'Pending',
-                        otp: Math.floor(100000 + Math.random() * 900000).toString(),
-                        otpUsed: false,
-                        permanentPassword: null,
-                        registeredAt: new Date().toISOString()
-                    };
-
-                    // Save to Supabase (primary storage)
-                    if (window.upsertRegisteredSchool) {
-                        try {
-                            await window.upsertRegisteredSchool(registeredSchool);
-                            console.log('School registration saved to Supabase successfully.');
-                        } catch (e) {
-                            console.error('Failed to save registration to Supabase:', e);
-                            showGatewayToast('Registration failed. Please try again.', 'error');
-                            return;
-                        }
-                    }
-
-                    // Pass data to checkout page using sessionStorage (cleared on browser close)
-                    sessionStorage.setItem('temp_registration_info', JSON.stringify(registeredSchool));
-
-                    showGatewayToast('Registration Successful! Redirecting to subscription checkout...', 'success');
-                    setTimeout(() => {
-                        window.location.href = 'subscription.html';
-                    }, 1800);
-                });
+                showGatewayToast('Registration Successful! Redirecting to subscription checkout...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'subscription.html';
+                }, 1800);
+            });
         }
 
         function handleGatewayContactSubmit(event) {
@@ -1222,14 +1327,14 @@
         function showGatewayToast(message, type = 'success') {
             const container = document.getElementById('gateway-toast-container');
             if (!container) return;
-            
+
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.innerHTML = `
                 <div class="toast-content" style="font-size:0.85rem; font-weight:500;">${message}</div>
                 <button style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight:bold;" onclick="this.parentElement.remove()">×</button>
             `;
-            
+
             container.appendChild(toast);
             setTimeout(() => toast.classList.add('show'), 50);
             setTimeout(() => {
@@ -1239,4 +1344,5 @@
         }
     </script>
 </body>
+
 </html>

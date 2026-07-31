@@ -1,0 +1,508 @@
+/* Reset & Base */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    background-color: #1a1a2e; /* Starts dark for neon hearts */
+    animation: bgChange 2s 5s forwards;
+}
+
+@keyframes bgChange {
+    0% { background-color: #1a1a2e; }
+    100% { 
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #ff9a9e 100%); 
+        background-size: 200% 200%;
+        animation: gradientBG 10s ease infinite;
+    }
+}
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Floating Romance Background */
+.floating-bg {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    animation: popInScreen 2s 5s forwards;
+}
+.float-item {
+    position: absolute;
+    bottom: -10vh;
+    left: var(--x);
+    font-size: calc(2rem * var(--s));
+    animation: floatUp 15s linear infinite;
+    animation-delay: var(--d);
+    opacity: 0;
+    text-shadow: 0 5px 15px rgba(255, 71, 126, 0.4);
+}
+@keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.6; }
+    50% { transform: translateY(-55vh) rotate(25deg); }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-120vh) rotate(-25deg); opacity: 0; }
+}
+
+/* Hide Radio Buttons */
+input[type="radio"] {
+    display: none;
+}
+
+/* ------------------------------------- */
+/* SCREEN 1: HEART MOSAIC                */
+/* ------------------------------------- */
+.heart-screen {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeOutHeart 1.2s 4.5s forwards;
+}
+
+@keyframes fadeOutHeart {
+    0% { opacity: 1; transform: scale(1); visibility: visible; }
+    99% { opacity: 0; transform: scale(1.5); visibility: visible; }
+    100% { opacity: 0; transform: scale(1.5); visibility: hidden; z-index: -1; pointer-events: none; }
+}
+
+.big-heart {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    animation: pulseBigHeart 1.5s infinite;
+}
+
+@keyframes pulseBigHeart {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.small-heart {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: var(--c);
+    transform: rotate(-45deg) scale(0);
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    filter: drop-shadow(0 0 6px var(--c));
+}
+.small-heart::before, .small-heart::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: var(--c);
+    border-radius: 50%;
+}
+.small-heart::before { top: -8px; left: 0; }
+.small-heart::after { top: 0; left: 8px; }
+
+@keyframes popIn {
+    0% { transform: rotate(-45deg) scale(0); }
+    100% { transform: rotate(-45deg) scale(1); }
+}
+
+/* ------------------------------------- */
+/* SCREEN 2: QUESTION UI                 */
+/* ------------------------------------- */
+.question-screen {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -45%);
+    width: 90vw;
+    max-width: 600px;
+    height: 70vh;
+    max-height: 500px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.15));
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-radius: 30px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 30px 60px rgba(255, 105, 135, 0.25), inset 0 0 20px rgba(255, 255, 255, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px 30px;
+    box-sizing: border-box;
+    opacity: 0;
+    pointer-events: none;
+    animation: cardFadeIn 1s 5.2s forwards, cardFloat 6s ease-in-out infinite alternate;
+}
+
+@keyframes cardFadeIn {
+    to { opacity: 1; transform: translate(-50%, -50%); pointer-events: all; }
+}
+@keyframes cardFloat {
+    0% { margin-top: 0px; }
+    100% { margin-top: -15px; }
+}
+
+.question-title {
+    text-align: center;
+    font-size: 2.2rem;
+    background: -webkit-linear-gradient(45deg, #ff0844 0%, #ffb199 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.8);
+    line-height: 1.3;
+    font-weight: 800;
+}
+
+.button-area {
+    position: relative;
+    width: 100%;
+    flex-grow: 1;
+}
+
+/* The Animated Visual Button */
+.fake-button {
+    position: absolute;
+    width: 120px;
+    height: 55px;
+    border-radius: 30px;
+    background: linear-gradient(45deg, #ff0844 0%, #ffb199 100%);
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 10px 20px rgba(255, 8, 68, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: none; /* Crucial: lets clicks pass to hitboxes */
+    transform: translate(-50%, -50%);
+    z-index: 5;
+}
+
+.text-yes {
+    display: none;
+}
+
+/* Invisible Hitboxes for interaction */
+.hitbox {
+    position: absolute;
+    width: 130px;
+    height: 70px;
+    cursor: pointer;
+    display: none;
+    z-index: 10;
+    transform: translate(-50%, -50%);
+}
+
+/* Add hover effect to the fake button when hovering a hitbox */
+.hitbox:hover ~ .fake-button {
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 12px 25px rgba(255, 65, 108, 0.6);
+}
+
+/* ------------------------------------- */
+/* STATE MACHINE (Pure CSS Logic)        */
+/* ------------------------------------- */
+
+/* START STATE (Button at bottom) */
+#state-start:checked ~ .question-screen .button-area .fake-button {
+    left: 50%; top: 80%;
+}
+#state-start:checked ~ .question-screen .button-area .start-hitbox {
+    display: block; left: 50%; top: 80%;
+}
+
+/* UP STATE (User clicked start) */
+#state-up:checked ~ .question-screen .button-area .fake-button {
+    left: 50%; top: 15%;
+}
+#state-up:checked ~ .question-screen .button-area .up-hitbox {
+    display: block; left: 50%; top: 15%;
+}
+
+/* RIGHT STATE (User clicked up) */
+#state-right:checked ~ .question-screen .button-area .fake-button {
+    left: 85%; top: 45%;
+}
+#state-right:checked ~ .question-screen .button-area .right-hitbox {
+    display: block; left: 85%; top: 45%;
+}
+
+/* LEFT STATE (User clicked right) */
+#state-left:checked ~ .question-screen .button-area .fake-button {
+    left: 15%; top: 60%;
+}
+#state-left:checked ~ .question-screen .button-area .left-hitbox {
+    display: block; left: 15%; top: 60%;
+}
+
+/* FINAL STATE (User clicked left) */
+#state-final:checked ~ .question-screen .button-area .fake-button {
+    left: 50%; top: 75%;
+    background: linear-gradient(45deg, #00b09b, #96c93d);
+    box-shadow: 0 10px 25px rgba(0, 176, 155, 0.5);
+    transform: translate(-50%, -50%) scale(1.15);
+}
+#state-final:checked ~ .question-screen .button-area .final-hitbox {
+    display: block; left: 50%; top: 75%;
+}
+
+/* Text toggle in final state */
+#state-final:checked ~ .question-screen .button-area .fake-button .text-no {
+    display: none;
+}
+#state-final:checked ~ .question-screen .button-area .fake-button .text-yes {
+    display: inline;
+}
+
+/* ------------------------------------- */
+/* HURRAY CELEBRATION MESSAGE            */
+/* ------------------------------------- */
+.hurray-message {
+    position: absolute;
+    left: 50%; top: 40%;
+    transform: translate(-50%, -50%);
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: -webkit-linear-gradient(45deg, #ff3b3b, #b5179e, #4cc9f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0;
+    transition: opacity 0.5s ease 0.4s;
+    pointer-events: none;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    white-space: nowrap;
+}
+
+#state-final:checked ~ .question-screen .button-area .hurray-message {
+    opacity: 1;
+    animation: bounceHurray 1s infinite alternate;
+}
+
+@keyframes bounceHurray {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    100% { transform: translate(-50%, -50%) scale(1.15); }
+}
+
+/* Responsive fixes for mobile */
+@media (max-width: 480px) {
+    .question-title { font-size: 1.8rem; }
+    .hurray-message { font-size: 2.5rem; }
+    
+    #state-right:checked ~ .question-screen .button-area .fake-button,
+    #state-right:checked ~ .question-screen .button-area .right-hitbox { left: 80%; }
+    
+    #state-left:checked ~ .question-screen .button-area .fake-button,
+    #state-left:checked ~ .question-screen .button-area .left-hitbox { left: 20%; }
+}
+
+/* ------------------------------------- */
+/* NEW SCREENS (ASK, FORM, SUCCESS)      */
+/* ------------------------------------- */
+
+/* Hide the initial question screen when moving forward */
+#state-ask:checked ~ .question-screen,
+#state-form:checked ~ .question-screen,
+#state-success:checked ~ .question-screen {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+/* Base Panel Styles */
+.screen-panel {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -45%);
+    width: 90vw;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.15));
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-radius: 30px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 30px 60px rgba(255, 105, 135, 0.25), inset 0 0 20px rgba(255, 255, 255, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px 40px;
+    box-sizing: border-box;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 50; /* Above everything */
+    animation: cardFloat 6s ease-in-out infinite alternate;
+}
+
+/* Custom Scrollbar for Panels */
+.screen-panel::-webkit-scrollbar {
+    width: 8px;
+}
+.screen-panel::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    margin: 20px 0;
+}
+.screen-panel::-webkit-scrollbar-thumb {
+    background: rgba(255, 71, 126, 0.5);
+    border-radius: 10px;
+}
+.screen-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 71, 126, 0.8);
+}
+
+/* Romantic Subtitle */
+.romantic-subtitle {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.2rem;
+    color: #ff0844;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+}
+
+/* Visibility Triggers */
+#state-ask:checked ~ .ask-screen,
+#state-form:checked ~ .form-screen,
+#state-success:checked ~ .success-screen {
+    opacity: 1;
+    pointer-events: all;
+    animation: popInScreen 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, cardFloat 6s ease-in-out infinite alternate;
+}
+
+@keyframes popInScreen {
+    from { transform: translate(-50%, -40%) scale(0.95); opacity: 0; }
+    to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+/* Buttons */
+.yes-btn, .submit-btn {
+    margin-top: 20px;
+    padding: 15px 45px;
+    border-radius: 30px;
+    background: linear-gradient(45deg, #ff0844 0%, #ffb199 100%);
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(255, 8, 68, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-align: center;
+}
+.yes-btn:hover, .submit-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 15px 35px rgba(255, 8, 68, 0.7);
+}
+.submit-btn {
+    margin-top: 35px;
+}
+
+/* Form Styles */
+.form-title {
+    text-align: center;
+    font-size: 2.2rem;
+    background: -webkit-linear-gradient(45deg, #ff0844 0%, #ffb199 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.8);
+    font-weight: 800;
+}
+
+.input-group {
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 1.1rem;
+    color: #b5179e;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.input-group input, .input-group textarea {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid rgba(255, 71, 126, 0.3);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.8);
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    color: #4a4e69;
+    box-sizing: border-box;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.input-group input:focus, .input-group textarea:focus {
+    outline: none;
+    border-color: #ff477e;
+    background: #ffffff;
+    box-shadow: 0 0 15px rgba(255, 71, 126, 0.4), inset 0 2px 5px rgba(0,0,0,0.02);
+    transform: scale(1.02);
+}
+
+/* Secret Question Logic */
+.secret-group {
+    background: linear-gradient(135deg, rgba(255, 182, 193, 0.4), rgba(255, 105, 180, 0.15));
+    padding: 25px;
+    border-radius: 20px;
+    border: 2px dashed #ff477e;
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+.private-question {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-top: 0;
+}
+
+/* Reveal when password exactly matches Aaku@1234 */
+#secret-pass:valid ~ .private-question {
+    max-height: 200px;
+    opacity: 1;
+    margin-top: 20px;
+}
+
+/* Success Screen */
+.success-title {
+    text-align: center;
+    font-size: 3rem;
+    background: -webkit-linear-gradient(45deg, #ff0844 0%, #ffb199 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 30px;
+    line-height: 1.3;
+    font-weight: 800;
+    text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.8);
+}
+
+.heart-pulse {
+    font-size: 5rem;
+    animation: pulseHeartBeat 1s infinite alternate;
+}
+
+@keyframes pulseHeartBeat {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.2); }
+}
+
+@media (max-width: 480px) {
+    .screen-panel { padding: 30px 20px; }
+    .form-title { font-size: 1.5rem; }
+    .input-group label { font-size: 0.95rem; }
+    .success-title { font-size: 2rem; }
+}
