@@ -1,791 +1,969 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="ne">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Salary Calculator (शिक्षक तलब क्याल्कुलेटर) — Digital Khatapana</title>
-    <meta name="description" content="Nepal teacher salary calculator — compute basic pay, allowances, PF, CIT, income tax deductions and net monthly salary instantly.">
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Mukta:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary:   #7c3aed;
-            --primary-dk:#4c1d95;
-            --primary-lt:#a78bfa;
-            --green:     #059669;
-            --green-lt:  #d1fae5;
-            --red:       #dc2626;
-            --red-lt:    #fee2e2;
-            --amber:     #d97706;
-            --amber-lt:  #fef3c7;
-            --blue:      #2563eb;
-            --blue-lt:   #dbeafe;
-            --bg:        #f1f5f9;
-            --card:      #ffffff;
-            --text:      #0f172a;
-            --muted:     #64748b;
-            --border:    #e2e8f0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nepal Salary Calculator 2083 | तलब क्याल्कुलेटर २०८३</title>
+<meta name="description" content="Nepal government salary calculator 2083 Shrawan — civil service, PSC officers, teachers. Bilingual Nepali/English.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Mukta:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pr:#7c3aed;--pr-dk:#4c1d95;--pr-lt:#ede9fe;
+  --gr:#059669;--gr-lt:#d1fae5;
+  --re:#dc2626;--re-lt:#fee2e2;
+  --bl:#2563eb;--bl-lt:#dbeafe;
+  --am:#d97706;--am-lt:#fef3c7;
+  --bg:#f1f5f9;--card:#fff;--text:#0f172a;--muted:#64748b;--border:#e2e8f0;
+}
+body{font-family:'Inter','Mukta',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── HEADER ── */
+.hdr{background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#312e81 100%);
+  color:#fff;padding:14px 4%;position:sticky;top:0;z-index:200;
+  box-shadow:0 6px 30px rgba(0,0,0,0.3);border-bottom:3px solid var(--pr)}
+.hdr-in{max-width:1300px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:46px;height:46px;background:linear-gradient(135deg,#7c3aed,#4c1d95);border-radius:13px;
+  display:flex;align-items:center;justify-content:center;font-size:1.55rem;box-shadow:0 0 18px rgba(124,58,237,.55)}
+.brand h1{font-size:1.25rem;font-weight:800;color:#fff;line-height:1.2}
+.brand p{font-size:.72rem;color:#c4b5fd;text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.hdr-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn-hdr{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#e2e8f0;
+  padding:8px 16px;border-radius:9px;font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;
+  transition:all .2s;font-family:inherit}
+.btn-hdr:hover{background:rgba(255,255,255,.2);color:#fff}
+/* Language toggle */
+.lang-toggle{display:flex;background:rgba(255,255,255,.1);border-radius:9px;overflow:hidden;border:1px solid rgba(255,255,255,.15)}
+.lang-toggle button{padding:7px 16px;font-size:.82rem;font-weight:700;background:transparent;border:none;
+  color:rgba(255,255,255,.65);cursor:pointer;font-family:inherit;transition:all .2s}
+.lang-toggle button.active{background:var(--pr);color:#fff}
 
-        body {
-            font-family: 'Inter', 'Mukta', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-        }
+/* ── MAIN ── */
+.main{max-width:1300px;margin:0 auto;padding:32px 4% 60px}
 
-        /* ── Header ── */
-        .app-header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            color: #fff;
-            padding: 16px 5%;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            border-bottom: 3px solid var(--primary);
-        }
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-        }
-        .brand-logo { display: flex; align-items: center; gap: 14px; }
-        .logo-icon {
-            width: 48px; height: 48px;
-            background: linear-gradient(135deg, #7c3aed, #4c1d95);
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.7rem;
-            box-shadow: 0 0 18px rgba(124,58,237,0.5);
-        }
-        .brand-titles h1 { font-size: 1.4rem; font-weight: 800; color: #fff; }
-        .brand-titles p  { font-size: 0.75rem; color: #c4b5fd; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-        .btn-header-action {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.15);
-            color: #e2e8f0;
-            padding: 9px 18px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-        .btn-header-action:hover { background: rgba(255,255,255,0.18); color: #fff; }
+/* Hero */
+.hero{background:linear-gradient(135deg,#4c1d95,#7c3aed 50%,#2563eb);
+  border-radius:22px;padding:36px 44px;margin-bottom:30px;color:#fff;
+  position:relative;overflow:hidden}
+.hero::before{content:'💰';position:absolute;right:44px;top:50%;transform:translateY(-50%);
+  font-size:6rem;opacity:.1;pointer-events:none}
+.hero h2{font-size:1.9rem;font-weight:800;margin-bottom:6px}
+.hero p{opacity:.85;font-size:.95rem}
+.hero .badge{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);
+  padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;margin-top:10px;letter-spacing:.5px}
 
-        /* ── Main ── */
-        .page-main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 36px 5% 60px;
-        }
+/* Grid */
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:26px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
 
-        /* Hero Banner */
-        .hero-banner {
-            background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 50%, #2563eb 100%);
-            border-radius: 24px;
-            padding: 40px 48px;
-            margin-bottom: 36px;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero-banner::before {
-            content: '💰';
-            position: absolute;
-            right: 48px; top: 50%;
-            transform: translateY(-50%);
-            font-size: 7rem;
-            opacity: 0.12;
-        }
-        .hero-banner h2 {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-        .hero-banner p { font-size: 1rem; opacity: 0.85; }
+/* Card */
+.card{background:var(--card);border-radius:20px;padding:28px;box-shadow:0 4px 22px rgba(0,0,0,.07);border:1px solid var(--border);margin-bottom:22px}
+.card-ttl{font-size:1.05rem;font-weight:800;margin-bottom:22px;padding-bottom:12px;
+  border-bottom:2px solid var(--border);display:flex;align-items:center;gap:9px;color:var(--text)}
+.card-ttl .ico{font-size:1.3rem}
 
-        /* Two-column layout */
-        .calc-grid {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 28px;
-            align-items: start;
-        }
-        @media (max-width: 860px) { .calc-grid { grid-template-columns: 1fr; } }
+/* Section label */
+.sec-lbl{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+  color:var(--pr);margin:20px 0 12px;display:flex;align-items:center;gap:8px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:#ddd6fe}
 
-        /* Card */
-        .card {
-            background: var(--card);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-            border: 1px solid var(--border);
-        }
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-bottom: 14px;
-            border-bottom: 2px solid var(--border);
-        }
-        .card-title span { font-size: 1.4rem; }
+/* Form */
+.fg{margin-bottom:15px}
+.fg label{display:block;font-size:.78rem;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.fg label .np{font-size:.74rem;color:#94a3b8;font-weight:500;text-transform:none;letter-spacing:0}
+.inp,.sel{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;
+  font-size:.92rem;font-family:inherit;color:var(--text);background:#f8fafc;
+  transition:border-color .2s,box-shadow .2s;appearance:none}
+.inp:focus,.sel:focus{outline:none;border-color:var(--pr);box-shadow:0 0 0 3px rgba(124,58,237,.1);background:#fff}
+.pfx{position:relative}.pfx i{position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  font-size:.85rem;color:var(--muted);font-weight:700;font-style:normal;pointer-events:none}
+.pfx .inp{padding-left:38px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px}
+@media(max-width:600px){.r2,.r3{grid-template-columns:1fr}}
 
-        /* Form elements */
-        .form-group { margin-bottom: 18px; }
-        .form-group label {
-            display: block;
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-        .form-group label .np { font-size: 0.78rem; color: #94a3b8; font-weight: 500; text-transform: none; letter-spacing: 0; }
-        .input-field, .select-field {
-            width: 100%;
-            padding: 11px 14px;
-            border: 1.5px solid var(--border);
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-family: inherit;
-            color: var(--text);
-            background: #f8fafc;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            appearance: none;
-        }
-        .input-field:focus, .select-field:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
-            background: #fff;
-        }
-        .input-prefix {
-            position: relative;
-        }
-        .input-prefix span {
-            position: absolute;
-            left: 13px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.9rem;
-            color: var(--muted);
-            font-weight: 700;
-            pointer-events: none;
-        }
-        .input-prefix input { padding-left: 42px; }
+/* Info badge */
+.ibadge{display:inline-block;font-size:.65rem;background:var(--bl-lt);color:var(--bl);
+  padding:2px 7px;border-radius:12px;font-weight:700;margin-left:5px}
 
-        .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+/* Category tabs */
+.cat-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.cat-tab{padding:9px 18px;border-radius:10px;font-size:.85rem;font-weight:700;
+  border:2px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;
+  transition:all .2s;font-family:inherit}
+.cat-tab.active{background:var(--pr);color:#fff;border-color:var(--pr);box-shadow:0 4px 14px rgba(124,58,237,.3)}
 
-        /* Section divider */
-        .section-label {
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--primary);
-            margin: 22px 0 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .section-label::after { content: ''; flex: 1; height: 1px; background: #e8e0ff; }
+/* Calculate btn */
+.btn-calc{width:100%;padding:14px;background:linear-gradient(135deg,var(--pr),var(--pr-dk));
+  color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;
+  margin-top:6px;transition:all .25s;box-shadow:0 6px 20px rgba(124,58,237,.35);font-family:inherit;letter-spacing:.3px}
+.btn-calc:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(124,58,237,.45)}
+.btn-calc:active{transform:translateY(0)}
 
-        /* Calculate Button */
-        .btn-calculate {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dk));
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.05rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: all 0.25s;
-            box-shadow: 0 6px 20px rgba(124,58,237,0.35);
-            letter-spacing: 0.3px;
-        }
-        .btn-calculate:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 28px rgba(124,58,237,0.45);
-        }
-        .btn-calculate:active { transform: translateY(0); }
+/* ── RESULT PANEL ── */
+#result-panel{display:none}
+#result-panel.vis{display:block;animation:gin .4s ease}
+@keyframes gin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
-        /* Result Panel */
-        #result-panel { display: none; }
+/* Net Pay hero */
+.net-box{background:linear-gradient(135deg,#059669,#065f46);border-radius:18px;
+  padding:26px 28px;color:#fff;text-align:center;margin-bottom:18px;position:relative;overflow:hidden}
+.net-box::before{content:'';position:absolute;width:160px;height:160px;background:rgba(255,255,255,.06);
+  border-radius:50%;top:-50px;right:-40px}
+.net-lbl{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;opacity:.8;margin-bottom:4px}
+.net-amt{font-size:2.5rem;font-weight:800;letter-spacing:-1px}
+.net-sub{font-size:.82rem;opacity:.75;margin-top:4px}
 
-        .net-pay-box {
-            background: linear-gradient(135deg, #059669, #065f46);
-            border-radius: 18px;
-            padding: 28px;
-            color: #fff;
-            text-align: center;
-            margin-bottom: 24px;
-            position: relative;
-            overflow: hidden;
-        }
-        .net-pay-box::before {
-            content: '';
-            position: absolute;
-            width: 180px; height: 180px;
-            background: rgba(255,255,255,0.06);
-            border-radius: 50%;
-            top: -50px; right: -50px;
-        }
-        .net-pay-label { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.8; margin-bottom: 6px; }
-        .net-pay-amount { font-size: 2.6rem; font-weight: 800; letter-spacing: -1px; }
-        .net-pay-np { font-size: 0.9rem; opacity: 0.75; margin-top: 4px; }
+/* Chips */
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.chip{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:12px 14px;text-align:center}
+.chip .cl{font-size:.68rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.chip .cv{font-size:1.1rem;font-weight:800;margin-top:3px}
+.chip.gr .cv{color:var(--gr)}.chip.re .cv{color:var(--re)}.chip.bl .cv{color:var(--bl)}.chip.pr .cv{color:var(--pr)}
 
-        /* Breakdown rows */
-        .breakdown-section { margin-bottom: 20px; }
-        .breakdown-section-title {
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-            padding-bottom: 6px;
-            border-bottom: 1.5px solid var(--border);
-        }
-        .breakdown-section-title.earning { color: var(--green); border-color: #bbf7d0; }
-        .breakdown-section-title.deduction { color: var(--red); border-color: #fecaca; }
+/* Breakdown */
+.bk-ttl{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:10px;padding-bottom:6px;border-bottom:1.5px solid var(--border)}
+.bk-ttl.earn{color:var(--gr);border-color:#bbf7d0}.bk-ttl.ded{color:var(--re);border-color:#fecaca}
+.brow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;
+  font-size:.88rem;border-bottom:1px dashed #f1f5f9}
+.brow:last-child{border-bottom:none}
+.brow .bl{color:var(--muted)}.brow .bv{font-weight:700}
+.brow .bv.e{color:var(--gr)}.brow .bv.d{color:var(--re)}
+.tot-row{display:flex;justify-content:space-between;padding:9px 13px;border-radius:10px;
+  font-size:.92rem;font-weight:700;margin-top:8px}
+.tot-row.e{background:var(--gr-lt);color:var(--gr)}.tot-row.d{background:var(--re-lt);color:var(--re)}
 
-        .breakdown-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            font-size: 0.9rem;
-            border-bottom: 1px dashed #f1f5f9;
-        }
-        .breakdown-row:last-child { border-bottom: none; }
-        .breakdown-row .label { color: var(--muted); }
-        .breakdown-row .amount { font-weight: 700; }
-        .breakdown-row .amount.earn  { color: var(--green); }
-        .breakdown-row .amount.deduct{ color: var(--red); }
+/* Pay scale table */
+.ps-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:4px}
+.ps-table th,.ps-table td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.ps-table th{background:#f8fafc;font-weight:700;color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.5px}
+.ps-table tr:hover td{background:#f8fafc}
+.ps-table .hi{font-weight:700;color:var(--pr)}
+.ps-table .cat{font-weight:600;color:var(--bl);font-size:.72rem}
 
-        .total-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 14px;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            margin-top: 10px;
-        }
-        .total-row.earn-total   { background: var(--green-lt); color: var(--green); }
-        .total-row.deduct-total { background: var(--red-lt);   color: var(--red);   }
+/* Print */
+.btn-print{width:100%;padding:11px;background:#f1f5f9;border:1.5px solid var(--border);border-radius:11px;
+  font-size:.88rem;font-weight:700;cursor:pointer;margin-top:12px;color:var(--text);transition:all .2s;font-family:inherit}
+.btn-print:hover{background:#e2e8f0}
 
-        /* Summary card chips */
-        .summary-chips {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .chip {
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 14px;
-            text-align: center;
-        }
-        .chip .chip-label { font-size: 0.72rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .chip .chip-value { font-size: 1.15rem; font-weight: 800; margin-top: 3px; }
-        .chip.green .chip-value { color: var(--green); }
-        .chip.red   .chip-value { color: var(--red); }
-        .chip.blue  .chip-value { color: var(--blue); }
-        .chip.purple.chip-value { color: var(--primary); }
+/* Disclaimer */
+.disc{background:var(--am-lt);border:1px solid #fcd34d;border-radius:12px;padding:12px 16px;
+  font-size:.78rem;color:#92400e;margin-top:16px;line-height:1.6}
 
-        /* Print btn */
-        .btn-print {
-            width: 100%;
-            padding: 12px;
-            background: #f1f5f9;
-            border: 1.5px solid var(--border);
-            border-radius: 12px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 12px;
-            color: var(--text);
-            transition: all 0.2s;
-        }
-        .btn-print:hover { background: #e2e8f0; }
-
-        /* Info tooltip chip */
-        .info-badge {
-            display: inline-block;
-            font-size: 0.7rem;
-            background: var(--blue-lt);
-            color: var(--blue);
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-weight: 700;
-            margin-left: 6px;
-        }
-
-        /* Table for pay scales */
-        .scale-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        .scale-table th, .scale-table td {
-            padding: 9px 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-        .scale-table th { background: #f8fafc; font-weight: 700; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .scale-table tr:hover td { background: #f8fafc; }
-        .scale-table td.highlight { font-weight: 700; color: var(--primary); }
-
-        @media print {
-            .app-header, .hero-banner, .btn-calculate, .btn-print, #form-section { display: none !important; }
-            #result-panel { display: block !important; }
-            body { background: white; }
-            .card { box-shadow: none; border: 1px solid #ddd; }
-        }
-
-        /* Animated glow on result card */
-        @keyframes glow-in {
-            from { opacity:0; transform: translateY(16px); }
-            to   { opacity:1; transform: translateY(0); }
-        }
-        #result-panel.visible { display: block; animation: glow-in 0.4s ease; }
-    </style>
+@media print{
+  .hdr,.hero,.cat-tabs,.btn-calc,.btn-print,#form-section,.disc{display:none!important}
+  #result-panel{display:block!important}
+  body{background:#fff}
+  .card{box-shadow:none;border:1px solid #ddd}
+}
+</style>
 </head>
-
 <body>
 
-    <!-- App Header -->
-    <header class="app-header">
-        <div class="header-container">
-            <div class="brand-logo">
-                <div class="logo-icon">💰</div>
-                <div class="brand-titles">
-                    <h1>Teacher Salary Calculator</h1>
-                    <p>शिक्षक तलब क्याल्कुलेटर — Digital Khatapana</p>
-                </div>
-            </div>
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <a href="digitalkhatapana.html" class="btn-header-action">← Dashboard (ड्यासबोर्ड)</a>
-            </div>
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="brand">
+      <div class="logo">💰</div>
+      <div>
+        <h1 id="h-title">Salary Calculator 2083</h1>
+        <p id="h-sub">Nepal Govt. — Civil Service & Teachers | New Scale from Shrawan 1, 2083</p>
+      </div>
+    </div>
+    <div class="hdr-actions">
+      <div class="lang-toggle">
+        <button id="btn-en" class="active" onclick="setLang('en')">🇬🇧 English</button>
+        <button id="btn-np" onclick="setLang('np')">🇳🇵 नेपाली</button>
+      </div>
+      <a href="digitalkhatapana.html" class="btn-hdr" id="h-home">← Dashboard</a>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <h2 id="hero-title">🇳🇵 Nepal Government Salary Calculator</h2>
+    <p id="hero-sub">Civil Service (PSC), Teachers & All Government Employees — Complete Monthly Salary with Deductions</p>
+    <div class="badge" id="hero-badge">✅ New Salary Scale effective from Shrawan 1, 2083 (July 17, 2026) | 10% Basic Hike + 10% Incentive Allowance | Rs.5,000 Dearness Allowance</div>
+  </div>
+
+  <div class="grid">
+
+    <!-- LEFT: FORM -->
+    <div id="form-section">
+      <div class="card">
+        <div class="card-ttl"><span class="ico">📋</span> <span id="lbl-details">Employee Details</span></div>
+
+        <!-- Category Tabs -->
+        <div id="lbl-category" style="font-size:.82rem;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Employee Category (कर्मचारी वर्ग)</div>
+        <div class="cat-tabs">
+          <button class="cat-tab active" id="tab-civil" onclick="setCategory('civil')">🏛️ <span id="t-civil">Civil Service</span></button>
+          <button class="cat-tab" id="tab-teacher" onclick="setCategory('teacher')">📚 <span id="t-teacher">Teacher (TSC)</span></button>
+          <button class="cat-tab" id="tab-health" onclick="setCategory('health')">🏥 <span id="t-health">Health Service</span></button>
+          <button class="cat-tab" id="tab-security" onclick="setCategory('security')">🪖 <span id="t-security">Security Forces</span></button>
         </div>
-    </header>
 
-    <main class="page-main">
-
-        <!-- Hero -->
-        <div class="hero-banner">
-            <h2>💰 Teacher Salary Calculator</h2>
-            <p>Nepal Government School Teacher — Monthly Net Pay, Allowances & Deductions Calculator<br>
-               <small>नेपाल सरकारी विद्यालय शिक्षक — मासिक खुद तलब, भत्ता र कट्टी क्याल्कुलेटर</small></p>
+        <!-- Level & Grade -->
+        <div class="sec-lbl" id="lbl-position-sec">Position & Level (पद तथा तह)</div>
+        <div class="r2">
+          <div class="fg">
+            <label id="lbl-level">Level / Class <span class="np">(तह / श्रेणी)</span></label>
+            <select id="s-level" class="sel" onchange="onLevelChange()">
+              <option value="">— Select —</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label id="lbl-position">Position <span class="np">(पद)</span></label>
+            <select id="s-position" class="sel" onchange="onPositionChange()">
+              <option value="">— Select Level First —</option>
+            </select>
+          </div>
         </div>
 
-        <div class="calc-grid">
-
-            <!-- LEFT: Input Form -->
-            <div id="form-section">
-                <div class="card">
-                    <div class="card-title">
-                        <span>📋</span> Enter Teacher Details (शिक्षकको विवरण)
-                    </div>
-
-                    <!-- Basic Info -->
-                    <div class="section-label">Basic Information (आधारभूत जानकारी)</div>
-                    <div class="row2">
-                        <div class="form-group">
-                            <label>Teacher Level <span class="np">(श्रेणी)</span></label>
-                            <select id="teacher-level" class="select-field" onchange="onLevelChange()">
-                                <option value="">— Select Level —</option>
-                                <option value="primary">Primary (प्राथमिक) — Class 1-5</option>
-                                <option value="lower-secondary">Lower Secondary (निम्न माध्यमिक) — Class 6-8</option>
-                                <option value="secondary">Secondary (माध्यमिक) — Class 9-10</option>
-                                <option value="higher-secondary">Higher Secondary (उच्च माध्यमिक) — Class 11-12</option>
-                                <option value="private">Private School (निजी विद्यालय)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Position / Grade <span class="np">(पद / तह)</span></label>
-                            <select id="teacher-grade" class="select-field" onchange="onGradeChange()">
-                                <option value="">— Select Grade —</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row2">
-                        <div class="form-group">
-                            <label>Service Years <span class="np">(सेवा अवधि)</span></label>
-                            <input type="number" id="service-years" class="input-field" min="0" max="40" placeholder="e.g. 12" value="5">
-                        </div>
-                        <div class="form-group">
-                            <label>Scale Step <span class="np">(वृद्धि)</span> <span class="info-badge">1–15</span></label>
-                            <input type="number" id="scale-step" class="input-field" min="1" max="15" placeholder="e.g. 3" value="1">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Basic Pay (मूल तलब) — रु. <span class="info-badge">Auto or Manual</span></label>
-                        <div class="input-prefix">
-                            <span>रु.</span>
-                            <input type="number" id="basic-pay" class="input-field" min="0" placeholder="Enter or select above to auto-fill" oninput="onManualBasic()">
-                        </div>
-                    </div>
-
-                    <!-- Allowances -->
-                    <div class="section-label">Allowances (भत्ताहरू)</div>
-                    <div class="row2">
-                        <div class="form-group">
-                            <label>Grade Allowance <span class="np">(श्रेणी भत्ता)</span></label>
-                            <div class="input-prefix"><span>रु.</span>
-                                <input type="number" id="grade-allowance" class="input-field" value="0" min="0">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Dearness Allowance <span class="np">(मँहगी भत्ता)</span></label>
-                            <div class="input-prefix"><span>रु.</span>
-                                <input type="number" id="da-allowance" class="input-field" value="0" min="0">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row2">
-                        <div class="form-group">
-                            <label>Local Allowance <span class="np">(स्थानीय भत्ता)</span></label>
-                            <div class="input-prefix"><span>रु.</span>
-                                <input type="number" id="local-allowance" class="input-field" value="0" min="0">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Technical Allowance <span class="np">(प्राविधिक भत्ता)</span></label>
-                            <div class="input-prefix"><span>रु.</span>
-                                <input type="number" id="technical-allowance" class="input-field" value="0" min="0">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row2">
-                        <div class="form-group">
-                            <label>Transport Allowance <span class="np">(यातायात भत्ता)</span></label>
-                            <div class="input-prefix"><span>रु.</span>
-                                <input type="number" id="transport-allowance" class="input-field" value="0" min="0">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Medical Allowance <span class="np">(स्वास्थ्य भत्ता)</span></label>
-                            <div class="input-prefix"><span>रु.</span>
-                                <input type="number" id="medical-allowance" class="input-field" value="0" min="0">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Other Allowance <span class="np">(अन्य भत्ता)</span></label>
-                        <div class="input-prefix"><span>रु.</span>
-                            <input type="number" id="other-allowance" class="input-field" value="0" min="0">
-                        </div>
-                    </div>
-
-                    <!-- Deductions -->
-                    <div class="section-label">Deductions (कट्टीहरू)</div>
-                    <div class="row2">
-                        <div class="form-group">
-                            <label>PF Employee Rate <span class="info-badge">Default 10%</span></label>
-                            <div class="input-prefix"><span>%</span>
-                                <input type="number" id="pf-rate" class="input-field" value="10" min="0" max="30" style="padding-left:36px;">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>CIT Rate <span class="info-badge">Default 1%</span></label>
-                            <div class="input-prefix"><span>%</span>
-                                <input type="number" id="cit-rate" class="input-field" value="1" min="0" max="10" style="padding-left:36px;">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row2">
-                        <div class="form-group">
-                            <label>Loan Deduction <span class="np">(ऋण कट्टी)</span></label>
-                            <div class="input-prefix"><span>रु.</span>
-                                <input type="number" id="loan-deduction" class="input-field" value="0" min="0">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Other Deduction <span class="np">(अन्य कट्टी)</span></label>
-                            <div class="input-prefix"><span>रु.</span>
-                                <input type="number" id="other-deduction" class="input-field" value="0" min="0">
-                            </div>
-                        </div>
-                    </div>
-
-                    <button class="btn-calculate" onclick="calculateSalary()">
-                        🧮 Calculate Net Salary (खुद तलब हिसाब गर्नुहोस्)
-                    </button>
-                </div>
-
-                <!-- Pay Scale Reference Table -->
-                <div class="card" style="margin-top:24px;">
-                    <div class="card-title"><span>📊</span> Nepal Teacher Pay Scale Reference (तलब मानदण्ड)</div>
-                    <table class="scale-table">
-                        <thead>
-                            <tr>
-                                <th>Level / Grade (श्रेणी)</th>
-                                <th>Position (पद)</th>
-                                <th>Basic Pay रु. (Step 1)</th>
-                                <th>Increment रु.</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>Primary (प्राथमिक)</td><td>तह ४ — Assistant Teacher</td><td class="highlight">18,000</td><td>700</td></tr>
-                            <tr><td>Primary (प्राथमिक)</td><td>तह ५ — Teacher</td><td class="highlight">21,000</td><td>800</td></tr>
-                            <tr><td>Lower Secondary</td><td>तह ५ — Teacher</td><td class="highlight">22,500</td><td>850</td></tr>
-                            <tr><td>Lower Secondary</td><td>तह ६ — Senior Teacher</td><td class="highlight">26,500</td><td>1,000</td></tr>
-                            <tr><td>Secondary (माध्यमिक)</td><td>तह ७ — Teacher</td><td class="highlight">31,000</td><td>1,200</td></tr>
-                            <tr><td>Secondary (माध्यमिक)</td><td>तह ८ — Senior Teacher</td><td class="highlight">38,000</td><td>1,500</td></tr>
-                            <tr><td>Higher Secondary</td><td>तह ९ — Lecturer</td><td class="highlight">47,000</td><td>2,000</td></tr>
-                            <tr><td>Higher Secondary</td><td>तह १० — Senior Lecturer</td><td class="highlight">58,000</td><td>2,500</td></tr>
-                        </tbody>
-                    </table>
-                    <p style="font-size:0.78rem; color:var(--muted); margin-top:12px; line-height:1.5;">
-                        ⚠️ Reference values based on Nepal Government pay scale (GoN Civil Service). Exact figures may vary by fiscal year. Always verify with your school's finance office.
-                    </p>
-                </div>
-            </div>
-
-            <!-- RIGHT: Result Panel -->
-            <div id="result-panel">
-                <!-- Net Pay -->
-                <div class="net-pay-box">
-                    <div class="net-pay-label">Monthly Net Pay (मासिक खुद तलब)</div>
-                    <div class="net-pay-amount" id="res-net-pay">रु. 0</div>
-                    <div class="net-pay-np" id="res-net-pay-np">—</div>
-                </div>
-
-                <!-- Summary Chips -->
-                <div class="summary-chips">
-                    <div class="chip green">
-                        <div class="chip-label">Gross Earning (कुल आय)</div>
-                        <div class="chip-value" id="res-gross">रु. 0</div>
-                    </div>
-                    <div class="chip red">
-                        <div class="chip-label">Total Deduction (कुल कट्टी)</div>
-                        <div class="chip-value" id="res-total-deduct">रु. 0</div>
-                    </div>
-                    <div class="chip blue">
-                        <div class="chip-label">Annual Net Pay (वार्षिक)</div>
-                        <div class="chip-value" id="res-annual">रु. 0</div>
-                    </div>
-                    <div class="chip">
-                        <div class="chip-label">Employer PF (नियोक्ता PF)</div>
-                        <div class="chip-value" id="res-employer-pf" style="color:var(--primary);">रु. 0</div>
-                    </div>
-                </div>
-
-                <!-- Earnings Breakdown -->
-                <div class="card" style="margin-bottom:20px;">
-                    <div class="breakdown-section">
-                        <div class="breakdown-section-title earning">✅ Earnings Breakdown (आयको विवरण)</div>
-                        <div class="breakdown-row"><span class="label">Basic Pay (मूल तलब)</span><span class="amount earn" id="r-basic">रु. 0</span></div>
-                        <div class="breakdown-row"><span class="label">Grade Allowance (श्रेणी भत्ता)</span><span class="amount earn" id="r-grade-al">रु. 0</span></div>
-                        <div class="breakdown-row"><span class="label">Dearness Allowance (मँहगी भत्ता)</span><span class="amount earn" id="r-da">रु. 0</span></div>
-                        <div class="breakdown-row"><span class="label">Local Allowance (स्थानीय भत्ता)</span><span class="amount earn" id="r-local">रु. 0</span></div>
-                        <div class="breakdown-row"><span class="label">Technical Allowance (प्राविधिक)</span><span class="amount earn" id="r-tech">रु. 0</span></div>
-                        <div class="breakdown-row"><span class="label">Transport Allowance (यातायात)</span><span class="amount earn" id="r-transport">रु. 0</span></div>
-                        <div class="breakdown-row"><span class="label">Medical Allowance (स्वास्थ्य)</span><span class="amount earn" id="r-medical">रु. 0</span></div>
-                        <div class="breakdown-row"><span class="label">Other Allowance (अन्य भत्ता)</span><span class="amount earn" id="r-other-al">रु. 0</span></div>
-                        <div class="total-row earn-total"><span>Total Gross Earning</span><span id="r-gross-total">रु. 0</span></div>
-                    </div>
-                </div>
-
-                <!-- Deductions Breakdown -->
-                <div class="card" style="margin-bottom:20px;">
-                    <div class="breakdown-section">
-                        <div class="breakdown-section-title deduction">❌ Deductions (कट्टीको विवरण)</div>
-                        <div class="breakdown-row"><span class="label">PF — Employee (<span id="r-pf-rate">10</span>%)</span><span class="amount deduct" id="r-pf">रु. 0</span></div>
-                        <div class="breakdown-row"><span class="label">CIT (<span id="r-cit-rate">1</span>%)</span><span class="amount deduct" id="r-cit">रु. 0</span></div>
-                        <div class="breakdown-row"><span class="label">Income Tax (आयकर)</span><span class="amount deduct" id="r-tax">रु. 0</span></div>
-                        <div class="breakdown-row"><span class="label">Loan Deduction (ऋण)</span><span class="amount deduct" id="r-loan">रु. 0</span></div>
-                        <div class="breakdown-row"><span class="label">Other Deduction (अन्य)</span><span class="amount deduct" id="r-other-ded">रु. 0</span></div>
-                        <div class="total-row deduct-total"><span>Total Deduction</span><span id="r-deduct-total">रु. 0</span></div>
-                    </div>
-                </div>
-
-                <!-- Employer Contribution -->
-                <div class="card" style="margin-bottom:20px; border-left: 4px solid var(--primary);">
-                    <div class="card-title" style="font-size:0.95rem;"><span>🏦</span> Employer Contribution (नियोक्ता अंशदान)</div>
-                    <div class="breakdown-row"><span class="label">Employer PF (10%)</span><span class="amount" style="color:var(--primary); font-weight:700;" id="r-employer-pf2">रु. 0</span></div>
-                    <div class="breakdown-row"><span class="label">Total PF Deposited per Month</span><span class="amount" style="color:var(--primary); font-weight:700;" id="r-total-pf">रु. 0</span></div>
-                </div>
-
-                <button class="btn-print" onclick="window.print()">🖨️ Print Salary Slip (तलब स्लिप प्रिन्ट गर्नुहोस्)</button>
-            </div>
-
+        <div class="r2">
+          <div class="fg">
+            <label id="lbl-step">Scale Step <span class="np">(तलब वृद्धि)</span> <span class="ibadge">1–20</span></label>
+            <input type="number" id="i-step" class="inp" min="1" max="20" value="1" oninput="onStepChange()">
+          </div>
+          <div class="fg">
+            <label id="lbl-service">Service Years <span class="np">(सेवा अवधि)</span></label>
+            <input type="number" id="i-service" class="inp" min="0" max="40" value="5" placeholder="e.g. 12">
+          </div>
         </div>
-    </main>
 
-    <script>
-        // ── Pay scale data ──
-        const PAY_SCALES = {
-            primary: [
-                { label: 'तह ४ — Assistant Teacher',     basic: 18000, increment: 700  },
-                { label: 'तह ५ — Teacher',               basic: 21000, increment: 800  },
-            ],
-            'lower-secondary': [
-                { label: 'तह ५ — Teacher',               basic: 22500, increment: 850  },
-                { label: 'तह ६ — Senior Teacher',        basic: 26500, increment: 1000 },
-            ],
-            secondary: [
-                { label: 'तह ७ — Teacher',               basic: 31000, increment: 1200 },
-                { label: 'तह ८ — Senior Teacher',        basic: 38000, increment: 1500 },
-            ],
-            'higher-secondary': [
-                { label: 'तह ९ — Lecturer',              basic: 47000, increment: 2000 },
-                { label: 'तह १० — Senior Lecturer',      basic: 58000, increment: 2500 },
-            ],
-            private: [
-                { label: 'Junior Teacher',               basic: 15000, increment: 500  },
-                { label: 'Teacher',                      basic: 20000, increment: 700  },
-                { label: 'Senior Teacher',               basic: 28000, increment: 1000 },
-                { label: 'Department Head',              basic: 38000, increment: 1500 },
-            ],
-        };
+        <div class="fg">
+          <label id="lbl-basic">Basic Pay (मूल तलब) <span class="ibadge">रु.</span></label>
+          <div class="pfx"><i>रु.</i><input type="number" id="i-basic" class="inp" placeholder="Auto-filled or enter manually" oninput="manualBasic=true"></div>
+        </div>
 
-        // ── Nepal income tax slabs (monthly, FY 2081/82 approx.) ──
-        function calcIncomeTax(annualTaxable) {
-            let tax = 0;
-            const slabs = [
-                { upto: 500000, rate: 0.01 },
-                { upto: 700000, rate: 0.10 },
-                { upto: 1000000,rate: 0.20 },
-                { upto: 2000000,rate: 0.30 },
-                { upto: Infinity,rate: 0.36 },
-            ];
-            let prev = 0;
-            for (const slab of slabs) {
-                if (annualTaxable <= 0) break;
-                const chunk = Math.min(annualTaxable - prev, slab.upto - prev);
-                if (chunk <= 0) { prev = slab.upto; continue; }
-                tax += chunk * slab.rate;
-                prev = slab.upto;
-                if (annualTaxable <= slab.upto) break;
-            }
-            return tax;
-        }
+        <!-- New 2083 Components -->
+        <div class="sec-lbl" id="lbl-2083-sec">2083 New Salary Components (नयाँ तलब अंशहरू)</div>
+        <div class="r2">
+          <div class="fg">
+            <label id="lbl-incentive">Incentive Allowance (प्रोत्साहन भत्ता) <span class="ibadge">10% of Basic</span></label>
+            <div class="pfx"><i>रु.</i><input type="number" id="i-incentive" class="inp" value="0" placeholder="Auto-calculated"></div>
+          </div>
+          <div class="fg">
+            <label id="lbl-da">Dearness Allowance (मँहगी भत्ता) <span class="ibadge">Rs.5,000</span></label>
+            <div class="pfx"><i>रु.</i><input type="number" id="i-da" class="inp" value="5000"></div>
+          </div>
+        </div>
 
-        function fmt(n) {
-            return 'रु. ' + Math.round(n).toLocaleString('en-IN');
-        }
+        <!-- Other Allowances -->
+        <div class="sec-lbl" id="lbl-allowances-sec">Other Allowances (अन्य भत्ताहरू)</div>
+        <div class="r2">
+          <div class="fg">
+            <label id="lbl-grade-al">Grade Allowance <span class="np">(श्रेणी भत्ता)</span></label>
+            <div class="pfx"><i>रु.</i><input type="number" id="i-grade-al" class="inp" value="0"></div>
+          </div>
+          <div class="fg">
+            <label id="lbl-local-al">Local Allowance <span class="np">(स्थानीय भत्ता)</span></label>
+            <div class="pfx"><i>रु.</i><input type="number" id="i-local-al" class="inp" value="0"></div>
+          </div>
+        </div>
+        <div class="r2">
+          <div class="fg">
+            <label id="lbl-remote-al">Remote Area Allowance <span class="np">(दुर्गम भत्ता)</span></label>
+            <div class="pfx"><i>रु.</i><input type="number" id="i-remote-al" class="inp" value="0"></div>
+          </div>
+          <div class="fg">
+            <label id="lbl-tech-al">Technical/Special Allowance <span class="np">(प्राविधिक)</span></label>
+            <div class="pfx"><i>रु.</i><input type="number" id="i-tech-al" class="inp" value="0"></div>
+          </div>
+        </div>
+        <div class="r2">
+          <div class="fg">
+            <label id="lbl-transport">Transport Allowance <span class="np">(यातायात)</span></label>
+            <div class="pfx"><i>रु.</i><input type="number" id="i-transport" class="inp" value="0"></div>
+          </div>
+          <div class="fg">
+            <label id="lbl-other-al">Other Allowance <span class="np">(अन्य)</span></label>
+            <div class="pfx"><i>रु.</i><input type="number" id="i-other-al" class="inp" value="0"></div>
+          </div>
+        </div>
 
-        function onLevelChange() {
-            const level = document.getElementById('teacher-level').value;
-            const gradeEl = document.getElementById('teacher-grade');
-            gradeEl.innerHTML = '<option value="">— Select Grade —</option>';
-            if (!level || !PAY_SCALES[level]) return;
-            PAY_SCALES[level].forEach((g, i) => {
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.textContent = g.label;
-                gradeEl.appendChild(opt);
-            });
-            gradeEl.value = '';
-            document.getElementById('basic-pay').value = '';
-        }
+        <!-- Deductions -->
+        <div class="sec-lbl" id="lbl-ded-sec">Deductions (कट्टीहरू)</div>
+        <div class="r3">
+          <div class="fg">
+            <label id="lbl-pf-r">PF Employee % <span class="ibadge">10%</span></label>
+            <div class="pfx"><i>%</i><input type="number" id="i-pf" class="inp" value="10" min="0" max="20" style="padding-left:30px"></div>
+          </div>
+          <div class="fg">
+            <label id="lbl-cit-r">CIT % <span class="ibadge">1%</span></label>
+            <div class="pfx"><i>%</i><input type="number" id="i-cit" class="inp" value="1" min="0" max="5" style="padding-left:30px"></div>
+          </div>
+          <div class="fg">
+            <label id="lbl-loan">Loan Deduction <span class="np">(ऋण)</span></label>
+            <div class="pfx"><i>रु.</i><input type="number" id="i-loan" class="inp" value="0"></div>
+          </div>
+        </div>
+        <div class="fg">
+          <label id="lbl-other-ded">Other Deduction <span class="np">(अन्य कट्टी)</span></label>
+          <div class="pfx"><i>रु.</i><input type="number" id="i-other-ded" class="inp" value="0"></div>
+        </div>
 
-        function onGradeChange() {
-            const level = document.getElementById('teacher-level').value;
-            const gradeIdx = document.getElementById('teacher-grade').value;
-            if (!level || gradeIdx === '') return;
-            const scale = PAY_SCALES[level][parseInt(gradeIdx)];
-            const step  = parseInt(document.getElementById('scale-step').value) || 1;
-            const basic = scale.basic + (step - 1) * scale.increment;
-            document.getElementById('basic-pay').value = basic;
-        }
+        <button class="btn-calc" onclick="calculate()" id="btn-calc">🧮 Calculate Net Salary (खुद तलब हिसाब गर्नुहोस्)</button>
+      </div>
 
-        function onManualBasic() {
-            // User typed manually — clear grade auto-selection
-        }
+      <!-- Pay Scale Table -->
+      <div class="card">
+        <div class="card-ttl"><span class="ico">📊</span><span id="lbl-table-ttl">Official Pay Scale — 2083 Shrawan 1 (New)</span></div>
+        <div style="overflow-x:auto">
+        <table class="ps-table" id="pay-table">
+          <thead><tr>
+            <th id="th-cat">Category</th>
+            <th id="th-lv">Level/Class</th>
+            <th id="th-pos">Position</th>
+            <th id="th-basic">Basic Pay (रु.)</th>
+            <th id="th-incr">Increment</th>
+          </tr></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+        </div>
+        <div class="disc" id="lbl-disc">
+          ⚠️ <strong>Note:</strong> Salary figures are based on the Nepal Government new pay scale effective Shrawan 1, 2083 (July 17, 2026) — Council of Ministers approved July 22, 2026. Includes 10% basic hike + 10% monthly incentive allowance + Rs.5,000 dearness allowance. Actual salary may vary; verify with your department's finance office or FCGO.
+        </div>
+      </div>
+    </div>
 
-        // Also recalc basic when step changes
-        document.getElementById('scale-step').addEventListener('input', onGradeChange);
+    <!-- RIGHT: RESULT -->
+    <div id="result-panel">
+      <!-- Employee Info Summary -->
+      <div class="card" style="border-top:4px solid var(--pr)">
+        <div class="card-ttl"><span class="ico">🧾</span><span id="lbl-slip">Salary Slip — 2083 Shrawan</span></div>
+        <div style="font-size:.82rem;color:var(--muted);line-height:1.8">
+          <div>👤 <span id="res-category-lbl">Category:</span> <strong id="res-cat">—</strong></div>
+          <div>🏷️ <span id="res-position-lbl">Position:</span> <strong id="res-pos">—</strong></div>
+          <div>📅 <span id="res-step-lbl">Scale Step:</span> <strong id="res-step">—</strong></div>
+          <div>📆 <span id="res-service-lbl">Service Years:</span> <strong id="res-svc">—</strong></div>
+        </div>
+      </div>
 
-        function calculateSalary() {
-            // ── Earnings ──
-            const basic      = parseFloat(document.getElementById('basic-pay').value)          || 0;
-            const gradeAl    = parseFloat(document.getElementById('grade-allowance').value)    || 0;
-            const da         = parseFloat(document.getElementById('da-allowance').value)       || 0;
-            const local      = parseFloat(document.getElementById('local-allowance').value)    || 0;
-            const tech       = parseFloat(document.getElementById('technical-allowance').value)|| 0;
-            const transport  = parseFloat(document.getElementById('transport-allowance').value)|| 0;
-            const medical    = parseFloat(document.getElementById('medical-allowance').value)  || 0;
-            const otherAl    = parseFloat(document.getElementById('other-allowance').value)    || 0;
+      <!-- Net Pay -->
+      <div class="net-box">
+        <div class="net-lbl" id="lbl-net-pay">Monthly Net Pay (मासिक खुद तलब)</div>
+        <div class="net-amt" id="res-net">रु. 0</div>
+        <div class="net-sub" id="res-net-sub">Annual: रु. 0 &nbsp;|&nbsp; Daily ≈ रु. 0</div>
+      </div>
 
-            const gross = basic + gradeAl + da + local + tech + transport + medical + otherAl;
+      <!-- Chips -->
+      <div class="chips">
+        <div class="chip gr"><div class="cl" id="lbl-gross-chip">Gross Earning</div><div class="cv" id="res-gross">रु. 0</div></div>
+        <div class="chip re"><div class="cl" id="lbl-ded-chip">Total Deduction</div><div class="cv" id="res-ded">रु. 0</div></div>
+        <div class="chip bl"><div class="cl" id="lbl-annual-chip">Annual Net Pay</div><div class="cv" id="res-annual">रु. 0</div></div>
+        <div class="chip pr"><div class="cl" id="lbl-emp-pf-chip">Employer PF</div><div class="cv" id="res-epf">रु. 0</div></div>
+      </div>
 
-            // ── Deductions ──
-            const pfRate     = parseFloat(document.getElementById('pf-rate').value) / 100  || 0.10;
-            const citRate    = parseFloat(document.getElementById('cit-rate').value) / 100 || 0.01;
-            const loan       = parseFloat(document.getElementById('loan-deduction').value)  || 0;
-            const otherDed   = parseFloat(document.getElementById('other-deduction').value) || 0;
+      <!-- Earnings -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="bk-ttl earn" id="lbl-earnings-ttl">✅ Earnings Breakdown (आयको विवरण)</div>
+        <div class="brow"><span class="bl" id="r-lbl-basic">Basic Pay (मूल तलब)</span><span class="bv e" id="r-basic">रु. 0</span></div>
+        <div class="brow"><span class="bl" id="r-lbl-incentive">Incentive Allowance 10% (प्रोत्साहन भत्ता)</span><span class="bv e" id="r-incentive">रु. 0</span></div>
+        <div class="brow"><span class="bl" id="r-lbl-da">Dearness Allowance (मँहगी भत्ता)</span><span class="bv e" id="r-da">रु. 0</span></div>
+        <div class="brow"><span class="bl" id="r-lbl-grade-al">Grade Allowance (श्रेणी भत्ता)</span><span class="bv e" id="r-grade-al">रु. 0</span></div>
+        <div class="brow"><span class="bl" id="r-lbl-local-al">Local Allowance (स्थानीय भत्ता)</span><span class="bv e" id="r-local-al">रु. 0</span></div>
+        <div class="brow"><span class="bl" id="r-lbl-remote-al">Remote Area Allowance (दुर्गम)</span><span class="bv e" id="r-remote-al">रु. 0</span></div>
+        <div class="brow"><span class="bl" id="r-lbl-tech-al">Technical Allowance (प्राविधिक)</span><span class="bv e" id="r-tech-al">रु. 0</span></div>
+        <div class="brow"><span class="bl" id="r-lbl-transport">Transport (यातायात)</span><span class="bv e" id="r-transport">रु. 0</span></div>
+        <div class="brow"><span class="bl" id="r-lbl-other-al">Other Allowance (अन्य भत्ता)</span><span class="bv e" id="r-other-al">रु. 0</span></div>
+        <div class="tot-row e"><span id="r-lbl-gross-tot">Total Gross Earning</span><span id="r-gross-tot">रु. 0</span></div>
+      </div>
 
-            const pf  = basic * pfRate;   // PF on basic only
-            const cit = basic * citRate;  // CIT on basic only
+      <!-- Deductions -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="bk-ttl ded" id="lbl-ded-ttl">❌ Deductions (कट्टीको विवरण)</div>
+        <div class="brow"><span class="bl" id="r-lbl-pf">Employee PF (10% of Basic)</span><span class="bv d" id="r-pf">रु. 0</span></div>
+        <div class="brow"><span class="bl" id="r-lbl-cit">CIT (1% of Basic)</span><span class="bv d" id="r-cit">रु. 0</span></div>
+        <div class="brow"><span class="bl" id="r-lbl-tax">Income Tax (आयकर)</span><span class="bv d" id="r-tax">रु. 0</span></div>
+        <div class="brow"><span class="bl" id="r-lbl-loan">Loan (ऋण)</span><span class="bv d" id="r-loan">रु. 0</span></div>
+        <div class="brow"><span class="bl" id="r-lbl-other-ded">Other Deduction (अन्य)</span><span class="bv d" id="r-other-ded">रु. 0</span></div>
+        <div class="tot-row d"><span id="r-lbl-ded-tot">Total Deduction</span><span id="r-ded-tot">रु. 0</span></div>
+      </div>
 
-            // Income tax on (gross - pf - cit) annual
-            const annualTaxable = (gross - pf - cit) * 12;
-            const annualTax = calcIncomeTax(annualTaxable);
-            const monthlyTax = annualTax / 12;
+      <!-- Employer PF -->
+      <div class="card" style="border-left:4px solid var(--pr);margin-bottom:16px">
+        <div class="bk-ttl" style="color:var(--pr)" id="lbl-emp-ttl">🏦 Employer Contribution (नियोक्ता अंशदान)</div>
+        <div class="brow"><span class="bl" id="r-lbl-epf">Employer PF (10%)</span><span class="bv" style="color:var(--pr)" id="r-epf">रु. 0</span></div>
+        <div class="brow"><span class="bl" id="r-lbl-tpf">Total PF per Month</span><span class="bv" style="color:var(--pr)" id="r-tpf">रु. 0</span></div>
+      </div>
 
-            const totalDeduct = pf + cit + monthlyTax + loan + otherDed;
-            const netPay = gross - totalDeduct;
+      <button class="btn-print" onclick="window.print()" id="btn-print">🖨️ Print Salary Slip (तलब स्लिप प्रिन्ट)</button>
+    </div>
 
-            const employerPF = basic * 0.10;  // employer always 10%
-            const totalPF    = pf + employerPF;
+  </div>
+</div>
 
-            // ── Render results ──
-            document.getElementById('res-net-pay').textContent    = fmt(netPay);
-            document.getElementById('res-net-pay-np').textContent = `Annual: ${fmt(netPay * 12)}  |  Daily ≈ ${fmt(netPay / 30)}`;
-            document.getElementById('res-gross').textContent      = fmt(gross);
-            document.getElementById('res-total-deduct').textContent = fmt(totalDeduct);
-            document.getElementById('res-annual').textContent     = fmt(netPay * 12);
-            document.getElementById('res-employer-pf').textContent= fmt(employerPF);
+<script>
+// ══════════════════════════════════════════════════════
+// PAY SCALE DATA — Nepal Govt 2083 Shrawan 1
+// Basic = new scale after 10% hike from 2083 Shrawan
+// Increment = per step / annual increment
+// ══════════════════════════════════════════════════════
+const PAY_DATA = {
+  civil: {
+    label: { en: 'Civil Service (निजामती सेवा)', np: 'निजामती सेवा (Civil Service)' },
+    levels: [
+      {
+        key:'classless', label:{en:'Classless (श्रेणीविहीन)', np:'श्रेणीविहीन (Classless)'},
+        positions:[
+          {label:{en:'Office Assistant / Peon', np:'कार्यालय सहयोगी / चपरासी'}, basic:28984, incr:800},
+          {label:{en:'Driver / Technician', np:'चालक / प्राविधिक'}, basic:30500, incr:900},
+        ]
+      },
+      {
+        key:'nag3', label:{en:'Non-Gazetted 3rd Class (रानपत्र अनंकित तृतीय)', np:'रानपत्र अनंकित तृतीय (Non-Gaz. 3rd)'},
+        positions:[
+          {label:{en:'Assistant / Clerk', np:'सहायक / लेखापढी'}, basic:30373, incr:950},
+          {label:{en:'Junior Assistant', np:'जुनियर सहायक'}, basic:31500, incr:1000},
+        ]
+      },
+      {
+        key:'nag2', label:{en:'Non-Gazetted 2nd Class (रानपत्र अनंकित द्वितीय)', np:'रानपत्र अनंकित द्वितीय (Non-Gaz. 2nd)'},
+        positions:[
+          {label:{en:'Senior Assistant / Accountant', np:'वरिष्ठ सहायक / लेखाकार'}, basic:36192, incr:1150},
+          {label:{en:'Supervisor', np:'सुपरभाइजर'}, basic:37500, incr:1200},
+        ]
+      },
+      {
+        key:'nag1', label:{en:'Non-Gazetted 1st Class (रानपत्र अनंकित प्रथम)', np:'रानपत्र अनंकित प्रथम (Non-Gaz. 1st)'},
+        positions:[
+          {label:{en:'Section Officer (Nayab Subba)', np:'नायब सुब्बा / खरिदार'}, basic:38203, incr:1250},
+          {label:{en:'Senior Section Officer', np:'वरिष्ठ खरिदार'}, basic:40000, incr:1300},
+        ]
+      },
+      {
+        key:'gaz3', label:{en:'Gazetted 3rd Class — तह ७ (राजपत्राङ्कित तृतीय)', np:'राजपत्राङ्कित तृतीय — तह ७'},
+        positions:[
+          {label:{en:'Section Officer (Sakha Adhikrit)', np:'शाखा अधिकृत'}, basic:48058, incr:1600},
+          {label:{en:'Officer', np:'अधिकृत'}, basic:49500, incr:1650},
+        ]
+      },
+      {
+        key:'gaz2', label:{en:'Gazetted 2nd Class — तह ८ (राजपत्राङ्कित द्वितीय)', np:'राजपत्राङ्कित द्वितीय — तह ८'},
+        positions:[
+          {label:{en:'Under Secretary (Upasachiv)', np:'उपसचिव'}, basic:53611, incr:1900},
+          {label:{en:'Senior Officer', np:'वरिष्ठ अधिकृत'}, basic:55000, incr:2000},
+        ]
+      },
+      {
+        key:'gaz1', label:{en:'Gazetted 1st Class — तह ९ (राजपत्राङ्कित प्रथम)', np:'राजपत्राङ्कित प्रथम — तह ९'},
+        positions:[
+          {label:{en:'Joint Secretary (Sahayak Sachiv)', np:'सहसचिव'}, basic:62466, incr:2300},
+          {label:{en:'Joint Secretary (Senior)', np:'सहसचिव (वरिष्ठ)'}, basic:64000, incr:2400},
+        ]
+      },
+      {
+        key:'spec', label:{en:'Gazetted Special — तह १० (राजपत्राङ्कित विशिष्ट)', np:'राजपत्राङ्कित विशिष्ट — तह १०'},
+        positions:[
+          {label:{en:'Additional Secretary (Ati. Sachiv)', np:'अतिरिक्त सचिव'}, basic:66539, incr:2700},
+          {label:{en:'Special Class / Secretary', np:'विशेष श्रेणी / सचिव'}, basic:79290, incr:3000},
+        ]
+      },
+      {
+        key:'chief', label:{en:'Chief Secretary (मुख्य सचिव)', np:'मुख्य सचिव (Chief Secretary)'},
+        positions:[
+          {label:{en:'Chief Secretary', np:'मुख्य सचिव'}, basic:84932, incr:3500},
+        ]
+      },
+    ]
+  },
 
-            document.getElementById('r-basic').textContent        = fmt(basic);
-            document.getElementById('r-grade-al').textContent     = fmt(gradeAl);
-            document.getElementById('r-da').textContent           = fmt(da);
-            document.getElementById('r-local').textContent        = fmt(local);
-            document.getElementById('r-tech').textContent         = fmt(tech);
-            document.getElementById('r-transport').textContent    = fmt(transport);
-            document.getElementById('r-medical').textContent      = fmt(medical);
-            document.getElementById('r-other-al').textContent     = fmt(otherAl);
-            document.getElementById('r-gross-total').textContent  = fmt(gross);
+  teacher: {
+    label: { en: 'Community School Teachers (TSC)', np: 'सामुदायिक विद्यालय शिक्षक (TSC)' },
+    levels: [
+      {
+        key:'p4', label:{en:'Primary Level 4 — तह ४ (प्राथमिक)', np:'प्राथमिक — तह ४'},
+        positions:[
+          {label:{en:'Assistant Teacher (Class 1–5)', np:'सहायक शिक्षक (कक्षा १–५)'}, basic:20900, incr:750},
+        ]
+      },
+      {
+        key:'p5', label:{en:'Primary Level 5 — तह ५ (प्राथमिक)', np:'प्राथमिक — तह ५'},
+        positions:[
+          {label:{en:'Teacher (Class 1–5)', np:'शिक्षक (कक्षा १–५)'}, basic:24200, incr:900},
+        ]
+      },
+      {
+        key:'ls5', label:{en:'Lower Secondary Level 5 — तह ५ (निम्न माध्यमिक)', np:'निम्न माध्यमिक — तह ५'},
+        positions:[
+          {label:{en:'Teacher (Class 6–8)', np:'शिक्षक (कक्षा ६–८)'}, basic:25850, incr:950},
+        ]
+      },
+      {
+        key:'ls6', label:{en:'Lower Secondary Level 6 — तह ६ (निम्न माध्यमिक)', np:'निम्न माध्यमिक — तह ६'},
+        positions:[
+          {label:{en:'Senior Teacher (Class 6–8)', np:'वरिष्ठ शिक्षक (कक्षा ६–८)'}, basic:31350, incr:1150},
+        ]
+      },
+      {
+        key:'s7', label:{en:'Secondary Level 7 — तह ७ (माध्यमिक)', np:'माध्यमिक — तह ७'},
+        positions:[
+          {label:{en:'Teacher (Class 9–10)', np:'शिक्षक (कक्षा ९–१०)'}, basic:37400, incr:1400},
+        ]
+      },
+      {
+        key:'s8', label:{en:'Secondary Level 8 — तह ८ (माध्यमिक)', np:'माध्यमिक — तह ८'},
+        positions:[
+          {label:{en:'Senior Teacher (Class 9–10)', np:'वरिष्ठ शिक्षक (कक्षा ९–१०)'}, basic:46200, incr:1750},
+        ]
+      },
+      {
+        key:'hs9', label:{en:'Higher Secondary Level 9 — तह ९', np:'उच्च माध्यमिक — तह ९'},
+        positions:[
+          {label:{en:'Lecturer (Class 11–12)', np:'प्राध्यापक (कक्षा ११–१२)'}, basic:55880, incr:2200},
+        ]
+      },
+      {
+        key:'hs10', label:{en:'Higher Secondary Level 10 — तह १०', np:'उच्च माध्यमिक — तह १०'},
+        positions:[
+          {label:{en:'Senior Lecturer (Class 11–12)', np:'वरिष्ठ प्राध्यापक (कक्षा ११–१२)'}, basic:68640, incr:2700},
+        ]
+      },
+    ]
+  },
 
-            document.getElementById('r-pf-rate').textContent      = (pfRate * 100).toFixed(0);
-            document.getElementById('r-cit-rate').textContent     = (citRate * 100).toFixed(0);
-            document.getElementById('r-pf').textContent           = fmt(pf);
-            document.getElementById('r-cit').textContent          = fmt(cit);
-            document.getElementById('r-tax').textContent          = fmt(monthlyTax);
-            document.getElementById('r-loan').textContent         = fmt(loan);
-            document.getElementById('r-other-ded').textContent    = fmt(otherDed);
-            document.getElementById('r-deduct-total').textContent = fmt(totalDeduct);
+  health: {
+    label: { en: 'Health Service (स्वास्थ्य सेवा)', np: 'स्वास्थ्य सेवा (Health Service)' },
+    levels: [
+      {
+        key:'h4', label:{en:'Health Level 4 (तह ४)', np:'स्वास्थ्य तह ४'},
+        positions:[
+          {label:{en:'Health Assistant / ANM', np:'स्वास्थ्य सहायक / ANM'}, basic:30373, incr:1000},
+        ]
+      },
+      {
+        key:'h5', label:{en:'Health Level 5 (तह ५)', np:'स्वास्थ्य तह ५'},
+        positions:[
+          {label:{en:'Staff Nurse / Lab Technician', np:'स्टाफ नर्स / ल्याब प्राविधिक'}, basic:36192, incr:1200},
+        ]
+      },
+      {
+        key:'h7', label:{en:'Health Level 7 — Medical Officer (तह ७)', np:'स्वास्थ्य तह ७ — चिकित्सा अधिकृत'},
+        positions:[
+          {label:{en:'Medical Officer / Doctor', np:'चिकित्सा अधिकृत / डाक्टर'}, basic:48058, incr:1700},
+        ]
+      },
+      {
+        key:'h8', label:{en:'Health Level 8 — Senior MO (तह ८)', np:'स्वास्थ्य तह ८'},
+        positions:[
+          {label:{en:'Senior Medical Officer', np:'वरिष्ठ चिकित्सा अधिकृत'}, basic:53611, incr:2000},
+        ]
+      },
+      {
+        key:'h9', label:{en:'Health Level 9 — Director (तह ९)', np:'स्वास्थ्य तह ९ — निर्देशक'},
+        positions:[
+          {label:{en:'Health Director / Specialist', np:'स्वास्थ्य निर्देशक / विशेषज्ञ'}, basic:62466, incr:2400},
+        ]
+      },
+    ]
+  },
 
-            document.getElementById('r-employer-pf2').textContent = fmt(employerPF);
-            document.getElementById('r-total-pf').textContent     = fmt(totalPF);
+  security: {
+    label: { en: 'Security Forces (सुरक्षा निकाय)', np: 'सुरक्षा निकाय (Security Forces)' },
+    levels: [
+      {
+        key:'constable', label:{en:'Constable / Sipahi (जवान)', np:'जवान / सिपाही'},
+        positions:[
+          {label:{en:'Constable / Sipahi', np:'सिपाही / जवान'}, basic:26400, incr:800},
+        ]
+      },
+      {
+        key:'hc', label:{en:'Head Constable / Hawaldar (हवल्दार)', np:'हवल्दार (Head Constable)'},
+        positions:[
+          {label:{en:'Head Constable / Hawaldar', np:'हवल्दार'}, basic:31200, incr:1000},
+        ]
+      },
+      {
+        key:'si', label:{en:'Sub-Inspector (सई)', np:'सई (Sub-Inspector)'},
+        positions:[
+          {label:{en:'Sub-Inspector', np:'सई'}, basic:38500, incr:1300},
+        ]
+      },
+      {
+        key:'insp', label:{en:'Inspector (निरीक्षक)', np:'निरीक्षक (Inspector)'},
+        positions:[
+          {label:{en:'Inspector', np:'निरीक्षक'}, basic:48000, incr:1600},
+        ]
+      },
+      {
+        key:'dsp', label:{en:'DSP / Major (DSP/मेजर)', np:'डिएसपी / मेजर'},
+        positions:[
+          {label:{en:'DSP / Deputy Superintendent', np:'डिएसपी'}, basic:55000, incr:2000},
+        ]
+      },
+      {
+        key:'sp', label:{en:'SP / Lt. Colonel (एसपी/लेफ्टिनेन्ट कर्णेल)', np:'एसपी / लेफ्टिनेन्ट कर्णेल'},
+        positions:[
+          {label:{en:'Superintendent of Police / Lt. Colonel', np:'प्रहरी उपरीक्षक / लेफ्टिनेन्ट कर्णेल'}, basic:64000, incr:2500},
+        ]
+      },
+      {
+        key:'dig', label:{en:'DIG / Colonel (डिआईजी/कर्णेल)', np:'डिआईजी / कर्णेल'},
+        positions:[
+          {label:{en:'DIG / Colonel', np:'डिआईजी / कर्णेल'}, basic:76000, incr:3000},
+        ]
+      },
+    ]
+  }
+};
 
-            // Show panel
-            const panel = document.getElementById('result-panel');
-            panel.className = '';
-            void panel.offsetWidth; // force reflow for animation
-            panel.className = 'visible';
-        }
-    </script>
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+let lang = 'en';
+let category = 'civil';
+let manualBasic = false;
 
+// ══════════════════════════════════════════════════════
+// LANGUAGE STRINGS
+// ══════════════════════════════════════════════════════
+const T = {
+  en: {
+    hTitle:'Salary Calculator 2083',
+    hSub:'Nepal Govt. — Civil Service & Teachers | New Scale Shrawan 1, 2083',
+    heroTitle:'🇳🇵 Nepal Government Salary Calculator',
+    heroSub:'Civil Service (PSC), Teachers & All Government Employees — Complete Monthly Salary Breakdown',
+    badge:'✅ New Salary Scale from Shrawan 1, 2083 | 10% Basic Hike + 10% Incentive Allowance | Rs.5,000 Dearness Allowance',
+    home:'← Dashboard',
+    details:'Employee Details',
+    catLbl:'Employee Category',
+    tCivil:'Civil Service', tTeacher:'Teacher (TSC)', tHealth:'Health Service', tSecurity:'Security Forces',
+    posLbl:'Position & Level',
+    level:'Level / Class', position:'Position', step:'Scale Step', service:'Service Years',
+    basic:'Basic Pay',
+    sec2083:'2083 New Salary Components',
+    incentive:'Incentive Allowance (10% of Basic)', da:'Dearness Allowance (Rs.5,000 fixed)',
+    secAl:'Other Allowances',
+    gradeAl:'Grade Allowance', localAl:'Local Allowance', remoteAl:'Remote Area Allowance',
+    techAl:'Technical/Special Allowance', transport:'Transport Allowance', otherAl:'Other Allowance',
+    secDed:'Deductions',
+    pfR:'PF Employee %', citR:'CIT %', loan:'Loan Deduction', otherDed:'Other Deduction',
+    btnCalc:'🧮 Calculate Net Salary',
+    tableTtl:'Official Pay Scale — Shrawan 1, 2083 (New)',
+    thCat:'Category', thLv:'Level', thPos:'Position', thBasic:'Basic Pay (रु.)', thIncr:'Increment',
+    disc:'⚠️ Note: Salary based on Nepal Govt. new pay scale effective Shrawan 1, 2083 (July 17, 2026). Includes 10% basic hike + 10% incentive allowance + Rs.5,000 dearness allowance. Verify with your department finance office / FCGO.',
+    slip:'Salary Slip — 2083 Shrawan',
+    catLblR:'Category:', posLblR:'Position:', stepLblR:'Scale Step:', svcLblR:'Service Years:',
+    netPay:'Monthly Net Pay (मासिक खुद तलब)',
+    grossChip:'Gross Earning', dedChip:'Total Deduction', annualChip:'Annual Net Pay', epfChip:'Employer PF',
+    earnTtl:'✅ Earnings Breakdown',
+    rBasic:'Basic Pay', rIncentive:'Incentive Allowance 10%', rDa:'Dearness Allowance',
+    rGradeAl:'Grade Allowance', rLocalAl:'Local Allowance', rRemoteAl:'Remote Area Allowance',
+    rTechAl:'Technical Allowance', rTransport:'Transport', rOtherAl:'Other Allowance',
+    rGrossTot:'Total Gross Earning',
+    dedTtl:'❌ Deductions Breakdown',
+    rPf:'Employee PF (10% of Basic)', rCit:'CIT (1% of Basic)', rTax:'Income Tax (आयकर)',
+    rLoan:'Loan', rOtherDed:'Other Deduction', rDedTot:'Total Deduction',
+    empTtl:'🏦 Employer Contribution',
+    rEpf:'Employer PF (10%)', rTpf:'Total PF per Month',
+    btnPrint:'🖨️ Print Salary Slip',
+  },
+  np: {
+    hTitle:'तलब क्याल्कुलेटर २०८३',
+    hSub:'नेपाल सरकार — निजामती सेवा र शिक्षक | २०८३ साउन १ देखि नयाँ तलबमान',
+    heroTitle:'🇳🇵 नेपाल सरकार तलब क्याल्कुलेटर',
+    heroSub:'निजामती सेवा (PSC), शिक्षक र सम्पूर्ण सरकारी कर्मचारी — सम्पूर्ण मासिक तलब विवरण',
+    badge:'✅ नयाँ तलबमान — २०८३ साउन १ गतेदेखि लागू | आधारभूत तलबमा १०% वृद्धि + १०% प्रोत्साहन भत्ता | रु.५,०००  मँहगी भत्ता',
+    home:'← ड्यासबोर्ड',
+    details:'कर्मचारीको विवरण',
+    catLbl:'कर्मचारी वर्ग',
+    tCivil:'निजामती सेवा', tTeacher:'शिक्षक (TSC)', tHealth:'स्वास्थ्य सेवा', tSecurity:'सुरक्षा निकाय',
+    posLbl:'पद तथा तह',
+    level:'तह / श्रेणी', position:'पद', step:'तलब वृद्धि', service:'सेवा अवधि',
+    basic:'मूल तलब',
+    sec2083:'२०८३ नयाँ तलब अंशहरू',
+    incentive:'प्रोत्साहन भत्ता (मूल तलबको १०%)', da:'मँहगी भत्ता (रु.५,००० निश्चित)',
+    secAl:'अन्य भत्ताहरू',
+    gradeAl:'श्रेणी भत्ता', localAl:'स्थानीय भत्ता', remoteAl:'दुर्गम भत्ता',
+    techAl:'प्राविधिक/विशेष भत्ता', transport:'यातायात भत्ता', otherAl:'अन्य भत्ता',
+    secDed:'कट्टीहरू',
+    pfR:'कर्मचारी PF %', citR:'CIT %', loan:'ऋण कट्टी', otherDed:'अन्य कट्टी',
+    btnCalc:'🧮 खुद तलब हिसाब गर्नुहोस्',
+    tableTtl:'आधिकारिक तलबमान — २०८३ साउन १ (नयाँ)',
+    thCat:'वर्ग', thLv:'तह', thPos:'पद', thBasic:'मूल तलब (रु.)', thIncr:'वृद्धि रकम',
+    disc:'⚠️ नोट: यो तलब नेपाल सरकारको २०८३ साउन १ गतेदेखि लागू नयाँ तलबमानमा आधारित छ। आधारभूत तलबमा १०% वृद्धि + १०% प्रोत्साहन भत्ता + रु.५,००० मँहगी भत्तासहित। यथार्थ तलबका लागि आफ्नो विभागको लेखा शाखा वा FCGO सम्पर्क गर्नुहोस्।',
+    slip:'तलब स्लिप — २०८३ साउन',
+    catLblR:'वर्ग:', posLblR:'पद:', stepLblR:'वृद्धि चरण:', svcLblR:'सेवा अवधि:',
+    netPay:'मासिक खुद तलब',
+    grossChip:'कुल आय', dedChip:'कुल कट्टी', annualChip:'वार्षिक खुद तलब', epfChip:'नियोक्ता PF',
+    earnTtl:'✅ आयको विवरण',
+    rBasic:'मूल तलब', rIncentive:'प्रोत्साहन भत्ता १०%', rDa:'मँहगी भत्ता',
+    rGradeAl:'श्रेणी भत्ता', rLocalAl:'स्थानीय भत्ता', rRemoteAl:'दुर्गम भत्ता',
+    rTechAl:'प्राविधिक भत्ता', rTransport:'यातायात भत्ता', rOtherAl:'अन्य भत्ता',
+    rGrossTot:'कुल आय',
+    dedTtl:'❌ कट्टीको विवरण',
+    rPf:'कर्मचारी PF (मूल तलबको १०%)', rCit:'CIT (मूल तलबको १%)', rTax:'आयकर',
+    rLoan:'ऋण', rOtherDed:'अन्य कट्टी', rDedTot:'कुल कट्टी',
+    empTtl:'🏦 नियोक्ता अंशदान',
+    rEpf:'नियोक्ता PF (१०%)', rTpf:'मासिक कुल PF जम्मा',
+    btnPrint:'🖨️ तलब स्लिप प्रिन्ट गर्नुहोस्',
+  }
+};
+
+function t(k){ return T[lang][k] || k; }
+
+function setLang(l){
+  lang = l;
+  document.getElementById('btn-en').className = l==='en'?'active':'';
+  document.getElementById('btn-np').className = l==='np'?'active':'';
+  document.documentElement.lang = l==='np'?'ne':'en';
+  applyLang();
+  populateLevelDropdown();
+  populateTable();
+}
+
+function applyLang(){
+  const ids = [
+    ['h-title','hTitle'],['h-sub','hSub'],['hero-title','heroTitle'],['hero-sub','heroSub'],
+    ['hero-badge','badge'],['h-home','home'],['lbl-details','details'],['lbl-category','catLbl'],
+    ['t-civil','tCivil'],['t-teacher','tTeacher'],['t-health','tHealth'],['t-security','tSecurity'],
+    ['lbl-position-sec','posLbl'],['lbl-level','level'],['lbl-position','position'],
+    ['lbl-step','step'],['lbl-service','service'],['lbl-basic','basic'],
+    ['lbl-2083-sec','sec2083'],['lbl-incentive','incentive'],['lbl-da','da'],
+    ['lbl-allowances-sec','secAl'],['lbl-grade-al','gradeAl'],['lbl-local-al','localAl'],
+    ['lbl-remote-al','remoteAl'],['lbl-tech-al','techAl'],['lbl-transport','transport'],
+    ['lbl-other-al','otherAl'],['lbl-ded-sec','secDed'],['lbl-pf-r','pfR'],['lbl-cit-r','citR'],
+    ['lbl-loan','loan'],['lbl-other-ded','otherDed'],['btn-calc','btnCalc'],
+    ['lbl-table-ttl','tableTtl'],['th-cat','thCat'],['th-lv','thLv'],['th-pos','thPos'],
+    ['th-basic','thBasic'],['th-incr','thIncr'],['lbl-disc','disc'],
+    ['lbl-slip','slip'],['res-category-lbl','catLblR'],['res-position-lbl','posLblR'],
+    ['res-step-lbl','stepLblR'],['res-service-lbl','svcLblR'],['lbl-net-pay','netPay'],
+    ['lbl-gross-chip','grossChip'],['lbl-ded-chip','dedChip'],
+    ['lbl-annual-chip','annualChip'],['lbl-emp-pf-chip','epfChip'],
+    ['lbl-earnings-ttl','earnTtl'],
+    ['r-lbl-basic','rBasic'],['r-lbl-incentive','rIncentive'],['r-lbl-da','rDa'],
+    ['r-lbl-grade-al','rGradeAl'],['r-lbl-local-al','rLocalAl'],['r-lbl-remote-al','rRemoteAl'],
+    ['r-lbl-tech-al','rTechAl'],['r-lbl-transport','rTransport'],['r-lbl-other-al','rOtherAl'],
+    ['r-lbl-gross-tot','rGrossTot'],['lbl-ded-ttl','dedTtl'],
+    ['r-lbl-pf','rPf'],['r-lbl-cit','rCit'],['r-lbl-tax','rTax'],['r-lbl-loan','rLoan'],
+    ['r-lbl-other-ded','rOtherDed'],['r-lbl-ded-tot','rDedTot'],['lbl-emp-ttl','empTtl'],
+    ['r-lbl-epf','rEpf'],['r-lbl-tpf','rTpf'],['btn-print','btnPrint'],
+  ];
+  ids.forEach(([id,key])=>{ const el=document.getElementById(id); if(el) el.textContent=t(key); });
+}
+
+function setCategory(cat){
+  category = cat;
+  manualBasic = false;
+  ['civil','teacher','health','security'].forEach(c=>{
+    document.getElementById('tab-'+c).className = 'cat-tab'+(c===cat?' active':'');
+  });
+  populateLevelDropdown();
+  document.getElementById('s-position').innerHTML = `<option value="">— Select Level First —</option>`;
+  document.getElementById('i-basic').value = '';
+  document.getElementById('i-incentive').value = '0';
+}
+
+function populateLevelDropdown(){
+  const data = PAY_DATA[category];
+  const sel = document.getElementById('s-level');
+  sel.innerHTML = `<option value="">— ${lang==='np'?'छान्नुहोस्':'Select'} —</option>`;
+  data.levels.forEach((lv,i)=>{
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = lv.label[lang];
+    sel.appendChild(opt);
+  });
+}
+
+function onLevelChange(){
+  manualBasic = false;
+  const lvIdx = document.getElementById('s-level').value;
+  const posSel = document.getElementById('s-position');
+  posSel.innerHTML = '';
+  if(lvIdx===''){
+    posSel.innerHTML='<option>— Select Level First —</option>';
+    document.getElementById('i-basic').value='';
+    return;
+  }
+  const positions = PAY_DATA[category].levels[parseInt(lvIdx)].positions;
+  positions.forEach((p,i)=>{
+    const opt=document.createElement('option');
+    opt.value=i; opt.textContent=p.label[lang];
+    posSel.appendChild(opt);
+  });
+  autoFillBasic();
+}
+
+function onPositionChange(){ if(!manualBasic) autoFillBasic(); }
+
+function autoFillBasic(){
+  const lvIdx = document.getElementById('s-level').value;
+  const posIdx = document.getElementById('s-position').value;
+  if(lvIdx===''||posIdx==='') return;
+  const pos = PAY_DATA[category].levels[parseInt(lvIdx)].positions[parseInt(posIdx)];
+  const step = parseInt(document.getElementById('i-step').value)||1;
+  const basic = pos.basic + (step-1)*pos.incr;
+  document.getElementById('i-basic').value = basic;
+  document.getElementById('i-incentive').value = Math.round(basic*0.10);
+}
+
+function onStepChange(){ if(!manualBasic) autoFillBasic(); }
+
+// Auto update incentive when basic changes manually
+document.getElementById('i-basic').addEventListener('input', function(){
+  manualBasic=true;
+  const b=parseFloat(this.value)||0;
+  document.getElementById('i-incentive').value=Math.round(b*0.10);
+});
+
+// ══════════════════════════════════════════════════════
+// INCOME TAX CALCULATION (Nepal slab annual 2082/83)
+// ══════════════════════════════════════════════════════
+function calcTax(annualTaxable){
+  if(annualTaxable<=0) return 0;
+  // Nepal income tax slabs (Single)
+  const slabs=[
+    {limit:500000,  rate:0.01},
+    {limit:700000,  rate:0.10},
+    {limit:1000000, rate:0.20},
+    {limit:2000000, rate:0.30},
+    {limit:Infinity,rate:0.36},
+  ];
+  let tax=0, prev=0;
+  for(const s of slabs){
+    if(annualTaxable<=prev) break;
+    const chunk=Math.min(annualTaxable, s.limit)-prev;
+    if(chunk<=0){prev=s.limit;continue;}
+    tax+=chunk*s.rate;
+    prev=s.limit;
+  }
+  return tax;
+}
+
+// ══════════════════════════════════════════════════════
+// FORMAT
+// ══════════════════════════════════════════════════════
+function fmt(n){
+  n=Math.round(n);
+  if(lang==='np'){
+    // Nepali number formatting
+    return 'रु. '+n.toLocaleString('ne-NP');
+  }
+  return 'Rs. '+n.toLocaleString('en-IN');
+}
+
+// ══════════════════════════════════════════════════════
+// CALCULATE
+// ══════════════════════════════════════════════════════
+function calculate(){
+  const basic     = parseFloat(document.getElementById('i-basic').value)||0;
+  const incentive = parseFloat(document.getElementById('i-incentive').value)||Math.round(basic*0.10);
+  const da        = parseFloat(document.getElementById('i-da').value)||5000;
+  const gradeAl   = parseFloat(document.getElementById('i-grade-al').value)||0;
+  const localAl   = parseFloat(document.getElementById('i-local-al').value)||0;
+  const remoteAl  = parseFloat(document.getElementById('i-remote-al').value)||0;
+  const techAl    = parseFloat(document.getElementById('i-tech-al').value)||0;
+  const transport = parseFloat(document.getElementById('i-transport').value)||0;
+  const otherAl   = parseFloat(document.getElementById('i-other-al').value)||0;
+
+  const pfRate    = (parseFloat(document.getElementById('i-pf').value)||10)/100;
+  const citRate   = (parseFloat(document.getElementById('i-cit').value)||1)/100;
+  const loan      = parseFloat(document.getElementById('i-loan').value)||0;
+  const otherDed  = parseFloat(document.getElementById('i-other-ded').value)||0;
+
+  const gross = basic+incentive+da+gradeAl+localAl+remoteAl+techAl+transport+otherAl;
+
+  const pf  = Math.round(basic*pfRate);
+  const cit = Math.round(basic*citRate);
+
+  // Tax on taxable income (gross - pf - cit) annually
+  const annualTaxable = (gross - pf - cit)*12;
+  const annualTax = calcTax(annualTaxable);
+  const monthlyTax = Math.round(annualTax/12);
+
+  const totalDed = pf+cit+monthlyTax+loan+otherDed;
+  const net = gross - totalDed;
+  const employerPF = Math.round(basic*0.10);
+  const totalPF = pf + employerPF;
+
+  // Position info
+  const lvIdx  = document.getElementById('s-level').value;
+  const posIdx = document.getElementById('s-position').value;
+  const step   = document.getElementById('i-step').value;
+  const svc    = document.getElementById('i-service').value;
+  const catLabel = PAY_DATA[category].label[lang];
+  const posLabel = (lvIdx!==''&&posIdx!=='')?
+    PAY_DATA[category].levels[parseInt(lvIdx)].positions[parseInt(posIdx)].label[lang] : '—';
+
+  // Render
+  document.getElementById('res-cat').textContent  = catLabel;
+  document.getElementById('res-pos').textContent  = posLabel;
+  document.getElementById('res-step').textContent = step+' '+(lang==='np'?'चरण':'step(s)');
+  document.getElementById('res-svc').textContent  = svc+' '+(lang==='np'?'वर्ष':'years');
+
+  document.getElementById('res-net').textContent  = fmt(net);
+  document.getElementById('res-net-sub').textContent =
+    (lang==='np'?'वार्षिक: ':'Annual: ')+fmt(net*12)+'  |  '+(lang==='np'?'दैनिक ≈ ':'Daily ≈ ')+fmt(net/30);
+
+  document.getElementById('res-gross').textContent   = fmt(gross);
+  document.getElementById('res-ded').textContent     = fmt(totalDed);
+  document.getElementById('res-annual').textContent  = fmt(net*12);
+  document.getElementById('res-epf').textContent     = fmt(employerPF);
+
+  document.getElementById('r-basic').textContent     = fmt(basic);
+  document.getElementById('r-incentive').textContent = fmt(incentive);
+  document.getElementById('r-da').textContent        = fmt(da);
+  document.getElementById('r-grade-al').textContent  = fmt(gradeAl);
+  document.getElementById('r-local-al').textContent  = fmt(localAl);
+  document.getElementById('r-remote-al').textContent = fmt(remoteAl);
+  document.getElementById('r-tech-al').textContent   = fmt(techAl);
+  document.getElementById('r-transport').textContent = fmt(transport);
+  document.getElementById('r-other-al').textContent  = fmt(otherAl);
+  document.getElementById('r-gross-tot').textContent = fmt(gross);
+
+  document.getElementById('r-pf').textContent        = fmt(pf);
+  document.getElementById('r-cit').textContent       = fmt(cit);
+  document.getElementById('r-tax').textContent       = fmt(monthlyTax);
+  document.getElementById('r-loan').textContent      = fmt(loan);
+  document.getElementById('r-other-ded').textContent = fmt(otherDed);
+  document.getElementById('r-ded-tot').textContent   = fmt(totalDed);
+
+  document.getElementById('r-epf').textContent       = fmt(employerPF);
+  document.getElementById('r-tpf').textContent       = fmt(totalPF);
+
+  const panel = document.getElementById('result-panel');
+  panel.className='';
+  void panel.offsetWidth;
+  panel.className='vis';
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ══════════════════════════════════════════════════════
+// POPULATE PAY SCALE TABLE
+// ══════════════════════════════════════════════════════
+function populateTable(){
+  const tbody = document.getElementById('table-body');
+  tbody.innerHTML='';
+  Object.keys(PAY_DATA).forEach(catKey=>{
+    const catData = PAY_DATA[catKey];
+    catData.levels.forEach(lv=>{
+      lv.positions.forEach(pos=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML=`
+          <td class="cat">${catData.label[lang]}</td>
+          <td>${lv.label[lang]}</td>
+          <td>${pos.label[lang]}</td>
+          <td class="hi">${lang==='np'?pos.basic.toLocaleString('ne-NP'):pos.basic.toLocaleString('en-IN')}</td>
+          <td>${lang==='np'?pos.incr.toLocaleString('ne-NP'):pos.incr.toLocaleString('en-IN')}</td>`;
+        tbody.appendChild(tr);
+      });
+    });
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+setLang('en');
+setCategory('civil');
+populateTable();
+</script>
 </body>
 </html>
