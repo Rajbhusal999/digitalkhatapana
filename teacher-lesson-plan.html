@@ -14,6 +14,8 @@
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary-purple: #7c3aed;
@@ -1183,6 +1185,11 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             'Health & Physical': { title: 'Class 8 Health, Physical & Creative Arts Guide', pdf: 'Teacher guide/hPC.pdf' }
         };
 
+        // Supabase Database Client Setup
+        const SUPABASE_URL = 'https://gxmmjkyakfwkhqtyizdk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd4bW1qa3lha2Z3a2hxdHlpemRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NzA2MDEsImV4cCI6MjA5NjA0NjYwMX0.V7A_rM1eEUntupVI7F0Hvk29jd2ugSpUnfHy21gfpkg';
+        const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
         let currentActiveGuide = SUBJECT_GUIDE_MAP['Science'];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1205,12 +1212,7 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             const subject = subjectSelect.value;
             const grade = gradeSelect ? gradeSelect.value : 'Grade 8';
 
-            if (btn) {
-                btn.innerText = '⏳ Loading Units...';
-                btn.style.background = '#d97706';
-            }
-
-            // Populate Unit Dropdown
+            // 1. INSTANT ZERO-DELAY POPULATION (0 ms) from in-memory SUBJECT_UNITS_MAP
             unitSelect.innerHTML = '';
             const units = SUBJECT_UNITS_MAP[subject] || [`Unit 1: General (${subject})`];
             units.forEach(u => {
@@ -1221,7 +1223,41 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             });
             unitSelect.selectedIndex = 0;
 
-            // Load Subject Teacher Guide PDF
+            if (btn) {
+                btn.innerText = `✅ ${subject} Units Loaded!`;
+                btn.style.background = '#059669';
+                setTimeout(() => {
+                    btn.innerText = '📥 Load Units & Guide';
+                    btn.style.background = '#2563eb';
+                }, 2000);
+            }
+
+            // 2. Query Supabase Database in background (Sync with Cloud Database)
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('teacher_guides')
+                        .select('units')
+                        .eq('subject', subject)
+                        .eq('grade', grade)
+                        .maybeSingle();
+
+                    if (data && data.units && Array.isArray(data.units) && data.units.length > 0) {
+                        unitSelect.innerHTML = '';
+                        data.units.forEach(u => {
+                            const opt = document.createElement('option');
+                            opt.value = u;
+                            opt.innerText = u;
+                            unitSelect.appendChild(opt);
+                        });
+                        unitSelect.selectedIndex = 0;
+                    }
+                } catch (dbErr) {
+                    console.warn('Supabase DB fetch note:', dbErr);
+                }
+            }
+
+            // 3. Asynchronous non-blocking background PDF extraction (does NOT block dropdown)
             const guide = SUBJECT_GUIDE_MAP[subject] || { title: `${grade} ${subject} Guide`, pdf: 'Teacher guide/Science.pdf' };
             currentActiveGuide = guide;
 
@@ -1230,28 +1266,20 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
                 indicator.innerText = `${grade} ${guide.title} (${guide.pdf})`;
             }
 
-            try {
-                const pdf = await pdfjsLib.getDocument(guide.pdf).promise;
-                let text = '';
-                const maxPages = Math.min(pdf.numPages, 10);
-                for (let i = 1; i <= maxPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    text += content.items.map(item => item.str).join(' ') + '\n';
-                }
-                extractedGuideText = text;
-            } catch (err) {
-                console.warn('Could not auto-extract PDF:', err);
-                extractedGuideText = `CDC Nepal ${grade} ${subject} Teacher Guide standard curriculum objectives and lesson framework.`;
-            }
-
-            if (btn) {
-                btn.innerText = `✅ ${subject} Units Loaded!`;
-                btn.style.background = '#059669';
-                setTimeout(() => {
-                    btn.innerText = '📥 Load Units & Guide';
-                    btn.style.background = '#2563eb';
-                }, 2500);
+            if (window.pdfjsLib) {
+                pdfjsLib.getDocument(guide.pdf).promise.then(async pdf => {
+                    let text = '';
+                    const maxPages = Math.min(pdf.numPages, 10);
+                    for (let i = 1; i <= maxPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const content = await page.getTextContent();
+                        text += content.items.map(item => item.str).join(' ') + '\n';
+                    }
+                    extractedGuideText = text;
+                }).catch(err => {
+                    console.warn('Background PDF load note:', err);
+                    extractedGuideText = `CDC Nepal ${grade} ${subject} Teacher Guide standard curriculum objectives and lesson framework.`;
+                });
             }
         }
 
@@ -1411,6 +1439,26 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
 
             document.getElementById('card-plan-output').style.display = 'block';
             document.getElementById('card-plan-output').scrollIntoView({ behavior: 'smooth' });
+
+            // Auto-Save generated lesson plan to Supabase Cloud Database
+            if (supabaseClient) {
+                supabaseClient.from('lesson_plans').insert([{
+                    topic: topic,
+                    unit: unit,
+                    grade: grade,
+                    subject: subject,
+                    duration: duration,
+                    language: lang,
+                    objectives: document.getElementById('out-objectives').innerText,
+                    materials: document.getElementById('out-materials-list').innerText,
+                    evaluation: document.getElementById('out-evaluation').innerText,
+                    homework: isNepali ? 'अभ्यास प्रश्न १ र २' : 'Exercises #1 and #2'
+                }]).then(({ error }) => {
+                    if (!error) {
+                        console.log('✅ Lesson plan saved to Supabase cloud database!');
+                    }
+                });
+            }
         }
 
         function renderAIResult(aiText, topic, unit, grade, subject, duration, lang) {
