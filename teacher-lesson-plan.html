@@ -494,8 +494,8 @@
                 </div>
             </div>
             <div>
-                <a href="landing.html" class="btn-back">
-                    <span>← ड्यासबोर्ड (Dashboard)</span>
+                <a href="index.html" class="btn-back">
+                    <span>← गृह पृष्ठ (Home Page)</span>
                 </a>
             </div>
         </div>
@@ -724,24 +724,19 @@
         let lessonPlans = [];
 
         document.addEventListener('DOMContentLoaded', async () => {
-            if (sessionStorage.getItem('school_user_logged_in') !== 'true') {
-                window.location.replace('digitalkhatapana.html');
-                return;
-            }
-
             if (window.initDatabase) {
-                await window.initDatabase();
+                try {
+                    await window.initDatabase();
+                } catch (e) {}
             }
 
-            // Display school details
-            if (window._activeSchoolInfo) {
-                const name = window._activeSchoolInfo.schoolName || 'विद्यालयको नाम उपलब्ध छैन';
-                const addr = window._activeSchoolInfo.address || 'ठेगाना उपलब्ध छैन';
-                document.getElementById('header-school-name').innerText = name;
-                document.getElementById('header-school-address').innerText = addr;
-                document.getElementById('print-school-name').innerText = name;
-                document.getElementById('print-school-address').innerText = addr;
-            }
+            // Display school details or default
+            const name = (window._activeSchoolInfo && window._activeSchoolInfo.schoolName) ? window._activeSchoolInfo.schoolName : 'श्री नेपाल राष्ट्रिय माध्यमिक विद्यालय';
+            const addr = (window._activeSchoolInfo && window._activeSchoolInfo.address) ? window._activeSchoolInfo.address : 'काठमाडौँ, नेपाल';
+            document.getElementById('header-school-name').innerText = name;
+            document.getElementById('header-school-address').innerText = addr;
+            document.getElementById('print-school-name').innerText = name;
+            document.getElementById('print-school-address').innerText = addr;
 
             loadLessonPlans();
         });
