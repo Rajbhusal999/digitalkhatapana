@@ -1158,6 +1158,7 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
         const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
         let currentActiveGuide = SUBJECT_GUIDE_MAP['Science'];
+        let extractedGuideText = ''; // CDC Teacher Guide text extracted from PDF
 
         document.addEventListener('DOMContentLoaded', () => {
             // Safe API key check
@@ -1170,7 +1171,7 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
 
         // Generate Subject & Grade Specific Ultra-Concise Lesson Plan
         async function handleGenerateLessonPlan(e) {
-            e.preventDefault();
+            if (e) e.preventDefault();
             const subject = document.getElementById('lp-subject').value;
             const grade = document.getElementById('lp-grade').value;
             const unit = document.getElementById('lp-unit').value;
@@ -1353,20 +1354,15 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             document.getElementById('out-meta-duration').innerText = `${duration} Mins`;
             document.getElementById('out-meta-guide').innerText = `${currentActiveGuide.title}`;
             document.getElementById('out-objectives').innerHTML = aiText.replace(/\n/g, '<br>');
+            if (document.getElementById('out-materials-list')) document.getElementById('out-materials-list').innerHTML = '';
+            if (document.getElementById('out-timeline')) document.getElementById('out-timeline').innerHTML = '';
+            if (document.getElementById('out-evaluation')) document.getElementById('out-evaluation').innerHTML = '';
             document.getElementById('card-plan-output').style.display = 'block';
             document.getElementById('card-plan-output').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function renderAIResult(aiText, topic, grade, subject, duration) {
-            document.getElementById('out-plan-title').innerText = `${topic} — ${grade} (${subject})`;
-            document.getElementById('out-meta-grade-subject').innerText = `${grade} — ${subject}`;
-            document.getElementById('out-meta-topic').innerText = topic;
-            document.getElementById('out-meta-duration').innerText = `${duration} Mins`;
-            document.getElementById('out-meta-guide').innerText = `${currentActiveGuide.title}`;
-            document.getElementById('out-objectives').innerHTML = aiText.replace(/\n/g, '<br>');
-            document.getElementById('card-plan-output').style.display = 'block';
-            document.getElementById('card-plan-output').scrollIntoView({ behavior: 'smooth' });
-        }
+        // Expose globally so form onsubmit attribute can call it
+        window.handleGenerateLessonPlan = handleGenerateLessonPlan;
 
         function generateMaterials() {
             const topic = document.getElementById('lp-topic').value || 'Target Topic';
