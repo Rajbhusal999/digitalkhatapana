@@ -1293,33 +1293,7 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
                 }, 1500);
             }
 
-            // 2. Non-blocking async background Supabase sync
-            if (supabaseClient) {
-                supabaseClient
-                    .from('teacher_guides')
-                    .select('units')
-                    .eq('subject', subject)
-                    .eq('grade', grade)
-                    .maybeSingle()
-                    .then(({ data }) => {
-                        // Guard against async race conditions (ensure user hasn't switched subjects)
-                        if (document.getElementById('lp-subject').value !== subject) return;
-
-                        if (data && data.units && Array.isArray(data.units) && data.units.length > 0) {
-                            unitSelect.innerHTML = '';
-                            data.units.forEach(u => {
-                                const opt = document.createElement('option');
-                                opt.value = u;
-                                opt.innerText = u;
-                                unitSelect.appendChild(opt);
-                            });
-                            unitSelect.selectedIndex = 0;
-                        }
-                    })
-                    .catch(() => {});
-            }
-
-            // 3. Non-blocking async background PDF extraction
+            // 2. Background PDF metadata guide indicator setup
             const guide = SUBJECT_GUIDE_MAP[subject] || { title: `${grade} ${subject} Guide`, pdf: 'Teacher guide/Science.pdf' };
             currentActiveGuide = guide;
 
