@@ -549,7 +549,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="lp-subject">Subject (विषय) *</label>
-                            <select id="lp-subject" class="select-field" required onchange="updateUnitDropdown(); autoLoadSubjectGuide();" oninput="updateUnitDropdown(); autoLoadSubjectGuide();">
+                            <select id="lp-subject" class="select-field" required onchange="loadSubjectUnitsAndGuide()">
                                 <option value="Science" selected>Science & Technology (विज्ञान तथा प्रविधि)</option>
                                 <option value="Mathematics">Mathematics (गणित)</option>
                                 <option value="English">English (अंग्रेजी)</option>
@@ -561,7 +561,7 @@
 
                         <div class="form-group">
                             <label for="lp-grade">Grade Level (कक्षा) *</label>
-                            <select id="lp-grade" class="select-field" required onchange="updateUnitDropdown(); autoLoadSubjectGuide();" oninput="updateUnitDropdown(); autoLoadSubjectGuide();">
+                            <select id="lp-grade" class="select-field" required onchange="loadSubjectUnitsAndGuide()">
                                 <option value="Grade 1">Grade 1</option>
                                 <option value="Grade 2">Grade 2</option>
                                 <option value="Grade 3">Grade 3</option>
@@ -577,10 +577,20 @@
                             </select>
                         </div>
 
+                        <div class="form-group full" style="display:flex; align-items:center; justify-content:space-between; gap:15px; background:#eff6ff; padding:12px 18px; border-radius:12px; border:1px solid #bfdbfe; margin-bottom:10px;">
+                            <div>
+                                <span style="font-size:0.85rem; font-weight:700; color:#1e40af;">📥 Step 1: Load Units & Official Teacher Guide</span>
+                                <div style="font-size:0.8rem; color:#3b82f6; margin-top:2px;">Select Subject & Grade above, then click button to load specific curriculum units into dropdown.</div>
+                            </div>
+                            <button type="button" id="btn-load-units" onclick="loadSubjectUnitsAndGuide()" style="background:#2563eb; color:white; border:none; padding:10px 18px; font-weight:700; border-radius:8px; cursor:pointer; font-size:0.9rem; white-space:nowrap; transition:all 0.2s ease;">
+                                📥 Load Units & Guide
+                            </button>
+                        </div>
+
                         <div class="form-group">
                             <label for="lp-unit">Unit Name (एकाइको नाम) *</label>
                             <select id="lp-unit" class="select-field" required>
-                                <option value="">Select Subject First (विषय छान्नुहोस्)</option>
+                                <option value="">Loading Units...</option>
                             </select>
                         </div>
 
@@ -1181,19 +1191,28 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             if (savedKey) {
                 document.getElementById('gemini-key-input').value = savedKey;
             }
-            updateUnitDropdown();
-            autoLoadSubjectGuide();
+            loadSubjectUnitsAndGuide();
         });
 
-        function updateUnitDropdown() {
+        async function loadSubjectUnitsAndGuide() {
             const subjectSelect = document.getElementById('lp-subject');
+            const gradeSelect = document.getElementById('lp-grade');
             const unitSelect = document.getElementById('lp-unit');
+            const btn = document.getElementById('btn-load-units');
+
             if (!subjectSelect || !unitSelect) return;
 
             const subject = subjectSelect.value;
-            const units = SUBJECT_UNITS_MAP[subject] || [`Unit 1: General (${subject})`];
+            const grade = gradeSelect ? gradeSelect.value : 'Grade 8';
 
+            if (btn) {
+                btn.innerText = '⏳ Loading Units...';
+                btn.style.background = '#d97706';
+            }
+
+            // Populate Unit Dropdown
             unitSelect.innerHTML = '';
+            const units = SUBJECT_UNITS_MAP[subject] || [`Unit 1: General (${subject})`];
             units.forEach(u => {
                 const opt = document.createElement('option');
                 opt.value = u;
@@ -1201,14 +1220,8 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
                 unitSelect.appendChild(opt);
             });
             unitSelect.selectedIndex = 0;
-        }
 
-        async function autoLoadSubjectGuide() {
-            updateUnitDropdown();
-
-            const subject = document.getElementById('lp-subject').value;
-            const grade = document.getElementById('lp-grade').value;
-            
+            // Load Subject Teacher Guide PDF
             const guide = SUBJECT_GUIDE_MAP[subject] || { title: `${grade} ${subject} Guide`, pdf: 'Teacher guide/Science.pdf' };
             currentActiveGuide = guide;
 
@@ -1230,6 +1243,15 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             } catch (err) {
                 console.warn('Could not auto-extract PDF:', err);
                 extractedGuideText = `CDC Nepal ${grade} ${subject} Teacher Guide standard curriculum objectives and lesson framework.`;
+            }
+
+            if (btn) {
+                btn.innerText = `✅ ${subject} Units Loaded!`;
+                btn.style.background = '#059669';
+                setTimeout(() => {
+                    btn.innerText = '📥 Load Units & Guide';
+                    btn.style.background = '#2563eb';
+                }, 2500);
             }
         }
 
