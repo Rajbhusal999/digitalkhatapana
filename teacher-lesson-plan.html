@@ -592,7 +592,13 @@
                         <div class="form-group">
                             <label for="lp-unit">Unit Name (एकाइको नाम) *</label>
                             <select id="lp-unit" class="select-field" required>
-                                <option value="">Loading Units...</option>
+                                <option value="Unit 1: Scientific Learning & Measurement (एकाइ १: वैज्ञानिक सिकाइ र नाप)">Unit 1: Scientific Learning & Measurement (एकाइ १: वैज्ञानिक सिकाइ र नाप)</option>
+                                <option value="Unit 2: Information & Tech (एकाइ २: सूचना तथा सञ्चार प्रविधि)">Unit 2: Information & Tech (एकाइ २: सूचना तथा सञ्चार प्रविधि)</option>
+                                <option value="Unit 3: Motion & Force (एकाइ ३: चाल र बल)">Unit 3: Motion & Force (एकाइ ३: चाल र बल)</option>
+                                <option value="Unit 4: Energy & Pressure (एकाइ ४: ऊर्जा र चाप)">Unit 4: Energy & Pressure (एकाइ ४: ऊर्जा र चाप)</option>
+                                <option value="Unit 5: Matter & Elements (एकाइ ५: पदार्थ र तत्त्वहरू)">Unit 5: Matter & Elements (एकाइ ५: पदार्थ र तत्त्वहरू)</option>
+                                <option value="Unit 6: Life Processes & Organisms (एकाइ ६: सजीव र जीवन प्रक्रिया)">Unit 6: Life Processes & Organisms (एकाइ ६: सजीव र जीवन प्रक्रिया)</option>
+                                <option value="Unit 7: Earth & Universe (एकाइ ७: पृथ्वी र अन्तरिक्ष)">Unit 7: Earth & Universe (एकाइ ७: पृथ्वी र अन्तरिक्ष)</option>
                             </select>
                         </div>
 
@@ -1201,7 +1207,7 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             loadSubjectUnitsAndGuide();
         });
 
-        async function loadSubjectUnitsAndGuide() {
+        function loadSubjectUnitsAndGuide() {
             const subjectSelect = document.getElementById('lp-subject');
             const gradeSelect = document.getElementById('lp-grade');
             const unitSelect = document.getElementById('lp-unit');
@@ -1212,9 +1218,9 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             const subject = subjectSelect.value;
             const grade = gradeSelect ? gradeSelect.value : 'Grade 8';
 
-            // 1. INSTANT ZERO-DELAY POPULATION (0 ms) from in-memory SUBJECT_UNITS_MAP
-            unitSelect.innerHTML = '';
+            // 1. INSTANT 0 MILLISECOND POPULATION from local memory map
             const units = SUBJECT_UNITS_MAP[subject] || [`Unit 1: General (${subject})`];
+            unitSelect.innerHTML = '';
             units.forEach(u => {
                 const opt = document.createElement('option');
                 opt.value = u;
@@ -1229,35 +1235,33 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
                 setTimeout(() => {
                     btn.innerText = '📥 Load Units & Guide';
                     btn.style.background = '#2563eb';
-                }, 2000);
+                }, 1500);
             }
 
-            // 2. Query Supabase Database in background (Sync with Cloud Database)
+            // 2. Non-blocking async background Supabase sync
             if (supabaseClient) {
-                try {
-                    const { data, error } = await supabaseClient
-                        .from('teacher_guides')
-                        .select('units')
-                        .eq('subject', subject)
-                        .eq('grade', grade)
-                        .maybeSingle();
-
-                    if (data && data.units && Array.isArray(data.units) && data.units.length > 0) {
-                        unitSelect.innerHTML = '';
-                        data.units.forEach(u => {
-                            const opt = document.createElement('option');
-                            opt.value = u;
-                            opt.innerText = u;
-                            unitSelect.appendChild(opt);
-                        });
-                        unitSelect.selectedIndex = 0;
-                    }
-                } catch (dbErr) {
-                    console.warn('Supabase DB fetch note:', dbErr);
-                }
+                supabaseClient
+                    .from('teacher_guides')
+                    .select('units')
+                    .eq('subject', subject)
+                    .eq('grade', grade)
+                    .maybeSingle()
+                    .then(({ data }) => {
+                        if (data && data.units && Array.isArray(data.units) && data.units.length > 0) {
+                            unitSelect.innerHTML = '';
+                            data.units.forEach(u => {
+                                const opt = document.createElement('option');
+                                opt.value = u;
+                                opt.innerText = u;
+                                unitSelect.appendChild(opt);
+                            });
+                            unitSelect.selectedIndex = 0;
+                        }
+                    })
+                    .catch(() => {});
             }
 
-            // 3. Asynchronous non-blocking background PDF extraction (does NOT block dropdown)
+            // 3. Non-blocking async background PDF extraction
             const guide = SUBJECT_GUIDE_MAP[subject] || { title: `${grade} ${subject} Guide`, pdf: 'Teacher guide/Science.pdf' };
             currentActiveGuide = guide;
 
@@ -1276,8 +1280,7 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
                         text += content.items.map(item => item.str).join(' ') + '\n';
                     }
                     extractedGuideText = text;
-                }).catch(err => {
-                    console.warn('Background PDF load note:', err);
+                }).catch(() => {
                     extractedGuideText = `CDC Nepal ${grade} ${subject} Teacher Guide standard curriculum objectives and lesson framework.`;
                 });
             }
