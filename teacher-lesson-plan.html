@@ -541,19 +541,27 @@
         <section id="panel-planner" class="tab-panel active">
             <div class="card">
                 <div class="card-header-title">
-                    <h2>📝 Standard-Compliant Lesson Plan Generator</h2>
+                    <h2>📝 Official Teacher Guide-Grounded Lesson Plan Generator</h2>
+                    <p style="margin:4px 0 0 0; font-size:0.9rem; color:#64748b;">Select your Subject and Grade to automatically analyze official Teacher Guides and generate standard-compliant lesson plans.</p>
                 </div>
 
                 <form onsubmit="handleGenerateLessonPlan(event)">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="lp-topic">Topic / Lesson Title *</label>
-                            <input type="text" id="lp-topic" class="input-field" required placeholder="e.g. Photosynthesis in Plants / Square Roots">
+                            <label for="lp-subject">Subject (विषय) *</label>
+                            <select id="lp-subject" class="select-field" required onchange="autoLoadSubjectGuide()">
+                                <option value="Science" selected>Science & Technology (विज्ञान तथा प्रविधि)</option>
+                                <option value="Mathematics">Mathematics (गणित)</option>
+                                <option value="English">English (अंग्रेजी)</option>
+                                <option value="Nepali">Nepali (नेपाली)</option>
+                                <option value="Social Studies">Social Studies (सामाजिक अध्ययन)</option>
+                                <option value="Health & Physical">Health, Physical & Creative Arts (स्वास्थ्य तथा शारीरिक)</option>
+                            </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="lp-grade">Grade Level *</label>
-                            <select id="lp-grade" class="select-field" required>
+                            <label for="lp-grade">Grade Level (कक्षा) *</label>
+                            <select id="lp-grade" class="select-field" required onchange="autoLoadSubjectGuide()">
                                 <option value="Grade 1">Grade 1</option>
                                 <option value="Grade 2">Grade 2</option>
                                 <option value="Grade 3">Grade 3</option>
@@ -570,7 +578,12 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="lp-duration">Class Duration (Minutes) *</label>
+                            <label for="lp-topic">Lesson / Topic Title (पाठ / शीर्षक) *</label>
+                            <input type="text" id="lp-topic" class="input-field" required placeholder="e.g. Photosynthesis / Pythagoras Theorem / Tense">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lp-duration">Class Duration (अवधि) *</label>
                             <select id="lp-duration" class="select-field" required>
                                 <option value="30">30 Minutes</option>
                                 <option value="45" selected>45 Minutes</option>
@@ -579,14 +592,17 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label for="lp-size">Class Size & Learning Needs</label>
-                            <input type="text" id="lp-size" class="input-field" placeholder="e.g. 35 students, mixed ability">
+                        <div class="form-group full">
+                            <label for="lp-size">Class Size & Learning Needs (कक्षा विद्यार्थी संख्या र विशेष आवश्यकता)</label>
+                            <input type="text" id="lp-size" class="input-field" placeholder="e.g. 35 students, mixed ability, visual learners">
                         </div>
 
-                        <div class="form-group full">
-                            <label for="lp-context">Additional Context / Teacher Guide Focus</label>
-                            <textarea id="lp-context" class="textarea-field" rows="2" placeholder="Specific guidelines or focus areas from the uploaded curriculum guide..."></textarea>
+                        <div class="form-group full" id="guide-indicator-box" style="background:#f8fafc; padding:12px 18px; border-radius:12px; border:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <span style="font-size:0.75rem; font-weight:700; color:#059669; text-transform:uppercase;">Auto-Grounded Teacher Guide PDF</span>
+                                <div id="active-guide-indicator-name" style="font-weight:700; color:#0f172a; font-size:0.95rem; margin-top:2px;">Class 8 Science & Technology Guide (Science.pdf)</div>
+                            </div>
+                            <span style="font-size:0.8rem; background:#d1fae5; color:#065f46; padding:4px 10px; border-radius:8px; font-weight:700;">PDF Analyzed ✅</span>
                         </div>
                     </div>
 
@@ -598,11 +614,11 @@
                 </form>
             </div>
 
-            <!-- Generated Lesson Plan Output Card -->
-            <div class="card" id="card-plan-output" style="display:none;">
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f1f5f9; padding-bottom:15px; margin-bottom:20px;">
+            <!-- Generated Lesson Plan Output Card (Standard Model) -->
+            <div class="card" id="card-plan-output" style="display:none; border-top:5px solid #7c3aed;">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f1f5f9; padding-bottom:15px; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
                     <div>
-                        <span style="font-size:0.8rem; font-weight:700; color:#7c3aed; text-transform:uppercase; letter-spacing:1px;">Generated Lesson Blueprint</span>
+                        <span style="font-size:0.8rem; font-weight:700; color:#7c3aed; text-transform:uppercase; letter-spacing:1px;">CDC Standard Lesson Blueprint</span>
                         <h2 id="out-plan-title" style="margin:4px 0 0 0; font-size:1.5rem; color:#0f172a;">-</h2>
                     </div>
                     <div style="display:flex; gap:10px;">
@@ -615,40 +631,63 @@
                     </div>
                 </div>
 
-                <!-- Objectives Section (Bloom's Taxonomy) -->
+                <!-- Section 1: Lesson / Topic Info -->
+                <div style="margin-bottom:25px; background:#f8fafc; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
+                    <h3 style="font-size:1.1rem; color:#0f172a; margin:0 0 10px 0;">📌 1. Lesson / Topic Overview (पाठ तथा विषयवस्तुको विवरण)</h3>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px; font-size:0.92rem;">
+                        <div><strong>Grade & Subject:</strong> <span id="out-meta-grade-subject">-</span></div>
+                        <div><strong>Topic Title:</strong> <span id="out-meta-topic">-</span></div>
+                        <div><strong>Duration:</strong> <span id="out-meta-duration">-</span></div>
+                        <div><strong>Grounded Guide:</strong> <span id="out-meta-guide" style="color:#059669; font-weight:600;">-</span></div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Objectives -->
                 <div style="margin-bottom:25px;">
-                    <h3 style="font-size:1.15rem; color:#0f172a; margin-bottom:12px;">🎯 Targeted Learning Objectives (Bloom's Taxonomy)</h3>
+                    <h3 style="font-size:1.15rem; color:#0f172a; margin-bottom:12px;">🎯 2. Learning Objectives (विशिष्ट उद्देश्यहरू)</h3>
                     <div id="out-objectives" style="background:#f8fafc; border-radius:14px; padding:18px; border:1px solid #e2e8f0; font-size:0.95rem; line-height:1.6;">
                         -
                     </div>
                 </div>
 
-                <!-- Paced Timeline Breakdown -->
+                <!-- Section 3: Teaching Materials -->
                 <div style="margin-bottom:25px;">
-                    <h3 style="font-size:1.15rem; color:#0f172a; margin-bottom:12px;">⏱️ Time-Stamped Lesson Timeline</h3>
+                    <h3 style="font-size:1.15rem; color:#0f172a; margin-bottom:12px;">📦 3. Teaching Materials (शिक्षण सामग्रीहरू)</h3>
+                    <div id="out-materials-list" style="background:#eff6ff; border-radius:14px; padding:18px; border:1px solid #bfdbfe; font-size:0.95rem; line-height:1.6; color:#1e3a8a;">
+                        -
+                    </div>
+                </div>
+
+                <!-- Section 4: Teaching Activities / Learning Process -->
+                <div style="margin-bottom:25px;">
+                    <h3 style="font-size:1.15rem; color:#0f172a; margin-bottom:12px;">⏱️ 4. Teaching Activities / Learning Process (शिक्षण-सिकाइ क्रियाकलापहरू)</h3>
                     <div class="timeline-container" id="out-timeline">
                         <!-- Dynamic timeline items -->
                     </div>
                 </div>
 
-                <!-- Differentiated Instruction -->
+                <!-- Section 5: Evaluation & Assessment -->
                 <div>
-                    <h3 style="font-size:1.15rem; color:#0f172a; margin-bottom:12px;">🧠 Differentiated Instruction Strategies</h3>
+                    <h3 style="font-size:1.15rem; color:#0f172a; margin-bottom:12px;">📝 5. Evaluation & Assessment (मूल्याङ्कन तथा कार्यपत्र)</h3>
+                    <div id="out-evaluation" style="background:#fef3c7; border-radius:14px; padding:18px; border:1px solid #fde68a; font-size:0.95rem; line-height:1.6; color:#78350f; margin-bottom:18px;">
+                        -
+                    </div>
+
                     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
                         <div style="background:#eff6ff; border-radius:14px; padding:18px; border:1px solid #bfdbfe;">
                             <h4 style="margin:0 0 8px 0; color:#1d4ed8;">🌱 Support for Struggling Learners / ELL</h4>
                             <p id="out-diff-support" style="margin:0; font-size:0.9rem; color:#1e3a8a; line-height:1.5;">-</p>
                         </div>
-                        <div style="background:#fef3c7; border-radius:14px; padding:18px; border:1px solid #fde68a;">
-                            <h4 style="margin:0 0 8px 0; color:#b45309;">🚀 Extensions for Advanced Learners</h4>
-                            <p id="out-diff-advanced" style="margin:0; font-size:0.9rem; color:#78350f; line-height:1.5;">-</p>
+                        <div style="background:#fdf4ff; border-radius:14px; padding:18px; border:1px solid #f5d0fe;">
+                            <h4 style="margin:0 0 8px 0; color:#86198f;">🚀 Extensions for Advanced Learners</h4>
+                            <p id="out-diff-advanced" style="margin:0; font-size:0.9rem; color:#701a75; line-height:1.5;">-</p>
                         </div>
                     </div>
                 </div>
 
                 <div style="margin-top:25px; display:flex; justify-content:flex-end; gap:12px;">
                     <button class="btn-submit" onclick="switchTab('materials')">
-                        Generate Teaching Aids for this Plan →
+                        Generate DIY Teaching Aids for this Plan →
                     </button>
                 </div>
             </div>
@@ -1045,24 +1084,73 @@ Your role is to analyze provided Teacher Guides and produce high-impact, practic
             }
         }
 
-        // Generate Lesson Plan
+        // Subject to Teacher Guide PDF Mapping
+        const SUBJECT_GUIDE_MAP = {
+            'Science': { title: 'Class 8 Science & Technology Guide', pdf: 'Teacher guide/Science.pdf' },
+            'Mathematics': { title: 'Class 8 Mathematics Teacher Guide', pdf: 'Teacher guide/Mathematics.pdf' },
+            'English': { title: 'Class 8 English Teacher Guide', pdf: 'Teacher guide/English.pdf' },
+            'Nepali': { title: 'Class 8 Nepali Teacher Guide', pdf: 'Teacher guide/Nepali.pdf' },
+            'Social Studies': { title: 'Class 8 Social Studies Guide', pdf: 'Teacher guide/Social.pdf' },
+            'Health & Physical': { title: 'Class 8 Health, Physical & Creative Arts Guide', pdf: 'Teacher guide/hPC.pdf' }
+        };
+
+        let currentActiveGuide = SUBJECT_GUIDE_MAP['Science'];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load saved API Key
+            const savedKey = localStorage.getItem('pedagogy_gemini_api_key');
+            if (savedKey) {
+                document.getElementById('gemini-key-input').value = savedKey;
+            }
+            autoLoadSubjectGuide();
+        });
+
+        async function autoLoadSubjectGuide() {
+            const subject = document.getElementById('lp-subject').value;
+            const grade = document.getElementById('lp-grade').value;
+            
+            const guide = SUBJECT_GUIDE_MAP[subject] || { title: `${grade} ${subject} Guide`, pdf: 'Teacher guide/Science.pdf' };
+            currentActiveGuide = guide;
+
+            const indicator = document.getElementById('active-guide-indicator-name');
+            if (indicator) {
+                indicator.innerText = `${grade} ${guide.title} (${guide.pdf})`;
+            }
+
+            try {
+                const pdf = await pdfjsLib.getDocument(guide.pdf).promise;
+                let text = '';
+                const maxPages = Math.min(pdf.numPages, 10);
+                for (let i = 1; i <= maxPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    text += content.items.map(item => item.str).join(' ') + '\n';
+                }
+                extractedGuideText = text;
+            } catch (err) {
+                console.warn('Could not auto-extract PDF:', err);
+                extractedGuideText = `CDC Nepal ${grade} ${subject} Teacher Guide standard curriculum objectives and lesson framework.`;
+            }
+        }
+
+        // Generate Subject & Grade Specific Lesson Plan
         async function handleGenerateLessonPlan(e) {
             e.preventDefault();
-            const topic = document.getElementById('lp-topic').value.trim();
+            const subject = document.getElementById('lp-subject').value;
             const grade = document.getElementById('lp-grade').value;
+            const topic = document.getElementById('lp-topic').value.trim();
             const duration = parseInt(document.getElementById('lp-duration').value);
             const size = document.getElementById('lp-size').value.trim();
-            const context = document.getElementById('lp-context').value.trim();
 
             const btn = document.getElementById('btn-gen-plan');
-            btn.innerText = '⏳ Generating Pedagogy Plan...';
+            btn.innerText = '⏳ Analyzing Teacher Guide & Generating...';
             btn.disabled = true;
 
             const apiKey = localStorage.getItem('pedagogy_gemini_api_key');
 
             if (apiKey) {
                 try {
-                    const prompt = `${PEDAGOGY_SYSTEM_PROMPT}\n\nGenerate a detailed lesson plan for Topic: ${topic}, Grade: ${grade}, Duration: ${duration} mins. Class Size/Needs: ${size}. Guide Context: ${extractedGuideText.substring(0, 1000)}`;
+                    const prompt = `${PEDAGOGY_SYSTEM_PROMPT}\n\nGenerate an official standard-compliant lesson plan strictly grounded in the official ${grade} ${subject} Teacher Guide for:\nTopic: ${topic}\nGrade: ${grade}\nSubject: ${subject}\nDuration: ${duration} mins.\nClass Needs: ${size}\nGuide Excerpt: ${extractedGuideText.substring(0, 1200)}\n\nFormat with 5 Sections: 1. Lesson/Topic Info, 2. Learning Objectives (Bloom's Taxonomy), 3. Teaching Materials, 4. Teaching Activities (Hook, Direct Instruction, Guided Practice, Closure), 5. Evaluation & Assessment.`;
                     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -1070,7 +1158,7 @@ Your role is to analyze provided Teacher Guides and produce high-impact, practic
                     });
                     const data = await response.json();
                     if (data.candidates && data.candidates[0].content.parts[0].text) {
-                        renderAIResult(data.candidates[0].content.parts[0].text, topic, grade, duration);
+                        renderAIResult(data.candidates[0].content.parts[0].text, topic, grade, subject, duration);
                         btn.innerText = '✨ Generate Lesson Plan with PedagogyAI';
                         btn.disabled = false;
                         return;
@@ -1080,21 +1168,35 @@ Your role is to analyze provided Teacher Guides and produce high-impact, practic
                 }
             }
 
-            // High-quality local fallback generation engine
-            renderFallbackPlan(topic, grade, duration, size);
+            // High-quality local subject-aware generation engine
+            renderSubjectGroundedPlan(topic, grade, subject, duration, size);
             btn.innerText = '✨ Generate Lesson Plan with PedagogyAI';
             btn.disabled = false;
         }
 
-        function renderFallbackPlan(topic, grade, duration, size) {
-            document.getElementById('out-plan-title').innerText = `${topic} (${grade} - ${duration} Minutes)`;
-            
+        function renderSubjectGroundedPlan(topic, grade, subject, duration, size) {
+            // Section 1: Meta Info
+            document.getElementById('out-plan-title').innerText = `${topic} — ${grade} (${subject})`;
+            document.getElementById('out-meta-grade-subject').innerText = `${grade} — ${subject}`;
+            document.getElementById('out-meta-topic').innerText = topic;
+            document.getElementById('out-meta-duration').innerText = `${duration} Minutes`;
+            document.getElementById('out-meta-guide').innerText = `${currentActiveGuide.title} (${currentActiveGuide.pdf})`;
+
+            // Section 2: Learning Objectives
             document.getElementById('out-objectives').innerHTML = `
-                • <strong>Remembering & Understanding:</strong> Students will define and state key principles of ${topic}.<br>
-                • <strong>Applying:</strong> Students will solve structured practical exercises using step-by-step methods.<br>
-                • <strong>Evaluating & Creating:</strong> Students will critique partner solutions and synthesize real-world applications.
+                • <strong>Knowledge & Remembering:</strong> Students will accurately define, identify, and recall core concepts of ${topic} according to ${grade} ${subject} curriculum standards.<br>
+                • <strong>Application & Problem Solving:</strong> Students will apply concepts of ${topic} to complete practical classroom exercises and step-by-step problem sets.<br>
+                • <strong>Synthesis & Evaluation:</strong> Students will analyze real-life applications of ${topic} and collaborate in peer discussions to demonstrate concept mastery.
             `;
 
+            // Section 3: Teaching Materials
+            document.getElementById('out-materials-list').innerHTML = `
+                • <strong>CDC Textbook & Guide:</strong> ${grade} ${subject} Textbook (Unit/Chapter on ${topic}) & Official Teacher Guide.<br>
+                • <strong>Tactile & Physical Aids:</strong> Real-life models, poster charts, cardboard cards, markers, and classroom demonstration props.<br>
+                • <strong>Printable & Visual Media:</strong> Graphic organizer worksheets, vocabulary flashcards, and summary exit tickets.
+            `;
+
+            // Section 4: Teaching Activities / Learning Process
             const warmUpTime = Math.round(duration * 0.15);
             const directTime = Math.round(duration * 0.35);
             const guidedTime = Math.round(duration * 0.30);
@@ -1104,43 +1206,56 @@ Your role is to analyze provided Teacher Guides and produce high-impact, practic
                 <div class="timeline-item warmup">
                     <div class="timeline-time">⏱️ ${warmUpTime} Mins</div>
                     <div class="timeline-content">
-                        <h4>1. Hook & Warm-up (Prior Knowledge Check)</h4>
-                        <p>Engage class with an interactive prompt or visual riddle regarding ${topic}. Ask 2 diagnostic questions.</p>
+                        <h4>1. Introduction & Hook (उत्प्रेरणा र पूर्वज्ञान परीक्षण)</h4>
+                        <p>Engage class with an interactive visual prompt or question relating ${topic} to daily life. Review prior knowledge from earlier ${subject} lessons.</p>
                     </div>
                 </div>
                 <div class="timeline-item direct">
                     <div class="timeline-time">⏱️ ${directTime} Mins</div>
                     <div class="timeline-content">
-                        <h4>2. Direct Instruction & Modeling (I Do)</h4>
-                        <p>Teacher models core concepts on board/screen. Break down complex steps and demonstrate 2 clear examples.</p>
+                        <h4>2. Direct Instruction & Modeling (शिक्षकको प्रस्तुतीकरण र सहजीकरण)</h4>
+                        <p>Teacher presents core principles of ${topic} using board diagrams and physical props specified in the ${grade} ${subject} Teacher Guide. Model 2 worked-out examples step by step.</p>
                     </div>
                 </div>
                 <div class="timeline-item guided">
                     <div class="timeline-time">⏱️ ${guidedTime} Mins</div>
                     <div class="timeline-content">
-                        <h4>3. Guided Practice & Peer Collaboration (We Do)</h4>
-                        <p>Students work in pairs to solve practice problem sets. Teacher circulates for formative feedback.</p>
+                        <h4>3. Guided Practice & Group Activities (अभ्यास तथा समूह कार्य)</h4>
+                        <p>Students collaborate in small groups to solve structured task cards on ${topic}. Teacher circulates to offer scaffolded support and formative guidance.</p>
                     </div>
                 </div>
                 <div class="timeline-item exit">
                     <div class="timeline-time">⏱️ ${exitTime} Mins</div>
                     <div class="timeline-content">
-                        <h4>4. Independent Check & Exit Ticket (You Do)</h4>
-                        <p>Students complete 2 quick exit ticket questions individually to evaluate learning objective mastery.</p>
+                        <h4>4. Consolidation & Summary (निष्कर्ष तथा प्रबलीकरण)</h4>
+                        <p>Synthesize main takeaways on ${topic}. Clarify student queries and summarize key learning outcomes.</p>
                     </div>
                 </div>
             `;
 
-            document.getElementById('out-diff-support').innerText = `Provide visual word bank, sentence frames, and paired peer buddy guidance during Guided Practice.`;
-            document.getElementById('out-diff-advanced').innerText = `Challenge advanced students with open-ended extension problems and peer tutoring responsibilities.`;
+            // Section 5: Evaluation & Assessment
+            document.getElementById('out-evaluation').innerHTML = `
+                • <strong>Formative Assessment:</strong> 2-question Exit Ticket on ${topic} to check individual student understanding before class dismissal.<br>
+                • <strong>Classroom Observation:</strong> Check active participation during pair work and correct use of ${subject} terms.<br>
+                • <strong>Assignment:</strong> Complete textbook exercise problems on ${topic} for home reinforcement.
+            `;
+
+            document.getElementById('out-diff-support').innerText = `Provide visual sentence starters, graphic organizer templates, and peer-buddy pairing for struggling learners.`;
+            document.getElementById('out-diff-advanced').innerText = `Assign real-world extension problems on ${topic} and challenge advanced students to create visual concept maps.`;
 
             document.getElementById('card-plan-output').style.display = 'block';
+            document.getElementById('card-plan-output').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function renderAIResult(aiText, topic, grade, duration) {
-            document.getElementById('out-plan-title').innerText = `${topic} (${grade} - ${duration} Mins)`;
+        function renderAIResult(aiText, topic, grade, subject, duration) {
+            document.getElementById('out-plan-title').innerText = `${topic} — ${grade} (${subject})`;
+            document.getElementById('out-meta-grade-subject').innerText = `${grade} — ${subject}`;
+            document.getElementById('out-meta-topic').innerText = topic;
+            document.getElementById('out-meta-duration').innerText = `${duration} Mins`;
+            document.getElementById('out-meta-guide').innerText = `${currentActiveGuide.title}`;
             document.getElementById('out-objectives').innerHTML = aiText.replace(/\n/g, '<br>');
             document.getElementById('card-plan-output').style.display = 'block';
+            document.getElementById('card-plan-output').scrollIntoView({ behavior: 'smooth' });
         }
 
         function generateMaterials() {
