@@ -526,133 +526,19 @@
 
         <!-- Navigation Tabs -->
         <nav class="tab-nav">
-            <button class="tab-btn active" onclick="switchTab('explorer')">
-                📁 1. Guide Explorer
-            </button>
-            <button class="tab-btn" onclick="switchTab('planner')">
-                📝 2. Lesson Planner
+            <button class="tab-btn active" onclick="switchTab('planner')">
+                📝 1. Lesson Planner
             </button>
             <button class="tab-btn" onclick="switchTab('materials')">
-                🎨 3. Material Maker
+                🎨 2. Material Maker
             </button>
             <button class="tab-btn" onclick="switchTab('chat')">
-                💬 4. Live AI Chat
+                💬 3. Live AI Chat
             </button>
         </nav>
 
-        <!-- TAB 1: Guide Explorer (Official Admin-Uploaded Teacher Guides Library) -->
-        <section id="panel-explorer" class="tab-panel active">
-            <div class="card">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; border-bottom:1px solid #f1f5f9; padding-bottom:15px; margin-bottom:20px;">
-                    <div>
-                        <h2 style="margin:0; font-size:1.4rem; color:#0f172a;">📚 Official Teacher Guides Library (प्रशासकीय शिक्षक निर्देशिका पुस्तकालय)</h2>
-                        <p style="margin:4px 0 0 0; font-size:0.9rem; color:#64748b;">Below are curriculum guides uploaded and verified by the Education Administration / CDC Nepal.</p>
-                    </div>
-                    <button class="btn-header-action" style="color:#7c3aed; background:#f3e8ff; border:1px solid #c4b5fd;" onclick="toggleAdminUploader()">
-                        🔒 Admin Uploader Panel (व्यवस्थापकिय अपलोड)
-                    </button>
-                </div>
-
-                <!-- Admin Upload Dropzone (Hidden by default for regular teachers) -->
-                <div id="admin-upload-section" style="display:none; margin-bottom:25px; background:#faf5ff; border:2px dashed #a78bfa; border-radius:20px; padding:25px; text-align:center;">
-                    <div style="font-size:0.8rem; font-weight:700; color:#7c3aed; text-transform:uppercase; margin-bottom:8px;">🔒 Super Admin Upload Gateway</div>
-                    <h3 style="margin:0 0 8px 0; color:#1e293b;">Upload New Official Teacher Guide (PDF / Text)</h3>
-                    <p style="margin:0 0 15px 0; color:#64748b; font-size:0.88rem;">Uploaded guides will be indexed and published to the shared Teacher Guides Library for all teachers.</p>
-
-                    <div style="display:flex; justify-content:center; gap:12px; max-width:500px; margin:0 auto 15px auto;">
-                        <input type="text" id="admin-guide-title" class="input-field" placeholder="Guide Title (e.g. Grade 9 Science)" style="flex:1;">
-                        <select id="admin-guide-grade" class="select-field">
-                            <option value="Grade 8">Grade 8</option>
-                            <option value="Grade 9">Grade 9</option>
-                            <option value="Grade 10">Grade 10</option>
-                        </select>
-                    </div>
-
-                    <div class="upload-dropzone" onclick="document.getElementById('file-upload-input').click()" style="background:white; padding:25px;">
-                        <input type="file" id="file-upload-input" accept=".pdf,.txt,.md" style="display:none" onchange="handleAdminFileUpload(event)">
-                        <div class="upload-icon" style="font-size:2.5rem;">📄</div>
-                        <h4 style="margin:0 0 4px 0; color:#1e293b;">Click to upload PDF / Text Guide</h4>
-                        <span style="font-size:0.8rem; color:#94a3b8;">Automatic text extraction & vector indexing</span>
-                    </div>
-
-                    <div id="upload-status" style="display:none; margin-top:15px; padding:12px; border-radius:10px; background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; font-weight:600; font-size:0.9rem;">
-                        ⏳ Extracting text and analyzing guide structure...
-                    </div>
-                </div>
-
-                <!-- Teacher Search & Filter Controls -->
-                <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px;">
-                    <input type="text" id="guide-search-input" class="input-field" placeholder="🔍 Search curriculum guides or topics..." style="flex:1;" onkeyup="filterAdminGuides()">
-                    
-                    <select id="guide-filter-grade" class="select-field" onchange="filterAdminGuides()">
-                        <option value="">All Grades (सबै कक्षा)</option>
-                        <option value="Grade 1">Grade 1</option>
-                        <option value="Grade 2">Grade 2</option>
-                        <option value="Grade 3">Grade 3</option>
-                        <option value="Grade 4">Grade 4</option>
-                        <option value="Grade 5">Grade 5</option>
-                        <option value="Grade 6">Grade 6</option>
-                        <option value="Grade 7">Grade 7</option>
-                        <option value="Grade 8" selected>Grade 8</option>
-                        <option value="Grade 9">Grade 9</option>
-                        <option value="Grade 10">Grade 10</option>
-                        <option value="Grade 11">Grade 11</option>
-                        <option value="Grade 12">Grade 12</option>
-                    </select>
-
-                    <select id="guide-filter-subject" class="select-field" onchange="filterAdminGuides()">
-                        <option value="">All Subjects (सबै विषय)</option>
-                        <option value="Mathematics">Mathematics (गणित)</option>
-                        <option value="Science">Science (विज्ञान)</option>
-                        <option value="English">English (अंग्रेजी)</option>
-                        <option value="Nepali">Nepali (नेपाली)</option>
-                        <option value="Social Studies">Social Studies (सामाजिक)</option>
-                    </select>
-                </div>
-
-                <!-- Admin Guides Grid (Library View for Teachers) -->
-                <div id="admin-guides-grid" class="materials-grid">
-                    <!-- Dynamic guide cards injected via JavaScript -->
-                </div>
-            </div>
-
-            <!-- Active Selected Guide Summary Card -->
-            <div class="card" id="card-analysis" style="display:none; border-left:5px solid #7c3aed;">
-                <div class="card-header-title">
-                    <h2>📊 Selected Guide Analysis & AI Context</h2>
-                </div>
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px;">
-                    <div style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0;">
-                        <span style="font-size:0.8rem; color:#64748b; font-weight:700; text-transform:uppercase;">Active Document</span>
-                        <h4 id="guide-doc-title" style="margin:5px 0 0 0; font-size:1.1rem; color:#0f172a;">-</h4>
-                    </div>
-                    <div style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0;">
-                        <span style="font-size:0.8rem; color:#64748b; font-weight:700; text-transform:uppercase;">Grade & Publisher</span>
-                        <h4 id="guide-grade-level" style="margin:5px 0 0 0; font-size:1.1rem; color:#7c3aed;">Grade 8 (CDC Nepal Admin)</h4>
-                    </div>
-                    <div style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0;">
-                        <span style="font-size:0.8rem; color:#64748b; font-weight:700; text-transform:uppercase;">Indexed Vector Chunks</span>
-                        <h4 id="guide-chunks-count" style="margin:5px 0 0 0; font-size:1.1rem; color:#059669;">24 Chunks Active</h4>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 style="font-size:1.1rem; margin-bottom:8px;">Core Curriculum Objectives & Grounded Context</h3>
-                    <div id="guide-summary-text" style="background:#f8fafc; padding:18px; border-radius:12px; font-size:0.95rem; line-height:1.6; color:#334155;">
-                        Guide summary will appear here...
-                    </div>
-                </div>
-
-                <div style="margin-top:20px; display:flex; justify-content:flex-end;">
-                    <button class="btn-submit" onclick="switchTab('planner')">
-                        Proceed to Lesson Planner with this Guide →
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 2: Lesson Planner (AI Generator) -->
-        <section id="panel-planner" class="tab-panel">
+        <!-- TAB 1: Lesson Planner (AI Generator) -->
+        <section id="panel-planner" class="tab-panel active">
             <div class="card">
                 <div class="card-header-title">
                     <h2>📝 Standard-Compliant Lesson Plan Generator</h2>
