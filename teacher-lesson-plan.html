@@ -1285,12 +1285,10 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             }, 1200);
 
             if (btn) {
-                btn.innerText = `✅ ${subject} Units Loaded!`;
+                btn.innerText = `✅ ${subject} Units Active`;
                 btn.style.background = '#059669';
-                setTimeout(() => {
-                    btn.innerText = '🔄 Refresh Units';
-                    btn.style.background = '#2563eb';
-                }, 1500);
+                btn.style.borderColor = '#047857';
+                btn.style.boxShadow = '0 2px 8px rgba(5, 150, 105, 0.3)';
             }
 
             // 2. Background PDF metadata guide indicator setup
