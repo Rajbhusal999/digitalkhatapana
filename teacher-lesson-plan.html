@@ -580,7 +580,13 @@
                         <div class="form-group">
                             <label for="lp-unit">Unit Name (एकाइको नाम) *</label>
                             <select id="lp-unit" class="select-field" required>
-                                <!-- Populated dynamically by autoLoadSubjectGuide() -->
+                                <option value="Unit 1: Scientific Learning & Measurement (एकाइ १: वैज्ञानिक सिकाइ र नाप)">Unit 1: Scientific Learning & Measurement (एकाइ १: वैज्ञानिक सिकाइ र नाप)</option>
+                                <option value="Unit 2: Information & Tech (एकाइ २: सूचना तथा सञ्चार प्रविधि)">Unit 2: Information & Tech (एकाइ २: सूचना तथा सञ्चार प्रविधि)</option>
+                                <option value="Unit 3: Motion & Force (एकाइ ३: चाल र बल)">Unit 3: Motion & Force (एकाइ ३: चाल र बल)</option>
+                                <option value="Unit 4: Energy & Pressure (एकाइ ४: ऊर्जा र चाप)">Unit 4: Energy & Pressure (एकाइ ४: ऊर्जा र चाप)</option>
+                                <option value="Unit 5: Matter & Elements (एकाइ ५: पदार्थ र तत्त्वहरू)">Unit 5: Matter & Elements (एकाइ ५: पदार्थ र तत्त्वहरू)</option>
+                                <option value="Unit 6: Life Processes & Organisms (एकाइ ६: सजीव र जीवन प्रक्रिया)">Unit 6: Life Processes & Organisms (एकाइ ६: सजीव र जीवन प्रक्रिया)</option>
+                                <option value="Unit 7: Earth & Universe (एकाइ ७: पृथ्वी र अन्तरिक्ष)">Unit 7: Earth & Universe (एकाइ ७: पृथ्वी र अन्तरिक्ष)</option>
                             </select>
                         </div>
 
@@ -1181,26 +1187,33 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             if (savedKey) {
                 document.getElementById('gemini-key-input').value = savedKey;
             }
+            updateUnitDropdown();
             autoLoadSubjectGuide();
         });
 
+        function updateUnitDropdown() {
+            const subjectSelect = document.getElementById('lp-subject');
+            const unitSelect = document.getElementById('lp-unit');
+            if (!subjectSelect || !unitSelect) return;
+
+            const subject = subjectSelect.value;
+            const units = SUBJECT_UNITS_MAP[subject] || [`Unit 1: General (${subject})`];
+
+            unitSelect.innerHTML = '';
+            units.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u;
+                opt.innerText = u;
+                unitSelect.appendChild(opt);
+            });
+        }
+
         async function autoLoadSubjectGuide() {
+            updateUnitDropdown();
+
             const subject = document.getElementById('lp-subject').value;
             const grade = document.getElementById('lp-grade').value;
             
-            // Populate Unit Name Dropdown
-            const unitSelect = document.getElementById('lp-unit');
-            if (unitSelect) {
-                unitSelect.innerHTML = '';
-                const units = SUBJECT_UNITS_MAP[subject] || [`Unit 1: General (${subject})`];
-                units.forEach(u => {
-                    const opt = document.createElement('option');
-                    opt.value = u;
-                    opt.innerText = u;
-                    unitSelect.appendChild(opt);
-                });
-            }
-
             const guide = SUBJECT_GUIDE_MAP[subject] || { title: `${grade} ${subject} Guide`, pdf: 'Teacher guide/Science.pdf' };
             currentActiveGuide = guide;
 
@@ -1219,6 +1232,28 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
                     text += content.items.map(item => item.str).join(' ') + '\n';
                 }
                 extractedGuideText = text;
+
+                // Extract any specific Units/Chapters dynamically from PDF text
+                const extractedUnits = [];
+                const lines = text.split('\n');
+                lines.forEach(line => {
+                    const trimmed = line.trim();
+                    if (/^(Unit|एकाइ|Chapter|पाठ)\s+\d+/i.test(trimmed) && trimmed.length < 60) {
+                        if (!extractedUnits.includes(trimmed)) extractedUnits.push(trimmed);
+                    }
+                });
+
+                if (extractedUnits.length > 0) {
+                    const unitSelect = document.getElementById('lp-unit');
+                    if (unitSelect) {
+                        extractedUnits.forEach(u => {
+                            const opt = document.createElement('option');
+                            opt.value = u;
+                            opt.innerText = `📖 ${u} (PDF Extracted)`;
+                            unitSelect.appendChild(opt);
+                        });
+                    }
+                }
             } catch (err) {
                 console.warn('Could not auto-extract PDF:', err);
                 extractedGuideText = `CDC Nepal ${grade} ${subject} Teacher Guide standard curriculum objectives and lesson framework.`;
