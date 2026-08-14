@@ -578,8 +578,23 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="lp-unit">Unit Name (एकाइको नाम) *</label>
+                            <select id="lp-unit" class="select-field" required>
+                                <!-- Populated dynamically by autoLoadSubjectGuide() -->
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lp-lang">Language (भाषा) *</label>
+                            <select id="lp-lang" class="select-field" required>
+                                <option value="Nepali" selected>🇳🇵 Nepali (नेपाली)</option>
+                                <option value="English">🇬🇧 English</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
                             <label for="lp-topic">Lesson / Topic Title (पाठ / शीर्षक) *</label>
-                            <input type="text" id="lp-topic" class="input-field" required placeholder="e.g. Photosynthesis / Pythagoras Theorem / Tense">
+                            <input type="text" id="lp-topic" class="input-field" required placeholder="e.g. Types of Set / Photosynthesis / Tenses">
                         </div>
 
                         <div class="form-group">
@@ -1098,6 +1113,56 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
    - 4. शिक्षण-सिकाइ क्रियाकलाप (Teaching Activities): 4 short timed bullet points (उत्प्रेरणा 5m, प्रस्तुतीकरण 15m, अभ्यास 15m, निष्कर्ष 10m).
    - 5. मूल्याङ्कन र गृहकार्य (Evaluation & Homework): Exactly 2 short exit questions + 1 homework task.`;
 
+        // Subject to Units Mapping (CDC Nepal Official Curriculum)
+        const SUBJECT_UNITS_MAP = {
+            'Mathematics': [
+                'Unit 1: Sets (एकाइ १: समूह)',
+                'Unit 2: Real Numbers & Arithmetic (एकाइ २: अङ्कगणित)',
+                'Unit 3: Mensuration (एकाइ ३: क्षेत्रमिति)',
+                'Unit 4: Algebra (एकाइ ४: बीजगणित)',
+                'Unit 5: Geometry (एकाइ ५: ज्यामिति)',
+                'Unit 6: Statistics & Probability (एकाइ ६: तथ्याङ्कशास्त्र)'
+            ],
+            'Science': [
+                'Unit 1: Scientific Learning & Measurement (एकाइ १: वैज्ञानिक सिकाइ र नाप)',
+                'Unit 2: Information & Tech (एकाइ २: सूचना तथा सञ्चार प्रविधि)',
+                'Unit 3: Motion & Force (एकाइ ३: चाल र बल)',
+                'Unit 4: Energy & Pressure (एकाइ ४: ऊर्जा र चाप)',
+                'Unit 5: Matter & Elements (एकाइ ५: पदार्थ र तत्त्वहरू)',
+                'Unit 6: Life Processes & Organisms (एकाइ ६: सजीव र जीवन प्रक्रिया)',
+                'Unit 7: Earth & Universe (एकाइ ७: पृथ्वी र अन्तरिक्ष)'
+            ],
+            'English': [
+                'Unit 1: Personal Experiences & Travelogues',
+                'Unit 2: Health, Fitness & Sports',
+                'Unit 3: Science & Modern Technology',
+                'Unit 4: People, Places & Culture',
+                'Unit 5: Environmental Conservation',
+                'Unit 6: Ethics, Values & Social Media'
+            ],
+            'Nepali': [
+                'एकाइ १: हाम्रो संस्कृति र परम्परा',
+                'एकाइ २: प्राकृतिक सौन्दर्य र वातावरण',
+                'एकाइ ३: विज्ञान, प्रविधि र अन्वेषण',
+                'एकाइ ४: नैतिक मूल्य र नागरिक कर्तव्य',
+                'एकाइ ५: नेपाली भाषा, व्याकरण र साहित्य'
+            ],
+            'Social Studies': [
+                'Unit 1: We and Our Society (एकाइ १: हामी र हाम्रो समाज)',
+                'Unit 2: Social Problems & Solutions (एकाइ २: सामाजिक समस्या र समाधान)',
+                'Unit 3: Civics & Constitution (एकाइ ३: नागरिक चेतना र संविधान)',
+                'Unit 4: Geography of Nepal & World (एकाइ ४: नेपालको भूगोल र वातावरण)',
+                'Unit 5: History of Nepal (एकाइ ५: नेपालको इतिहास)'
+            ],
+            'Health & Physical': [
+                'Unit 1: Personal Health & Hygiene (एकाइ १: व्यक्तिगत स्वास्थ्य)',
+                'Unit 2: Nutrition & First Aid (एकाइ २: पोषण र प्राथमिक उपचार)',
+                'Unit 3: Physical Education & Games (एकाइ ३: शारीरिक शिक्षा र खेलकुद)',
+                'Unit 4: Visual Arts & Crafts (एकाइ ४: दृश्य कला र हस्तकला)',
+                'Unit 5: Music & Performing Arts (एकाइ ५: संगीत र नाट्य कला)'
+            ]
+        };
+
         // Subject to Teacher Guide PDF Mapping
         const SUBJECT_GUIDE_MAP = {
             'Science': { title: 'Class 8 Science & Technology Guide', pdf: 'Teacher guide/Science.pdf' },
@@ -1123,6 +1188,19 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             const subject = document.getElementById('lp-subject').value;
             const grade = document.getElementById('lp-grade').value;
             
+            // Populate Unit Name Dropdown
+            const unitSelect = document.getElementById('lp-unit');
+            if (unitSelect) {
+                unitSelect.innerHTML = '';
+                const units = SUBJECT_UNITS_MAP[subject] || [`Unit 1: General (${subject})`];
+                units.forEach(u => {
+                    const opt = document.createElement('option');
+                    opt.value = u;
+                    opt.innerText = u;
+                    unitSelect.appendChild(opt);
+                });
+            }
+
             const guide = SUBJECT_GUIDE_MAP[subject] || { title: `${grade} ${subject} Guide`, pdf: 'Teacher guide/Science.pdf' };
             currentActiveGuide = guide;
 
@@ -1152,6 +1230,8 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             e.preventDefault();
             const subject = document.getElementById('lp-subject').value;
             const grade = document.getElementById('lp-grade').value;
+            const unit = document.getElementById('lp-unit').value;
+            const lang = document.getElementById('lp-lang').value;
             const topic = document.getElementById('lp-topic').value.trim();
             const duration = parseInt(document.getElementById('lp-duration').value);
             const size = document.getElementById('lp-size').value.trim();
@@ -1164,7 +1244,7 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
 
             if (apiKey) {
                 try {
-                    const prompt = `${PEDAGOGY_SYSTEM_PROMPT}\n\nGenerate an ultra-concise, short-point Teacher Diary Lesson Plan for:\nTopic: ${topic}\nGrade: ${grade}\nSubject: ${subject}\nDuration: ${duration} mins.\nGuide Excerpt: ${extractedGuideText.substring(0, 1000)}\n\nFormat EXACTLY in 5 concise diary sections with short points only.`;
+                    const prompt = `${PEDAGOGY_SYSTEM_PROMPT}\n\nGenerate an ultra-concise, short-point Teacher Diary Lesson Plan in ${lang.toUpperCase()} language for:\nSubject: ${subject}\nGrade: ${grade}\nUnit: ${unit}\nTopic: ${topic}\nDuration: ${duration} mins.\nLanguage Choice: ${lang}\nGuide Excerpt: ${extractedGuideText.substring(0, 1000)}\n\nIMPORTANT: The whole output MUST be in ${lang} language strictly in 5 short diary sections.`;
                     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -1172,7 +1252,7 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
                     });
                     const data = await response.json();
                     if (data.candidates && data.candidates[0].content.parts[0].text) {
-                        renderAIResult(data.candidates[0].content.parts[0].text, topic, grade, subject, duration);
+                        renderAIResult(data.candidates[0].content.parts[0].text, topic, unit, grade, subject, duration, lang);
                         btn.innerText = '✨ Generate Lesson Plan with PedagogyAI';
                         btn.disabled = false;
                         return;
@@ -1182,77 +1262,134 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
                 }
             }
 
-            // High-quality local concise teacher diary engine
-            renderSubjectGroundedPlan(topic, grade, subject, duration, size);
+            // High-quality local concise teacher diary engine (Bilingual)
+            renderSubjectGroundedPlan(topic, unit, grade, subject, duration, size, lang);
             btn.innerText = '✨ Generate Lesson Plan with PedagogyAI';
             btn.disabled = false;
         }
 
-        function renderSubjectGroundedPlan(topic, grade, subject, duration, size) {
-            // Section 1: Meta Info (Compact)
-            document.getElementById('out-plan-title').innerText = `${topic} — ${grade} (${subject})`;
+        function renderSubjectGroundedPlan(topic, unit, grade, subject, duration, size, lang) {
+            const isNepali = lang === 'Nepali';
+
+            // Section 1: Meta Info
+            document.getElementById('out-plan-title').innerText = `${topic} (${unit})`;
             document.getElementById('out-meta-grade-subject').innerText = `${grade} — ${subject}`;
-            document.getElementById('out-meta-topic').innerText = topic;
-            document.getElementById('out-meta-duration').innerText = `${duration} Mins`;
+            document.getElementById('out-meta-topic').innerText = `${topic} (${unit})`;
+            document.getElementById('out-meta-duration').innerText = isNepali ? `${duration} मिनेट` : `${duration} Minutes`;
             document.getElementById('out-meta-guide').innerText = `${currentActiveGuide.title}`;
 
-            // Section 2: Objectives (Ultra-Concise 2 Points)
-            document.getElementById('out-objectives').innerHTML = `
-                • <strong>ज्ञान/बोध:</strong> ${topic} को मुख्य अवधारणा र परिभाषा स्पष्टसँग भन्न तथा लेख्न।<br>
-                • <strong>प्रयोग/सीप:</strong> ${topic} सम्बन्धी व्यावहारिक अभ्यास र समस्याहरू चरणबद्ध समाधान गर्न।
-            `;
+            // Section 2: Objectives (Bilingual Ultra-Concise 2 Points)
+            if (isNepali) {
+                document.getElementById('out-objectives').innerHTML = `
+                    • <strong>ज्ञान/बोध:</strong> ${topic} (${unit}) को मुख्य अवधारणा र परिभाषा स्पष्टसँग भन्न तथा लेख्न।<br>
+                    • <strong>प्रयोग/सीप:</strong> ${topic} सम्बन्धी अभ्यास र समस्याहरू चरणबद्ध रूपमा समाधान गर्न।
+                `;
+                document.getElementById('out-materials-list').innerHTML = `
+                    पाठ्यपुस्तक (${subject}), शिक्षक निर्देशिका, सम्बन्धित चित्र चार्ट/कार्ड, र मुख्य प्रदर्शन सामग्री।
+                `;
+            } else {
+                document.getElementById('out-objectives').innerHTML = `
+                    • <strong>Knowledge & Understanding:</strong> Students will clearly define and explain key concepts of ${topic} (${unit}).<br>
+                    • <strong>Application & Skill:</strong> Students will solve practical exercises and problem sets on ${topic} step-by-step.
+                `;
+                document.getElementById('out-materials-list').innerHTML = `
+                    Textbook (${subject}), Official Teacher Guide, relevant visual charts/flashcards, and demonstration props.
+                `;
+            }
 
-            // Section 3: Teaching Materials (Short Comma-Separated List)
-            document.getElementById('out-materials-list').innerHTML = `
-                पाठ्यपुस्तक (${subject}), शिक्षक निर्देशिका, सम्बन्धित चित्र चार्ट/कार्ड, र मुख्य प्रदर्शन सामग्री।
-            `;
-
-            // Section 4: Teaching Activities / Learning Process (Concise Timed Steps)
+            // Section 4: Teaching Activities (Bilingual Timed Steps)
             const warmUpTime = Math.round(duration * 0.15);
             const directTime = Math.round(duration * 0.35);
             const guidedTime = Math.round(duration * 0.30);
             const exitTime = duration - warmUpTime - directTime - guidedTime;
 
-            document.getElementById('out-timeline').innerHTML = `
-                <div class="timeline-item warmup">
-                    <div class="timeline-time">⏱️ ${warmUpTime} मिनेट</div>
-                    <div class="timeline-content">
-                        <h4>१. उत्प्रेरणा र पूर्वज्ञान (Warm-up)</h4>
-                        <p>${topic} सँग सम्बन्धित २ वटा चित्र/प्रश्न सोधेर विद्यार्थीको ध्यान आकर्षित गर्ने।</p>
+            if (isNepali) {
+                document.getElementById('out-timeline').innerHTML = `
+                    <div class="timeline-item warmup">
+                        <div class="timeline-time">⏱️ ${warmUpTime} मिनेट</div>
+                        <div class="timeline-content">
+                            <h4>१. उत्प्रेरणा र पूर्वज्ञान (Warm-up)</h4>
+                            <p>${topic} सँग सम्बन्धित २ वटा चित्र/प्रश्न सोधेर विद्यार्थीको ध्यान आकर्षित गर्ने।</p>
+                        </div>
                     </div>
-                </div>
-                <div class="timeline-item direct">
-                    <div class="timeline-time">⏱️ ${directTime} मिनेट</div>
-                    <div class="timeline-content">
-                        <h4>२. प्रस्तुतीकरण र सहजीकरण (Modeling)</h4>
-                        <p>मुख्य अवधारणा र २ वटा उदाहरण बोर्डमा प्रदर्शन गरी व्याख्या गर्ने।</p>
+                    <div class="timeline-item direct">
+                        <div class="timeline-time">⏱️ ${directTime} मिनेट</div>
+                        <div class="timeline-content">
+                            <h4>२. प्रस्तुतीकरण र सहजीकरण (Modeling)</h4>
+                            <p>मुख्य अवधारणा र २ वटा उदाहरण बोर्डमा प्रदर्शन गरी व्याख्या गर्ने।</p>
+                        </div>
                     </div>
-                </div>
-                <div class="timeline-item guided">
-                    <div class="timeline-time">⏱️ ${guidedTime} मिनेट</div>
-                    <div class="timeline-content">
-                        <h4>३. समूह अभ्यास र कार्य (Practice)</h4>
-                        <p>विद्यार्थीहरूलाई जोडी/समूहमा विभाजन गरी कार्यपत्र (Worksheet) समाधान गराउने।</p>
+                    <div class="timeline-item guided">
+                        <div class="timeline-time">⏱️ ${guidedTime} मिनेट</div>
+                        <div class="timeline-content">
+                            <h4>३. समूह अभ्यास र कार्य (Practice)</h4>
+                            <p>विद्यार्थीहरूलाई जोडी/समूहमा विभाजन गरी कार्यपत्र (Worksheet) समाधान गराउने।</p>
+                        </div>
                     </div>
-                </div>
-                <div class="timeline-item exit">
-                    <div class="timeline-time">⏱️ ${exitTime} मिनेट</div>
-                    <div class="timeline-content">
-                        <h4>४. निष्कर्ष र पुनरावृत्ति (Closure)</h4>
-                        <p>मुख्य सिकाइ बिन्दुहरू दोहोऱ्याउने र विद्यार्थीका जिज्ञासा निवारण गर्ने।</p>
+                    <div class="timeline-item exit">
+                        <div class="timeline-time">⏱️ ${exitTime} मिनेट</div>
+                        <div class="timeline-content">
+                            <h4>४. निष्कर्ष र पुनरावृत्ति (Closure)</h4>
+                            <p>मुख्य सिकाइ बिन्दुहरू दोहोऱ्याउने र विद्यार्थीका जिज्ञासा निवारण गर्ने।</p>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+                document.getElementById('out-evaluation').innerHTML = `
+                    • <strong>कक्षा मूल्याङ्कन (Exit Test):</strong> १. ${topic} को मुख्य विशेषता के हो? २. यसको १ व्यावहारिक प्रयोग लेख्नुहोस्।<br>
+                    • <strong>गृहकार्य (Homework):</strong> पाठ्यपुस्तकको अभ्यास प्रश्न नं. १ र २ का उत्तर सफा अक्षरीमा लेखी ल्याउनुहोस्।
+                `;
+                document.getElementById('out-diff-support').innerText = `सहयोग आवश्यक परेका विद्यार्थीलाई शब्द-कार्ड र जोडी साथी (Peer Buddy) को सहयोग दिने।`;
+                document.getElementById('out-diff-advanced').innerText = `प्रतिभाशाली विद्यार्थीलाई अतिरिक्त खोजमूलक प्रश्न समाधान गर्न दिने।`;
+            } else {
+                document.getElementById('out-timeline').innerHTML = `
+                    <div class="timeline-item warmup">
+                        <div class="timeline-time">⏱️ ${warmUpTime} Mins</div>
+                        <div class="timeline-content">
+                            <h4>1. Introduction & Hook (Warm-up)</h4>
+                            <p>Ask 2 diagnostic questions or present a visual riddle on ${topic} to engage students.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item direct">
+                        <div class="timeline-time">⏱️ ${directTime} Mins</div>
+                        <div class="timeline-content">
+                            <h4>2. Direct Instruction & Modeling</h4>
+                            <p>Explain key concepts of ${topic} on board using props from ${unit}. Model 2 worked examples.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item guided">
+                        <div class="timeline-time">⏱️ ${guidedTime} Mins</div>
+                        <div class="timeline-content">
+                            <h4>3. Guided Practice & Group Task</h4>
+                            <p>Divide class into pairs/small groups to solve structured worksheet problems on ${topic}.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item exit">
+                        <div class="timeline-time">⏱️ ${exitTime} Mins</div>
+                        <div class="timeline-content">
+                            <h4>4. Closure & Summary</h4>
+                            <p>Summarize core takeaways on ${topic} and address student questions.</p>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('out-evaluation').innerHTML = `
+                    • <strong>Class Assessment (Exit Test):</strong> 1. What is the key principle of ${topic}? 2. State 1 practical application.<br>
+                    • <strong>Homework:</strong> Complete Exercises #1 and #2 from the textbook chapter on ${unit}.
+                `;
+                document.getElementById('out-diff-support').innerText = `Provide visual word banks, sentence starters, and peer-buddy pairing during group work.`;
+                document.getElementById('out-diff-advanced').innerText = `Challenge advanced students with open-ended synthesis problems and concept mapping.`;
+            }
 
-            // Section 5: Evaluation & Assessment (Short Exact Answers & Questions)
-            document.getElementById('out-evaluation').innerHTML = `
-                • <strong>कक्षा मूल्याङ्कन (Exit Test):</strong> १. ${topic} को मुख्य विशेषता के हो? २. यसको १ व्यावहारिक प्रयोग लेख्नुहोस्।<br>
-                • <strong>गृहकार्य (Homework):</strong> पाठ्यपुस्तकको अभ्यास प्रश्न नं. १ र २ का उत्तर सफा अक्षरीमा लेखी ल्याउनुहोस्।
-            `;
+            document.getElementById('card-plan-output').style.display = 'block';
+            document.getElementById('card-plan-output').scrollIntoView({ behavior: 'smooth' });
+        }
 
-            document.getElementById('out-diff-support').innerText = `सहयोग आवश्यक परेका विद्यार्थीलाई शब्द-कार्ड र जोडी साथी (Peer Buddy) को सहयोग दिने।`;
-            document.getElementById('out-diff-advanced').innerText = `प्रतिभाशाली विद्यार्थीलाई अतिरिक्त खोजमूलक प्रश्न समाधान गर्न दिने।`;
-
+        function renderAIResult(aiText, topic, unit, grade, subject, duration, lang) {
+            document.getElementById('out-plan-title').innerText = `${topic} (${unit})`;
+            document.getElementById('out-meta-grade-subject').innerText = `${grade} — ${subject}`;
+            document.getElementById('out-meta-topic').innerText = `${topic} (${unit})`;
+            document.getElementById('out-meta-duration').innerText = `${duration} Mins`;
+            document.getElementById('out-meta-guide').innerText = `${currentActiveGuide.title}`;
+            document.getElementById('out-objectives').innerHTML = aiText.replace(/\n/g, '<br>');
             document.getElementById('card-plan-output').style.display = 'block';
             document.getElementById('card-plan-output').scrollIntoView({ behavior: 'smooth' });
         }
