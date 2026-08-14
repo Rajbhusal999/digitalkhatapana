@@ -585,19 +585,31 @@
                         <div class="form-group">
                             <label for="lp-unit">Unit Name (एकाइको नाम) *</label>
                             <select id="lp-unit" class="select-field" required>
-                                <!-- Auto-populated by loadSubjectUnitsAndGuide() -->
+                                <option value="Unit 1: Scientific Learning & Measurement (एकाइ १: वैज्ञानिक सिकाइ र नाप)">Unit 1: Scientific Learning & Measurement (एकाइ १: वैज्ञानिक सिकाइ र नाप)</option>
+                                <option value="Unit 2: Information & Tech (एकाइ २: सूचना तथा सञ्चार प्रविधि)">Unit 2: Information & Tech (एकाइ २: सूचना तथा सञ्चार प्रविधि)</option>
+                                <option value="Unit 3: Motion & Force (एकाइ ३: चाल र बल)">Unit 3: Motion & Force (एकाइ ३: चाल र बल)</option>
+                                <option value="Unit 4: Energy & Pressure (एकाइ ४: ऊर्जा र चाप)">Unit 4: Energy & Pressure (एकाइ ४: ऊर्जा र चाप)</option>
+                                <option value="Unit 5: Matter & Elements (एकाइ ५: पदार्थ र तत्त्वहरू)">Unit 5: Matter & Elements (एकाइ ५: पदार्थ र तत्त्वहरू)</option>
+                                <option value="Unit 6: Life Processes & Organisms (एकाइ ६: सजीव र जीवन प्रक्रिया)">Unit 6: Life Processes & Organisms (एकाइ ६: सजीव र जीवन प्रक्रिया)</option>
+                                <option value="Unit 7: Earth & Universe (एकाइ ७: पृथ्वी र अन्तरिक्ष)">Unit 7: Earth & Universe (एकाइ ७: पृथ्वी र अन्तरिक्ष)</option>
                             </select>
                         </div>
 
                         <div class="form-group full" style="background:#f1f5f9; padding:12px 18px; border-radius:12px; border:1px solid #e2e8f0; margin-top:-5px;">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                                 <span style="font-size:0.85rem; font-weight:700; color:#1e293b;">📖 Loaded Teacher Guide Units (Click to select):</span>
-                                <button type="button" id="btn-load-units" onclick="loadSubjectUnitsAndGuide()" style="background:#2563eb; color:white; border:none; padding:5px 12px; font-weight:700; border-radius:6px; cursor:pointer; font-size:0.8rem;">
-                                    🔄 Refresh Units
+                                <button type="button" id="btn-load-units" onclick="loadSubjectUnitsAndGuide()" style="background:#059669; color:white; border:none; padding:5px 12px; font-weight:700; border-radius:6px; cursor:pointer; font-size:0.8rem;">
+                                    ✅ Science Units Active
                                 </button>
                             </div>
                             <div id="unit-chips-container" style="display:flex; flex-wrap:wrap; gap:8px;">
-                                <!-- Chips dynamically inserted by JavaScript -->
+                                <div style="background:#7c3aed; border:1px solid #7c3aed; color:#ffffff; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer;">Unit 1: Scientific Learning & Measurement</div>
+                                <div style="background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer;">Unit 2: Information & Tech</div>
+                                <div style="background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer;">Unit 3: Motion & Force</div>
+                                <div style="background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer;">Unit 4: Energy & Pressure</div>
+                                <div style="background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer;">Unit 5: Matter & Elements</div>
+                                <div style="background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer;">Unit 6: Life Processes</div>
+                                <div style="background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer;">Unit 7: Earth & Universe</div>
                             </div>
                         </div>
 
@@ -1198,10 +1210,11 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
         let currentActiveGuide = SUBJECT_GUIDE_MAP['Science'];
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Load saved API Key
+            // Safe API key check
+            const keyInput = document.getElementById('gemini-key-input');
             const savedKey = localStorage.getItem('pedagogy_gemini_api_key');
-            if (savedKey) {
-                document.getElementById('gemini-key-input').value = savedKey;
+            if (keyInput && savedKey) {
+                keyInput.value = savedKey;
             }
             
             const btn = document.getElementById('btn-load-units');
@@ -1215,6 +1228,7 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             const subjectSelect = document.getElementById('lp-subject');
             if (subjectSelect) {
                 subjectSelect.addEventListener('change', loadSubjectUnitsAndGuide);
+                subjectSelect.addEventListener('input', loadSubjectUnitsAndGuide);
             }
 
             loadSubjectUnitsAndGuide();
