@@ -549,7 +549,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="lp-subject">Subject (विषय) *</label>
-                            <select id="lp-subject" class="select-field" required onchange="updateUnitDropdown(); autoLoadSubjectGuide();">
+                            <select id="lp-subject" class="select-field" required onchange="updateUnitDropdown(); autoLoadSubjectGuide();" oninput="updateUnitDropdown(); autoLoadSubjectGuide();">
                                 <option value="Science" selected>Science & Technology (विज्ञान तथा प्रविधि)</option>
                                 <option value="Mathematics">Mathematics (गणित)</option>
                                 <option value="English">English (अंग्रेजी)</option>
@@ -561,7 +561,7 @@
 
                         <div class="form-group">
                             <label for="lp-grade">Grade Level (कक्षा) *</label>
-                            <select id="lp-grade" class="select-field" required onchange="updateUnitDropdown(); autoLoadSubjectGuide();">
+                            <select id="lp-grade" class="select-field" required onchange="updateUnitDropdown(); autoLoadSubjectGuide();" oninput="updateUnitDropdown(); autoLoadSubjectGuide();">
                                 <option value="Grade 1">Grade 1</option>
                                 <option value="Grade 2">Grade 2</option>
                                 <option value="Grade 3">Grade 3</option>
@@ -580,7 +580,7 @@
                         <div class="form-group">
                             <label for="lp-unit">Unit Name (एकाइको नाम) *</label>
                             <select id="lp-unit" class="select-field" required>
-                                <option value="Unit 1: Scientific Learning & Measurement (एकाइ १: वैज्ञानिक सिकाइ र नाप)">Unit 1: Scientific Learning & Measurement (एकाइ १: वैज्ञानिक सिकाइ र नाप)</option>
+                                <option value="">Select Subject First (विषय छान्नुहोस्)</option>
                             </select>
                         </div>
 
@@ -1200,6 +1200,7 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
                 opt.innerText = u;
                 unitSelect.appendChild(opt);
             });
+            unitSelect.selectedIndex = 0;
         }
 
         async function autoLoadSubjectGuide() {
