@@ -886,57 +886,79 @@
         let currentLessonPlan = null;
         let adminGuides = [];
 
-        // Official Pre-Uploaded Admin Teacher Guides
+        // Official Class 8 Teacher Guides (Pre-uploaded by Admin in 'Teacher guide/' folder)
         const defaultAdminGuides = [
             {
                 id: 'guide-m8',
-                title: 'Grade 8 Mathematics Teacher Guide (गणित शिक्षक निर्देशिका)',
+                title: 'Class 8 Mathematics Teacher Guide (गणित शिक्षक निर्देशिका)',
                 grade: 'Grade 8',
                 subject: 'Mathematics',
                 uploadedBy: 'Admin (CDC Nepal)',
-                chunks: 24,
-                summary: 'Official Grade 8 Mathematics Curriculum Guide covering Algebra, Geometry, Arithmetic, Sets, Statistics, and Mensuration. Emphasizes problem-solving and tactile learning aids.',
-                rawText: 'Grade 8 Mathematics Curriculum Guide. Topics: Sets, Real Numbers, Arithmetic (Percentage, Profit & Loss), Algebra (Polynomials, Equations), Geometry (Triangles, Circle, Quadrilaterals), Mensuration, Statistics. Learning Objectives: Apply formulas, prove geometric theorems, model real-life math scenarios.'
+                fileUrl: 'Teacher guide/Mathematics.pdf',
+                fileSize: '17.8 MB',
+                chunks: 35,
+                summary: 'Official Class 8 Mathematics Teacher Guide (CDC Nepal Approved). Covers Sets, Real Numbers, Arithmetic (Percentage, Profit & Loss), Algebra (Polynomials, Linear Equations), Geometry (Triangles, Quadrilaterals, Circle), Mensuration, and Statistics.',
+                rawText: 'Class 8 Mathematics Curriculum Guide (CDC Nepal). Units: 1. Sets, 2. Real Numbers, 3. Arithmetic (Percentage, Simple Interest, Profit & Loss), 4. Mensuration (Area, Volume), 5. Algebra (Factorization, Equations), 6. Geometry (Constructions, Theorems), 7. Statistics (Mean, Median, Frequency Tables).'
             },
             {
                 id: 'guide-s8',
-                title: 'Grade 8 Science & Technology Guide (विज्ञान तथा प्रविधि निर्देशिका)',
+                title: 'Class 8 Science & Technology Guide (विज्ञान तथा प्रविधि निर्देशिका)',
                 grade: 'Grade 8',
                 subject: 'Science',
                 uploadedBy: 'Admin (CDC Nepal)',
-                chunks: 30,
-                summary: 'Grade 8 Science Curriculum Guide focusing on Scientific Inquiry, Measurement, Motion & Force, Energy, Chemistry of Elements, Biology of Living Organisms, and Earth & Space.',
-                rawText: 'Grade 8 Science & Technology Curriculum. Units: Measurement, Force and Motion, Simple Machines, Heat, Light, Electricity, Structure of Matter, Chemical Reactions, Cell Structure, Organ Systems, Environment. Objectives: Design experiments, construct low-cost physical models, perform safe observations.'
+                fileUrl: 'Teacher guide/Science.pdf',
+                fileSize: '14.5 MB',
+                chunks: 40,
+                summary: 'Official Class 8 Science & Technology Teacher Guide (CDC Nepal Approved). Focuses on Scientific Measurement, Motion & Force, Simple Machines, Energy, Elements & Compounds, Cells & Tissues, Living Organisms, and Earth & Space Science.',
+                rawText: 'Class 8 Science & Technology Curriculum (CDC Nepal). Units: 1. Scientific Learning & Measurement, 2. Force and Motion, 3. Pressure, 4. Energy (Heat, Light, Electricity), 5. Matter (Elements, Compounds, Chemical Reactions), 6. Biology (Cell, Tissues, Life Processes), 7. Astronomy & Geology.'
             },
             {
-                id: 'guide-e10',
-                title: 'Grade 10 English Teacher Guide (अंग्रेजी शिक्षक निर्देशिका)',
-                grade: 'Grade 10',
+                id: 'guide-e8',
+                title: 'Class 8 English Teacher Guide (अंग्रेजी शिक्षक निर्देशिका)',
+                grade: 'Grade 8',
                 subject: 'English',
                 uploadedBy: 'Admin (CDC Nepal)',
-                chunks: 28,
-                summary: 'Grade 10 Secondary English Teacher Guide focusing on Communicative Competence, Reading Comprehension, Grammar in Context, Essay Writing, and Creative Expression.',
-                rawText: 'Grade 10 English Guide. Units: World Literature, Environmental Conservation, Science & Tech, Travelogue, Formal Letters, Essay Writing, Passive Voice, Reported Speech. Objectives: Express opinion fluently, synthesize reading texts, produce structured essays.'
+                fileUrl: 'Teacher guide/English.pdf',
+                fileSize: '3.0 MB',
+                chunks: 25,
+                summary: 'Official Class 8 English Teacher Guide (CDC Nepal Approved). Emphasizes Communicative Competence, Reading Comprehension, Grammar in Context (Tenses, Passive Voice, Reported Speech), Writing Letters/Essays, and Vocabulary Building.',
+                rawText: 'Class 8 English Teacher Guide (CDC Nepal). Units: Personal Experiences, Festivals & Culture, Science & Environment, Moral Stories, Travelogues. Key Skills: Speaking fluency, contextual grammar (Prepositions, Tenses, Modals), guided composition, reading comprehension.'
             },
             {
-                id: 'guide-n6',
-                title: 'Grade 6 Nepali Language Teacher Guide (नेपाली भाषा शिक्षण निर्देशिका)',
-                grade: 'Grade 6',
+                id: 'guide-n8',
+                title: 'Class 8 Nepali Teacher Guide (नेपाली शिक्षक निर्देशिका)',
+                grade: 'Grade 8',
                 subject: 'Nepali',
                 uploadedBy: 'Admin (CDC Nepal)',
-                chunks: 18,
-                summary: 'कक्षा ६ नेपाली भाषा शिक्षक निर्देशिका। व्याकरण, शब्दभण्डार, बोध र अभिव्यक्ति, कथा तथा कविता शिक्षण सिकाइ क्रियाकलाप।',
-                rawText: 'कक्षा ६ नेपाली भाषा निर्देशिका। पाठ्यवस्तु: पदवर्ग, नाम, सर्वनाम, विशेषण, काल र पक्ष, शुद्धलेखन, संवाद लेखन, निबन्ध। विशिष्ट उद्देश्य: शुद्ध बोल्ने र लेख्ने क्षमता अभिवृद्धि गर्ने।'
+                fileUrl: 'Teacher guide/Nepali.pdf',
+                fileSize: '4.3 MB',
+                chunks: 22,
+                summary: 'आधिकारिक कक्षा ८ नेपाली भाषा शिक्षक निर्देशिका (पाठ्यक्रम विकास केन्द्र)। व्याकरण (पदवर्ग, काल, पक्ष), बोध र अभिव्यक्ति, कथा, कविता, निबन्ध, र वादविवाद शिक्षण सिकाइ क्रियाकलाप।',
+                rawText: 'कक्षा ८ नेपाली शिक्षक निर्देशिका। पाठ्यवस्तु: पदवर्ग (नाम, सर्वनाम, विशेषण, क्रियापद), वाक्य गठन, पदसङ्गति, करण-अकरण, शब्दभण्डार, संवाद, चिठीपत्र र निबन्ध लेखन। उद्देश्य: सुनाइ, बोलाइ, पढाइ र लेखाइ सीपको सर्वाङ्गीण विकास।'
             },
             {
-                id: 'guide-ss5',
-                title: 'Grade 5 Social Studies Guide (सामाजिक अध्ययन तथा मानवमूल्य शिक्षा)',
-                grade: 'Grade 5',
+                id: 'guide-ss8',
+                title: 'Class 8 Social Studies Guide (सामाजिक अध्ययन तथा मानवमूल्य शिक्षा)',
+                grade: 'Grade 8',
                 subject: 'Social Studies',
                 uploadedBy: 'Admin (CDC Nepal)',
-                chunks: 22,
-                summary: 'Grade 5 Social Studies & Values Education Guide covering Our Community, Geography of Nepal, Civics, Cultural Heritage, and Civic Responsibility.',
-                rawText: 'Grade 5 Social Studies Guide. Units: We and Our Society, Our Traditions, Social Problems, Our Earth and Geography, Historical Nepal. Objectives: Identify local geography, evaluate civic duties, practice respect for diversity.'
+                fileUrl: 'Teacher guide/Social.pdf',
+                fileSize: '3.5 MB',
+                chunks: 28,
+                summary: 'Official Class 8 Social Studies & Civic Education Guide (CDC Nepal Approved). Covers Nepali Society & Culture, Civics & Rights, Geography of Nepal, History, International Relations, and Community Values.',
+                rawText: 'Class 8 Social Studies & Values Education Guide (CDC Nepal). Units: 1. We and Our Society, 2. Social Problems and Solutions, 3. Our Traditions and Heritage, 4. Civics and Constitution, 5. Geography of Nepal and World, 6. Historical Events of Nepal.'
+            },
+            {
+                id: 'guide-hpc8',
+                title: 'Class 8 Health, Physical & Creative Arts Guide (स्वास्थ्य, शारीरिक तथा सिर्जनात्मक कला)',
+                grade: 'Grade 8',
+                subject: 'Health & Physical',
+                uploadedBy: 'Admin (CDC Nepal)',
+                fileUrl: 'Teacher guide/hPC.pdf',
+                fileSize: '28.9 MB',
+                chunks: 45,
+                summary: 'Official Class 8 Health, Physical Education & Creative Arts (HPC) Teacher Guide (CDC Nepal Approved). Covers Human Physiology, Nutrition, First Aid, Physical Drills & Games, Visual Arts, and Music.',
+                rawText: 'Class 8 Health, Physical Education & Creative Arts Guide. Units: Personal Hygiene, Nutrition, Disease Prevention, First Aid, Games & Physical Drills, Drawing & Craft, Music and Rhythm activities.'
             }
         ];
 
@@ -956,21 +978,13 @@ Your role is to analyze provided Teacher Guides and produce high-impact, practic
             if (savedKey) {
                 document.getElementById('gemini-key-input').value = savedKey;
             }
+            // Always refresh default Class 8 Guides
+            localStorage.setItem('pedagogy_admin_guides', JSON.stringify(defaultAdminGuides));
             loadAdminGuides();
         });
 
         function loadAdminGuides() {
-            const raw = localStorage.getItem('pedagogy_admin_guides');
-            if (raw) {
-                try {
-                    adminGuides = JSON.parse(raw);
-                } catch (e) {
-                    adminGuides = defaultAdminGuides;
-                }
-            } else {
-                adminGuides = defaultAdminGuides;
-                localStorage.setItem('pedagogy_admin_guides', JSON.stringify(adminGuides));
-            }
+            adminGuides = defaultAdminGuides;
             renderAdminGuides(adminGuides);
         }
 
@@ -998,10 +1012,12 @@ Your role is to analyze provided Teacher Guides and produce high-impact, practic
                     <h3 style="margin:0 0 8px 0; font-size:1.15rem; color:#0f172a;">${guide.title}</h3>
                     <p style="font-size:0.88rem; color:#475569; margin-bottom:15px; line-height:1.5;">${guide.summary}</p>
                     
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:12px;">
-                        <span style="font-size:0.8rem; color:#64748b; font-weight:600;">📊 ${guide.chunks} Indexed Chunks</span>
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:12px; flex-wrap:wrap; gap:8px;">
+                        <a href="${guide.fileUrl}" target="_blank" class="btn-header-action" style="color:#1d4ed8; background:#eff6ff; border:1px solid #bfdbfe; font-size:0.8rem; text-decoration:none;">
+                            📖 Read PDF (${guide.fileSize})
+                        </a>
                         <button class="btn-submit" style="padding:8px 16px; font-size:0.85rem;" onclick="selectAdminGuide('${guide.id}')">
-                            Select Guide for Lesson Plan →
+                            ✨ Select Guide for AI Plan →
                         </button>
                     </div>
                 `;
@@ -1017,31 +1033,73 @@ Your role is to analyze provided Teacher Guides and produce high-impact, practic
             const filtered = adminGuides.filter(g => {
                 const matchesSearch = g.title.toLowerCase().includes(search) || g.summary.toLowerCase().includes(search);
                 const matchesGrade = grade === '' || g.grade === grade;
-                const matchesSubject = subject === '' || g.subject === subject;
+                const matchesSubject = subject === '' || g.subject.toLowerCase().includes(subject.toLowerCase());
                 return matchesSearch && matchesGrade && matchesSubject;
             });
 
             renderAdminGuides(filtered);
         }
 
-        function selectAdminGuide(id) {
+        async function selectAdminGuide(id) {
             const guide = adminGuides.find(g => g.id === id);
             if (!guide) return;
 
-            extractedGuideText = guide.rawText;
-            activeGuideSummary = guide.summary;
+            const status = document.getElementById('upload-status');
+            if (status) {
+                status.style.display = 'block';
+                status.innerText = `⏳ Loading & Indexing ${guide.title}...`;
+            }
 
-            document.getElementById('guide-doc-title').innerText = guide.title;
-            document.getElementById('guide-grade-level').innerText = `${guide.grade} (${guide.uploadedBy})`;
-            document.getElementById('guide-chunks-count').innerText = `${guide.chunks} Chunks Active`;
-            document.getElementById('guide-summary-text').innerText = guide.summary;
+            try {
+                // If PDF file URL exists, extract real text using PDF.js
+                if (guide.fileUrl) {
+                    try {
+                        const pdf = await pdfjsLib.getDocument(guide.fileUrl).promise;
+                        let text = '';
+                        // Read up to first 10 pages for fast RAG context
+                        const maxPages = Math.min(pdf.numPages, 10);
+                        for (let i = 1; i <= maxPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const content = await page.getTextContent();
+                            text += content.items.map(item => item.str).join(' ') + '\n';
+                        }
+                        if (text.length > 100) {
+                            extractedGuideText = text;
+                        } else {
+                            extractedGuideText = guide.rawText;
+                        }
+                    } catch (pdfErr) {
+                        console.warn('Could not extract PDF directly, using pre-indexed guide text:', pdfErr);
+                        extractedGuideText = guide.rawText;
+                    }
+                } else {
+                    extractedGuideText = guide.rawText;
+                }
 
-            // Pre-fill Lesson Planner Form grade
-            const gradeSelect = document.getElementById('lp-grade');
-            if (gradeSelect) gradeSelect.value = guide.grade;
+                activeGuideSummary = guide.summary;
 
-            document.getElementById('card-analysis').style.display = 'block';
-            document.getElementById('card-analysis').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('guide-doc-title').innerText = guide.title;
+                document.getElementById('guide-grade-level').innerText = `${guide.grade} (${guide.uploadedBy})`;
+                document.getElementById('guide-chunks-count').innerText = `${guide.chunks} Chunks Active`;
+                document.getElementById('guide-summary-text').innerText = guide.summary;
+
+                // Pre-fill Lesson Planner Form grade & subject context
+                const gradeSelect = document.getElementById('lp-grade');
+                if (gradeSelect) gradeSelect.value = guide.grade;
+
+                const contextBox = document.getElementById('lp-context');
+                if (contextBox) contextBox.value = `Grounded in ${guide.title}`;
+
+                if (status) status.style.display = 'none';
+
+                document.getElementById('card-analysis').style.display = 'block';
+                document.getElementById('card-analysis').scrollIntoView({ behavior: 'smooth' });
+            } catch (e) {
+                console.error(e);
+                extractedGuideText = guide.rawText;
+                document.getElementById('card-analysis').style.display = 'block';
+                if (status) status.style.display = 'none';
+            }
         }
 
         function toggleAdminUploader() {
