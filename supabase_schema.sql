@@ -101,3 +101,91 @@ CREATE TABLE IF NOT EXISTS opening_balances (
     amount NUMERIC DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
+
+-- =================================================================
+-- AI TEACHER ASSISTANT ("PedagogyAI") SCHEMA (PostgreSQL + pgvector)
+-- =================================================================
+
+-- 1. Enable pgvector and uuid-ossp extension
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- 2. Teachers / Users table
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email TEXT UNIQUE NOT NULL,
+    full_name TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 3. Teacher Guides / Curricula table
+CREATE TABLE IF NOT EXISTS teacher_guides (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    grade_level TEXT,
+    subject TEXT,
+    file_url TEXT,
+    raw_content TEXT,
+    summary TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 4. Document Chunks with Vector Embeddings (for RAG search)
+CREATE TABLE IF NOT EXISTS guide_chunks (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    guide_id UUID REFERENCES teacher_guides(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    chunk_index INT NOT NULL,
+    metadata JSONB DEFAULT '{}'::jsonb,
+    embedding vector(768), -- Size for Google Gemini (text-embedding-004)
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Index for fast similarity search
+CREATE INDEX IF NOT EXISTS guide_chunks_embedding_idx ON guide_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
+
+-- 5. Lesson Plans table
+CREATE TABLE IF NOT EXISTS lesson_plans (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    guide_id UUID REFERENCES teacher_guides(id) ON DELETE SET NULL,
+    topic TEXT NOT NULL,
+    grade_level TEXT NOT NULL,
+    duration_minutes INT DEFAULT 45,
+    objectives JSONB,
+    timeline JSONB, -- [ { "phase": "Warm-up", "duration": 5, "activity": "..." } ]
+    assessment_notes TEXT,
+    differentiated_strategies JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 6. Teaching Materials table
+CREATE TABLE IF NOT EXISTS teaching_materials (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    lesson_plan_id UUID REFERENCES lesson_plans(id) ON DELETE CASCADE,
+    material_type TEXT NOT NULL, -- 'diy_prop', 'worksheet', 'flashcard', 'presentation'
+    title TEXT NOT NULL,
+    required_supplies TEXT[],
+    step_by_step_instructions JSONB,
+    printable_content TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 7. Chat Conversations & Messages
+CREATE TABLE IF NOT EXISTS conversations (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    guide_id UUID REFERENCES teacher_guides(id) ON DELETE SET NULL,
+    title TEXT DEFAULT 'New Lesson Planning Session',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    conversation_id UUID REFERENCES conversations(id) ON DELETE CASCADE,
+    sender TEXT NOT NULL CHECK (sender IN ('user', 'assistant', 'system')),
+    content TEXT NOT NULL,
+    context_used JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
