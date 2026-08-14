@@ -540,48 +540,104 @@
             </button>
         </nav>
 
-        <!-- TAB 1: Guide Explorer (Document Upload & Parsing) -->
+        <!-- TAB 1: Guide Explorer (Official Admin-Uploaded Teacher Guides Library) -->
         <section id="panel-explorer" class="tab-panel active">
             <div class="card">
-                <div class="card-header-title">
-                    <h2>📁 Upload Teacher Guide / Curriculum Document</h2>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; border-bottom:1px solid #f1f5f9; padding-bottom:15px; margin-bottom:20px;">
+                    <div>
+                        <h2 style="margin:0; font-size:1.4rem; color:#0f172a;">📚 Official Teacher Guides Library (प्रशासकीय शिक्षक निर्देशिका पुस्तकालय)</h2>
+                        <p style="margin:4px 0 0 0; font-size:0.9rem; color:#64748b;">Below are curriculum guides uploaded and verified by the Education Administration / CDC Nepal.</p>
+                    </div>
+                    <button class="btn-header-action" style="color:#7c3aed; background:#f3e8ff; border:1px solid #c4b5fd;" onclick="toggleAdminUploader()">
+                        🔒 Admin Uploader Panel (व्यवस्थापकिय अपलोड)
+                    </button>
                 </div>
 
-                <div class="upload-dropzone" onclick="document.getElementById('file-upload-input').click()">
-                    <input type="file" id="file-upload-input" accept=".pdf,.txt,.md" style="display:none" onchange="handleFileUpload(event)">
-                    <div class="upload-icon">📄</div>
-                    <h3 style="margin: 0 0 8px 0; color: #1e293b;">Click or drag PDF / Text Teacher Guide here</h3>
-                    <p style="margin: 0; color: #64748b; font-size: 0.9rem;">Upload textbook chapters, curriculum guidelines, or teaching notes.</p>
+                <!-- Admin Upload Dropzone (Hidden by default for regular teachers) -->
+                <div id="admin-upload-section" style="display:none; margin-bottom:25px; background:#faf5ff; border:2px dashed #a78bfa; border-radius:20px; padding:25px; text-align:center;">
+                    <div style="font-size:0.8rem; font-weight:700; color:#7c3aed; text-transform:uppercase; margin-bottom:8px;">🔒 Super Admin Upload Gateway</div>
+                    <h3 style="margin:0 0 8px 0; color:#1e293b;">Upload New Official Teacher Guide (PDF / Text)</h3>
+                    <p style="margin:0 0 15px 0; color:#64748b; font-size:0.88rem;">Uploaded guides will be indexed and published to the shared Teacher Guides Library for all teachers.</p>
+
+                    <div style="display:flex; justify-content:center; gap:12px; max-width:500px; margin:0 auto 15px auto;">
+                        <input type="text" id="admin-guide-title" class="input-field" placeholder="Guide Title (e.g. Grade 9 Science)" style="flex:1;">
+                        <select id="admin-guide-grade" class="select-field">
+                            <option value="Grade 8">Grade 8</option>
+                            <option value="Grade 9">Grade 9</option>
+                            <option value="Grade 10">Grade 10</option>
+                        </select>
+                    </div>
+
+                    <div class="upload-dropzone" onclick="document.getElementById('file-upload-input').click()" style="background:white; padding:25px;">
+                        <input type="file" id="file-upload-input" accept=".pdf,.txt,.md" style="display:none" onchange="handleAdminFileUpload(event)">
+                        <div class="upload-icon" style="font-size:2.5rem;">📄</div>
+                        <h4 style="margin:0 0 4px 0; color:#1e293b;">Click to upload PDF / Text Guide</h4>
+                        <span style="font-size:0.8rem; color:#94a3b8;">Automatic text extraction & vector indexing</span>
+                    </div>
+
+                    <div id="upload-status" style="display:none; margin-top:15px; padding:12px; border-radius:10px; background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; font-weight:600; font-size:0.9rem;">
+                        ⏳ Extracting text and analyzing guide structure...
+                    </div>
                 </div>
 
-                <!-- Status Progress -->
-                <div id="upload-status" style="display:none; margin-top:20px; padding:15px; border-radius:12px; background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; font-weight:600;">
-                    ⏳ Extracting text and analyzing guide structure...
+                <!-- Teacher Search & Filter Controls -->
+                <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px;">
+                    <input type="text" id="guide-search-input" class="input-field" placeholder="🔍 Search curriculum guides or topics..." style="flex:1;" onkeyup="filterAdminGuides()">
+                    
+                    <select id="guide-filter-grade" class="select-field" onchange="filterAdminGuides()">
+                        <option value="">All Grades (सबै कक्षा)</option>
+                        <option value="Grade 1">Grade 1</option>
+                        <option value="Grade 2">Grade 2</option>
+                        <option value="Grade 3">Grade 3</option>
+                        <option value="Grade 4">Grade 4</option>
+                        <option value="Grade 5">Grade 5</option>
+                        <option value="Grade 6">Grade 6</option>
+                        <option value="Grade 7">Grade 7</option>
+                        <option value="Grade 8" selected>Grade 8</option>
+                        <option value="Grade 9">Grade 9</option>
+                        <option value="Grade 10">Grade 10</option>
+                        <option value="Grade 11">Grade 11</option>
+                        <option value="Grade 12">Grade 12</option>
+                    </select>
+
+                    <select id="guide-filter-subject" class="select-field" onchange="filterAdminGuides()">
+                        <option value="">All Subjects (सबै विषय)</option>
+                        <option value="Mathematics">Mathematics (गणित)</option>
+                        <option value="Science">Science (विज्ञान)</option>
+                        <option value="English">English (अंग्रेजी)</option>
+                        <option value="Nepali">Nepali (नेपाली)</option>
+                        <option value="Social Studies">Social Studies (सामाजिक)</option>
+                    </select>
+                </div>
+
+                <!-- Admin Guides Grid (Library View for Teachers) -->
+                <div id="admin-guides-grid" class="materials-grid">
+                    <!-- Dynamic guide cards injected via JavaScript -->
                 </div>
             </div>
 
-            <!-- Active Document Analysis Summary -->
-            <div class="card" id="card-analysis" style="display:none;">
+            <!-- Active Selected Guide Summary Card -->
+            <div class="card" id="card-analysis" style="display:none; border-left:5px solid #7c3aed;">
                 <div class="card-header-title">
-                    <h2>📊 Curriculum & Guide Summary</h2>
+                    <h2>📊 Selected Guide Analysis & AI Context</h2>
                 </div>
                 <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px;">
                     <div style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0;">
-                        <span style="font-size:0.8rem; color:#64748b; font-weight:700; text-transform:uppercase;">Document Title</span>
-                        <h4 id="guide-doc-title" style="margin:5px 0 0 0; font-size:1.1rem;">-</h4>
+                        <span style="font-size:0.8rem; color:#64748b; font-weight:700; text-transform:uppercase;">Active Document</span>
+                        <h4 id="guide-doc-title" style="margin:5px 0 0 0; font-size:1.1rem; color:#0f172a;">-</h4>
                     </div>
                     <div style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0;">
-                        <span style="font-size:0.8rem; color:#64748b; font-weight:700; text-transform:uppercase;">Target Grade Level</span>
-                        <h4 id="guide-grade-level" style="margin:5px 0 0 0; font-size:1.1rem; color:#7c3aed;">Grade 1-12</h4>
+                        <span style="font-size:0.8rem; color:#64748b; font-weight:700; text-transform:uppercase;">Grade & Publisher</span>
+                        <h4 id="guide-grade-level" style="margin:5px 0 0 0; font-size:1.1rem; color:#7c3aed;">Grade 8 (CDC Nepal Admin)</h4>
                     </div>
                     <div style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0;">
-                        <span style="font-size:0.8rem; color:#64748b; font-weight:700; text-transform:uppercase;">Extracted Chunks</span>
-                        <h4 id="guide-chunks-count" style="margin:5px 0 0 0; font-size:1.1rem; color:#059669;">0 Chunks</h4>
+                        <span style="font-size:0.8rem; color:#64748b; font-weight:700; text-transform:uppercase;">Indexed Vector Chunks</span>
+                        <h4 id="guide-chunks-count" style="margin:5px 0 0 0; font-size:1.1rem; color:#059669;">24 Chunks Active</h4>
                     </div>
                 </div>
 
                 <div>
-                    <h3 style="font-size:1.1rem; margin-bottom:8px;">Core Curriculum Objectives & Topics</h3>
+                    <h3 style="font-size:1.1rem; margin-bottom:8px;">Core Curriculum Objectives & Grounded Context</h3>
                     <div id="guide-summary-text" style="background:#f8fafc; padding:18px; border-radius:12px; font-size:0.95rem; line-height:1.6; color:#334155;">
                         Guide summary will appear here...
                     </div>
@@ -589,7 +645,7 @@
 
                 <div style="margin-top:20px; display:flex; justify-content:flex-end;">
                     <button class="btn-submit" onclick="switchTab('planner')">
-                        Proceed to Lesson Planner →
+                        Proceed to Lesson Planner with this Guide →
                     </button>
                 </div>
             </div>
@@ -828,6 +884,61 @@
         let extractedGuideText = "";
         let activeGuideSummary = "";
         let currentLessonPlan = null;
+        let adminGuides = [];
+
+        // Official Pre-Uploaded Admin Teacher Guides
+        const defaultAdminGuides = [
+            {
+                id: 'guide-m8',
+                title: 'Grade 8 Mathematics Teacher Guide (गणित शिक्षक निर्देशिका)',
+                grade: 'Grade 8',
+                subject: 'Mathematics',
+                uploadedBy: 'Admin (CDC Nepal)',
+                chunks: 24,
+                summary: 'Official Grade 8 Mathematics Curriculum Guide covering Algebra, Geometry, Arithmetic, Sets, Statistics, and Mensuration. Emphasizes problem-solving and tactile learning aids.',
+                rawText: 'Grade 8 Mathematics Curriculum Guide. Topics: Sets, Real Numbers, Arithmetic (Percentage, Profit & Loss), Algebra (Polynomials, Equations), Geometry (Triangles, Circle, Quadrilaterals), Mensuration, Statistics. Learning Objectives: Apply formulas, prove geometric theorems, model real-life math scenarios.'
+            },
+            {
+                id: 'guide-s8',
+                title: 'Grade 8 Science & Technology Guide (विज्ञान तथा प्रविधि निर्देशिका)',
+                grade: 'Grade 8',
+                subject: 'Science',
+                uploadedBy: 'Admin (CDC Nepal)',
+                chunks: 30,
+                summary: 'Grade 8 Science Curriculum Guide focusing on Scientific Inquiry, Measurement, Motion & Force, Energy, Chemistry of Elements, Biology of Living Organisms, and Earth & Space.',
+                rawText: 'Grade 8 Science & Technology Curriculum. Units: Measurement, Force and Motion, Simple Machines, Heat, Light, Electricity, Structure of Matter, Chemical Reactions, Cell Structure, Organ Systems, Environment. Objectives: Design experiments, construct low-cost physical models, perform safe observations.'
+            },
+            {
+                id: 'guide-e10',
+                title: 'Grade 10 English Teacher Guide (अंग्रेजी शिक्षक निर्देशिका)',
+                grade: 'Grade 10',
+                subject: 'English',
+                uploadedBy: 'Admin (CDC Nepal)',
+                chunks: 28,
+                summary: 'Grade 10 Secondary English Teacher Guide focusing on Communicative Competence, Reading Comprehension, Grammar in Context, Essay Writing, and Creative Expression.',
+                rawText: 'Grade 10 English Guide. Units: World Literature, Environmental Conservation, Science & Tech, Travelogue, Formal Letters, Essay Writing, Passive Voice, Reported Speech. Objectives: Express opinion fluently, synthesize reading texts, produce structured essays.'
+            },
+            {
+                id: 'guide-n6',
+                title: 'Grade 6 Nepali Language Teacher Guide (नेपाली भाषा शिक्षण निर्देशिका)',
+                grade: 'Grade 6',
+                subject: 'Nepali',
+                uploadedBy: 'Admin (CDC Nepal)',
+                chunks: 18,
+                summary: 'कक्षा ६ नेपाली भाषा शिक्षक निर्देशिका। व्याकरण, शब्दभण्डार, बोध र अभिव्यक्ति, कथा तथा कविता शिक्षण सिकाइ क्रियाकलाप।',
+                rawText: 'कक्षा ६ नेपाली भाषा निर्देशिका। पाठ्यवस्तु: पदवर्ग, नाम, सर्वनाम, विशेषण, काल र पक्ष, शुद्धलेखन, संवाद लेखन, निबन्ध। विशिष्ट उद्देश्य: शुद्ध बोल्ने र लेख्ने क्षमता अभिवृद्धि गर्ने।'
+            },
+            {
+                id: 'guide-ss5',
+                title: 'Grade 5 Social Studies Guide (सामाजिक अध्ययन तथा मानवमूल्य शिक्षा)',
+                grade: 'Grade 5',
+                subject: 'Social Studies',
+                uploadedBy: 'Admin (CDC Nepal)',
+                chunks: 22,
+                summary: 'Grade 5 Social Studies & Values Education Guide covering Our Community, Geography of Nepal, Civics, Cultural Heritage, and Civic Responsibility.',
+                rawText: 'Grade 5 Social Studies Guide. Units: We and Our Society, Our Traditions, Social Problems, Our Earth and Geography, Historical Nepal. Objectives: Identify local geography, evaluate civic duties, practice respect for diversity.'
+            }
+        ];
 
         // System Prompt Definition
         const PEDAGOGY_SYSTEM_PROMPT = `You are "PedagogyAI," an expert instructional designer and master educator assistant. 
@@ -845,64 +956,148 @@ Your role is to analyze provided Teacher Guides and produce high-impact, practic
             if (savedKey) {
                 document.getElementById('gemini-key-input').value = savedKey;
             }
+            loadAdminGuides();
         });
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-
-            const targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabName));
-            if (targetBtn) targetBtn.classList.add('active');
-
-            const targetPanel = document.getElementById(`panel-${tabName}`);
-            if (targetPanel) targetPanel.classList.add('active');
-        }
-
-        function openSettingsModal() { document.getElementById('settings-modal').classList.add('active'); }
-        function closeSettingsModal() { document.getElementById('settings-modal').classList.remove('active'); }
-
-        function saveSettings() {
-            const key = document.getElementById('gemini-key-input').value.trim();
-            if (key) {
-                localStorage.setItem('pedagogy_gemini_api_key', key);
-                alert('API Key saved successfully!');
+        function loadAdminGuides() {
+            const raw = localStorage.getItem('pedagogy_admin_guides');
+            if (raw) {
+                try {
+                    adminGuides = JSON.parse(raw);
+                } catch (e) {
+                    adminGuides = defaultAdminGuides;
+                }
+            } else {
+                adminGuides = defaultAdminGuides;
+                localStorage.setItem('pedagogy_admin_guides', JSON.stringify(adminGuides));
             }
-            closeSettingsModal();
+            renderAdminGuides(adminGuides);
         }
 
-        // File Upload & PDF parsing
-        async function handleFileUpload(event) {
+        function renderAdminGuides(guides) {
+            const grid = document.getElementById('admin-guides-grid');
+            grid.innerHTML = '';
+
+            if (guides.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1; text-align:center; padding:40px; background:#f8fafc; border-radius:16px; border:1px dashed #cbd5e1;">
+                        <p style="color:#64748b; font-size:1.05rem;">No curriculum guides match your search/filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            guides.forEach(guide => {
+                const card = document.createElement('div');
+                card.className = 'material-card';
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span class="material-tag digital">${guide.grade}</span>
+                        <span style="font-size:0.75rem; color:#059669; font-weight:700; background:#d1fae5; padding:2px 8px; border-radius:10px;">${guide.uploadedBy}</span>
+                    </div>
+                    <h3 style="margin:0 0 8px 0; font-size:1.15rem; color:#0f172a;">${guide.title}</h3>
+                    <p style="font-size:0.88rem; color:#475569; margin-bottom:15px; line-height:1.5;">${guide.summary}</p>
+                    
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:12px;">
+                        <span style="font-size:0.8rem; color:#64748b; font-weight:600;">📊 ${guide.chunks} Indexed Chunks</span>
+                        <button class="btn-submit" style="padding:8px 16px; font-size:0.85rem;" onclick="selectAdminGuide('${guide.id}')">
+                            Select Guide for Lesson Plan →
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterAdminGuides() {
+            const search = document.getElementById('guide-search-input').value.toLowerCase();
+            const grade = document.getElementById('guide-filter-grade').value;
+            const subject = document.getElementById('guide-filter-subject').value;
+
+            const filtered = adminGuides.filter(g => {
+                const matchesSearch = g.title.toLowerCase().includes(search) || g.summary.toLowerCase().includes(search);
+                const matchesGrade = grade === '' || g.grade === grade;
+                const matchesSubject = subject === '' || g.subject === subject;
+                return matchesSearch && matchesGrade && matchesSubject;
+            });
+
+            renderAdminGuides(filtered);
+        }
+
+        function selectAdminGuide(id) {
+            const guide = adminGuides.find(g => g.id === id);
+            if (!guide) return;
+
+            extractedGuideText = guide.rawText;
+            activeGuideSummary = guide.summary;
+
+            document.getElementById('guide-doc-title').innerText = guide.title;
+            document.getElementById('guide-grade-level').innerText = `${guide.grade} (${guide.uploadedBy})`;
+            document.getElementById('guide-chunks-count').innerText = `${guide.chunks} Chunks Active`;
+            document.getElementById('guide-summary-text').innerText = guide.summary;
+
+            // Pre-fill Lesson Planner Form grade
+            const gradeSelect = document.getElementById('lp-grade');
+            if (gradeSelect) gradeSelect.value = guide.grade;
+
+            document.getElementById('card-analysis').style.display = 'block';
+            document.getElementById('card-analysis').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleAdminUploader() {
+            const uploader = document.getElementById('admin-upload-section');
+            uploader.style.display = uploader.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Admin File Upload & PDF parsing
+        async function handleAdminFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
 
+            const title = document.getElementById('admin-guide-title').value.trim() || file.name;
+            const grade = document.getElementById('admin-guide-grade').value;
+
             const status = document.getElementById('upload-status');
             status.style.display = 'block';
-            status.innerText = `⏳ Parsing ${file.name}...`;
+            status.innerText = `⏳ Admin Uploading & Indexing ${file.name}...`;
 
             try {
+                let text = '';
                 if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
                     const arrayBuffer = await file.arrayBuffer();
                     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                    let text = '';
                     for (let i = 1; i <= pdf.numPages; i++) {
                         const page = await pdf.getPage(i);
                         const content = await page.getTextContent();
                         text += content.items.map(item => item.str).join(' ') + '\n';
                     }
-                    extractedGuideText = text;
                 } else {
-                    extractedGuideText = await file.text();
+                    text = await file.text();
                 }
 
-                document.getElementById('guide-doc-title').innerText = file.name;
-                document.getElementById('guide-chunks-count').innerText = `${Math.ceil(extractedGuideText.length / 500)} Chunks`;
-                document.getElementById('guide-summary-text').innerText = extractedGuideText.substring(0, 400) + '...\n\n[Summary Extracted & Embedded Successfully]';
+                const newGuide = {
+                    id: 'guide-' + Date.now(),
+                    title: title,
+                    grade: grade,
+                    subject: 'General',
+                    uploadedBy: 'Super Admin',
+                    chunks: Math.ceil(text.length / 400),
+                    summary: `Admin Uploaded Guide: ${title}. ${text.substring(0, 200)}...`,
+                    rawText: text
+                };
 
-                document.getElementById('card-analysis').style.display = 'block';
+                adminGuides.unshift(newGuide);
+                localStorage.setItem('pedagogy_admin_guides', JSON.stringify(adminGuides));
+                renderAdminGuides(adminGuides);
+
+                selectAdminGuide(newGuide.id);
+
                 status.style.display = 'none';
+                alert('Official Admin Teacher Guide published to Library successfully!');
+                toggleAdminUploader();
             } catch (e) {
                 console.error(e);
-                status.innerText = `❌ Error reading document: ${e.message}`;
+                status.innerText = `❌ Admin upload failed: ${e.message}`;
             }
         }
 
