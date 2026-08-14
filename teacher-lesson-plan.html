@@ -1198,6 +1198,20 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             if (savedKey) {
                 document.getElementById('gemini-key-input').value = savedKey;
             }
+            
+            const btn = document.getElementById('btn-load-units');
+            if (btn) {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadSubjectUnitsAndGuide();
+                });
+            }
+
+            const subjectSelect = document.getElementById('lp-subject');
+            if (subjectSelect) {
+                subjectSelect.addEventListener('change', loadSubjectUnitsAndGuide);
+            }
+
             loadSubjectUnitsAndGuide();
         });
 
@@ -1222,6 +1236,14 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
                 unitSelect.appendChild(opt);
             });
             unitSelect.selectedIndex = 0;
+
+            // Visual Highlight Effect on unitSelect
+            unitSelect.style.border = '2px solid #059669';
+            unitSelect.style.boxShadow = '0 0 10px rgba(5, 150, 105, 0.3)';
+            setTimeout(() => {
+                unitSelect.style.border = '1px solid #cbd5e1';
+                unitSelect.style.boxShadow = 'none';
+            }, 1200);
 
             if (btn) {
                 btn.innerText = `✅ ${subject} Units Loaded!`;
@@ -1282,6 +1304,9 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
                 });
             }
         }
+
+        // Expose globally for inline button onclick attributes
+        window.loadSubjectUnitsAndGuide = loadSubjectUnitsAndGuide;
 
         // Generate Subject & Grade Specific Ultra-Concise Lesson Plan
         async function handleGenerateLessonPlan(e) {
