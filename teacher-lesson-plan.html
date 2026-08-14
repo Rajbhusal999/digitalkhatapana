@@ -554,7 +554,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="lp-subject">Subject (विषय) *</label>
-                            <select id="lp-subject" class="select-field" required onchange="loadSubjectUnitsAndGuide()">
+                            <select id="lp-subject" class="select-field" required>
                                 <option value="Science" selected>Science & Technology (विज्ञान तथा प्रविधि)</option>
                                 <option value="Mathematics">Mathematics (गणित)</option>
                                 <option value="English">English (अंग्रेजी)</option>
@@ -566,7 +566,7 @@
 
                         <div class="form-group">
                             <label for="lp-grade">Grade Level (कक्षा) *</label>
-                            <select id="lp-grade" class="select-field" required onchange="loadSubjectUnitsAndGuide()">
+                            <select id="lp-grade" class="select-field" required>
                                 <option value="Grade 1">Grade 1</option>
                                 <option value="Grade 2">Grade 2</option>
                                 <option value="Grade 3">Grade 3</option>
@@ -584,33 +584,33 @@
 
                         <div class="form-group">
                             <label for="lp-unit">Unit Name (एकाइको नाम) *</label>
-                            <select id="lp-unit" class="select-field" required>
-                                <option value="Unit 1: Scientific Learning & Measurement (एकाइ १: वैज्ञानिक सिकाइ र नाप)">Unit 1: Scientific Learning & Measurement (एकाइ १: वैज्ञानिक सिकाइ र नाप)</option>
-                                <option value="Unit 2: Information & Tech (एकाइ २: सूचना तथा सञ्चार प्रविधि)">Unit 2: Information & Tech (एकाइ २: सूचना तथा सञ्चार प्रविधि)</option>
-                                <option value="Unit 3: Motion & Force (एकाइ ३: चाल र बल)">Unit 3: Motion & Force (एकाइ ३: चाल र बल)</option>
-                                <option value="Unit 4: Energy & Pressure (एकाइ ४: ऊर्जा र चाप)">Unit 4: Energy & Pressure (एकाइ ४: ऊर्जा र चाप)</option>
-                                <option value="Unit 5: Matter & Elements (एकाइ ५: पदार्थ र तत्त्वहरू)">Unit 5: Matter & Elements (एकाइ ५: पदार्थ र तत्त्वहरू)</option>
-                                <option value="Unit 6: Life Processes & Organisms (एकाइ ६: सजीव र जीवन प्रक्रिया)">Unit 6: Life Processes & Organisms (एकाइ ६: सजीव र जीवन प्रक्रिया)</option>
-                                <option value="Unit 7: Earth & Universe (एकाइ ७: पृथ्वी र अन्तरिक्ष)">Unit 7: Earth & Universe (एकाइ ७: पृथ्वी र अन्तरिक्ष)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group full" style="background:#f1f5f9; padding:12px 18px; border-radius:12px; border:1px solid #e2e8f0; margin-top:-5px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                                <span style="font-size:0.85rem; font-weight:700; color:#1e293b;">📖 Loaded Teacher Guide Units (Click to select):</span>
-                                <button type="button" id="btn-load-units" onclick="loadSubjectUnitsAndGuide()" style="background:#059669; color:white; border:none; padding:5px 12px; font-weight:700; border-radius:6px; cursor:pointer; font-size:0.8rem;">
-                                    ✅ Science Units Active
-                                </button>
-                            </div>
-                            <div id="unit-chips-container" style="display:flex; flex-wrap:wrap; gap:8px;">
-                                <div style="background:#7c3aed; border:1px solid #7c3aed; color:#ffffff; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer;">Unit 1: Scientific Learning & Measurement</div>
-                                <div style="background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer;">Unit 2: Information & Tech</div>
-                                <div style="background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer;">Unit 3: Motion & Force</div>
-                                <div style="background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer;">Unit 4: Energy & Pressure</div>
-                                <div style="background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer;">Unit 5: Matter & Elements</div>
-                                <div style="background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer;">Unit 6: Life Processes</div>
-                                <div style="background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer;">Unit 7: Earth & Universe</div>
-                            </div>
+                            <input type="text" id="lp-unit" class="input-field" list="unit-suggestions" required placeholder="e.g. Unit 1: Sets / Unit 2: Motion / Unit 1: Travelogues">
+                            <datalist id="unit-suggestions">
+                                <option value="Unit 1: Sets (एकाइ १: समूह)">
+                                <option value="Unit 2: Real Numbers & Arithmetic (एकाइ २: अङ्कगणित)">
+                                <option value="Unit 3: Mensuration (एकाइ ३: क्षेत्रमिति)">
+                                <option value="Unit 4: Algebra (एकाइ ४: बीजगणित)">
+                                <option value="Unit 5: Geometry (एकाइ ५: ज्यामिति)">
+                                <option value="Unit 6: Statistics & Probability (एकाइ ६: तथ्याङ्कशास्त्र)">
+                                <option value="Unit 1: Scientific Learning & Measurement (एकाइ १: वैज्ञानिक सिकाइ र नाप)">
+                                <option value="Unit 2: Information & Tech (एकाइ २: सूचना तथा सञ्चार प्रविधि)">
+                                <option value="Unit 3: Motion & Force (एकाइ ३: चाल र बल)">
+                                <option value="Unit 4: Energy & Pressure (एकाइ ४: ऊर्जा र चाप)">
+                                <option value="Unit 5: Matter & Elements (एकाइ ५: पदार्थ र तत्त्वहरू)">
+                                <option value="Unit 6: Life Processes & Organisms (एकाइ ६: सजीव र जीवन प्रक्रिया)">
+                                <option value="Unit 7: Earth & Universe (एकाइ ७: पृथ्वी र अन्तरिक्ष)">
+                                <option value="Unit 1: Personal Experiences & Travelogues">
+                                <option value="Unit 2: Health, Fitness & Sports">
+                                <option value="Unit 3: Science & Modern Technology">
+                                <option value="Unit 4: People, Places & Culture">
+                                <option value="Unit 5: Environmental Conservation">
+                                <option value="Unit 6: Ethics, Values & Social Media">
+                                <option value="एकाइ १: हाम्रो संस्कृति र परम्परा">
+                                <option value="एकाइ २: प्राकृतिक सौन्दर्य र वातावरण">
+                                <option value="एकाइ ३: विज्ञान, प्रविधि र अन्वेषण">
+                                <option value="एकाइ ४: नैतिक मूल्य र नागरिक कर्तव्य">
+                                <option value="एकाइ ५: नेपाली भाषा, व्याकरण र साहित्य">
+                            </datalist>
                         </div>
 
                         <div class="form-group">
@@ -1142,56 +1142,6 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
    - 4. शिक्षण-सिकाइ क्रियाकलाप (Teaching Activities): 4 short timed bullet points (उत्प्रेरणा 5m, प्रस्तुतीकरण 15m, अभ्यास 15m, निष्कर्ष 10m).
    - 5. मूल्याङ्कन र गृहकार्य (Evaluation & Homework): Exactly 2 short exit questions + 1 homework task.`;
 
-        // Subject to Units Mapping (CDC Nepal Official Curriculum)
-        const SUBJECT_UNITS_MAP = {
-            'Mathematics': [
-                'Unit 1: Sets (एकाइ १: समूह)',
-                'Unit 2: Real Numbers & Arithmetic (एकाइ २: अङ्कगणित)',
-                'Unit 3: Mensuration (एकाइ ३: क्षेत्रमिति)',
-                'Unit 4: Algebra (एकाइ ४: बीजगणित)',
-                'Unit 5: Geometry (एकाइ ५: ज्यामिति)',
-                'Unit 6: Statistics & Probability (एकाइ ६: तथ्याङ्कशास्त्र)'
-            ],
-            'Science': [
-                'Unit 1: Scientific Learning & Measurement (एकाइ १: वैज्ञानिक सिकाइ र नाप)',
-                'Unit 2: Information & Tech (एकाइ २: सूचना तथा सञ्चार प्रविधि)',
-                'Unit 3: Motion & Force (एकाइ ३: चाल र बल)',
-                'Unit 4: Energy & Pressure (एकाइ ४: ऊर्जा र चाप)',
-                'Unit 5: Matter & Elements (एकाइ ५: पदार्थ र तत्त्वहरू)',
-                'Unit 6: Life Processes & Organisms (एकाइ ६: सजीव र जीवन प्रक्रिया)',
-                'Unit 7: Earth & Universe (एकाइ ७: पृथ्वी र अन्तरिक्ष)'
-            ],
-            'English': [
-                'Unit 1: Personal Experiences & Travelogues',
-                'Unit 2: Health, Fitness & Sports',
-                'Unit 3: Science & Modern Technology',
-                'Unit 4: People, Places & Culture',
-                'Unit 5: Environmental Conservation',
-                'Unit 6: Ethics, Values & Social Media'
-            ],
-            'Nepali': [
-                'एकाइ १: हाम्रो संस्कृति र परम्परा',
-                'एकाइ २: प्राकृतिक सौन्दर्य र वातावरण',
-                'एकाइ ३: विज्ञान, प्रविधि र अन्वेषण',
-                'एकाइ ४: नैतिक मूल्य र नागरिक कर्तव्य',
-                'एकाइ ५: नेपाली भाषा, व्याकरण र साहित्य'
-            ],
-            'Social Studies': [
-                'Unit 1: We and Our Society (एकाइ १: हामी र हाम्रो समाज)',
-                'Unit 2: Social Problems & Solutions (एकाइ २: सामाजिक समस्या र समाधान)',
-                'Unit 3: Civics & Constitution (एकाइ ३: नागरिक चेतना र संविधान)',
-                'Unit 4: Geography of Nepal & World (एकाइ ४: नेपालको भूगोल र वातावरण)',
-                'Unit 5: History of Nepal (एकाइ ५: नेपालको इतिहास)'
-            ],
-            'Health & Physical': [
-                'Unit 1: Personal Health & Hygiene (एकाइ १: व्यक्तिगत स्वास्थ्य)',
-                'Unit 2: Nutrition & First Aid (एकाइ २: पोषण र प्राथमिक उपचार)',
-                'Unit 3: Physical Education & Games (एकाइ ३: शारीरिक शिक्षा र खेलकुद)',
-                'Unit 4: Visual Arts & Crafts (एकाइ ४: दृश्य कला र हस्तकला)',
-                'Unit 5: Music & Performing Arts (एकाइ ५: संगीत र नाट्य कला)'
-            ]
-        };
-
         // Subject to Teacher Guide PDF Mapping
         const SUBJECT_GUIDE_MAP = {
             'Science': { title: 'Class 8 Science & Technology Guide', pdf: 'Teacher guide/Science.pdf' },
@@ -1216,122 +1166,7 @@ Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans speci
             if (keyInput && savedKey) {
                 keyInput.value = savedKey;
             }
-            
-            const btn = document.getElementById('btn-load-units');
-            if (btn) {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    loadSubjectUnitsAndGuide();
-                });
-            }
-
-            const subjectSelect = document.getElementById('lp-subject');
-            if (subjectSelect) {
-                subjectSelect.addEventListener('change', loadSubjectUnitsAndGuide);
-                subjectSelect.addEventListener('input', loadSubjectUnitsAndGuide);
-            }
-
-            loadSubjectUnitsAndGuide();
         });
-
-        function renderUnitChips(units) {
-            const container = document.getElementById('unit-chips-container');
-            const unitSelect = document.getElementById('lp-unit');
-            if (!container) return;
-
-            container.innerHTML = '';
-            units.forEach((u, idx) => {
-                const chip = document.createElement('div');
-                chip.style.cssText = 'background:#ffffff; border:1px solid #cbd5e1; color:#1e293b; padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; gap:5px;';
-                chip.innerText = u;
-                if (idx === 0) {
-                    chip.style.background = '#7c3aed';
-                    chip.style.color = '#ffffff';
-                    chip.style.borderColor = '#7c3aed';
-                }
-
-                chip.onclick = () => {
-                    if (unitSelect) unitSelect.value = u;
-                    Array.from(container.children).forEach(c => {
-                        c.style.background = '#ffffff';
-                        c.style.color = '#1e293b';
-                        c.style.borderColor = '#cbd5e1';
-                    });
-                    chip.style.background = '#7c3aed';
-                    chip.style.color = '#ffffff';
-                    chip.style.borderColor = '#7c3aed';
-                };
-                container.appendChild(chip);
-            });
-        }
-
-        function loadSubjectUnitsAndGuide() {
-            const subjectSelect = document.getElementById('lp-subject');
-            const gradeSelect = document.getElementById('lp-grade');
-            const unitSelect = document.getElementById('lp-unit');
-            const btn = document.getElementById('btn-load-units');
-
-            if (!subjectSelect || !unitSelect) return;
-
-            const subject = subjectSelect.value;
-            const grade = gradeSelect ? gradeSelect.value : 'Grade 8';
-
-            // 1. INSTANT 0 MILLISECOND POPULATION from local memory map
-            const units = SUBJECT_UNITS_MAP[subject] || [`Unit 1: General (${subject})`];
-            unitSelect.innerHTML = '';
-            units.forEach(u => {
-                const opt = document.createElement('option');
-                opt.value = u;
-                opt.innerText = u;
-                unitSelect.appendChild(opt);
-            });
-            unitSelect.selectedIndex = 0;
-
-            // Render visible unit chips
-            renderUnitChips(units);
-
-            // Visual Highlight Effect on unitSelect
-            unitSelect.style.border = '2px solid #059669';
-            unitSelect.style.boxShadow = '0 0 10px rgba(5, 150, 105, 0.3)';
-            setTimeout(() => {
-                unitSelect.style.border = '1px solid #cbd5e1';
-                unitSelect.style.boxShadow = 'none';
-            }, 1200);
-
-            if (btn) {
-                btn.innerText = `✅ ${subject} Units Active`;
-                btn.style.background = '#059669';
-                btn.style.borderColor = '#047857';
-                btn.style.boxShadow = '0 2px 8px rgba(5, 150, 105, 0.3)';
-            }
-
-            // 2. Background PDF metadata guide indicator setup
-            const guide = SUBJECT_GUIDE_MAP[subject] || { title: `${grade} ${subject} Guide`, pdf: 'Teacher guide/Science.pdf' };
-            currentActiveGuide = guide;
-
-            const indicator = document.getElementById('active-guide-indicator-name');
-            if (indicator) {
-                indicator.innerText = `${grade} ${guide.title} (${guide.pdf})`;
-            }
-
-            if (window.pdfjsLib) {
-                pdfjsLib.getDocument(guide.pdf).promise.then(async pdf => {
-                    let text = '';
-                    const maxPages = Math.min(pdf.numPages, 10);
-                    for (let i = 1; i <= maxPages; i++) {
-                        const page = await pdf.getPage(i);
-                        const content = await page.getTextContent();
-                        text += content.items.map(item => item.str).join(' ') + '\n';
-                    }
-                    extractedGuideText = text;
-                }).catch(() => {
-                    extractedGuideText = `CDC Nepal ${grade} ${subject} Teacher Guide standard curriculum objectives and lesson framework.`;
-                });
-            }
-        }
-
-        // Expose globally for inline button onclick attributes
-        window.loadSubjectUnitsAndGuide = loadSubjectUnitsAndGuide;
 
         // Generate Subject & Grade Specific Ultra-Concise Lesson Plan
         async function handleGenerateLessonPlan(e) {
