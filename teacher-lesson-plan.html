@@ -4,501 +4,366 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>PedagogyAI - AI Teacher Assistant & Instructional Designer</title>
-    <!-- Custom CSS -->
+    <title>Teacher Salary Calculator (शिक्षक तलब क्याल्कुलेटर) — Digital Khatapana</title>
+    <meta name="description" content="Nepal teacher salary calculator — compute basic pay, allowances, PF, CIT, income tax deductions and net monthly salary instantly.">
     <link rel="stylesheet" href="css/style.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Mukta:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- PDF.js CDN for Client-side PDF Parsing -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    </script>
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --primary-purple: #7c3aed;
-            --primary-dark: #4c1d95;
-            --primary-light: #a78bfa;
-            --accent-gold: #f59e0b;
-            --bg-slate: #0f172a;
-            --card-bg: #ffffff;
-            --text-dark: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
+            --primary:   #7c3aed;
+            --primary-dk:#4c1d95;
+            --primary-lt:#a78bfa;
+            --green:     #059669;
+            --green-lt:  #d1fae5;
+            --red:       #dc2626;
+            --red-lt:    #fee2e2;
+            --amber:     #d97706;
+            --amber-lt:  #fef3c7;
+            --blue:      #2563eb;
+            --blue-lt:   #dbeafe;
+            --bg:        #f1f5f9;
+            --card:      #ffffff;
+            --text:      #0f172a;
+            --muted:     #64748b;
+            --border:    #e2e8f0;
         }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            background-color: #f8fafc;
             font-family: 'Inter', 'Mukta', sans-serif;
-            color: var(--text-dark);
-            margin: 0;
-            padding: 0;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
         }
 
-        /* ── Header Bar ── */
+        /* ── Header ── */
         .app-header {
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            color: white;
-            padding: 18px 5%;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            color: #fff;
+            padding: 16px 5%;
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 3px solid var(--primary-purple);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border-bottom: 3px solid var(--primary);
         }
-
         .header-container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 16px;
         }
-
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
+        .brand-logo { display: flex; align-items: center; gap: 14px; }
         .logo-icon {
-            width: 48px;
-            height: 48px;
+            width: 48px; height: 48px;
             background: linear-gradient(135deg, #7c3aed, #4c1d95);
             border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            box-shadow: 0 0 15px rgba(124, 58, 237, 0.5);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.7rem;
+            box-shadow: 0 0 18px rgba(124,58,237,0.5);
         }
-
-        .brand-titles h1 {
-            font-size: 1.5rem;
-            margin: 0;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            color: #ffffff;
-        }
-
-        .brand-titles p {
-            margin: 0;
-            font-size: 0.8rem;
-            color: #c4b5fd;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
+        .brand-titles h1 { font-size: 1.4rem; font-weight: 800; color: #fff; }
+        .brand-titles p  { font-size: 0.75rem; color: #c4b5fd; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
         .btn-header-action {
-            background: rgba(255, 255, 255, 0.12);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #e2e8f0;
             padding: 9px 18px;
-            border-radius: 20px;
+            border-radius: 10px;
+            font-size: 0.85rem;
             font-weight: 600;
-            font-size: 0.88rem;
             cursor: pointer;
             text-decoration: none;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-header-action:hover {
-            background: rgba(255, 255, 255, 0.22);
-            transform: translateY(-2px);
-        }
-
-        /* ── Main Layout & Tabs ── */
-        .app-main {
-            max-width: 1400px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        /* Tab Navigation Bar */
-        .tab-nav {
-            display: flex;
-            gap: 10px;
-            background: white;
-            padding: 8px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e2e8f0;
-            margin-bottom: 30px;
-            overflow-x: auto;
-        }
-
-        .tab-btn {
-            flex: 1;
-            min-width: 180px;
-            padding: 14px 20px;
-            background: none;
-            border: none;
-            border-radius: 12px;
-            color: #64748b;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            white-space: nowrap;
-        }
-
-        .tab-btn:hover {
-            color: var(--primary-purple);
-            background: #f3e8ff;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-dark));
-            color: white;
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
-        }
-
-        /* Tab Panels */
-        .tab-panel {
-            display: none;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        .tab-panel.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ── Cards & Section Wrappers ── */
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e2e8f0;
-            margin-bottom: 25px;
-        }
-
-        .card-header-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 15px;
-        }
-
-        .card-header-title h2 {
-            margin: 0;
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #0f172a;
-        }
-
-        /* Form Controls */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .form-group.full {
-            grid-column: 1 / -1;
-        }
-
-        .form-group label {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #334155;
-        }
-
-        .input-field, .select-field, .textarea-field {
-            padding: 12px 16px;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-family: inherit;
-            outline: none;
-            transition: all 0.3s ease;
-            background: #ffffff;
-        }
-
-        .input-field:focus, .select-field:focus, .textarea-field:focus {
-            border-color: var(--primary-purple);
-            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
-        }
-
-        .btn-submit {
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-dark));
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5);
-            background: linear-gradient(135deg, #8b5cf6, var(--primary-dark));
-        }
-
-        /* ── Upload Area ── */
-        .upload-dropzone {
-            border: 2px dashed #a78bfa;
-            background: #f5f3ff;
-            border-radius: 20px;
-            padding: 40px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .upload-dropzone:hover {
-            background: #ede9fe;
-            border-color: var(--primary-purple);
-            transform: scale(1.01);
-        }
-
-        .upload-icon {
-            font-size: 3.5rem;
-            color: var(--primary-purple);
-            margin-bottom: 15px;
-        }
-
-        /* ── Lesson Plan Paced Timeline ── */
-        .timeline-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .timeline-item {
-            display: flex;
-            gap: 20px;
-            background: #f8fafc;
-            border-radius: 14px;
-            padding: 18px;
-            border-left: 5px solid var(--primary-purple);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
-
-        .timeline-item.warmup { border-left-color: #10b981; }
-        .timeline-item.direct { border-left-color: #3b82f6; }
-        .timeline-item.guided { border-left-color: #f59e0b; }
-        .timeline-item.independent { border-left-color: #8b5cf6; }
-        .timeline-item.exit { border-left-color: #ef4444; }
-
-        .timeline-time {
-            font-weight: 800;
-            font-size: 0.95rem;
-            color: #0f172a;
-            min-width: 90px;
-            display: flex;
-            align-items: center;
-        }
-
-        .timeline-content h4 {
-            margin: 0 0 6px 0;
-            font-size: 1.1rem;
-            color: #0f172a;
-        }
-
-        .timeline-content p {
-            margin: 0;
-            font-size: 0.92rem;
-            color: #475569;
-            line-height: 1.5;
-        }
-
-        /* ── DIY Material Cards ── */
-        .materials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-        }
-
-        .material-card {
-            background: white;
-            border-radius: 18px;
-            border: 1px solid #e2e8f0;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            transition: all 0.3s ease;
-        }
-
-        .material-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.08);
-        }
-
-        .material-tag {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-        }
-
-        .material-tag.diy { background: #fef3c7; color: #d97706; }
-        .material-tag.printable { background: #d1fae5; color: #059669; }
-        .material-tag.digital { background: #dbeafe; color: #1d4ed8; }
-
-        /* ── Live Chat Panel ── */
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 600px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e2e8f0;
-            overflow: hidden;
-        }
-
-        .chat-header {
-            background: linear-gradient(135deg, #0f172a, #1e1b4b);
-            color: white;
-            padding: 15px 25px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 25px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            background: #f8fafc;
-        }
-
-        .chat-bubble {
-            max-width: 80%;
-            padding: 16px 20px;
-            border-radius: 18px;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .chat-bubble.assistant {
-            align-self: flex-start;
-            background: white;
-            color: #1e293b;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            border-bottom-left-radius: 4px;
-        }
-
-        .chat-bubble.user {
-            align-self: flex-end;
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-dark));
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .chat-input-bar {
-            padding: 18px;
-            background: white;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            gap: 12px;
-        }
-
-        .chat-quick-prompts {
-            display: flex;
-            gap: 8px;
-            padding: 10px 20px;
-            background: #f1f5f9;
-            overflow-x: auto;
-        }
-
-        .prompt-pill {
-            background: white;
-            border: 1px solid #cbd5e1;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #475569;
-            cursor: pointer;
-            white-space: nowrap;
             transition: all 0.2s;
         }
+        .btn-header-action:hover { background: rgba(255,255,255,0.18); color: #fff; }
 
-        .prompt-pill:hover {
-            background: var(--primary-purple);
-            color: white;
-            border-color: var(--primary-purple);
+        /* ── Main ── */
+        .page-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 36px 5% 60px;
         }
 
-        /* Modal Settings Drawer */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(6px);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.active { display: flex; }
-
-        .modal-card {
-            background: white;
+        /* Hero Banner */
+        .hero-banner {
+            background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 50%, #2563eb 100%);
             border-radius: 24px;
-            width: 90%;
-            max-width: 550px;
-            padding: 35px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+            padding: 40px 48px;
+            margin-bottom: 36px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-banner::before {
+            content: '💰';
+            position: absolute;
+            right: 48px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 7rem;
+            opacity: 0.12;
+        }
+        .hero-banner h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .hero-banner p { font-size: 1rem; opacity: 0.85; }
+
+        /* Two-column layout */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 28px;
+            align-items: start;
+        }
+        @media (max-width: 860px) { .calc-grid { grid-template-columns: 1fr; } }
+
+        /* Card */
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+            border: 1px solid var(--border);
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid var(--border);
+        }
+        .card-title span { font-size: 1.4rem; }
+
+        /* Form elements */
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .form-group label .np { font-size: 0.78rem; color: #94a3b8; font-weight: 500; text-transform: none; letter-spacing: 0; }
+        .input-field, .select-field {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            color: var(--text);
+            background: #f8fafc;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none;
+        }
+        .input-field:focus, .select-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+            background: #fff;
+        }
+        .input-prefix {
+            position: relative;
+        }
+        .input-prefix span {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.9rem;
+            color: var(--muted);
+            font-weight: 700;
+            pointer-events: none;
+        }
+        .input-prefix input { padding-left: 42px; }
+
+        .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        /* Section divider */
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            margin: 22px 0 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-label::after { content: ''; flex: 1; height: 1px; background: #e8e0ff; }
+
+        /* Calculate Button */
+        .btn-calculate {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dk));
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.25s;
+            box-shadow: 0 6px 20px rgba(124,58,237,0.35);
+            letter-spacing: 0.3px;
+        }
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(124,58,237,0.45);
+        }
+        .btn-calculate:active { transform: translateY(0); }
+
+        /* Result Panel */
+        #result-panel { display: none; }
+
+        .net-pay-box {
+            background: linear-gradient(135deg, #059669, #065f46);
+            border-radius: 18px;
+            padding: 28px;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .net-pay-box::before {
+            content: '';
+            position: absolute;
+            width: 180px; height: 180px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+            top: -50px; right: -50px;
+        }
+        .net-pay-label { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.8; margin-bottom: 6px; }
+        .net-pay-amount { font-size: 2.6rem; font-weight: 800; letter-spacing: -1px; }
+        .net-pay-np { font-size: 0.9rem; opacity: 0.75; margin-top: 4px; }
+
+        /* Breakdown rows */
+        .breakdown-section { margin-bottom: 20px; }
+        .breakdown-section-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1.5px solid var(--border);
+        }
+        .breakdown-section-title.earning { color: var(--green); border-color: #bbf7d0; }
+        .breakdown-section-title.deduction { color: var(--red); border-color: #fecaca; }
+
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 0.9rem;
+            border-bottom: 1px dashed #f1f5f9;
+        }
+        .breakdown-row:last-child { border-bottom: none; }
+        .breakdown-row .label { color: var(--muted); }
+        .breakdown-row .amount { font-weight: 700; }
+        .breakdown-row .amount.earn  { color: var(--green); }
+        .breakdown-row .amount.deduct{ color: var(--red); }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        .total-row.earn-total   { background: var(--green-lt); color: var(--green); }
+        .total-row.deduct-total { background: var(--red-lt);   color: var(--red);   }
+
+        /* Summary card chips */
+        .summary-chips {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .chip {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            text-align: center;
+        }
+        .chip .chip-label { font-size: 0.72rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .chip .chip-value { font-size: 1.15rem; font-weight: 800; margin-top: 3px; }
+        .chip.green .chip-value { color: var(--green); }
+        .chip.red   .chip-value { color: var(--red); }
+        .chip.blue  .chip-value { color: var(--blue); }
+        .chip.purple.chip-value { color: var(--primary); }
+
+        /* Print btn */
+        .btn-print {
+            width: 100%;
+            padding: 12px;
+            background: #f1f5f9;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 12px;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        .btn-print:hover { background: #e2e8f0; }
+
+        /* Info tooltip chip */
+        .info-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            background: var(--blue-lt);
+            color: var(--blue);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-left: 6px;
         }
 
-        /* Printable Sheet */
-        @media print {
-            body * { visibility: hidden; }
-            #printable-area, #printable-area * { visibility: visible; }
-            #printable-area { position: absolute; left: 0; top: 0; width: 100%; }
+        /* Table for pay scales */
+        .scale-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .scale-table th, .scale-table td {
+            padding: 9px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
         }
+        .scale-table th { background: #f8fafc; font-weight: 700; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .scale-table tr:hover td { background: #f8fafc; }
+        .scale-table td.highlight { font-weight: 700; color: var(--primary); }
+
+        @media print {
+            .app-header, .hero-banner, .btn-calculate, .btn-print, #form-section { display: none !important; }
+            #result-panel { display: block !important; }
+            body { background: white; }
+            .card { box-shadow: none; border: 1px solid #ddd; }
+        }
+
+        /* Animated glow on result card */
+        @keyframes glow-in {
+            from { opacity:0; transform: translateY(16px); }
+            to   { opacity:1; transform: translateY(0); }
+        }
+        #result-panel.visible { display: block; animation: glow-in 0.4s ease; }
     </style>
 </head>
 
@@ -508,935 +373,419 @@
     <header class="app-header">
         <div class="header-container">
             <div class="brand-logo">
-                <div class="logo-icon">🤖</div>
+                <div class="logo-icon">💰</div>
                 <div class="brand-titles">
-                    <h1>PedagogyAI</h1>
-                    <p>AI Teacher Assistant & Instructional Designer</p>
+                    <h1>Teacher Salary Calculator</h1>
+                    <p>शिक्षक तलब क्याल्कुलेटर — Digital Khatapana</p>
                 </div>
             </div>
-
-            <div class="header-actions">
-                <button class="btn-header-action" onclick="openSettingsModal()">
-                    ⚙️ AI Settings
-                </button>
-                <a href="index.html" class="btn-header-action">
-                    ← Home Page (गृह पृष्ठ)
-                </a>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <a href="digitalkhatapana.html" class="btn-header-action">← Dashboard (ड्यासबोर्ड)</a>
             </div>
         </div>
     </header>
 
-    <!-- Main App Layout -->
-    <main class="app-main">
+    <main class="page-main">
 
-        <!-- Navigation Tabs -->
-        <nav class="tab-nav">
-            <button class="tab-btn active" onclick="switchTab('planner')">
-                📝 1. Lesson Planner
-            </button>
-            <button class="tab-btn" onclick="switchTab('materials')">
-                🎨 2. Material Maker
-            </button>
-            <button class="tab-btn" onclick="switchTab('chat')">
-                💬 3. Live AI Chat
-            </button>
-        </nav>
+        <!-- Hero -->
+        <div class="hero-banner">
+            <h2>💰 Teacher Salary Calculator</h2>
+            <p>Nepal Government School Teacher — Monthly Net Pay, Allowances & Deductions Calculator<br>
+               <small>नेपाल सरकारी विद्यालय शिक्षक — मासिक खुद तलब, भत्ता र कट्टी क्याल्कुलेटर</small></p>
+        </div>
 
-        <!-- TAB 1: Lesson Planner (AI Generator) -->
-        <section id="panel-planner" class="tab-panel active">
-            <div class="card">
-                <div class="card-header-title">
-                    <h2>📝 Official Teacher Guide-Grounded Lesson Plan Generator</h2>
-                    <p style="margin:4px 0 0 0; font-size:0.9rem; color:#64748b;">Select your Subject and Grade to automatically analyze official Teacher Guides and generate standard-compliant lesson plans.</p>
-                </div>
+        <div class="calc-grid">
 
-                <form onsubmit="handleGenerateLessonPlan(event)">
-                    <div class="form-grid">
+            <!-- LEFT: Input Form -->
+            <div id="form-section">
+                <div class="card">
+                    <div class="card-title">
+                        <span>📋</span> Enter Teacher Details (शिक्षकको विवरण)
+                    </div>
+
+                    <!-- Basic Info -->
+                    <div class="section-label">Basic Information (आधारभूत जानकारी)</div>
+                    <div class="row2">
                         <div class="form-group">
-                            <label for="lp-subject">Subject (विषय) *</label>
-                            <select id="lp-subject" class="select-field" required>
-                                <option value="Science" selected>Science & Technology (विज्ञान तथा प्रविधि)</option>
-                                <option value="Mathematics">Mathematics (गणित)</option>
-                                <option value="English">English (अंग्रेजी)</option>
-                                <option value="Nepali">Nepali (नेपाली)</option>
-                                <option value="Social Studies">Social Studies (सामाजिक अध्ययन)</option>
-                                <option value="Health & Physical">Health, Physical & Creative Arts (स्वास्थ्य तथा शारीरिक)</option>
+                            <label>Teacher Level <span class="np">(श्रेणी)</span></label>
+                            <select id="teacher-level" class="select-field" onchange="onLevelChange()">
+                                <option value="">— Select Level —</option>
+                                <option value="primary">Primary (प्राथमिक) — Class 1-5</option>
+                                <option value="lower-secondary">Lower Secondary (निम्न माध्यमिक) — Class 6-8</option>
+                                <option value="secondary">Secondary (माध्यमिक) — Class 9-10</option>
+                                <option value="higher-secondary">Higher Secondary (उच्च माध्यमिक) — Class 11-12</option>
+                                <option value="private">Private School (निजी विद्यालय)</option>
                             </select>
                         </div>
-
                         <div class="form-group">
-                            <label for="lp-grade">Grade Level (कक्षा) *</label>
-                            <select id="lp-grade" class="select-field" required>
-                                <option value="Grade 1">Grade 1</option>
-                                <option value="Grade 2">Grade 2</option>
-                                <option value="Grade 3">Grade 3</option>
-                                <option value="Grade 4">Grade 4</option>
-                                <option value="Grade 5">Grade 5</option>
-                                <option value="Grade 6">Grade 6</option>
-                                <option value="Grade 7">Grade 7</option>
-                                <option value="Grade 8" selected>Grade 8</option>
-                                <option value="Grade 9">Grade 9</option>
-                                <option value="Grade 10">Grade 10</option>
-                                <option value="Grade 11">Grade 11</option>
-                                <option value="Grade 12">Grade 12</option>
+                            <label>Position / Grade <span class="np">(पद / तह)</span></label>
+                            <select id="teacher-grade" class="select-field" onchange="onGradeChange()">
+                                <option value="">— Select Grade —</option>
                             </select>
                         </div>
+                    </div>
 
-                        <!-- Unit Name field removed -->
-                        <input type="hidden" id="lp-unit" value="">
-
-
+                    <div class="row2">
                         <div class="form-group">
-                            <label for="lp-lang">Language (भाषा) *</label>
-                            <select id="lp-lang" class="select-field" required>
-                                <option value="Nepali" selected>🇳🇵 Nepali (नेपाली)</option>
-                                <option value="English">🇬🇧 English</option>
-                            </select>
+                            <label>Service Years <span class="np">(सेवा अवधि)</span></label>
+                            <input type="number" id="service-years" class="input-field" min="0" max="40" placeholder="e.g. 12" value="5">
                         </div>
-
                         <div class="form-group">
-                            <label for="lp-topic">Lesson / Topic Title (पाठ / शीर्षक) *</label>
-                            <input type="text" id="lp-topic" class="input-field" required placeholder="e.g. Types of Set / Photosynthesis / Tenses">
+                            <label>Scale Step <span class="np">(वृद्धि)</span> <span class="info-badge">1–15</span></label>
+                            <input type="number" id="scale-step" class="input-field" min="1" max="15" placeholder="e.g. 3" value="1">
                         </div>
+                    </div>
 
+                    <div class="form-group">
+                        <label>Basic Pay (मूल तलब) — रु. <span class="info-badge">Auto or Manual</span></label>
+                        <div class="input-prefix">
+                            <span>रु.</span>
+                            <input type="number" id="basic-pay" class="input-field" min="0" placeholder="Enter or select above to auto-fill" oninput="onManualBasic()">
+                        </div>
+                    </div>
+
+                    <!-- Allowances -->
+                    <div class="section-label">Allowances (भत्ताहरू)</div>
+                    <div class="row2">
                         <div class="form-group">
-                            <label for="lp-duration">Class Duration (अवधि) *</label>
-                            <select id="lp-duration" class="select-field" required>
-                                <option value="30">30 Minutes</option>
-                                <option value="45" selected>45 Minutes</option>
-                                <option value="60">60 Minutes</option>
-                                <option value="90">90 Minutes</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group full">
-                            <label for="lp-size">Class Size & Learning Needs (कक्षा विद्यार्थी संख्या र विशेष आवश्यकता)</label>
-                            <input type="text" id="lp-size" class="input-field" placeholder="e.g. 35 students, mixed ability, visual learners">
-                        </div>
-
-                        <div class="form-group full" id="guide-indicator-box" style="background:#f8fafc; padding:12px 18px; border-radius:12px; border:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
-                            <div>
-                                <span style="font-size:0.75rem; font-weight:700; color:#059669; text-transform:uppercase;">Auto-Grounded Teacher Guide PDF</span>
-                                <div id="active-guide-indicator-name" style="font-weight:700; color:#0f172a; font-size:0.95rem; margin-top:2px;">Class 8 Science & Technology Guide (Science.pdf)</div>
+                            <label>Grade Allowance <span class="np">(श्रेणी भत्ता)</span></label>
+                            <div class="input-prefix"><span>रु.</span>
+                                <input type="number" id="grade-allowance" class="input-field" value="0" min="0">
                             </div>
-                            <span style="font-size:0.8rem; background:#d1fae5; color:#065f46; padding:4px 10px; border-radius:8px; font-weight:700;">PDF Analyzed ✅</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Dearness Allowance <span class="np">(मँहगी भत्ता)</span></label>
+                            <div class="input-prefix"><span>रु.</span>
+                                <input type="number" id="da-allowance" class="input-field" value="0" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row2">
+                        <div class="form-group">
+                            <label>Local Allowance <span class="np">(स्थानीय भत्ता)</span></label>
+                            <div class="input-prefix"><span>रु.</span>
+                                <input type="number" id="local-allowance" class="input-field" value="0" min="0">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Technical Allowance <span class="np">(प्राविधिक भत्ता)</span></label>
+                            <div class="input-prefix"><span>रु.</span>
+                                <input type="number" id="technical-allowance" class="input-field" value="0" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row2">
+                        <div class="form-group">
+                            <label>Transport Allowance <span class="np">(यातायात भत्ता)</span></label>
+                            <div class="input-prefix"><span>रु.</span>
+                                <input type="number" id="transport-allowance" class="input-field" value="0" min="0">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Medical Allowance <span class="np">(स्वास्थ्य भत्ता)</span></label>
+                            <div class="input-prefix"><span>रु.</span>
+                                <input type="number" id="medical-allowance" class="input-field" value="0" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Other Allowance <span class="np">(अन्य भत्ता)</span></label>
+                        <div class="input-prefix"><span>रु.</span>
+                            <input type="number" id="other-allowance" class="input-field" value="0" min="0">
                         </div>
                     </div>
 
-                    <div style="margin-top:25px; display:flex; gap:15px; justify-content:flex-end;">
-                        <button type="button" class="btn-submit" id="btn-gen-plan" onclick="handleGenerateLessonPlan(event)">
-                            ✨ Generate Lesson Plan with PedagogyAI
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Generated Lesson Plan Output Card (Standard Model) -->
-            <div class="card" id="card-plan-output" style="display:none; border-top:5px solid #7c3aed;">
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f1f5f9; padding-bottom:15px; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
-                    <div>
-                        <span style="font-size:0.8rem; font-weight:700; color:#7c3aed; text-transform:uppercase; letter-spacing:1px;">CDC Standard Lesson Blueprint</span>
-                        <h2 id="out-plan-title" style="margin:4px 0 0 0; font-size:1.5rem; color:#0f172a;">-</h2>
-                    </div>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn-header-action" style="color:#1e293b; background:#f1f5f9; border-color:#cbd5e1;" onclick="exportPlanMarkdown()">
-                            📋 Copy Markdown
-                        </button>
-                        <button class="btn-header-action" style="color:#1e293b; background:#f1f5f9; border-color:#cbd5e1;" onclick="window.print()">
-                            🖨️ Print Plan
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Section 1: Lesson / Topic Info -->
-                <div style="margin-bottom:25px; background:#f8fafc; padding:18px; border-radius:14px; border:1px solid #e2e8f0;">
-                    <h3 style="font-size:1.1rem; color:#0f172a; margin:0 0 10px 0;">📌 1. Lesson / Topic Overview (पाठ तथा विषयवस्तुको विवरण)</h3>
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px; font-size:0.92rem;">
-                        <div><strong>Grade & Subject:</strong> <span id="out-meta-grade-subject">-</span></div>
-                        <div><strong>Topic Title:</strong> <span id="out-meta-topic">-</span></div>
-                        <div><strong>Duration:</strong> <span id="out-meta-duration">-</span></div>
-                        <div><strong>Grounded Guide:</strong> <span id="out-meta-guide" style="color:#059669; font-weight:600;">-</span></div>
-                    </div>
-                </div>
-
-                <!-- Section 2: Objectives -->
-                <div style="margin-bottom:25px;">
-                    <h3 style="font-size:1.15rem; color:#0f172a; margin-bottom:12px;">🎯 2. Learning Objectives (विशिष्ट उद्देश्यहरू)</h3>
-                    <div id="out-objectives" style="background:#f8fafc; border-radius:14px; padding:18px; border:1px solid #e2e8f0; font-size:0.95rem; line-height:1.6;">
-                        -
-                    </div>
-                </div>
-
-                <!-- Section 3: Teaching Materials -->
-                <div style="margin-bottom:25px;">
-                    <h3 style="font-size:1.15rem; color:#0f172a; margin-bottom:12px;">📦 3. Teaching Materials (शिक्षण सामग्रीहरू)</h3>
-                    <div id="out-materials-list" style="background:#eff6ff; border-radius:14px; padding:18px; border:1px solid #bfdbfe; font-size:0.95rem; line-height:1.6; color:#1e3a8a;">
-                        -
-                    </div>
-                </div>
-
-                <!-- Section 4: Teaching Activities / Learning Process -->
-                <div style="margin-bottom:25px;">
-                    <h3 style="font-size:1.15rem; color:#0f172a; margin-bottom:12px;">⏱️ 4. Teaching Activities / Learning Process (शिक्षण-सिकाइ क्रियाकलापहरू)</h3>
-                    <div class="timeline-container" id="out-timeline">
-                        <!-- Dynamic timeline items -->
-                    </div>
-                </div>
-
-                <!-- Section 5: Evaluation & Assessment -->
-                <div>
-                    <h3 style="font-size:1.15rem; color:#0f172a; margin-bottom:12px;">📝 5. Evaluation & Assessment (मूल्याङ्कन तथा कार्यपत्र)</h3>
-                    <div id="out-evaluation" style="background:#fef3c7; border-radius:14px; padding:18px; border:1px solid #fde68a; font-size:0.95rem; line-height:1.6; color:#78350f; margin-bottom:18px;">
-                        -
-                    </div>
-
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
-                        <div style="background:#eff6ff; border-radius:14px; padding:18px; border:1px solid #bfdbfe;">
-                            <h4 style="margin:0 0 8px 0; color:#1d4ed8;">🌱 Support for Struggling Learners / ELL</h4>
-                            <p id="out-diff-support" style="margin:0; font-size:0.9rem; color:#1e3a8a; line-height:1.5;">-</p>
+                    <!-- Deductions -->
+                    <div class="section-label">Deductions (कट्टीहरू)</div>
+                    <div class="row2">
+                        <div class="form-group">
+                            <label>PF Employee Rate <span class="info-badge">Default 10%</span></label>
+                            <div class="input-prefix"><span>%</span>
+                                <input type="number" id="pf-rate" class="input-field" value="10" min="0" max="30" style="padding-left:36px;">
+                            </div>
                         </div>
-                        <div style="background:#fdf4ff; border-radius:14px; padding:18px; border:1px solid #f5d0fe;">
-                            <h4 style="margin:0 0 8px 0; color:#86198f;">🚀 Extensions for Advanced Learners</h4>
-                            <p id="out-diff-advanced" style="margin:0; font-size:0.9rem; color:#701a75; line-height:1.5;">-</p>
+                        <div class="form-group">
+                            <label>CIT Rate <span class="info-badge">Default 1%</span></label>
+                            <div class="input-prefix"><span>%</span>
+                                <input type="number" id="cit-rate" class="input-field" value="1" min="0" max="10" style="padding-left:36px;">
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div class="row2">
+                        <div class="form-group">
+                            <label>Loan Deduction <span class="np">(ऋण कट्टी)</span></label>
+                            <div class="input-prefix"><span>रु.</span>
+                                <input type="number" id="loan-deduction" class="input-field" value="0" min="0">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Other Deduction <span class="np">(अन्य कट्टी)</span></label>
+                            <div class="input-prefix"><span>रु.</span>
+                                <input type="number" id="other-deduction" class="input-field" value="0" min="0">
+                            </div>
+                        </div>
+                    </div>
 
-                <div style="margin-top:25px; display:flex; justify-content:flex-end; gap:12px;">
-                    <button class="btn-submit" onclick="switchTab('materials')">
-                        Generate DIY Teaching Aids for this Plan →
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 3: Material Maker (DIY Props & Printables Guide) -->
-        <section id="panel-materials" class="tab-panel">
-            <div class="card">
-                <div class="card-header-title">
-                    <h2>🎨 Teaching Material Creation Guide</h2>
-                </div>
-
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <p style="margin:0; color:#64748b;">Automatically generate step-by-step instructions for Low-Cost DIY Props, Printables, and Presentation Slides.</p>
-                    <button class="btn-submit" onclick="generateMaterials()">
-                        🛠️ Generate Materials Blueprint
+                    <button class="btn-calculate" onclick="calculateSalary()">
+                        🧮 Calculate Net Salary (खुद तलब हिसाब गर्नुहोस्)
                     </button>
                 </div>
 
-                <div class="materials-grid" id="materials-container">
-                    <!-- Material Cards -->
-                    <div class="material-card">
-                        <span class="material-tag diy">Low-Cost / DIY Prop</span>
-                        <h3 style="margin:0 0 10px 0;">📦 Hands-on Manipulative Model</h3>
-                        <p style="font-size:0.9rem; color:#475569; margin-bottom:15px;">Step-by-step DIY instructions using cardboard, plastic caps, or household tactile materials.</p>
-                        <div style="font-size:0.85rem; color:#64748b; background:#f8fafc; padding:12px; border-radius:10px;">
-                            <strong>Supplies:</strong> Cardstock, scissors, markers, rubber bands.
-                        </div>
-                    </div>
-
-                    <div class="material-card">
-                        <span class="material-tag printable">Printable Aid</span>
-                        <h3 style="margin:0 0 10px 0;">📄 Vocabulary Flashcards & Worksheet</h3>
-                        <p style="font-size:0.9rem; color:#475569; margin-bottom:15px;">Ready-to-print vocabulary prompt sheets, graphic organizers, and exit tickets.</p>
-                        <div style="font-size:0.85rem; color:#64748b; background:#f8fafc; padding:12px; border-radius:10px;">
-                            <strong>Format:</strong> 2-page print layout with rubric.
-                        </div>
-                    </div>
-
-                    <div class="material-card">
-                        <span class="material-tag digital">Digital Slide Deck Outline</span>
-                        <h3 style="margin:0 0 10px 0;">💻 6-Slide Interactive Deck</h3>
-                        <p style="font-size:0.9rem; color:#475569; margin-bottom:15px;">Slide-by-slide script, visual diagram layout, and interactive check-for-understanding questions.</p>
-                        <div style="font-size:0.85rem; color:#64748b; background:#f8fafc; padding:12px; border-radius:10px;">
-                            <strong>Slides:</strong> Hook → Model → Activity → Quiz → Summary.
-                        </div>
-                    </div>
+                <!-- Pay Scale Reference Table -->
+                <div class="card" style="margin-top:24px;">
+                    <div class="card-title"><span>📊</span> Nepal Teacher Pay Scale Reference (तलब मानदण्ड)</div>
+                    <table class="scale-table">
+                        <thead>
+                            <tr>
+                                <th>Level / Grade (श्रेणी)</th>
+                                <th>Position (पद)</th>
+                                <th>Basic Pay रु. (Step 1)</th>
+                                <th>Increment रु.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Primary (प्राथमिक)</td><td>तह ४ — Assistant Teacher</td><td class="highlight">18,000</td><td>700</td></tr>
+                            <tr><td>Primary (प्राथमिक)</td><td>तह ५ — Teacher</td><td class="highlight">21,000</td><td>800</td></tr>
+                            <tr><td>Lower Secondary</td><td>तह ५ — Teacher</td><td class="highlight">22,500</td><td>850</td></tr>
+                            <tr><td>Lower Secondary</td><td>तह ६ — Senior Teacher</td><td class="highlight">26,500</td><td>1,000</td></tr>
+                            <tr><td>Secondary (माध्यमिक)</td><td>तह ७ — Teacher</td><td class="highlight">31,000</td><td>1,200</td></tr>
+                            <tr><td>Secondary (माध्यमिक)</td><td>तह ८ — Senior Teacher</td><td class="highlight">38,000</td><td>1,500</td></tr>
+                            <tr><td>Higher Secondary</td><td>तह ९ — Lecturer</td><td class="highlight">47,000</td><td>2,000</td></tr>
+                            <tr><td>Higher Secondary</td><td>तह १० — Senior Lecturer</td><td class="highlight">58,000</td><td>2,500</td></tr>
+                        </tbody>
+                    </table>
+                    <p style="font-size:0.78rem; color:var(--muted); margin-top:12px; line-height:1.5;">
+                        ⚠️ Reference values based on Nepal Government pay scale (GoN Civil Service). Exact figures may vary by fiscal year. Always verify with your school's finance office.
+                    </p>
                 </div>
             </div>
-        </section>
 
-        <!-- TAB 4: Live AI Chat (PedagogyAI RAG Assistant) -->
-        <section id="panel-chat" class="tab-panel">
-            <div class="chat-container">
-                <div class="chat-header">
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <span style="font-size:1.5rem;">🤖</span>
-                        <div>
-                            <h3 style="margin:0; font-size:1.1rem;">PedagogyAI Assistant</h3>
-                            <span style="font-size:0.75rem; color:#a78bfa;">Context-Aware Instructional Designer</span>
-                        </div>
+            <!-- RIGHT: Result Panel -->
+            <div id="result-panel">
+                <!-- Net Pay -->
+                <div class="net-pay-box">
+                    <div class="net-pay-label">Monthly Net Pay (मासिक खुद तलब)</div>
+                    <div class="net-pay-amount" id="res-net-pay">रु. 0</div>
+                    <div class="net-pay-np" id="res-net-pay-np">—</div>
+                </div>
+
+                <!-- Summary Chips -->
+                <div class="summary-chips">
+                    <div class="chip green">
+                        <div class="chip-label">Gross Earning (कुल आय)</div>
+                        <div class="chip-value" id="res-gross">रु. 0</div>
                     </div>
-                    <span style="font-size:0.8rem; background:rgba(255,255,255,0.15); padding:4px 12px; border-radius:12px;">Google Gemini Powered</span>
-                </div>
-
-                <div class="chat-messages" id="chat-box">
-                    <div class="chat-bubble assistant">
-                        👋 Hello! I am <strong>PedagogyAI</strong>, your instructional design assistant. How can I help customize your lesson plan, refine your teaching materials, or adjust timing today?
+                    <div class="chip red">
+                        <div class="chip-label">Total Deduction (कुल कट्टी)</div>
+                        <div class="chip-value" id="res-total-deduct">रु. 0</div>
+                    </div>
+                    <div class="chip blue">
+                        <div class="chip-label">Annual Net Pay (वार्षिक)</div>
+                        <div class="chip-value" id="res-annual">रु. 0</div>
+                    </div>
+                    <div class="chip">
+                        <div class="chip-label">Employer PF (नियोक्ता PF)</div>
+                        <div class="chip-value" id="res-employer-pf" style="color:var(--primary);">रु. 0</div>
                     </div>
                 </div>
 
-                <!-- Quick Prompt Pills -->
-                <div class="chat-quick-prompts">
-                    <button class="prompt-pill" onclick="sendQuickPrompt('Shorten this lesson plan for a 30-minute period')">⚡ Shorten for 30 mins</button>
-                    <button class="prompt-pill" onclick="sendQuickPrompt('Give me a hands-on kinesthetic activity for this topic')">🤸 Kinesthetic activity</button>
-                    <button class="prompt-pill" onclick="sendQuickPrompt('Generate 5 multiple choice quiz questions with answers')">❓ 5-question quiz</button>
-                    <button class="prompt-pill" onclick="sendQuickPrompt('Provide accommodations for English Language Learners (ELL)')">🌐 ELL Support</button>
+                <!-- Earnings Breakdown -->
+                <div class="card" style="margin-bottom:20px;">
+                    <div class="breakdown-section">
+                        <div class="breakdown-section-title earning">✅ Earnings Breakdown (आयको विवरण)</div>
+                        <div class="breakdown-row"><span class="label">Basic Pay (मूल तलब)</span><span class="amount earn" id="r-basic">रु. 0</span></div>
+                        <div class="breakdown-row"><span class="label">Grade Allowance (श्रेणी भत्ता)</span><span class="amount earn" id="r-grade-al">रु. 0</span></div>
+                        <div class="breakdown-row"><span class="label">Dearness Allowance (मँहगी भत्ता)</span><span class="amount earn" id="r-da">रु. 0</span></div>
+                        <div class="breakdown-row"><span class="label">Local Allowance (स्थानीय भत्ता)</span><span class="amount earn" id="r-local">रु. 0</span></div>
+                        <div class="breakdown-row"><span class="label">Technical Allowance (प्राविधिक)</span><span class="amount earn" id="r-tech">रु. 0</span></div>
+                        <div class="breakdown-row"><span class="label">Transport Allowance (यातायात)</span><span class="amount earn" id="r-transport">रु. 0</span></div>
+                        <div class="breakdown-row"><span class="label">Medical Allowance (स्वास्थ्य)</span><span class="amount earn" id="r-medical">रु. 0</span></div>
+                        <div class="breakdown-row"><span class="label">Other Allowance (अन्य भत्ता)</span><span class="amount earn" id="r-other-al">रु. 0</span></div>
+                        <div class="total-row earn-total"><span>Total Gross Earning</span><span id="r-gross-total">रु. 0</span></div>
+                    </div>
                 </div>
 
-                <div class="chat-input-bar">
-                    <input type="text" id="chat-input" class="input-field" style="flex:1;" placeholder="Ask PedagogyAI to refine plans or generate activities..." onkeypress="if(event.key==='Enter') sendChatMessage()">
-                    <button class="btn-submit" onclick="sendChatMessage()">Send 🚀</button>
+                <!-- Deductions Breakdown -->
+                <div class="card" style="margin-bottom:20px;">
+                    <div class="breakdown-section">
+                        <div class="breakdown-section-title deduction">❌ Deductions (कट्टीको विवरण)</div>
+                        <div class="breakdown-row"><span class="label">PF — Employee (<span id="r-pf-rate">10</span>%)</span><span class="amount deduct" id="r-pf">रु. 0</span></div>
+                        <div class="breakdown-row"><span class="label">CIT (<span id="r-cit-rate">1</span>%)</span><span class="amount deduct" id="r-cit">रु. 0</span></div>
+                        <div class="breakdown-row"><span class="label">Income Tax (आयकर)</span><span class="amount deduct" id="r-tax">रु. 0</span></div>
+                        <div class="breakdown-row"><span class="label">Loan Deduction (ऋण)</span><span class="amount deduct" id="r-loan">रु. 0</span></div>
+                        <div class="breakdown-row"><span class="label">Other Deduction (अन्य)</span><span class="amount deduct" id="r-other-ded">रु. 0</span></div>
+                        <div class="total-row deduct-total"><span>Total Deduction</span><span id="r-deduct-total">रु. 0</span></div>
+                    </div>
                 </div>
+
+                <!-- Employer Contribution -->
+                <div class="card" style="margin-bottom:20px; border-left: 4px solid var(--primary);">
+                    <div class="card-title" style="font-size:0.95rem;"><span>🏦</span> Employer Contribution (नियोक्ता अंशदान)</div>
+                    <div class="breakdown-row"><span class="label">Employer PF (10%)</span><span class="amount" style="color:var(--primary); font-weight:700;" id="r-employer-pf2">रु. 0</span></div>
+                    <div class="breakdown-row"><span class="label">Total PF Deposited per Month</span><span class="amount" style="color:var(--primary); font-weight:700;" id="r-total-pf">रु. 0</span></div>
+                </div>
+
+                <button class="btn-print" onclick="window.print()">🖨️ Print Salary Slip (तलब स्लिप प्रिन्ट गर्नुहोस्)</button>
             </div>
-        </section>
 
+        </div>
     </main>
 
-    <!-- Settings Modal -->
-    <div id="settings-modal" class="modal-overlay">
-        <div class="modal-card">
-            <h3 style="margin:0 0 15px 0; font-size:1.4rem; color:#0f172a;">⚙️ PedagogyAI Configuration</h3>
-            <p style="color:#64748b; font-size:0.9rem; margin-bottom:20px;">Configure your Google Gemini API Key for direct document parsing & LLM generation.</p>
-
-            <div class="form-group" style="margin-bottom:15px;">
-                <label for="gemini-key-input">Google Gemini API Key</label>
-                <input type="password" id="gemini-key-input" class="input-field" placeholder="AIzaSy...">
-                <span style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">Key is saved locally in your browser session.</span>
-            </div>
-
-            <div class="form-group" style="margin-bottom:25px;">
-                <label for="gemini-model-select">Gemini Model</label>
-                <select id="gemini-model-select" class="select-field">
-                    <option value="gemini-2.0-flash">Gemini 2.0 Flash (Fastest / Recommended)</option>
-                    <option value="gemini-1.5-pro">Gemini 1.5 Pro (Deep Multimodal RAG)</option>
-                </select>
-            </div>
-
-            <div style="display:flex; justify-content:flex-end; gap:10px;">
-                <button class="btn-header-action" style="color:#475569; background:#e2e8f0; border:none;" onclick="closeSettingsModal()">Cancel</button>
-                <button class="btn-submit" onclick="saveSettings()">Save Configuration</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="js/config.js"></script>
     <script>
-        let extractedGuideText = "";
-        let activeGuideSummary = "";
-        let currentLessonPlan = null;
-        let adminGuides = [];
-
-        // Official Class 8 Teacher Guides (Pre-uploaded by Admin in 'Teacher guide/' folder)
-        const defaultAdminGuides = [
-            {
-                id: 'guide-m8',
-                title: 'Class 8 Mathematics Teacher Guide (गणित शिक्षक निर्देशिका)',
-                grade: 'Grade 8',
-                subject: 'Mathematics',
-                uploadedBy: 'Admin (CDC Nepal)',
-                fileUrl: 'Teacher guide/Mathematics.pdf',
-                fileSize: '17.8 MB',
-                chunks: 35,
-                summary: 'Official Class 8 Mathematics Teacher Guide (CDC Nepal Approved). Covers Sets, Real Numbers, Arithmetic (Percentage, Profit & Loss), Algebra (Polynomials, Linear Equations), Geometry (Triangles, Quadrilaterals, Circle), Mensuration, and Statistics.',
-                rawText: 'Class 8 Mathematics Curriculum Guide (CDC Nepal). Units: 1. Sets, 2. Real Numbers, 3. Arithmetic (Percentage, Simple Interest, Profit & Loss), 4. Mensuration (Area, Volume), 5. Algebra (Factorization, Equations), 6. Geometry (Constructions, Theorems), 7. Statistics (Mean, Median, Frequency Tables).'
-            },
-            {
-                id: 'guide-s8',
-                title: 'Class 8 Science & Technology Guide (विज्ञान तथा प्रविधि निर्देशिका)',
-                grade: 'Grade 8',
-                subject: 'Science',
-                uploadedBy: 'Admin (CDC Nepal)',
-                fileUrl: 'Teacher guide/Science.pdf',
-                fileSize: '14.5 MB',
-                chunks: 40,
-                summary: 'Official Class 8 Science & Technology Teacher Guide (CDC Nepal Approved). Focuses on Scientific Measurement, Motion & Force, Simple Machines, Energy, Elements & Compounds, Cells & Tissues, Living Organisms, and Earth & Space Science.',
-                rawText: 'Class 8 Science & Technology Curriculum (CDC Nepal). Units: 1. Scientific Learning & Measurement, 2. Force and Motion, 3. Pressure, 4. Energy (Heat, Light, Electricity), 5. Matter (Elements, Compounds, Chemical Reactions), 6. Biology (Cell, Tissues, Life Processes), 7. Astronomy & Geology.'
-            },
-            {
-                id: 'guide-e8',
-                title: 'Class 8 English Teacher Guide (अंग्रेजी शिक्षक निर्देशिका)',
-                grade: 'Grade 8',
-                subject: 'English',
-                uploadedBy: 'Admin (CDC Nepal)',
-                fileUrl: 'Teacher guide/English.pdf',
-                fileSize: '3.0 MB',
-                chunks: 25,
-                summary: 'Official Class 8 English Teacher Guide (CDC Nepal Approved). Emphasizes Communicative Competence, Reading Comprehension, Grammar in Context (Tenses, Passive Voice, Reported Speech), Writing Letters/Essays, and Vocabulary Building.',
-                rawText: 'Class 8 English Teacher Guide (CDC Nepal). Units: Personal Experiences, Festivals & Culture, Science & Environment, Moral Stories, Travelogues. Key Skills: Speaking fluency, contextual grammar (Prepositions, Tenses, Modals), guided composition, reading comprehension.'
-            },
-            {
-                id: 'guide-n8',
-                title: 'Class 8 Nepali Teacher Guide (नेपाली शिक्षक निर्देशिका)',
-                grade: 'Grade 8',
-                subject: 'Nepali',
-                uploadedBy: 'Admin (CDC Nepal)',
-                fileUrl: 'Teacher guide/Nepali.pdf',
-                fileSize: '4.3 MB',
-                chunks: 22,
-                summary: 'आधिकारिक कक्षा ८ नेपाली भाषा शिक्षक निर्देशिका (पाठ्यक्रम विकास केन्द्र)। व्याकरण (पदवर्ग, काल, पक्ष), बोध र अभिव्यक्ति, कथा, कविता, निबन्ध, र वादविवाद शिक्षण सिकाइ क्रियाकलाप।',
-                rawText: 'कक्षा ८ नेपाली शिक्षक निर्देशिका। पाठ्यवस्तु: पदवर्ग (नाम, सर्वनाम, विशेषण, क्रियापद), वाक्य गठन, पदसङ्गति, करण-अकरण, शब्दभण्डार, संवाद, चिठीपत्र र निबन्ध लेखन। उद्देश्य: सुनाइ, बोलाइ, पढाइ र लेखाइ सीपको सर्वाङ्गीण विकास।'
-            },
-            {
-                id: 'guide-ss8',
-                title: 'Class 8 Social Studies Guide (सामाजिक अध्ययन तथा मानवमूल्य शिक्षा)',
-                grade: 'Grade 8',
-                subject: 'Social Studies',
-                uploadedBy: 'Admin (CDC Nepal)',
-                fileUrl: 'Teacher guide/Social.pdf',
-                fileSize: '3.5 MB',
-                chunks: 28,
-                summary: 'Official Class 8 Social Studies & Civic Education Guide (CDC Nepal Approved). Covers Nepali Society & Culture, Civics & Rights, Geography of Nepal, History, International Relations, and Community Values.',
-                rawText: 'Class 8 Social Studies & Values Education Guide (CDC Nepal). Units: 1. We and Our Society, 2. Social Problems and Solutions, 3. Our Traditions and Heritage, 4. Civics and Constitution, 5. Geography of Nepal and World, 6. Historical Events of Nepal.'
-            },
-            {
-                id: 'guide-hpc8',
-                title: 'Class 8 Health, Physical & Creative Arts Guide (स्वास्थ्य, शारीरिक तथा सिर्जनात्मक कला)',
-                grade: 'Grade 8',
-                subject: 'Health & Physical',
-                uploadedBy: 'Admin (CDC Nepal)',
-                fileUrl: 'Teacher guide/hPC.pdf',
-                fileSize: '28.9 MB',
-                chunks: 45,
-                summary: 'Official Class 8 Health, Physical Education & Creative Arts (HPC) Teacher Guide (CDC Nepal Approved). Covers Human Physiology, Nutrition, First Aid, Physical Drills & Games, Visual Arts, and Music.',
-                rawText: 'Class 8 Health, Physical Education & Creative Arts Guide. Units: Personal Hygiene, Nutrition, Disease Prevention, First Aid, Games & Physical Drills, Drawing & Craft, Music and Rhythm activities.'
-            }
-        ];
-
-        // System Prompt Definition
-        const PEDAGOGY_SYSTEM_PROMPT = `You are "PedagogyAI," an expert instructional designer and master educator assistant. 
-Your role is to analyze provided Teacher Guides and produce high-impact, practical lesson plans and DIY teaching material blueprints.
-
-### CORE RESPONSIBILITIES:
-1. Grounding: Base your advice and lesson scopes strictly on the curriculum standards and topics provided in the Teacher Guide context.
-2. Structured Lesson Planning: Provide Topic, Learning Standard, Objectives (Bloom's Taxonomy), Time Breakdown (Warm-up, Direct Instruction, Guided Practice, Independent Practice, Exit Ticket), and Accommodations.
-3. Teaching Material Maker: Provide DIY low-cost props, printables, and digital slide deck outlines.
-4. Tone & Format: Encouraging, pedagogical, practical, and clear.`;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Load saved API Key
-            const savedKey = localStorage.getItem('pedagogy_gemini_api_key');
-            if (savedKey) {
-                document.getElementById('gemini-key-input').value = savedKey;
-            }
-            // Always refresh default Class 8 Guides
-            localStorage.setItem('pedagogy_admin_guides', JSON.stringify(defaultAdminGuides));
-            loadAdminGuides();
-        });
-
-        function loadAdminGuides() {
-            adminGuides = defaultAdminGuides;
-            renderAdminGuides(adminGuides);
-        }
-
-        function renderAdminGuides(guides) {
-            const grid = document.getElementById('admin-guides-grid');
-            grid.innerHTML = '';
-
-            if (guides.length === 0) {
-                grid.innerHTML = `
-                    <div style="grid-column:1/-1; text-align:center; padding:40px; background:#f8fafc; border-radius:16px; border:1px dashed #cbd5e1;">
-                        <p style="color:#64748b; font-size:1.05rem;">No curriculum guides match your search/filter.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            guides.forEach(guide => {
-                const card = document.createElement('div');
-                card.className = 'material-card';
-                card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <span class="material-tag digital">${guide.grade}</span>
-                        <span style="font-size:0.75rem; color:#059669; font-weight:700; background:#d1fae5; padding:2px 8px; border-radius:10px;">${guide.uploadedBy}</span>
-                    </div>
-                    <h3 style="margin:0 0 8px 0; font-size:1.15rem; color:#0f172a;">${guide.title}</h3>
-                    <p style="font-size:0.88rem; color:#475569; margin-bottom:15px; line-height:1.5;">${guide.summary}</p>
-                    
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:12px; flex-wrap:wrap; gap:8px;">
-                        <a href="${guide.fileUrl}" target="_blank" class="btn-header-action" style="color:#1d4ed8; background:#eff6ff; border:1px solid #bfdbfe; font-size:0.8rem; text-decoration:none;">
-                            📖 Read PDF (${guide.fileSize})
-                        </a>
-                        <button class="btn-submit" style="padding:8px 16px; font-size:0.85rem;" onclick="selectAdminGuide('${guide.id}')">
-                            ✨ Select Guide for AI Plan →
-                        </button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function filterAdminGuides() {
-            const search = document.getElementById('guide-search-input').value.toLowerCase();
-            const grade = document.getElementById('guide-filter-grade').value;
-            const subject = document.getElementById('guide-filter-subject').value;
-
-            const filtered = adminGuides.filter(g => {
-                const matchesSearch = g.title.toLowerCase().includes(search) || g.summary.toLowerCase().includes(search);
-                const matchesGrade = grade === '' || g.grade === grade;
-                const matchesSubject = subject === '' || g.subject.toLowerCase().includes(subject.toLowerCase());
-                return matchesSearch && matchesGrade && matchesSubject;
-            });
-
-            renderAdminGuides(filtered);
-        }
-
-        async function selectAdminGuide(id) {
-            const guide = adminGuides.find(g => g.id === id);
-            if (!guide) return;
-
-            const status = document.getElementById('upload-status');
-            if (status) {
-                status.style.display = 'block';
-                status.innerText = `⏳ Loading & Indexing ${guide.title}...`;
-            }
-
-            try {
-                // If PDF file URL exists, extract real text using PDF.js
-                if (guide.fileUrl) {
-                    try {
-                        const pdf = await pdfjsLib.getDocument(guide.fileUrl).promise;
-                        let text = '';
-                        // Read up to first 10 pages for fast RAG context
-                        const maxPages = Math.min(pdf.numPages, 10);
-                        for (let i = 1; i <= maxPages; i++) {
-                            const page = await pdf.getPage(i);
-                            const content = await page.getTextContent();
-                            text += content.items.map(item => item.str).join(' ') + '\n';
-                        }
-                        if (text.length > 100) {
-                            extractedGuideText = text;
-                        } else {
-                            extractedGuideText = guide.rawText;
-                        }
-                    } catch (pdfErr) {
-                        console.warn('Could not extract PDF directly, using pre-indexed guide text:', pdfErr);
-                        extractedGuideText = guide.rawText;
-                    }
-                } else {
-                    extractedGuideText = guide.rawText;
-                }
-
-                activeGuideSummary = guide.summary;
-
-                document.getElementById('guide-doc-title').innerText = guide.title;
-                document.getElementById('guide-grade-level').innerText = `${guide.grade} (${guide.uploadedBy})`;
-                document.getElementById('guide-chunks-count').innerText = `${guide.chunks} Chunks Active`;
-                document.getElementById('guide-summary-text').innerText = guide.summary;
-
-                // Pre-fill Lesson Planner Form grade & subject context
-                const gradeSelect = document.getElementById('lp-grade');
-                if (gradeSelect) gradeSelect.value = guide.grade;
-
-                const contextBox = document.getElementById('lp-context');
-                if (contextBox) contextBox.value = `Grounded in ${guide.title}`;
-
-                if (status) status.style.display = 'none';
-
-                document.getElementById('card-analysis').style.display = 'block';
-                document.getElementById('card-analysis').scrollIntoView({ behavior: 'smooth' });
-            } catch (e) {
-                console.error(e);
-                extractedGuideText = guide.rawText;
-                document.getElementById('card-analysis').style.display = 'block';
-                if (status) status.style.display = 'none';
-            }
-        }
-
-        function toggleAdminUploader() {
-            const uploader = document.getElementById('admin-upload-section');
-            uploader.style.display = uploader.style.display === 'none' ? 'block' : 'none';
-        }
-
-        // Admin File Upload & PDF parsing
-        async function handleAdminFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const title = document.getElementById('admin-guide-title').value.trim() || file.name;
-            const grade = document.getElementById('admin-guide-grade').value;
-
-            const status = document.getElementById('upload-status');
-            status.style.display = 'block';
-            status.innerText = `⏳ Admin Uploading & Indexing ${file.name}...`;
-
-            try {
-                let text = '';
-                if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-                    const arrayBuffer = await file.arrayBuffer();
-                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                    for (let i = 1; i <= pdf.numPages; i++) {
-                        const page = await pdf.getPage(i);
-                        const content = await page.getTextContent();
-                        text += content.items.map(item => item.str).join(' ') + '\n';
-                    }
-                } else {
-                    text = await file.text();
-                }
-
-                const newGuide = {
-                    id: 'guide-' + Date.now(),
-                    title: title,
-                    grade: grade,
-                    subject: 'General',
-                    uploadedBy: 'Super Admin',
-                    chunks: Math.ceil(text.length / 400),
-                    summary: `Admin Uploaded Guide: ${title}. ${text.substring(0, 200)}...`,
-                    rawText: text
-                };
-
-                adminGuides.unshift(newGuide);
-                localStorage.setItem('pedagogy_admin_guides', JSON.stringify(adminGuides));
-                renderAdminGuides(adminGuides);
-
-                selectAdminGuide(newGuide.id);
-
-                status.style.display = 'none';
-                alert('Official Admin Teacher Guide published to Library successfully!');
-                toggleAdminUploader();
-            } catch (e) {
-                console.error(e);
-                status.innerText = `❌ Admin upload failed: ${e.message}`;
-            }
-        }
-
-        // System Prompt Definition (Tailored for Concise Physical Teacher Diary Writing)
-        const PEDAGOGY_SYSTEM_PROMPT = `You are "PedagogyAI," an expert master teacher assistant.
-Your task is to generate ultra-concise, bulleted, exact-point Lesson Plans specifically formatted for teachers to hand-write into their physical "Teacher Daily Lesson Plan Diary" (शिक्षक दैनिक पाठ योजना डायरी).
-
-### CRITICAL RULES FOR TEACHER DIARY FORMAT:
-1. STRICT BREVITY: No wordy introductions, long explanations, or conversational filler.
-2. EXACT POINTS ONLY: Use short 1-line bullet points.
-3. STRUCTURE:
-   - 1. पाठ / विषयवस्तु (Topic & Subject): Grade, Subject, Topic, Duration.
-   - 2. विशिष्ट उद्देश्यहरू (Learning Objectives): Exactly 2 short, measurable student objectives.
-   - 3. शिक्षण सामग्री (Teaching Materials): 1-line comma-separated list of textbook & 2 simple low-cost props.
-   - 4. शिक्षण-सिकाइ क्रियाकलाप (Teaching Activities): 4 short timed bullet points (उत्प्रेरणा 5m, प्रस्तुतीकरण 15m, अभ्यास 15m, निष्कर्ष 10m).
-   - 5. मूल्याङ्कन र गृहकार्य (Evaluation & Homework): Exactly 2 short exit questions + 1 homework task.`;
-
-        // Subject to Teacher Guide PDF Mapping
-        const SUBJECT_GUIDE_MAP = {
-            'Science': { title: 'Class 8 Science & Technology Guide', pdf: 'Teacher guide/Science.pdf' },
-            'Mathematics': { title: 'Class 8 Mathematics Teacher Guide', pdf: 'Teacher guide/Mathematics.pdf' },
-            'English': { title: 'Class 8 English Teacher Guide', pdf: 'Teacher guide/English.pdf' },
-            'Nepali': { title: 'Class 8 Nepali Teacher Guide', pdf: 'Teacher guide/Nepali.pdf' },
-            'Social Studies': { title: 'Class 8 Social Studies Guide', pdf: 'Teacher guide/Social.pdf' },
-            'Health & Physical': { title: 'Class 8 Health, Physical & Creative Arts Guide', pdf: 'Teacher guide/hPC.pdf' }
+        // ── Pay scale data ──
+        const PAY_SCALES = {
+            primary: [
+                { label: 'तह ४ — Assistant Teacher',     basic: 18000, increment: 700  },
+                { label: 'तह ५ — Teacher',               basic: 21000, increment: 800  },
+            ],
+            'lower-secondary': [
+                { label: 'तह ५ — Teacher',               basic: 22500, increment: 850  },
+                { label: 'तह ६ — Senior Teacher',        basic: 26500, increment: 1000 },
+            ],
+            secondary: [
+                { label: 'तह ७ — Teacher',               basic: 31000, increment: 1200 },
+                { label: 'तह ८ — Senior Teacher',        basic: 38000, increment: 1500 },
+            ],
+            'higher-secondary': [
+                { label: 'तह ९ — Lecturer',              basic: 47000, increment: 2000 },
+                { label: 'तह १० — Senior Lecturer',      basic: 58000, increment: 2500 },
+            ],
+            private: [
+                { label: 'Junior Teacher',               basic: 15000, increment: 500  },
+                { label: 'Teacher',                      basic: 20000, increment: 700  },
+                { label: 'Senior Teacher',               basic: 28000, increment: 1000 },
+                { label: 'Department Head',              basic: 38000, increment: 1500 },
+            ],
         };
 
-        // Supabase Database Client Setup
-        const SUPABASE_URL = 'https://gxmmjkyakfwkhqtyizdk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd4bW1qa3lha2Z3a2hxdHlpemRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NzA2MDEsImV4cCI6MjA5NjA0NjYwMX0.V7A_rM1eEUntupVI7F0Hvk29jd2ugSpUnfHy21gfpkg';
-        const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-
-        let currentActiveGuide = SUBJECT_GUIDE_MAP['Science'];
-        let extractedGuideText = ''; // CDC Teacher Guide text extracted from PDF
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Safe API key check
-            const keyInput = document.getElementById('gemini-key-input');
-            const savedKey = localStorage.getItem('pedagogy_gemini_api_key');
-            if (keyInput && savedKey) {
-                keyInput.value = savedKey;
+        // ── Nepal income tax slabs (monthly, FY 2081/82 approx.) ──
+        function calcIncomeTax(annualTaxable) {
+            let tax = 0;
+            const slabs = [
+                { upto: 500000, rate: 0.01 },
+                { upto: 700000, rate: 0.10 },
+                { upto: 1000000,rate: 0.20 },
+                { upto: 2000000,rate: 0.30 },
+                { upto: Infinity,rate: 0.36 },
+            ];
+            let prev = 0;
+            for (const slab of slabs) {
+                if (annualTaxable <= 0) break;
+                const chunk = Math.min(annualTaxable - prev, slab.upto - prev);
+                if (chunk <= 0) { prev = slab.upto; continue; }
+                tax += chunk * slab.rate;
+                prev = slab.upto;
+                if (annualTaxable <= slab.upto) break;
             }
-        });
-
-        // Generate Subject & Grade Specific Ultra-Concise Lesson Plan
-        async function handleGenerateLessonPlan(e) {
-            if (e) e.preventDefault();
-
-            // Null-safe reads with fallback defaults
-            const subjectEl = document.getElementById('lp-subject');
-            const gradeEl   = document.getElementById('lp-grade');
-            const unitEl    = document.getElementById('lp-unit');
-            const langEl    = document.getElementById('lp-lang');
-            const topicEl   = document.getElementById('lp-topic');
-            const durationEl= document.getElementById('lp-duration');
-            const sizeEl    = document.getElementById('lp-size');
-            const btn       = document.getElementById('btn-gen-plan');
-
-            if (!topicEl || !topicEl.value.trim()) {
-                alert('कृपया Lesson / Topic Title भर्नुहोस् (Please fill in the Topic Title)');
-                return;
-            }
-
-            const subject  = subjectEl  ? subjectEl.value   : 'Science';
-            const grade    = gradeEl    ? gradeEl.value     : 'Grade 8';
-            const unit     = unitEl     ? unitEl.value      : '';
-            const lang     = langEl     ? langEl.value      : 'Nepali';
-            const topic    = topicEl.value.trim();
-            const duration = durationEl ? parseInt(durationEl.value) || 45 : 45;
-            const size     = sizeEl     ? sizeEl.value.trim() : '';
-
-            if (btn) { btn.innerText = '⏳ Generating...'; btn.disabled = true; }
-
-            try {
-                const apiKey = localStorage.getItem('pedagogy_gemini_api_key');
-
-                if (apiKey) {
-                    try {
-                        const guideExcerpt = (typeof extractedGuideText === 'string') ? extractedGuideText.substring(0, 1000) : '';
-                        const prompt = `${PEDAGOGY_SYSTEM_PROMPT}\n\nGenerate an ultra-concise Teacher Diary Lesson Plan in ${lang.toUpperCase()} for:\nSubject: ${subject}\nGrade: ${grade}\nTopic: ${topic}\nDuration: ${duration} mins.\nGuide Excerpt: ${guideExcerpt}\n\nOutput MUST be in ${lang} in 5 short diary sections.`;
-                        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                        });
-                        const data = await response.json();
-                        if (data.candidates && data.candidates[0] && data.candidates[0].content.parts[0].text) {
-                            renderAIResult(data.candidates[0].content.parts[0].text, topic, unit, grade, subject, duration, lang);
-                            if (btn) { btn.innerText = '✨ Generate Lesson Plan with PedagogyAI'; btn.disabled = false; }
-                            return;
-                        }
-                    } catch (apiErr) {
-                        console.warn('Gemini API error, falling back to local engine:', apiErr);
-                    }
-                }
-
-                // Local fallback engine
-                renderSubjectGroundedPlan(topic, unit, grade, subject, duration, size, lang);
-
-            } catch (fatalErr) {
-                console.error('Lesson plan generation error:', fatalErr);
-                // Show error visibly on screen
-                const outputCard = document.getElementById('card-plan-output');
-                if (outputCard) {
-                    outputCard.style.display = 'block';
-                    const titleEl = document.getElementById('out-plan-title');
-                    if (titleEl) titleEl.innerText = '❌ Error generating plan';
-                    const objEl = document.getElementById('out-objectives');
-                    if (objEl) objEl.innerHTML = `<span style="color:red;">Error: ${fatalErr.message}</span>`;
-                    outputCard.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    alert('Error: ' + fatalErr.message);
-                }
-            }
-
-            if (btn) { btn.innerText = '✨ Generate Lesson Plan with PedagogyAI'; btn.disabled = false; }
+            return tax;
         }
 
-        function renderSubjectGroundedPlan(topic, unit, grade, subject, duration, size, lang) {
-            const isNepali = lang === 'Nepali';
-
-            // Section 1: Meta Info
-            document.getElementById('out-plan-title').innerText = `${topic} (${unit})`;
-            document.getElementById('out-meta-grade-subject').innerText = `${grade} — ${subject}`;
-            document.getElementById('out-meta-topic').innerText = `${topic} (${unit})`;
-            document.getElementById('out-meta-duration').innerText = isNepali ? `${duration} मिनेट` : `${duration} Minutes`;
-            document.getElementById('out-meta-guide').innerText = `${currentActiveGuide.title}`;
-
-            // Section 2: Objectives (Bilingual Ultra-Concise 2 Points)
-            if (isNepali) {
-                document.getElementById('out-objectives').innerHTML = `
-                    • <strong>ज्ञान/बोध:</strong> ${topic} (${unit}) को मुख्य अवधारणा र परिभाषा स्पष्टसँग भन्न तथा लेख्न।<br>
-                    • <strong>प्रयोग/सीप:</strong> ${topic} सम्बन्धी अभ्यास र समस्याहरू चरणबद्ध रूपमा समाधान गर्न।
-                `;
-                document.getElementById('out-materials-list').innerHTML = `
-                    पाठ्यपुस्तक (${subject}), शिक्षक निर्देशिका, सम्बन्धित चित्र चार्ट/कार्ड, र मुख्य प्रदर्शन सामग्री।
-                `;
-            } else {
-                document.getElementById('out-objectives').innerHTML = `
-                    • <strong>Knowledge & Understanding:</strong> Students will clearly define and explain key concepts of ${topic} (${unit}).<br>
-                    • <strong>Application & Skill:</strong> Students will solve practical exercises and problem sets on ${topic} step-by-step.
-                `;
-                document.getElementById('out-materials-list').innerHTML = `
-                    Textbook (${subject}), Official Teacher Guide, relevant visual charts/flashcards, and demonstration props.
-                `;
-            }
-
-            // Section 4: Teaching Activities (Bilingual Timed Steps)
-            const warmUpTime = Math.round(duration * 0.15);
-            const directTime = Math.round(duration * 0.35);
-            const guidedTime = Math.round(duration * 0.30);
-            const exitTime = duration - warmUpTime - directTime - guidedTime;
-
-            if (isNepali) {
-                document.getElementById('out-timeline').innerHTML = `
-                    <div class="timeline-item warmup">
-                        <div class="timeline-time">⏱️ ${warmUpTime} मिनेट</div>
-                        <div class="timeline-content">
-                            <h4>१. उत्प्रेरणा र पूर्वज्ञान (Warm-up)</h4>
-                            <p>${topic} सँग सम्बन्धित २ वटा चित्र/प्रश्न सोधेर विद्यार्थीको ध्यान आकर्षित गर्ने।</p>
-                        </div>
-                    </div>
-                    <div class="timeline-item direct">
-                        <div class="timeline-time">⏱️ ${directTime} मिनेट</div>
-                        <div class="timeline-content">
-                            <h4>२. प्रस्तुतीकरण र सहजीकरण (Modeling)</h4>
-                            <p>मुख्य अवधारणा र २ वटा उदाहरण बोर्डमा प्रदर्शन गरी व्याख्या गर्ने।</p>
-                        </div>
-                    </div>
-                    <div class="timeline-item guided">
-                        <div class="timeline-time">⏱️ ${guidedTime} मिनेट</div>
-                        <div class="timeline-content">
-                            <h4>३. समूह अभ्यास र कार्य (Practice)</h4>
-                            <p>विद्यार्थीहरूलाई जोडी/समूहमा विभाजन गरी कार्यपत्र (Worksheet) समाधान गराउने।</p>
-                        </div>
-                    </div>
-                    <div class="timeline-item exit">
-                        <div class="timeline-time">⏱️ ${exitTime} मिनेट</div>
-                        <div class="timeline-content">
-                            <h4>४. निष्कर्ष र पुनरावृत्ति (Closure)</h4>
-                            <p>मुख्य सिकाइ बिन्दुहरू दोहोऱ्याउने र विद्यार्थीका जिज्ञासा निवारण गर्ने।</p>
-                        </div>
-                    </div>
-                `;
-                document.getElementById('out-evaluation').innerHTML = `
-                    • <strong>कक्षा मूल्याङ्कन (Exit Test):</strong> १. ${topic} को मुख्य विशेषता के हो? २. यसको १ व्यावहारिक प्रयोग लेख्नुहोस्।<br>
-                    • <strong>गृहकार्य (Homework):</strong> पाठ्यपुस्तकको अभ्यास प्रश्न नं. १ र २ का उत्तर सफा अक्षरीमा लेखी ल्याउनुहोस्।
-                `;
-                document.getElementById('out-diff-support').innerText = `सहयोग आवश्यक परेका विद्यार्थीलाई शब्द-कार्ड र जोडी साथी (Peer Buddy) को सहयोग दिने।`;
-                document.getElementById('out-diff-advanced').innerText = `प्रतिभाशाली विद्यार्थीलाई अतिरिक्त खोजमूलक प्रश्न समाधान गर्न दिने।`;
-            } else {
-                document.getElementById('out-timeline').innerHTML = `
-                    <div class="timeline-item warmup">
-                        <div class="timeline-time">⏱️ ${warmUpTime} Mins</div>
-                        <div class="timeline-content">
-                            <h4>1. Introduction & Hook (Warm-up)</h4>
-                            <p>Ask 2 diagnostic questions or present a visual riddle on ${topic} to engage students.</p>
-                        </div>
-                    </div>
-                    <div class="timeline-item direct">
-                        <div class="timeline-time">⏱️ ${directTime} Mins</div>
-                        <div class="timeline-content">
-                            <h4>2. Direct Instruction & Modeling</h4>
-                            <p>Explain key concepts of ${topic} on board using props from ${unit}. Model 2 worked examples.</p>
-                        </div>
-                    </div>
-                    <div class="timeline-item guided">
-                        <div class="timeline-time">⏱️ ${guidedTime} Mins</div>
-                        <div class="timeline-content">
-                            <h4>3. Guided Practice & Group Task</h4>
-                            <p>Divide class into pairs/small groups to solve structured worksheet problems on ${topic}.</p>
-                        </div>
-                    </div>
-                    <div class="timeline-item exit">
-                        <div class="timeline-time">⏱️ ${exitTime} Mins</div>
-                        <div class="timeline-content">
-                            <h4>4. Closure & Summary</h4>
-                            <p>Summarize core takeaways on ${topic} and address student questions.</p>
-                        </div>
-                    </div>
-                `;
-                document.getElementById('out-evaluation').innerHTML = `
-                    • <strong>Class Assessment (Exit Test):</strong> 1. What is the key principle of ${topic}? 2. State 1 practical application.<br>
-                    • <strong>Homework:</strong> Complete Exercises #1 and #2 from the textbook chapter on ${unit}.
-                `;
-                document.getElementById('out-diff-support').innerText = `Provide visual word banks, sentence starters, and peer-buddy pairing during group work.`;
-                document.getElementById('out-diff-advanced').innerText = `Challenge advanced students with open-ended synthesis problems and concept mapping.`;
-            }
-
-            document.getElementById('card-plan-output').style.display = 'block';
-            document.getElementById('card-plan-output').scrollIntoView({ behavior: 'smooth' });
-
-            // Auto-Save generated lesson plan to Supabase Cloud Database
-            if (supabaseClient) {
-                supabaseClient.from('lesson_plans').insert([{
-                    topic: topic,
-                    unit: unit,
-                    grade: grade,
-                    subject: subject,
-                    duration: duration,
-                    language: lang,
-                    objectives: document.getElementById('out-objectives').innerText,
-                    materials: document.getElementById('out-materials-list').innerText,
-                    evaluation: document.getElementById('out-evaluation').innerText,
-                    homework: isNepali ? 'अभ्यास प्रश्न १ र २' : 'Exercises #1 and #2'
-                }]).then(({ error }) => {
-                    if (!error) {
-                        console.log('✅ Lesson plan saved to Supabase cloud database!');
-                    }
-                });
-            }
+        function fmt(n) {
+            return 'रु. ' + Math.round(n).toLocaleString('en-IN');
         }
 
-        function renderAIResult(aiText, topic, unit, grade, subject, duration, lang) {
-            document.getElementById('out-plan-title').innerText = `${topic} (${unit})`;
-            document.getElementById('out-meta-grade-subject').innerText = `${grade} — ${subject}`;
-            document.getElementById('out-meta-topic').innerText = `${topic} (${unit})`;
-            document.getElementById('out-meta-duration').innerText = `${duration} Mins`;
-            document.getElementById('out-meta-guide').innerText = `${currentActiveGuide.title}`;
-            document.getElementById('out-objectives').innerHTML = aiText.replace(/\n/g, '<br>');
-            if (document.getElementById('out-materials-list')) document.getElementById('out-materials-list').innerHTML = '';
-            if (document.getElementById('out-timeline')) document.getElementById('out-timeline').innerHTML = '';
-            if (document.getElementById('out-evaluation')) document.getElementById('out-evaluation').innerHTML = '';
-            document.getElementById('card-plan-output').style.display = 'block';
-            document.getElementById('card-plan-output').scrollIntoView({ behavior: 'smooth' });
+        function onLevelChange() {
+            const level = document.getElementById('teacher-level').value;
+            const gradeEl = document.getElementById('teacher-grade');
+            gradeEl.innerHTML = '<option value="">— Select Grade —</option>';
+            if (!level || !PAY_SCALES[level]) return;
+            PAY_SCALES[level].forEach((g, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = g.label;
+                gradeEl.appendChild(opt);
+            });
+            gradeEl.value = '';
+            document.getElementById('basic-pay').value = '';
         }
 
-        // Expose globally so form onsubmit attribute can call it
-        window.handleGenerateLessonPlan = handleGenerateLessonPlan;
-
-        function generateMaterials() {
-            const topic = document.getElementById('lp-topic').value || 'Target Topic';
-            const container = document.getElementById('materials-container');
-            container.innerHTML = `
-                <div class="material-card">
-                    <span class="material-tag diy">Low-Cost DIY Prop</span>
-                    <h3>📦 ${topic} Physical Manipulative</h3>
-                    <p style="font-size:0.9rem; color:#475569; margin-bottom:12px;">Craft a tactile physical aid using cardboard, color cards, and everyday household items.</p>
-                    <ol style="font-size:0.85rem; color:#334155; padding-left:18px; line-height:1.5;">
-                        <li>Cut cardboard into 10x10 cm square tiles.</li>
-                        <li>Label key values/symbols for ${topic}.</li>
-                        <li>Have students arrange physical tiles in pairs.</li>
-                    </ol>
-                </div>
-
-                <div class="material-card">
-                    <span class="material-tag printable">Printable Aid</span>
-                    <h3>📄 Graphic Organizer & Flashcards</h3>
-                    <p style="font-size:0.9rem; color:#475569; margin-bottom:12px;">Ready-to-print vocabulary sheet & 2-column problem solver template.</p>
-                    <button class="btn-header-action" style="color:#7c3aed; background:#f3e8ff; border:none; margin-top:10px;" onclick="window.print()">
-                        🖨️ Print Worksheet Template
-                    </button>
-                </div>
-
-                <div class="material-card">
-                    <span class="material-tag digital">Digital Slide Deck Outline</span>
-                    <h3>💻 Interactive Presentation Deck</h3>
-                    <p style="font-size:0.9rem; color:#475569; margin-bottom:12px;">Slide 1: Title & Hook<br>Slide 2: Direct Modeling<br>Slide 3: Guided Pair Task<br>Slide 4: Exit Quiz</p>
-                </div>
-            `;
+        function onGradeChange() {
+            const level = document.getElementById('teacher-level').value;
+            const gradeIdx = document.getElementById('teacher-grade').value;
+            if (!level || gradeIdx === '') return;
+            const scale = PAY_SCALES[level][parseInt(gradeIdx)];
+            const step  = parseInt(document.getElementById('scale-step').value) || 1;
+            const basic = scale.basic + (step - 1) * scale.increment;
+            document.getElementById('basic-pay').value = basic;
         }
 
-        // Live Chat Assistant
-        function sendChatMessage() {
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if (!text) return;
-
-            appendChatBubble('user', text);
-            input.value = '';
-
-            setTimeout(() => {
-                const response = `Based on your lesson plan context for <strong>${document.getElementById('lp-topic').value || 'your topic'}</strong>:\n\n` +
-                    `Here is a tailored recommendation: ${text.includes('30') ? 'To shorten this to 30 minutes, compress Direct Instruction to 10 mins and combine Guided/Independent practice.' : 'Engage students with a kinesthetic station rotation activity where groups move across 3 learning stations.'}`;
-                appendChatBubble('assistant', response);
-            }, 600);
+        function onManualBasic() {
+            // User typed manually — clear grade auto-selection
         }
 
-        function sendQuickPrompt(promptText) {
-            document.getElementById('chat-input').value = promptText;
-            sendChatMessage();
-        }
+        // Also recalc basic when step changes
+        document.getElementById('scale-step').addEventListener('input', onGradeChange);
 
-        function appendChatBubble(sender, text) {
-            const chatBox = document.getElementById('chat-box');
-            const bubble = document.createElement('div');
-            bubble.className = `chat-bubble ${sender}`;
-            bubble.innerHTML = text.replace(/\n/g, '<br>');
-            chatBox.appendChild(bubble);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+        function calculateSalary() {
+            // ── Earnings ──
+            const basic      = parseFloat(document.getElementById('basic-pay').value)          || 0;
+            const gradeAl    = parseFloat(document.getElementById('grade-allowance').value)    || 0;
+            const da         = parseFloat(document.getElementById('da-allowance').value)       || 0;
+            const local      = parseFloat(document.getElementById('local-allowance').value)    || 0;
+            const tech       = parseFloat(document.getElementById('technical-allowance').value)|| 0;
+            const transport  = parseFloat(document.getElementById('transport-allowance').value)|| 0;
+            const medical    = parseFloat(document.getElementById('medical-allowance').value)  || 0;
+            const otherAl    = parseFloat(document.getElementById('other-allowance').value)    || 0;
 
-        function exportPlanMarkdown() {
-            const title = document.getElementById('out-plan-title').innerText;
-            const content = `# Lesson Plan: ${title}\n\n## Objectives\n${document.getElementById('out-objectives').innerText}\n\nGenerated by PedagogyAI`;
-            navigator.clipboard.writeText(content);
-            alert('Lesson Plan copied to clipboard in Markdown format!');
+            const gross = basic + gradeAl + da + local + tech + transport + medical + otherAl;
+
+            // ── Deductions ──
+            const pfRate     = parseFloat(document.getElementById('pf-rate').value) / 100  || 0.10;
+            const citRate    = parseFloat(document.getElementById('cit-rate').value) / 100 || 0.01;
+            const loan       = parseFloat(document.getElementById('loan-deduction').value)  || 0;
+            const otherDed   = parseFloat(document.getElementById('other-deduction').value) || 0;
+
+            const pf  = basic * pfRate;   // PF on basic only
+            const cit = basic * citRate;  // CIT on basic only
+
+            // Income tax on (gross - pf - cit) annual
+            const annualTaxable = (gross - pf - cit) * 12;
+            const annualTax = calcIncomeTax(annualTaxable);
+            const monthlyTax = annualTax / 12;
+
+            const totalDeduct = pf + cit + monthlyTax + loan + otherDed;
+            const netPay = gross - totalDeduct;
+
+            const employerPF = basic * 0.10;  // employer always 10%
+            const totalPF    = pf + employerPF;
+
+            // ── Render results ──
+            document.getElementById('res-net-pay').textContent    = fmt(netPay);
+            document.getElementById('res-net-pay-np').textContent = `Annual: ${fmt(netPay * 12)}  |  Daily ≈ ${fmt(netPay / 30)}`;
+            document.getElementById('res-gross').textContent      = fmt(gross);
+            document.getElementById('res-total-deduct').textContent = fmt(totalDeduct);
+            document.getElementById('res-annual').textContent     = fmt(netPay * 12);
+            document.getElementById('res-employer-pf').textContent= fmt(employerPF);
+
+            document.getElementById('r-basic').textContent        = fmt(basic);
+            document.getElementById('r-grade-al').textContent     = fmt(gradeAl);
+            document.getElementById('r-da').textContent           = fmt(da);
+            document.getElementById('r-local').textContent        = fmt(local);
+            document.getElementById('r-tech').textContent         = fmt(tech);
+            document.getElementById('r-transport').textContent    = fmt(transport);
+            document.getElementById('r-medical').textContent      = fmt(medical);
+            document.getElementById('r-other-al').textContent     = fmt(otherAl);
+            document.getElementById('r-gross-total').textContent  = fmt(gross);
+
+            document.getElementById('r-pf-rate').textContent      = (pfRate * 100).toFixed(0);
+            document.getElementById('r-cit-rate').textContent     = (citRate * 100).toFixed(0);
+            document.getElementById('r-pf').textContent           = fmt(pf);
+            document.getElementById('r-cit').textContent          = fmt(cit);
+            document.getElementById('r-tax').textContent          = fmt(monthlyTax);
+            document.getElementById('r-loan').textContent         = fmt(loan);
+            document.getElementById('r-other-ded').textContent    = fmt(otherDed);
+            document.getElementById('r-deduct-total').textContent = fmt(totalDeduct);
+
+            document.getElementById('r-employer-pf2').textContent = fmt(employerPF);
+            document.getElementById('r-total-pf').textContent     = fmt(totalPF);
+
+            // Show panel
+            const panel = document.getElementById('result-panel');
+            panel.className = '';
+            void panel.offsetWidth; // force reflow for animation
+            panel.className = 'visible';
         }
     </script>
-</body>
 
+</body>
 </html>
