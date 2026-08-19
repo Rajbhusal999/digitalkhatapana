@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="g5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2a0312" />
+      <stop offset="50%" stop-color="#9333ea" />
+      <stop offset="100%" stop-color="#f43f5e" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#g5)" />
+  <circle cx="400" cy="230" r="160" fill="#d946ef" opacity="0.35" />
+  <path d="M400 340s-90-56-90-120c0-35 28-60 60-60 18 0 36 9 48 24 12-15 30-24 48-24 32 0 60 25 60 60 0 64-90 120-90 120z" fill="#d946ef" />
+  <text x="50%" y="82%" font-family="Outfit, sans-serif" font-weight="bold" font-size="26" fill="#ffe4e6" text-anchor="middle">💓 हाम्रो माया कसरी कस्तो भयो है सानु ...</text>
+  <text x="50%" y="90%" font-family="Outfit, sans-serif" font-size="18" fill="#fbcfe8" text-anchor="middle">(Upload your real memory5.jpg photo here!)</text>
+</svg>

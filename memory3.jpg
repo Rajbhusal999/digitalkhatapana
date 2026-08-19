@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e020d" />
+      <stop offset="50%" stop-color="#9f1239" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#g3)" />
+  <circle cx="400" cy="230" r="160" fill="#f43f5e" opacity="0.3" />
+  <path d="M400 340s-90-56-90-120c0-35 28-60 60-60 18 0 36 9 48 24 12-15 30-24 48-24 32 0 60 25 60 60 0 64-90 120-90 120z" fill="#f43f5e" />
+  <text x="50%" y="82%" font-family="Outfit, sans-serif" font-weight="bold" font-size="22" fill="#ffe4e6" text-anchor="middle">🌹 के अहिले पनि यस्तै पहिलाको जस्तो मलाइ माया गर्न सक्छौ कान्छु ????...</text>
+  <text x="50%" y="90%" font-family="Outfit, sans-serif" font-size="18" fill="#fbcfe8" text-anchor="middle">(Upload your real memory3.jpg photo here!)</text>
+</svg>
