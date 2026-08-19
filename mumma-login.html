@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mumma's Special Access 💖 | 3D Birthday Wish for My Love</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Outfit:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,600;1,400;1,700&display=swap" rel="stylesheet">
+    <title>Mumma's Special Access 💖 | 3D Rocket & Heart Birthday Celebration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Outfit:wght@300;400;600;700;800;900&family=Playfair+Display:ital,wght@0,600;1,400;1,700&display=swap" rel="stylesheet">
     <!-- Three.js 3D WebGL Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
@@ -235,6 +235,164 @@
             40%, 80% { transform: translateX(8px); }
         }
 
+        /* 🚀 ROCKET LAUNCHER SECTION */
+        .rocket-stage-card {
+            position: relative;
+            z-index: 20;
+            display: none;
+            width: 100%;
+            max-width: 540px;
+            background: rgba(24, 2, 12, 0.65);
+            backdrop-filter: blur(24px);
+            border: 2px solid rgba(254, 205, 211, 0.35);
+            border-radius: 30px;
+            padding: 38px 28px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(244, 63, 94, 0.35);
+            text-align: center;
+            animation: zoomIn 0.5s ease forwards;
+        }
+
+        .rockets-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            position: relative;
+            min-height: 90px;
+        }
+
+        .rocket-item {
+            font-size: 3rem;
+            filter: drop-shadow(0 6px 15px rgba(244, 63, 94, 0.6));
+            transition: transform 0.4s ease;
+            position: relative;
+            display: inline-block;
+        }
+
+        .rocket-item.launching {
+            animation: shootRocket 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes shootRocket {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            40% { transform: translateY(-40vh) scale(1.2); opacity: 1; }
+            100% { transform: translateY(-90vh) scale(0.3); opacity: 0; }
+        }
+
+        .rocket-prompt-text {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #fef08a;
+            margin-bottom: 16px;
+            line-height: 1.4;
+            letter-spacing: 0.3px;
+        }
+
+        .blank-fill-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .blank-fill-box input {
+            width: 80%;
+            padding: 14px 20px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2.5px solid #f43f5e;
+            border-radius: 16px;
+            color: #fef08a;
+            outline: none;
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+        }
+
+        .btn-launch-trigger {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #f43f5e 0%, #e11d48 50%, #be123c 100%);
+            border: none;
+            border-radius: 16px;
+            color: #fff;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(244, 63, 94, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-launch-trigger:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 12px 30px rgba(244, 63, 94, 0.7);
+        }
+
+        /* 🎈 HEART SHAPE BALLOON ALPHABET BANNER AT TOP WINDOW */
+        .heart-balloons-banner {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 40;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 95vw;
+            pointer-events: none;
+        }
+
+        .balloon-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .balloon-heart-item {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: floatBalloon 3s ease-in-out infinite alternate;
+        }
+
+        .balloon-heart-svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 6px 14px rgba(244, 63, 94, 0.6));
+        }
+
+        .balloon-letter-text {
+            position: relative;
+            z-index: 2;
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+            font-family: 'Outfit', sans-serif;
+            margin-top: -3px;
+        }
+
+        .balloon-string {
+            position: absolute;
+            bottom: -14px;
+            left: 50%;
+            width: 1.5px;
+            height: 14px;
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        @keyframes floatBalloon {
+            0% { transform: translateY(0) rotate(-4deg); }
+            100% { transform: translateY(-12px) rotate(4deg); }
+        }
+
         /* 3D Birthday Wishing Overlay Screen */
         .birthday-overlay {
             position: relative;
@@ -243,7 +401,7 @@
             width: 100%;
             max-width: 680px;
             text-align: center;
-            pointer-events: none;
+            margin-top: 140px;
             animation: zoomIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
@@ -254,7 +412,7 @@
 
         .birthday-card {
             pointer-events: auto;
-            background: rgba(24, 2, 12, 0.45);
+            background: rgba(24, 2, 12, 0.55);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 2px solid rgba(254, 205, 211, 0.35);
@@ -398,6 +556,16 @@
     <!-- Floating Heart Background Particles (Login Mode) -->
     <div class="floating-hearts-bg" id="hearts-container"></div>
 
+    <!-- 🎈 HEART BALLOON ALPHABET BANNER AT TOP WINDOW -->
+    <div class="heart-balloons-banner" id="heart-balloons-banner">
+        <!-- Row 1: HAPPY -->
+        <div class="balloon-row" id="row-happy"></div>
+        <!-- Row 2: BIRTHDAY -->
+        <div class="balloon-row" id="row-birthday"></div>
+        <!-- Row 3: TO YOU -->
+        <div class="balloon-row" id="row-to-you"></div>
+    </div>
+
     <!-- 1. LOGIN INTERFACE CARD -->
     <div class="login-card" id="login-section">
         <div class="card-header-ico">💖</div>
@@ -419,14 +587,41 @@
             </div>
 
             <button type="submit" class="btn-romantic-login">
-                Unlock 3D Birthday Surprise 💖
+                Unlock Rocket Station 💖
             </button>
         </form>
 
         <div id="error-message" class="error-toast"></div>
     </div>
 
-    <!-- 2. 3D HEART BIRTHDAY WISHING INTERFACE -->
+    <!-- 2. ROCKET LAUNCHER STAGE CARD -->
+    <div class="rocket-stage-card" id="rocket-section">
+        <!-- Multiple rockets ready for launch -->
+        <div class="rockets-row" id="rockets-row">
+            <span class="rocket-item" style="animation-delay: 0s;">🚀</span>
+            <span class="rocket-item" style="animation-delay: 0.1s;">🚀</span>
+            <span class="rocket-item" style="animation-delay: 0.2s;">🚀</span>
+            <span class="rocket-item" style="animation-delay: 0.3s;">🚀</span>
+            <span class="rocket-item" style="animation-delay: 0.4s;">🚀</span>
+            <span class="rocket-item" style="animation-delay: 0.5s;">🚀</span>
+            <span class="rocket-item" style="animation-delay: 0.6s;">🚀</span>
+        </div>
+
+        <!-- Requested text below rockets -->
+        <div class="rocket-prompt-text">
+            🚀 Can you ready for lunching the rockets
+        </div>
+
+        <!-- Fill in blank input -->
+        <div class="blank-fill-box">
+            <input type="text" id="blank-input" placeholder="Type YES" autocomplete="off" oninput="checkBlankInput(this)">
+            <button class="btn-launch-trigger" onclick="executeRocketLaunchSequence()">
+                🚀 Launch All Rockets Altogether!
+            </button>
+        </div>
+    </div>
+
+    <!-- 3. 3D BIRTHDAY WISHING INTERFACE -->
     <div class="birthday-overlay" id="birthday-section">
         <div class="birthday-card">
             <div class="badge-romantic">🎉 3D Birthday Celebration 🎂</div>
@@ -494,7 +689,7 @@
             }
         }
 
-        // Handle Login Submission
+        // Handle Password Submission (bhadra4)
         function handleLogin(e) {
             e.preventDefault();
             const input = document.getElementById('password-input').value.trim();
@@ -503,18 +698,91 @@
             if (input.toLowerCase() === 'bhadra4') {
                 errorEl.style.display = 'none';
                 
-                // Hide Login Card & Show 3D Birthday Celebration
+                // Hide Login Card & Show Rocket Launcher Station
                 document.getElementById('login-section').style.display = 'none';
-                document.getElementById('birthday-section').style.display = 'block';
-                document.getElementById('canvas3d').style.display = 'block';
+                document.getElementById('rocket-section').style.display = 'block';
+                document.getElementById('blank-input').focus();
 
-                // Initialize 3D Heart Three.js Scene
+                // Initialize 3D Canvas in Background
+                document.getElementById('canvas3d').style.display = 'block';
                 init3DHeartScene();
             } else {
                 errorEl.innerText = '❌ Incorrect password! Please try again with love 💖 (Hint: bhadra4)';
                 errorEl.style.display = 'block';
                 document.getElementById('password-input').focus();
             }
+        }
+
+        // Check Fill-in-the-blank Input for YES
+        function checkBlankInput(inputEl) {
+            if (inputEl.value.trim().toUpperCase() === 'YES') {
+                executeRocketLaunchSequence();
+            }
+        }
+
+        // 🚀 ROCKET LAUNCH & BLAST SEQUENCE
+        let launchTriggered = false;
+        function executeRocketLaunchSequence() {
+            if (launchTriggered) return;
+            launchTriggered = true;
+
+            const rocketItems = document.querySelectorAll('.rocket-item');
+            
+            // Launch all rockets altogether
+            rocketItems.forEach((r, idx) => {
+                setTimeout(() => {
+                    r.classList.add('launching');
+                }, idx * 80);
+            });
+
+            // Trigger blast at upper window after launch (1.2s)
+            setTimeout(() => {
+                trigger3DFireworks();
+                trigger3DFireworks();
+
+                // Hide rocket card stage
+                document.getElementById('rocket-section').style.display = 'none';
+
+                // Display Heart Balloon Alphabet Banner at Top of Window!
+                renderHeartBalloonsBanner();
+                document.getElementById('heart-balloons-banner').style.display = 'flex';
+
+                // Display 3D Birthday Celebration Overlay
+                document.getElementById('birthday-section').style.display = 'block';
+            }, 1200);
+        }
+
+        // 🎈 RENDER "HAPPY BIRTHDAY TO YOU" HEART BALLOON ALPHABETS
+        function renderHeartBalloonsBanner() {
+            const colors = ['#f43f5e', '#ec4899', '#be123c', '#e11d48', '#d946ef', '#f472b6'];
+
+            function createHeartBalloonSVG(letter, colorDelay) {
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                return `
+                    <div class="balloon-heart-item" style="animation-delay: ${Math.random() * 2}s;">
+                        <svg class="balloon-heart-svg" viewBox="0 0 32 32">
+                            <defs>
+                                <radialGradient id="grad-${letter}-${Math.random().toString(36).substr(2, 5)}" cx="35%" cy="35%" r="65%">
+                                    <stop offset="0%" stop-color="#fff" stop-opacity="0.8"/>
+                                    <stop offset="40%" stop-color="${color}"/>
+                                    <stop offset="100%" stop-color="#881337"/>
+                                </radialGradient>
+                            </defs>
+                            <path d="M16 28.5s-12.5-7.8-12.5-16.5C3.5 6.5 7.8 3.5 12.2 3.5c2.6 0 5 1.2 6.8 3.3 1.8-2.1 4.2-3.3 6.8-3.3 4.4 0 8.7 3 8.7 8.5C34.5 20.7 22 28.5 22 28.5L16 28.5z" fill="${color}"/>
+                        </svg>
+                        <span class="balloon-letter-text">${letter}</span>
+                        <div class="balloon-string"></div>
+                    </div>
+                `;
+            }
+
+            const happy = ['H','A','P','P','Y'];
+            const birthday = ['B','I','R','T','H','D','A','Y'];
+            const toYou = ['T','O', ' ', 'Y','O','U'];
+
+            document.getElementById('row-happy').innerHTML = happy.map((l, i) => createHeartBalloonSVG(l, i)).join('');
+            document.getElementById('row-birthday').innerHTML = birthday.map((l, i) => createHeartBalloonSVG(l, i)).join('');
+            document.getElementById('row-to-you').innerHTML = toYou.map((l, i) => l === ' ' ? '<div style="width:20px;"></div>' : createHeartBalloonSVG(l, i)).join('');
         }
 
         // Modal Controls
@@ -533,7 +801,7 @@
             
             // Camera
             camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 30;
+            camera.position.z = 32;
 
             // Renderer
             renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
@@ -578,6 +846,7 @@
             // Main Center 3D Heart
             mainHeartMesh = new THREE.Mesh(heartGeometry, heartMaterial);
             mainHeartMesh.scale.set(1.4, 1.4, 1.4);
+            mainHeartMesh.position.y = -2;
             scene.add(mainHeartMesh);
 
             // Orbiting 3D Hearts Group
@@ -623,10 +892,8 @@
             particleSystem = new THREE.Points(particleGeo, particleMat);
             scene.add(particleSystem);
 
-            // Window Resize Listener
             window.addEventListener('resize', onWindowResize);
 
-            // Mouse Move Parallax
             window.addEventListener('mousemove', (e) => {
                 const mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
                 const mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
@@ -635,18 +902,15 @@
                 camera.lookAt(scene.position);
             });
 
-            // Start Animation Loop
             animate3D();
         }
 
-        // 3D Animation Loop
         let clock = new THREE.Clock();
         function animate3D() {
             requestAnimationFrame(animate3D);
 
             const elapsedTime = clock.getElapsedTime();
 
-            // Pulse & Rotate Main 3D Heart
             if (mainHeartMesh) {
                 mainHeartMesh.rotation.y = elapsedTime * 0.8;
                 mainHeartMesh.rotation.x = Math.sin(elapsedTime * 0.5) * 0.2;
@@ -654,7 +918,6 @@
                 mainHeartMesh.scale.set(pulse, pulse, pulse);
             }
 
-            // Rotate Orbiting Sub Hearts
             if (heartGroup) {
                 heartGroup.children.forEach(sub => {
                     sub.rotation.x += sub.userData.rotSpeedX;
@@ -664,16 +927,14 @@
                 });
             }
 
-            // Animate Particles
             if (particleSystem) {
                 particleSystem.rotation.y = elapsedTime * 0.05;
             }
 
-            // Update Fireworks Particles
             for (let i = fireworksParticles.length - 1; i >= 0; i--) {
                 const p = fireworksParticles[i];
                 p.position.add(p.userData.velocity);
-                p.userData.velocity.y -= 0.005; // gravity
+                p.userData.velocity.y -= 0.005;
                 p.material.opacity -= 0.02;
                 if (p.material.opacity <= 0) {
                     scene.remove(p);
@@ -684,23 +945,22 @@
             renderer.render(scene, camera);
         }
 
-        // Trigger 3D Heart Fireworks Explosion
         function trigger3DFireworks() {
             if (!scene) return;
             const colors = [0xf43f5e, 0xf472b6, 0xfbe7e8, 0xfb7185, 0xffd700];
             
-            for (let i = 0; i < 60; i++) {
-                const pGeo = new THREE.SphereGeometry(0.15 + Math.random() * 0.15, 8, 8);
+            for (let i = 0; i < 70; i++) {
+                const pGeo = new THREE.SphereGeometry(0.18 + Math.random() * 0.15, 8, 8);
                 const pMat = new THREE.MeshBasicMaterial({
                     color: colors[Math.floor(Math.random() * colors.length)],
                     transparent: true,
                     opacity: 1
                 });
                 const p = new THREE.Mesh(pGeo, pMat);
-                p.position.set(0, 0, 0);
+                p.position.set(0, 10, 0);
 
                 const angle = Math.random() * Math.PI * 2;
-                const speed = 0.2 + Math.random() * 0.5;
+                const speed = 0.25 + Math.random() * 0.55;
                 const vz = (Math.random() - 0.5) * 0.5;
 
                 p.userData.velocity = new THREE.Vector3(
