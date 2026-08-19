@@ -323,10 +323,6 @@
             box-shadow: 0 8px 25px rgba(244, 63, 94, 0.5);
             transition: all 0.3s ease;
         }
-        .btn-launch-trigger:hover {
-            transform: translateY(-2px) scale(1.03);
-            box-shadow: 0 12px 30px rgba(244, 63, 94, 0.7);
-        }
 
         /* 🎈 HEART SHAPE BALLOON ALPHABET BANNER AT TOP WINDOW */
         .heart-balloons-banner {
@@ -516,7 +512,7 @@
             transform: translateY(-3px);
         }
 
-        /* 💖 JOURNEY PROMPT MODAL (YES/NO) */
+        /* 💖 JOURNEY PROMPT MODAL (YES / NO) */
         .journey-modal {
             display: none;
             position: fixed;
@@ -568,9 +564,6 @@
             border-radius: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
-        }
-        .btn-journey-no:hover {
-            background: rgba(255,255,255,0.3);
         }
 
         /* 📸 MEMORY JOURNEY GALLERY STAGE */
@@ -663,10 +656,7 @@
             box-shadow: 0 6px 20px rgba(244, 63, 94, 0.4);
             transition: all 0.3s ease;
         }
-        .btn-nav-journey:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(244, 63, 94, 0.6);
-        }
+
         .dots-indicator {
             display: flex;
             gap: 8px;
@@ -685,6 +675,260 @@
             border-radius: 10px;
             background: #f43f5e;
             box-shadow: 0 0 12px #f43f5e;
+        }
+
+        /* 🎁 5. GIFT BOX INTERFACE STAGE */
+        .gift-box-stage {
+            display: none;
+            position: relative;
+            z-index: 50;
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+            margin-top: 120px;
+            padding-bottom: 60px;
+            animation: zoomIn 0.6s ease forwards;
+        }
+        .gift-box-card {
+            background: rgba(24, 2, 12, 0.75);
+            backdrop-filter: blur(25px);
+            border: 2px solid rgba(254, 205, 211, 0.35);
+            border-radius: 32px;
+            padding: 42px 32px;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7), 0 0 50px rgba(244, 63, 94, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .gift-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #fff1f2;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        .gift-sub {
+            font-size: 1.05rem;
+            color: #fbcfe8;
+            margin-bottom: 24px;
+        }
+        
+        /* Interactive Gift Box Element */
+        .gift-box-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 26px;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.3s ease;
+        }
+        .gift-box-container:hover {
+            transform: scale(1.05);
+        }
+        .gift-box-visual {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f43f5e, #be123c);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(244, 63, 94, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .gift-ribbon-v {
+            position: absolute;
+            width: 32px;
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+        .gift-ribbon-h {
+            position: absolute;
+            height: 32px;
+            width: 100%;
+            background: linear-gradient(180deg, #fbbf24, #f59e0b);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+        .gift-lid-box {
+            position: absolute;
+            top: -12px;
+            left: -10px;
+            width: 200px;
+            height: 48px;
+            background: linear-gradient(135deg, #fb7185, #e11d48);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+        }
+        .gift-lid-box.opened {
+            transform: translateY(-80px) rotate(-35deg) scale(0.7);
+            opacity: 0.2;
+        }
+        .gift-bow-icon {
+            font-size: 3.5rem;
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 12;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));
+        }
+
+        .bouquet-roses-revealed {
+            font-size: 5.5rem;
+            display: none;
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            filter: drop-shadow(0 10px 25px rgba(244,63,94,0.7));
+        }
+
+        /* Flying 3D Hearts Elements */
+        .flying-heart-item {
+            position: fixed;
+            font-size: 2.2rem;
+            pointer-events: none;
+            z-index: 120;
+            animation: flyUpHeart 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        @keyframes flyUpHeart {
+            0% { transform: translateY(0) scale(0.3) rotate(0deg); opacity: 1; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-70vh) scale(1.6) rotate(360deg); opacity: 0; }
+        }
+
+        .gift-prompt-label {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #fef08a;
+            margin-bottom: 14px;
+            letter-spacing: 0.3px;
+        }
+
+        .input-gift-row {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .input-gift-row input {
+            width: 85%;
+            padding: 14px 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #f43f5e;
+            border-radius: 16px;
+            color: #fff;
+            outline: none;
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.35);
+        }
+
+        .btn-submit-gift {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #f43f5e, #be123c);
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 1.05rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(244, 63, 94, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .gift-response-msg {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: #ffe4e6;
+            margin-bottom: 18px;
+            line-height: 1.4;
+            animation: popIn 0.4s ease;
+        }
+
+        .btn-gift-yes {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(16,185,129,0.45);
+            transition: all 0.3s ease;
+        }
+
+        .would-like-msg {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fef08a;
+            margin-bottom: 18px;
+            line-height: 1.4;
+            animation: popIn 0.4s ease;
+        }
+
+        .btn-final-yes {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #f43f5e, #be123c);
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(244, 63, 94, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-final-yes:hover {
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 12px 30px rgba(244, 63, 94, 0.7);
+        }
+
+        /* 🌹 6. FINAL PURE ROMANTIC LOVE INTERFACE STAGE */
+        .final-pure-love-stage {
+            display: none;
+            position: relative;
+            z-index: 50;
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            margin-top: 120px;
+            padding-bottom: 60px;
+            animation: zoomIn 0.8s ease forwards;
+        }
+        .pure-love-card {
+            background: rgba(24, 2, 12, 0.65);
+            backdrop-filter: blur(25px);
+            border: 2px solid rgba(254, 205, 211, 0.4);
+            border-radius: 36px;
+            padding: 50px 36px;
+            box-shadow: 0 35px 80px rgba(0, 0, 0, 0.8), 0 0 60px rgba(244, 63, 94, 0.5);
+        }
+        .pure-love-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 0%, #fecdd3 50%, #f43f5e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+            line-height: 1.25;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .pure-love-poem {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.6rem;
+            color: #ffe4e6;
+            margin: 22px 0;
+            line-height: 1.35;
+            text-shadow: 0 4px 20px rgba(244, 63, 94, 0.7);
         }
 
         /* Love Note Modal */
@@ -777,7 +1021,6 @@
 
     <!-- 2. ROCKET LAUNCHER STAGE CARD -->
     <div class="rocket-stage-card" id="rocket-section">
-        <!-- Multiple rockets ready for launch -->
         <div class="rockets-row" id="rockets-row">
             <span class="rocket-item" style="animation-delay: 0s;">🚀</span>
             <span class="rocket-item" style="animation-delay: 0.1s;">🚀</span>
@@ -788,12 +1031,10 @@
             <span class="rocket-item" style="animation-delay: 0.6s;">🚀</span>
         </div>
 
-        <!-- Requested text below rockets -->
         <div class="rocket-prompt-text">
             🚀 Can you ready for lunching the rockets
         </div>
 
-        <!-- Fill in blank input -->
         <div class="blank-fill-box">
             <input type="text" id="blank-input" placeholder="Type YES" autocomplete="off" oninput="checkBlankInput(this)">
             <button class="btn-launch-trigger" onclick="executeRocketLaunchSequence()">
@@ -817,12 +1058,11 @@
             </p>
 
             <div class="actions-3d-row">
-                <!-- Requested button: अब अगाडी केहि कुरा हेर्ने होइन त -->
                 <button class="btn-action-3d btn-journey" onclick="openJourneyPrompt()">
                     💖 अब अगाडी केहि कुरा हेर्ने होइन त ➔
                 </button>
-                <button class="btn-action-3d btn-fireworks" onclick="trigger3DFireworks()">
-                    🎆 Launch Heart Fireworks
+                <button class="btn-action-3d btn-fireworks" onclick="openGiftBoxStage()">
+                    🎁 Please Babe open the Gift box ➔
                 </button>
                 <button class="btn-action-3d btn-love-note" onclick="openLoveModal()">
                     💌 Love Note
@@ -856,24 +1096,20 @@
 
     <!-- 📸 4. MEMORY JOURNEY STORY GALLERY STAGE -->
     <div class="journey-gallery-stage" id="journey-gallery-stage">
-        <!-- Requested Title when YES is chosen -->
         <h1 class="journey-header-title" id="journey-main-heading">
             हाम्रो माया को यात्रा थोरै हेरौ है त 💖✨
         </h1>
 
         <div class="journey-card-frame">
-            <!-- Photo Frame Container -->
             <div class="journey-img-wrapper">
                 <img id="journey-current-img" src="memory1.jpg" alt="Love Memory Slide" onerror="handleImageError(this)">
             </div>
 
-            <!-- Dynamic Caption Box -->
             <div class="journey-caption-box">
                 <div class="journey-caption-main" id="journey-caption-text">हाम्रो पहिलो भेट ...</div>
                 <div class="journey-caption-sub" id="journey-sub-text">पहिलो पटक देख्दा नै मुटुमा बसेकी थियौ सानु ✨</div>
             </div>
 
-            <!-- Navigation Controls & Dots -->
             <div class="journey-controls">
                 <button class="btn-nav-journey" id="btn-prev-slide" onclick="prevJourneySlide()">⬅️ अघिल्लो (Prev)</button>
                 
@@ -881,6 +1117,68 @@
                 
                 <button class="btn-nav-journey" id="btn-next-slide" onclick="nextJourneySlide()">पछिल्लो (Next) ➡️</button>
             </div>
+        </div>
+    </div>
+
+    <!-- 🎁 5. GIFT BOX INTERFACE STAGE -->
+    <div class="gift-box-stage" id="gift-box-stage">
+        <div class="gift-box-card">
+            <!-- Requested Title -->
+            <h1 class="gift-title" id="gift-main-title">Please Babe open the Gift box 🎁💖</h1>
+            <p class="gift-sub" id="gift-sub-desc">Click the gift box below to open your special birthday surprise!</p>
+
+            <!-- 🎁 Interactive Gift Box -->
+            <div class="gift-box-container" id="gift-box-container" onclick="openGiftBoxAction()">
+                <div class="gift-lid-box" id="gift-lid-box">
+                    <span class="gift-bow-icon">🎀</span>
+                </div>
+                <div class="gift-box-visual">
+                    <div class="gift-ribbon-v"></div>
+                    <div class="gift-ribbon-h"></div>
+                    <div class="bouquet-roses-revealed" id="bouquet-roses">💐🌹</div>
+                </div>
+            </div>
+
+            <!-- Requested Form: what gift you need tell me -->
+            <div class="gift-form-area" id="gift-form-area" style="display:none; animation: popIn 0.5s ease;">
+                <div class="gift-prompt-label">🌹 what gift you need tell me 💖</div>
+                <div class="input-gift-row">
+                    <input type="text" id="gift-user-input" placeholder="Type what gift you want..." autocomplete="off">
+                    <button class="btn-submit-gift" onclick="submitUserGiftWish()">Submit Wish 💌</button>
+                </div>
+            </div>
+
+            <!-- Requested Message: Gift चाहि भेटेसी दिन्छु है सानु ... -->
+            <div class="gift-response-box" id="gift-response-box" style="display:none; margin-top:20px;">
+                <div class="gift-response-msg">Gift चाहि भेटेसी दिन्छु है सानु ... 🙈🎁💖</div>
+                <button class="btn-gift-yes" onclick="showWouldYouLikePrompt()">YES (हुन्छ सानु) 💕</button>
+            </div>
+
+            <!-- Requested Prompt: would you like this babe -->
+            <div class="would-like-box" id="would-like-box" style="display:none; margin-top:20px;">
+                <div class="would-like-msg">would you like this babe? 🥰💖</div>
+                <div style="display:flex; gap:16px; justify-content:center; margin-top:16px;">
+                    <button class="btn-final-yes" onclick="openFinalPureLoveStage()">YES (अँ साह्रै मन पर्यो सानु) 💖</button>
+                    <button class="btn-final-yes" style="background:linear-gradient(135deg,#ec4899,#d946ef);" onclick="openFinalPureLoveStage()">YES 💕</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🌹 6. FINAL PURE ROMANTIC LOVE INTERFACE STAGE -->
+    <div class="final-pure-love-stage" id="final-pure-love-stage">
+        <div class="pure-love-card">
+            <div style="font-size:4.2rem; margin-bottom:14px; animation: heartPulse 1.5s infinite ease-in-out;">💖</div>
+            <h1 class="pure-love-title">Forever Yours, My Babe 🌹✨</h1>
+            <div class="pure-love-poem">
+                "In your eyes, I found my home. In your heart, I found my love." 💕
+            </div>
+            <p style="color:#ffe4e6; font-size:1.15rem; line-height:1.7; margin-bottom:28px;">
+                You are my whole world, my greatest blessing, and my happiest reality. Happy Birthday once again, my love! ❤️🎂✨
+            </p>
+            <a href="index.html" class="btn-action-3d btn-fireworks" style="text-decoration:none;">
+                ← Portfolio
+            </a>
         </div>
     </div>
 
@@ -933,12 +1231,10 @@
             if (input.toLowerCase() === 'bhadra4') {
                 errorEl.style.display = 'none';
                 
-                // Hide Login Card & Show Rocket Launcher Station
                 document.getElementById('login-section').style.display = 'none';
                 document.getElementById('rocket-section').style.display = 'block';
                 document.getElementById('blank-input').focus();
 
-                // Initialize 3D Canvas in Background
                 document.getElementById('canvas3d').style.display = 'block';
                 init3DHeartScene();
             } else {
@@ -1015,9 +1311,7 @@
             document.getElementById('row-to-you').innerHTML = toYou.map((l, i) => l === ' ' ? '<div style="width:20px;"></div>' : createHeartBalloonSVG(l, i)).join('');
         }
 
-        // ══════════════════════════════════════════════════════
         // 💖 LOVE JOURNEY STORY GALLERY DATA & CONTROLS
-        // ══════════════════════════════════════════════════════
         const JOURNEY_SLIDES = [
             {
                 img: 'memory1.jpg',
@@ -1062,8 +1356,7 @@
         }
 
         function handleJourneyNo() {
-            const noMsg = document.getElementById('journey-no-msg');
-            noMsg.style.display = 'block';
+            document.getElementById('journey-no-msg').style.display = 'block';
         }
 
         function startMemoryJourney() {
@@ -1071,7 +1364,6 @@
             document.getElementById('birthday-section').style.display = 'none';
             document.getElementById('journey-gallery-stage').style.display = 'block';
             
-            // Render dots indicator
             renderJourneyDots();
             showJourneySlide(0);
         }
@@ -1085,7 +1377,11 @@
 
         function showJourneySlide(index) {
             if (index < 0) index = 0;
-            if (index >= JOURNEY_SLIDES.length) index = JOURNEY_SLIDES.length - 1;
+            if (index >= JOURNEY_SLIDES.length) {
+                // If past last slide, open Gift Box Stage!
+                openGiftBoxStage();
+                return;
+            }
 
             currentJourneySlide = index;
             const slide = JOURNEY_SLIDES[index];
@@ -1100,11 +1396,15 @@
                 imgEl.style.opacity = '1';
             }, 200);
 
-            // Update Nav Buttons State
             document.getElementById('btn-prev-slide').disabled = (index === 0);
-            document.getElementById('btn-next-slide').disabled = (index === JOURNEY_SLIDES.length - 1);
+            
+            const nextBtn = document.getElementById('btn-next-slide');
+            if (index === JOURNEY_SLIDES.length - 1) {
+                nextBtn.innerText = '🎁 Please Babe open the Gift box ➔';
+            } else {
+                nextBtn.innerText = 'पछिल्लो (Next) ➡️';
+            }
 
-            // Update dots
             const dots = document.querySelectorAll('.dot-item');
             dots.forEach((dot, idx) => {
                 dot.className = `dot-item ${idx === index ? 'active' : ''}`;
@@ -1118,30 +1418,96 @@
         }
 
         function nextJourneySlide() {
-            if (currentJourneySlide < JOURNEY_SLIDES.length - 1) {
-                showJourneySlide(currentJourneySlide + 1);
-            }
+            showJourneySlide(currentJourneySlide + 1);
         }
 
-        // Fallback for Dummy Image loading if file not yet uploaded
         function handleImageError(imgEl) {
             const index = currentJourneySlide;
             const colors = ['#f43f5e', '#be123c', '#d946ef', '#9333ea', '#e11d48', '#881337'];
             const color = colors[index % colors.length];
             
-            // Generate inline romantic SVG placeholder
             const svgPlaceholder = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500"><rect width="800" height="500" fill="%2318020c"/><circle cx="400" cy="250" r="180" fill="${encodeURIComponent(color)}" opacity="0.4"/><path d="M400 340s-90-56-90-120c0-35 28-60 60-60 18 0 36 9 48 24 12-15 30-24 48-24 32 0 60 25 60 60 0 64-90 120-90 120z" fill="${encodeURIComponent(color)}"/><text x="50%" y="82%" font-family="Outfit, sans-serif" font-weight="bold" font-size="28" fill="%23ffe4e6" text-anchor="middle">💖 ${encodeURIComponent(JOURNEY_SLIDES[index].caption)}</text></svg>`;
             
             imgEl.src = svgPlaceholder;
+        }
+
+        // 🎁 5. GIFT BOX STAGE CONTROLS
+        function openGiftBoxStage() {
+            document.getElementById('birthday-section').style.display = 'none';
+            document.getElementById('journey-gallery-stage').style.display = 'none';
+            document.getElementById('gift-box-stage').style.display = 'block';
+        }
+
+        let giftBoxOpened = false;
+        function openGiftBoxAction() {
+            if (giftBoxOpened) return;
+            giftBoxOpened = true;
+
+            // Open Gift Lid
+            document.getElementById('gift-lid-box').classList.add('opened');
+            
+            // Reveal Bouquet of Red Roses inside box
+            setTimeout(() => {
+                document.getElementById('bouquet-roses').style.display = 'block';
+            }, 300);
+
+            // Spawn 3D Red Hearts Flying Out of the Box
+            spawnFlying3DHearts();
+            trigger3DFireworks();
+
+            // Reveal "what gift you need tell me" Form
+            setTimeout(() => {
+                document.getElementById('gift-form-area').style.display = 'block';
+                document.getElementById('gift-user-input').focus();
+            }, 700);
+        }
+
+        // Spawn Flying 3D Red Hearts Animation
+        function spawnFlying3DHearts() {
+            const heartIcons = ['💖', '❤️', '💕', '💓', '💗', '🌹'];
+            for (let i = 0; i < 32; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'flying-heart-item';
+                    heart.innerText = heartIcons[Math.floor(Math.random() * heartIcons.length)];
+                    heart.style.left = (42 + (Math.random() - 0.5) * 20) + 'vw';
+                    heart.style.top = '55vh';
+                    heart.style.fontSize = (1.8 + Math.random() * 2) + 'rem';
+                    document.body.appendChild(heart);
+
+                    setTimeout(() => { heart.remove(); }, 2000);
+                }, i * 60);
+            }
+        }
+
+        // Submit User Gift Wish
+        function submitUserGiftWish() {
+            const inputVal = document.getElementById('gift-user-input').value.trim();
+            document.getElementById('gift-form-area').style.display = 'none';
+            
+            // Show: Gift चाहि भेटेसी दिन्छु है सानु ...
+            document.getElementById('gift-response-box').style.display = 'block';
+        }
+
+        // Show: would you like this babe
+        function showWouldYouLikePrompt() {
+            document.getElementById('gift-response-box').style.display = 'none';
+            document.getElementById('would-like-box').style.display = 'block';
+        }
+
+        // 🌹 6. OPEN FINAL PURE ROMANTIC LOVE INTERFACE
+        function openFinalPureLoveStage() {
+            document.getElementById('gift-box-stage').style.display = 'none';
+            document.getElementById('final-pure-love-stage').style.display = 'block';
+            trigger3DFireworks();
+            trigger3DFireworks();
         }
 
         // Modal Controls
         function openLoveModal() { document.getElementById('love-modal').style.display = 'flex'; }
         function closeLoveModal() { document.getElementById('love-modal').style.display = 'none'; }
 
-        // ══════════════════════════════════════════════════════
         // THREE.JS 3D HEART Celebration Engine
-        // ══════════════════════════════════════════════════════
         let scene, camera, renderer, mainHeartMesh, heartGroup, particleSystem;
         let fireworksParticles = [];
 
