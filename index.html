@@ -477,6 +477,15 @@
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes shakeAlert {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.85); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
 
         /* Responsive */
         @media (max-width: 1024px) {
@@ -579,8 +588,15 @@
             </div>
         </div>
         <div class="hero-right">
-            <!-- Portrait Image Placeholder -->
-            <img src="profile.jpg" alt="Raj Bhusal" />
+            <div style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div style="font-weight: 800; font-size: 1.1rem; color: var(--accent-gold); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px; animation: pulse 2s infinite ease-in-out;">
+                    👇 click where you want to
+                </div>
+                <div style="padding: 8px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-gold), #fff); box-shadow: 0 10px 30px rgba(0,0,0,0.25); cursor: pointer; transition: transform 0.3s ease;">
+                    <img id="hero-profile-img" src="profile.jpg" alt="Raj Bhusal" style="cursor: pointer; display: block; border-radius: 50%; width: 340px; height: 340px; object-fit: cover; object-position: top; border: 4px solid var(--bg-cream);" onclick="onPersonImageClick(event)" />
+                </div>
+                <div id="face-feedback-alert" style="margin-top: 14px; min-height: 40px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem;"></div>
+            </div>
         </div>
     </section>
 
@@ -753,6 +769,49 @@
 
         function closeNewsTicker() {
             document.getElementById('global-news-ticker').classList.remove('active');
+        }
+
+        // Person Face Click Interaction
+        function onPersonImageClick(e) {
+            const img = e.target;
+            const rect = img.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width;  // 0.0 to 1.0
+            const y = (e.clientY - rect.top) / rect.height; // 0.0 to 1.0
+
+            // Person face region on profile.jpg (circle element with object-position: top)
+            // Center of face: X = 0.50 (50%), Y = 0.45 (45%)
+            // Radii: horizontal rx = 0.22, vertical ry = 0.24
+            const dx = (x - 0.50) / 0.22;
+            const dy = (y - 0.45) / 0.24;
+            const distSq = dx * dx + dy * dy;
+
+            const alertEl = document.getElementById('face-feedback-alert');
+
+            if (distSq <= 1.0) {
+                // Clicked on face!
+                if (alertEl) {
+                    alertEl.innerHTML = `
+                        <div style="background: rgba(16, 185, 129, 0.2); border: 1.5px solid #10b981; color: #10b981; padding: 8px 18px; border-radius: 20px; animation: popIn 0.3s ease;">
+                            🎉 Opening new page... (नयाँ पृष्ठ खोलिँदैछ...)
+                        </div>
+                    `;
+                }
+                setTimeout(() => {
+                    const win = window.open('digitalkhatapana.html', '_blank');
+                    if (!win) {
+                        window.location.href = 'digitalkhatapana.html';
+                    }
+                }, 450);
+            } else {
+                // Clicked beside face!
+                if (alertEl) {
+                    alertEl.innerHTML = `
+                        <div style="background: rgba(239, 68, 68, 0.15); border: 1.5px solid #ef4444; color: #dc2626; padding: 8px 18px; border-radius: 20px; animation: shakeAlert 0.4s ease;">
+                            🚫 sorry it doesnot open please choose the best place.
+                        </div>
+                    `;
+                }
+            }
         }
     </script>
 </body>

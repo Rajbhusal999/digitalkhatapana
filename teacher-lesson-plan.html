@@ -153,8 +153,69 @@ body{font-family:'Inter','Mukta',sans-serif;background:var(--bg);color:var(--tex
 .disc{background:var(--am-lt);border:1px solid #fcd34d;border-radius:12px;padding:12px 16px;
   font-size:.78rem;color:#92400e;margin-top:16px;line-height:1.6}
 
+/* Interactive Face Click Card */
+.interactive-face-card {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+  border-radius: 22px;
+  padding: 24px 20px;
+  margin-bottom: 24px;
+  color: #fff;
+  text-align: center;
+  border: 2px solid var(--pr);
+  box-shadow: 0 10px 30px rgba(124,58,237,0.25);
+  position: relative;
+  overflow: hidden;
+}
+.interactive-face-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fef08a;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+  animation: pulseInstruction 2s infinite ease-in-out;
+}
+.profile-img-frame {
+  display: inline-block;
+  position: relative;
+  padding: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c29f6d, #fef08a);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.profile-img-frame:hover {
+  transform: scale(1.04);
+  box-shadow: 0 12px 35px rgba(124,58,237,0.45);
+}
+.interactive-face-img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+  border: 4px solid #fff;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+@keyframes shakeAlert {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+@keyframes pulseInstruction {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.03); opacity: 0.85; }
+}
+@keyframes popIn {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 @media print{
-  .hdr,.hero,.cat-tabs,.btn-calc,.btn-print,#form-section,.disc{display:none!important}
+  .hdr,.hero,.cat-tabs,.btn-calc,.btn-print,#form-section,.disc,.interactive-face-card{display:none!important}
   #result-panel{display:block!important}
   body{background:#fff}
   .card{box-shadow:none;border:1px solid #ddd}
@@ -184,6 +245,18 @@ body{font-family:'Inter','Mukta',sans-serif;background:var(--bg);color:var(--tex
 </header>
 
 <div class="main">
+
+  <!-- Interactive Person Face Click Card -->
+  <div class="interactive-face-card">
+    <div class="interactive-face-title" id="lbl-click-instruction">
+      👇 click where you want to
+    </div>
+    <div class="profile-img-frame">
+      <img src="profile.jpg" id="person-face-img" alt="Person Face" class="interactive-face-img" onclick="onPersonImageClick(event)" />
+    </div>
+    <div id="face-feedback-alert" style="margin-top: 14px; min-height: 42px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; transition: all 0.3s ease;">
+    </div>
+  </div>
 
   <!-- Hero -->
   <div class="hero">
@@ -663,6 +736,7 @@ const T = {
     empTtl:'🏦 Employer Contribution',
     rEpf:'Employer PF (10%)', rTpf:'Total PF per Month',
     btnPrint:'🖨️ Print Salary Slip',
+    clickInstruction:'👇 click where you want to',
   },
   np: {
     hTitle:'तलब क्याल्कुलेटर २०८३',
@@ -703,6 +777,7 @@ const T = {
     empTtl:'🏦 नियोक्ता अंशदान',
     rEpf:'नियोक्ता PF (१०%)', rTpf:'मासिक कुल PF जम्मा',
     btnPrint:'🖨️ तलब स्लिप प्रिन्ट गर्नुहोस्',
+    clickInstruction:'👇 click where you want to (तपाईंलाई मन लागेको ठाउँमा क्लिक गर्नुहोस्)',
   }
 };
 
@@ -720,6 +795,7 @@ function setLang(l){
 
 function applyLang(){
   const ids = [
+    ['lbl-click-instruction','clickInstruction'],
     ['h-title','hTitle'],['h-sub','hSub'],['hero-title','heroTitle'],['hero-sub','heroSub'],
     ['hero-badge','badge'],['h-home','home'],['lbl-details','details'],['lbl-category','catLbl'],
     ['t-civil','tCivil'],['t-teacher','tTeacher'],['t-health','tHealth'],['t-security','tSecurity'],
@@ -956,6 +1032,51 @@ function populateTable(){
       });
     });
   });
+}
+
+// ══════════════════════════════════════════════════════
+// PERSON FACE CLICK INTERACTION
+// ══════════════════════════════════════════════════════
+function onPersonImageClick(e) {
+  const img = e.target;
+  const rect = img.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width;  // 0.0 to 1.0
+  const y = (e.clientY - rect.top) / rect.height; // 0.0 to 1.0
+
+  // Person face region on profile.jpg (circle element with object-position: top)
+  // Center of face: X = 0.50 (50%), Y = 0.45 (45%)
+  // Radii: horizontal rx = 0.22, vertical ry = 0.24
+  const dx = (x - 0.50) / 0.22;
+  const dy = (y - 0.45) / 0.24;
+  const distSq = dx * dx + dy * dy;
+
+  const alertEl = document.getElementById('face-feedback-alert');
+
+  if (distSq <= 1.0) {
+    // Clicked on face!
+    if (alertEl) {
+      alertEl.innerHTML = `
+        <div style="background: rgba(16, 185, 129, 0.25); border: 1.5px solid #10b981; color: #6ee7b7; padding: 10px 20px; border-radius: 20px; animation: popIn 0.3s ease; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
+          🎉 Opening new page... (नयाँ पृष्ठ खोलिँदैछ...)
+        </div>
+      `;
+    }
+    setTimeout(() => {
+      const win = window.open('digitalkhatapana.html', '_blank');
+      if (!win) {
+        window.location.href = 'digitalkhatapana.html';
+      }
+    }, 450);
+  } else {
+    // Clicked beside face!
+    if (alertEl) {
+      alertEl.innerHTML = `
+        <div style="background: rgba(239, 68, 68, 0.25); border: 1.5px solid #ef4444; color: #fca5a5; padding: 10px 20px; border-radius: 20px; animation: shakeAlert 0.4s ease; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);">
+          🚫 sorry it doesnot open please choose the best place.
+        </div>
+      `;
+    }
+  }
 }
 
 // ══════════════════════════════════════════════════════
